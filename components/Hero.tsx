@@ -11,7 +11,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="stripe-mark text-tiger mb-6"
+          className="stripe-mark text-tiger mb-8"
         >
           <span></span>
           <span></span>
@@ -22,19 +22,10 @@ export default function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display italic font-medium text-4xl sm:text-5xl md:text-6xl tracking-tight text-ink text-center"
-        >
-          Tiger Club
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-5 font-display text-2xl md:text-3xl text-ink/85 text-center"
+          className="font-display italic font-medium text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-ink text-center leading-[1.05]"
         >
           life is better together.
-        </motion.p>
+        </motion.h1>
 
         <motion.div
           initial={{ opacity: 0 }}

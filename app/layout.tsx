@@ -3,6 +3,7 @@ import { Fraunces, Inter, Caveat, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import PawPrints from "@/components/PawPrints";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable}`}>
       <body className="font-sans antialiased">
         <div className="grain" aria-hidden="true" />
+        <PawPrints />
         <Nav />
         {children}
         <Footer />

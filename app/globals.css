@@ -100,3 +100,18 @@ body {
   background-image: radial-gradient(rgba(21,19,14,0.035) 1px, transparent 1px);
   background-size: 3px 3px;
 }
+
+.paw-mark {
+  animation: paw-fade 0.95s ease-out forwards;
+}
+
+@keyframes paw-fade {
+  0% { opacity: 0; transform: scale(0.6); }
+  12% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.25) translateY(4px); }
+}
+
+@keyframes paw-walk-fade {
+  0%, 100% { opacity: 0; }
+  15%, 85% { opacity: 0.5; }
+}
