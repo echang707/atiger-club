@@ -48,7 +48,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="annotation text-3xl md:text-4xl mt-10"
         >
-          &ldquo;We sat down as strangers. Nobody wanted to be the first to leave.&rdquo;
+          &ldquo;A meaningful life is a life connected to others.&rdquo;
         </motion.p>
       </div>
 
@@ -62,7 +62,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.8 }}
           className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight"
         >
-          some of them aren&rsquo;t strangers anymore.
+          made for the moments that become something more.
         </motion.p>
       </div>
 

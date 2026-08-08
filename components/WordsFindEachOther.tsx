@@ -2,15 +2,15 @@
 
 import { motion } from "framer-motion";
 
-// On first load each word sits well off its resting spot — separated and
-// misaligned — then slowly drifts toward the others, like it's looking
-// for the rest of the sentence, until they all lock into
-// "life is better together."
+// On first load each word sits far off its resting spot — scattered,
+// tiny, and soft-focus, like it's drifting in from somewhere else —
+// then slowly, gently drifts and comes into focus, arriving late and
+// unhurried until they all settle into "life is better together."
 const words: { text: string; from: { x: number; y: number; rotate: number } }[] = [
-  { text: "life", from: { x: -46, y: -22, rotate: -6 } },
-  { text: "is", from: { x: 18, y: 34, rotate: 8 } },
-  { text: "better", from: { x: 30, y: -28, rotate: -5 } },
-  { text: "together.", from: { x: 54, y: 36, rotate: 6 } },
+  { text: "life", from: { x: -120, y: -60, rotate: -10 } },
+  { text: "is", from: { x: 46, y: 88, rotate: 12 } },
+  { text: "better", from: { x: 78, y: -74, rotate: -9 } },
+  { text: "together.", from: { x: 132, y: 92, rotate: 10 } },
 ];
 
 export default function WordsFindEachOther() {
@@ -19,12 +19,12 @@ export default function WordsFindEachOther() {
       {words.map((w, i) => (
         <motion.span
           key={w.text}
-          initial={{ opacity: 0, x: w.from.x, y: w.from.y, rotate: w.from.rotate }}
-          animate={{ opacity: 1, x: 0, y: 0, rotate: 0 }}
+          initial={{ opacity: 0, x: w.from.x, y: w.from.y, rotate: w.from.rotate, scale: 0.82, filter: "blur(6px)" }}
+          animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, filter: "blur(0px)" }}
           transition={{
-            duration: 2.6,
-            delay: 0.2 + i * 0.1,
-            ease: [0.16, 1, 0.3, 1],
+            duration: 4.2,
+            delay: 0.3 + i * 0.22,
+            ease: [0.11, 0.6, 0.15, 1],
           }}
           className="inline-block"
         >
