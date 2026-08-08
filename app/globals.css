@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #E1DACB #FAF6EF;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FAF6EF;
+  color: #201D1A;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Signature stripe mark — abstracted, tapering, warm. Used as brand mark & divider. */
+.stripe-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.stripe-mark span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.stripe-mark span:nth-child(1) { width: 18px; opacity: 1; }
+.stripe-mark span:nth-child(2) { width: 12px; opacity: 0.7; }
+.stripe-mark span:nth-child(3) { width: 6px; opacity: 0.45; }
+
+.underline-stripe {
+  position: relative;
+}
+
+.underline-stripe::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, #E2A63B, #C1652F);
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.underline-stripe:hover::after {
+  width: 100%;
+}
+
+::selection {
+  background: #F1CE8C;
+  color: #201D1A;
+}
