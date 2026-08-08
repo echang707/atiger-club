@@ -7,13 +7,14 @@ import { memories } from "@/lib/events";
 // The hero postcard is Bite Club #01 — the event that started it all.
 const hero = memories[0];
 
-// The scatter of smaller postcards pulls real Tiger Club gatherings, each
-// with a caption about the connection made, not the headcount.
+// The scatter of postcards pulls real Tiger Club gatherings — each caption
+// is the same note that goes with that specific photo, so they always match.
 const scatter = [
-  { rotate: 4, x: 36, y: 10, w: 24, memory: memories[1], caption: "still in the group chat from that table" },
-  { rotate: -3, x: 64, y: 0, w: 28, memory: memories[2], caption: "screamed at a screen with total strangers" },
-  { rotate: 7, x: 6, y: 34, w: 24, memory: memories[3], caption: "matched pace with someone, kept in touch" },
-  { rotate: -8, x: 48, y: 38, w: 26, memory: memories[4], caption: "cleaned up a park, stayed for the people" },
+  { rotate: -5, x: 4, y: 4, w: 24, memory: memories[1], caption: "traded sketchbooks for phone numbers" },
+  { rotate: 3, x: 34, y: 0, w: 26, memory: memories[2], caption: "screamed at one shared screen, way too loud" },
+  { rotate: -4, x: 66, y: 6, w: 26, memory: memories[3], caption: "ran badly together, finished together" },
+  { rotate: 6, x: 14, y: 44, w: 24, memory: memories[4], caption: "gloves on, trash bags full, pizza after" },
+  { rotate: -6, x: 46, y: 48, w: 26, memory: memories[5], caption: "raced badly, cheered loudly, stayed anyway" },
 ];
 
 export default function ScrollStory() {
@@ -68,7 +69,7 @@ export default function ScrollStory() {
       <div className="h-[10vh] md:h-[14vh]" />
 
       <div className="relative max-w-content mx-auto px-6 md:px-10">
-        <div className="relative w-full" style={{ paddingBottom: "70%" }}>
+        <div className="relative w-full" style={{ paddingBottom: "78%" }}>
           {scatter.map((p, i) => (
             <motion.div
               key={p.memory.id}

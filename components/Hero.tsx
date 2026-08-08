@@ -24,7 +24,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 2.9 }}
+          transition={{ duration: 0.8, delay: 1.6 }}
           className="mt-8 md:mt-10 w-full max-w-lg"
         >
           <RotatingLine />

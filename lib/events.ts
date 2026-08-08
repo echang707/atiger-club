@@ -198,4 +198,15 @@ export const memories: Memory[] = [
     x: 53,
     y: 61,
   },
+  {
+    id: "dragon-boat-01",
+    title: "DRAGON BOAT #01",
+    location: "Lake Lanier",
+    date: "Sept 12, 2026",
+    attendees: "60 people.",
+    note: "Raced badly, cheered loudly, stayed for the after-party.",
+    image: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?q=80&w=1200&auto=format&fit=crop",
+    x: 85,
+    y: 22,
+  },
 ];

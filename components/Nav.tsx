@@ -28,8 +28,8 @@ export default function Nav() {
         scrolled || open ? "bg-paper/85 backdrop-blur-md border-b border-ink/10" : "bg-transparent"
       }`}
     >
-      <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 text-ink" onClick={() => setOpen(false)}>
+      <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 grid grid-cols-[1fr_auto_1fr] items-center">
+        <Link href="/" className="flex items-center gap-2.5 text-ink justify-self-start" onClick={() => setOpen(false)}>
           <span className="stripe-mark text-tiger">
             <span></span>
             <span></span>
@@ -42,20 +42,20 @@ export default function Nav() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-9 text-sm">
+        <nav className="hidden md:flex items-center gap-9 text-sm justify-self-center">
           <Link href="/events" className="underline-stripe text-ink/80 hover:text-ink transition-colors">
             Experiences
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-self-end">
           <a
             href="https://discord.gg/6u83g4P8Cb"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-ink border border-ink/20 px-4 py-2 rounded-full hover:border-tiger hover:text-tiger transition-colors duration-300"
+            className="text-sm font-medium text-ink border border-ink/20 px-4 py-2 rounded-full hover:border-tiger hover:text-tiger transition-colors duration-300 whitespace-nowrap"
           >
-            Join
+            Join the Club
           </a>
 
           <button

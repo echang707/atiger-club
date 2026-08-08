@@ -72,21 +72,40 @@ export default function MediumWord({
       timers.current.forEach(clearTimeout);
       timers.current = [];
       setShowCheck(false);
-      let ticks = 0;
-      const maxTicks = 7;
-      const iv = setInterval(() => {
-        ticks++;
-        if (ticks >= maxTicks) {
-          clearInterval(iv);
-          setDisplay(letters);
-          setShowCheck(true);
-          const t = setTimeout(() => setShowCheck(false), 850);
-          timers.current.push(t);
-        } else {
-          setDisplay(letters.map(() => randChar()));
-        }
-      }, 130);
-      timers.current.push(iv);
+      const ticksPerLetter = 5;
+      const tickMs = 65;
+      const letterDuration = ticksPerLetter * tickMs;
+      setDisplay(letters.map(() => randChar()));
+
+      letters.forEach((letter, li) => {
+        const t0 = setTimeout(() => {
+          let ticks = 0;
+          const iv = setInterval(() => {
+            ticks++;
+            if (ticks >= ticksPerLetter) {
+              clearInterval(iv);
+              setDisplay((prev) => {
+                const next = [...prev];
+                next[li] = letter;
+                return next;
+              });
+              if (li === letters.length - 1) {
+                setShowCheck(true);
+                const t2 = setTimeout(() => setShowCheck(false), 700);
+                timers.current.push(t2);
+              }
+            } else {
+              setDisplay((prev) => {
+                const next = [...prev];
+                next[li] = randChar();
+                return next;
+              });
+            }
+          }, tickMs);
+          timers.current.push(iv);
+        }, li * letterDuration);
+        timers.current.push(t0);
+      });
     }
 
     if (variant === "serve") {
