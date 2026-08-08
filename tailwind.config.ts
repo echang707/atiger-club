@@ -20,6 +20,7 @@ const config: Config = {
       fontFamily: {
         display: ["var(--font-fraunces)", "serif"],
         sans: ["var(--font-inter)", "sans-serif"],
+        hand: ["var(--font-hand)", "cursive"],
       },
       letterSpacing: {
         tightest: "-0.04em",
