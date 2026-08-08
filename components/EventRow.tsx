@@ -1,85 +1,72 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { TigerEvent, categories } from "@/lib/events";
+import { TigerEvent } from "@/lib/events";
 
-const badgeLabel: Record<TigerEvent["badge"], string> = {
-  Original: "🐯 Tiger Club Original",
-  Partner: "🤝 Co-Hosted",
-  Promoted: "⭐ We're Promoting",
-};
-
-export default function EventRow({
-  event,
-  index,
-}: {
-  event: TigerEvent;
-  index: number;
-}) {
-  const meta = categories.find((c) => c.name === event.category);
-  const wide = index % 3 === 0;
+export default function EventRow({ event, index }: { event: TigerEvent; index: number }) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <motion.a
-      href={event.ctaUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 24 }}
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`group flex flex-col md:flex-row gap-6 md:gap-10 items-start py-10 border-t border-stone-dark ${
-        wide ? "" : ""
-      }`}
+      transition={{ duration: 0.6, delay: (index % 6) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      className="border-b border-ink/10 group"
     >
-      <div className="flex md:flex-col items-center md:items-start gap-4 md:gap-1 md:w-24 shrink-0">
-        <div className="font-display text-4xl md:text-5xl text-ink leading-none">
-          {event.day}
-        </div>
-        <div className="text-xs uppercase tracking-[0.15em] text-ink/50">
-          {event.weekday} · {event.month}
-        </div>
-      </div>
-
-      <div
-        className={`relative shrink-0 overflow-hidden rounded-2xl bg-stone w-full md:w-auto ${
-          wide ? "md:w-[320px] aspect-[16/10]" : "md:w-[220px] aspect-[4/3]"
-        }`}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-5 md:gap-10 py-6 md:py-7 text-left"
       >
-        <Image
-          src={event.image}
-          alt={event.title}
-          fill
-          sizes="(max-width: 768px) 90vw, 320px"
-          className="object-cover transition-transform duration-700 ease-smooth group-hover:scale-105"
-        />
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2.5 flex-wrap mb-2.5">
-          <span className="text-xs font-medium bg-stone px-3 py-1 rounded-full text-ink/70">
-            {meta?.emoji} {event.category}
-          </span>
-          <span className="text-xs text-ink/40">{badgeLabel[event.badge]}</span>
-        </div>
-
-        <h3 className="font-display text-2xl md:text-3xl text-ink leading-snug mb-2 group-hover:text-rust transition-colors duration-300">
-          {event.title}
-        </h3>
-
-        <p className="text-sm text-ink/60 mb-3">
-          {event.time} · {event.location}
-        </p>
-
-        <p className="text-sm text-ink/70 leading-relaxed max-w-xl mb-4">
-          {event.description}
-        </p>
-
-        <span className="inline-flex items-center gap-1.5 text-sm font-medium underline-stripe text-ink">
-          {event.ctaLabel} ↗
+        <span className="font-mono text-xs md:text-sm text-ink/40 w-14 md:w-16 shrink-0">
+          {event.month} {event.day}
         </span>
-      </div>
-    </motion.a>
+
+        <span className="flex-1 min-w-0">
+          <span className="font-display text-xl md:text-3xl text-ink leading-snug block truncate group-hover:italic transition-all">
+            {event.title}
+          </span>
+          <span className="text-xs md:text-sm text-ink/45">
+            {event.location} · {event.medium}
+          </span>
+        </span>
+
+        <span className="hidden sm:block relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden shrink-0 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-500 ease-smooth">
+          <Image src={event.image} alt={event.title} fill sizes="80px" className="object-cover" />
+        </span>
+
+        <span
+          className={`shrink-0 text-ink/40 text-xl transition-transform duration-400 ${open ? "rotate-45" : ""}`}
+        >
+          +
+        </span>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="pb-8 md:pb-10 flex flex-col md:flex-row gap-6 md:gap-10">
+              <div className="relative w-full md:w-64 aspect-[4/3] rounded-sm overflow-hidden shrink-0">
+                <Image src={event.image} alt={event.title} fill sizes="(max-width: 768px) 90vw, 256px" className="object-cover" />
+              </div>
+              <div className="flex-1">
+                <p className="text-ink/70 leading-relaxed max-w-md">{event.description}</p>
+                <button className="mt-5 text-sm font-medium underline-stripe text-ink">
+                  RSVP on Discord
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

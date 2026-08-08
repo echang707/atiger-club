@@ -15,14 +15,34 @@ Then open http://localhost:3000
 
 ## Project structure
 
-- `app/page.tsx` — landing page (hero + upcoming experiences preview)
-- `app/events/` — the main experiences/events page with category filtering
-- `components/` — Nav, Footer, Hero, EventCard, UpcomingStrip
-- `lib/events.ts` — event data (swap this for a real data source later — CMS, database, API)
-- `tailwind.config.ts` — the full design token system (colors, fonts, spacing)
+- `app/page.tsx` — the full editorial homepage: minimal hero with the six
+  interactive medium words (EAT · CREATE · MOVE · EXPLORE · SERVE · LEARN),
+  a scroll-triggered scrapbook story, upcoming experiences, the "Tiger Club
+  Was Here" map, and the closing section.
+- `app/events/` — the experiences page: same visual identity, editorial rows
+  instead of cards, filterable by medium (`/events?medium=Eat` etc., which is
+  exactly what clicking a homepage word links to).
+- `components/MediumWord.tsx` — the six bespoke micro-interactions (bite,
+  draw-in, flee-the-cursor, scatter, reach-and-give, scramble/resolve).
+- `components/ScrollStory.tsx` — the candid photo/annotation scroll sequence.
+- `components/TigerWasHere.tsx` — the abstracted city map with clickable
+  memory dots (`lib/events.ts` → `memories`).
+- `components/EventRow.tsx` — shared editorial row used on both the homepage
+  preview and the full events page; expands in place on click.
+- `lib/events.ts` — event + memory data (swap for a real data source later —
+  CMS, database, API).
+- `tailwind.config.ts` — the full design token system (colors, fonts, spacing,
+  the walk/grain keyframes used in the ending section).
 
-Placeholder photography is pulled from Unsplash — swap `lib/events.ts` image URLs
-and the hero image in `components/Hero.tsx` for real photos when you have them.
+Placeholder photography is pulled from Unsplash — swap the `image` URLs in
+`lib/events.ts` for real candid Tiger Club photos when you have them. The
+brief specifically wants imperfect, human photography rather than polished
+event photography, so lean toward phone photos over anything staged.
+
+The Discord link (`https://discord.gg/6u83g4P8Cb`) is wired into the nav,
+footer, and the final "join the community" line — update it in those three
+spots (`components/Nav.tsx`, `components/Footer.tsx`, `components/Ending.tsx`)
+if it ever changes.
 
 ## Deploying to Cloudflare Pages (your domain: atigerclub.com)
 

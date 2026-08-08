@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, Caveat } from "next/font/google";
+import { Fraunces, Inter, Caveat, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "900"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -21,15 +21,22 @@ const inter = Inter({
 
 const caveat = Caveat({
   subsets: ["latin"],
-  variable: "--font-hand",
-  weight: ["500", "600", "700"],
+  variable: "--font-caveat",
+  weight: ["500", "700"],
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  weight: ["400", "500"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Tiger Club — Find your people",
+  title: "Tiger Club",
   description:
-    "Tiger Club is a social club creating meaningful experiences that bring people together around the city.",
+    "go do something. dinners, walks, creative nights, adventures, and other reasons to leave the house.",
 };
 
 export default function RootLayout({
@@ -38,8 +45,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${caveat.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable}`}>
       <body className="font-sans antialiased">
+        <div className="grain" aria-hidden="true" />
         <Nav />
         {children}
         <Footer />

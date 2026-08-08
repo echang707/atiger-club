@@ -5,48 +5,55 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ivory: "#FAF6EF",
-        ink: "#201D1A",
-        amber: {
-          DEFAULT: "#E2A63B",
-          soft: "#F1CE8C",
-          deep: "#B9822A",
+        paper: "#F5F0E3",
+        "paper-dim": "#ECE4D0",
+        ink: "#15130E",
+        "ink-soft": "#15130E99",
+        tiger: {
+          DEFAULT: "#E2531C",
+          soft: "#F0A15F",
+          deep: "#B23E14",
         },
-        rust: "#C1652F",
-        sage: "#6E7B5E",
-        stone: "#EFEAE0",
-        "stone-dark": "#E1DACB",
+        jungle: {
+          DEFAULT: "#26331A",
+          soft: "#4B5B30",
+        },
+        brass: "#B98A34",
       },
       fontFamily: {
         display: ["var(--font-fraunces)", "serif"],
         sans: ["var(--font-inter)", "sans-serif"],
-        hand: ["var(--font-hand)", "cursive"],
+        hand: ["var(--font-caveat)", "cursive"],
+        mono: ["var(--font-jetbrains)", "monospace"],
       },
       letterSpacing: {
-        tightest: "-0.04em",
+        tightest: "-0.045em",
+        wideish: "0.14em",
       },
       maxWidth: {
         content: "1400px",
       },
       transitionTimingFunction: {
         smooth: "cubic-bezier(0.22, 1, 0.36, 1)",
-      },
-      fontSize: {
-        wordmark: ["clamp(3.5rem, 14vw, 11rem)", { lineHeight: "0.92" }],
+        snap: "cubic-bezier(0.34, 1.56, 0.64, 1)",
       },
       keyframes: {
-        marquee: {
-          "0%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(-50%)" },
+        walk: {
+          "0%": { transform: "translateX(-10vw)" },
+          "100%": { transform: "translateX(110vw)" },
         },
-        kenburns: {
-          "0%": { transform: "scale(1.08)" },
-          "100%": { transform: "scale(1)" },
+        grain: {
+          "0%, 100%": { transform: "translate(0,0)" },
+          "10%": { transform: "translate(-1%,-2%)" },
+          "30%": { transform: "translate(2%,1%)" },
+          "50%": { transform: "translate(-1%,2%)" },
+          "70%": { transform: "translate(1%,-1%)" },
+          "90%": { transform: "translate(-2%,1%)" },
         },
       },
       animation: {
-        marquee: "marquee 28s linear infinite",
-        kenburns: "kenburns 12s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        walk: "walk 18s linear infinite",
+        grain: "grain 1.4s steps(4) infinite",
       },
     },
   },
