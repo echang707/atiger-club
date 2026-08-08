@@ -10,8 +10,10 @@ export default function Footer() {
             <span></span>
             <span></span>
           </span>
-          <span className="font-wordmark font-extrabold text-lg tracking-tight">
-            TIGER<span className="text-tiger">.</span>CLUB
+          <span className="font-wordmark font-extrabold text-lg tracking-tight inline-flex items-center">
+            TIGER
+            <span className="inline-block h-[0.22em] w-[0.22em] rounded-full bg-tiger mx-[0.14em]" />
+            CLUB
           </span>
         </div>
 

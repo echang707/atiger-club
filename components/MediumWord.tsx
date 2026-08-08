@@ -134,31 +134,6 @@ export default function MediumWord({
     }
   }, [variant, letters]);
 
-  // Every word plays its animation once, automatically, the first time it
-  // scrolls into view. After that, it's hover-only (or tap-to-replay on
-  // touch devices, since they have no hover to fall back on).
-  const hasAutoPlayed = useRef(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const el = ref.current;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAutoPlayed.current) {
-          hasAutoPlayed.current = true;
-          runEnter();
-          const t = setTimeout(() => runLeave(), 1900);
-          timers.current.push(t);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.55 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const onEnter = useCallback(() => {
     runEnter();
   }, [runEnter]);

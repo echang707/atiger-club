@@ -35,17 +35,16 @@ export default function Nav() {
             <span></span>
             <span></span>
           </span>
-          <span className="font-wordmark font-extrabold text-lg md:text-xl tracking-tight">
-            TIGER<span className="text-tiger">.</span>CLUB
+          <span className="font-wordmark font-extrabold text-lg md:text-xl tracking-tight inline-flex items-center">
+            TIGER
+            <span className="inline-block h-[0.22em] w-[0.22em] rounded-full bg-tiger mx-[0.14em]" />
+            CLUB
           </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-9 text-sm">
           <Link href="/events" className="underline-stripe text-ink/80 hover:text-ink transition-colors">
             Experiences
-          </Link>
-          <Link href="/#was-here" className="underline-stripe text-ink/80 hover:text-ink transition-colors">
-            Was Here
           </Link>
         </nav>
 
@@ -92,9 +91,6 @@ export default function Nav() {
             <div className="max-w-content mx-auto px-6 py-6 flex flex-col gap-5 text-lg">
               <Link href="/events" className="font-display text-ink" onClick={() => setOpen(false)}>
                 Experiences
-              </Link>
-              <Link href="/#was-here" className="font-display text-ink" onClick={() => setOpen(false)}>
-                Was Here
               </Link>
             </div>
           </motion.nav>

@@ -8,12 +8,12 @@ import { memories } from "@/lib/events";
 const hero = memories[0];
 
 // The scatter of smaller postcards pulls real Tiger Club gatherings, each
-// with its own specific caption instead of a generic stock-photo tag.
+// with a caption about the connection made, not the headcount.
 const scatter = [
-  { rotate: 4, x: 36, y: 10, w: 24, memory: memories[1], caption: "24 people, one very long font debate" },
-  { rotate: -3, x: 64, y: 0, w: 28, memory: memories[2], caption: "80 people, one screen, way too loud" },
-  { rotate: 7, x: 6, y: 34, w: 24, memory: memories[3], caption: "45 people, nobody paced well" },
-  { rotate: -8, x: 48, y: 38, w: 26, memory: memories[4], caption: "31 people, pizza after" },
+  { rotate: 4, x: 36, y: 10, w: 24, memory: memories[1], caption: "still in the group chat from that table" },
+  { rotate: -3, x: 64, y: 0, w: 28, memory: memories[2], caption: "screamed at a screen with total strangers" },
+  { rotate: 7, x: 6, y: 34, w: 24, memory: memories[3], caption: "matched pace with someone, kept in touch" },
+  { rotate: -8, x: 48, y: 38, w: 26, memory: memories[4], caption: "cleaned up a park, stayed for the people" },
 ];
 
 export default function ScrollStory() {
@@ -47,7 +47,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="annotation text-3xl md:text-4xl mt-10"
         >
-          &ldquo;{hero.attendees.replace(".", "")} showed up for Bite of Korea. We ran out of tables.&rdquo;
+          &ldquo;We sat down as strangers. Nobody wanted to be the first to leave.&rdquo;
         </motion.p>
       </div>
 
