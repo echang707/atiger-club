@@ -73,19 +73,19 @@ export default function MediumWord({
       timers.current = [];
       setShowCheck(false);
       let ticks = 0;
-      const maxTicks = 5;
+      const maxTicks = 7;
       const iv = setInterval(() => {
         ticks++;
         if (ticks >= maxTicks) {
           clearInterval(iv);
           setDisplay(letters);
           setShowCheck(true);
-          const t = setTimeout(() => setShowCheck(false), 500);
+          const t = setTimeout(() => setShowCheck(false), 850);
           timers.current.push(t);
         } else {
           setDisplay(letters.map(() => randChar()));
         }
-      }, 55);
+      }, 130);
       timers.current.push(iv);
     }
 
@@ -134,28 +134,22 @@ export default function MediumWord({
     }
   }, [variant, letters]);
 
-  // Detect touch / no-hover devices so we can trigger the animation on
-  // scroll instead of on a hover event that will never fire.
-  const [noHover, setNoHover] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: none)");
-    setNoHover(mq.matches);
-    const onChange = () => setNoHover(mq.matches);
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
-  }, []);
+  // Every word plays its animation once, automatically, the first time it
+  // scrolls into view. After that, it's hover-only (or tap-to-replay on
+  // touch devices, since they have no hover to fall back on).
+  const hasAutoPlayed = useRef(false);
 
   useEffect(() => {
-    if (!noHover || !ref.current) return;
+    if (!ref.current) return;
     const el = ref.current;
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasAutoPlayed.current) {
+          hasAutoPlayed.current = true;
           runEnter();
-          const t = setTimeout(() => runLeave(), 1500);
+          const t = setTimeout(() => runLeave(), 1900);
           timers.current.push(t);
-        } else {
-          runLeave();
+          io.disconnect();
         }
       },
       { threshold: 0.55 }
@@ -163,17 +157,15 @@ export default function MediumWord({
     io.observe(el);
     return () => io.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [noHover]);
+  }, []);
 
   const onEnter = useCallback(() => {
-    if (noHover) return;
     runEnter();
-  }, [noHover, runEnter]);
+  }, [runEnter]);
 
   const onLeave = useCallback(() => {
-    if (noHover) return;
     runLeave();
-  }, [noHover, runLeave]);
+  }, [runLeave]);
 
   const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;

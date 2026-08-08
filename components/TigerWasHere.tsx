@@ -199,78 +199,26 @@ export default function TigerWasHere() {
   );
 }
 
-// A stylized but geographically-honest metro Atlanta: the I-285 perimeter
-// (its true rounded-diamond shape), the downtown connector, the Beltline
-// loop, the Chattahoochee along the northwest edge, and the intown
-// neighborhoods Tiger Club actually shows up in — editorial line-art
-// rather than a literal street map, drawn in the site's own palette.
+// Just the shape of the city — the I-285 perimeter's rounded-diamond
+// silhouette, softly filled, with nothing else on it. The dots (rendered
+// by the parent) are the only other thing that lives on top.
 function AtlantaMap() {
   return (
     <svg viewBox="0 0 100 80" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
-      {/* base wash */}
       <rect x="0" y="0" width="100" height="80" fill="#ECE3CB" />
 
-      {/* Chattahoochee river tracing the northwest edge of the city */}
       <path
-        d="M2,2 C12,6 10,16 18,22 C27,29 22,38 30,46 C38,54 34,64 42,72 C46,76 48,79 52,80"
-        stroke="#4B5B30"
-        strokeWidth="0.55"
-        fill="none"
-        opacity="0.4"
+        d="M50,14 C65,14 76,21 82,32 C88,43 88,55 79,64 C70,74 60,78 50,78 C40,78 30,74 21,64 C12,55 12,43 18,32 C24,21 35,14 50,14 Z"
+        fill="#E2531C"
+        opacity="0.09"
       />
-
-      {/* I-285 perimeter — the real rounded-diamond shape, not a plain ellipse */}
       <path
-        d="M50,16 C64,16 74,22 80,32 C86,42 86,54 78,63 C70,72 60,76 50,76 C40,76 30,72 22,63 C14,54 14,42 20,32 C26,22 36,16 50,16 Z"
+        d="M50,14 C65,14 76,21 82,32 C88,43 88,55 79,64 C70,74 60,78 50,78 C40,78 30,74 21,64 C12,55 12,43 18,32 C24,21 35,14 50,14 Z"
         stroke="#15130E"
-        strokeWidth="0.4"
+        strokeWidth="0.45"
         fill="none"
-        opacity="0.32"
+        opacity="0.28"
       />
-
-      {/* downtown connector (I-75/85) */}
-      <path d="M50,12 L50,80" stroke="#15130E" strokeWidth="0.32" opacity="0.28" />
-      {/* I-20 east-west */}
-      <path d="M10,48 L90,48" stroke="#15130E" strokeWidth="0.26" opacity="0.22" />
-      {/* a few connecting arteries out to the perimeter */}
-      <path d="M50,48 L76,26" stroke="#15130E" strokeWidth="0.22" opacity="0.18" />
-      <path d="M50,48 L80,50" stroke="#15130E" strokeWidth="0.22" opacity="0.18" />
-      <path d="M50,48 L24,30" stroke="#15130E" strokeWidth="0.22" opacity="0.18" />
-      <path d="M50,48 L60,70" stroke="#15130E" strokeWidth="0.22" opacity="0.18" />
-
-      {/* the Beltline — a looping trail through intown neighborhoods */}
-      <path
-        d="M40,30 C50,24 60,26 64,34 C68,42 66,50 58,54 C50,58 44,56 40,50 C36,44 38,36 44,34 C48,32 52,34 52,38"
-        stroke="#B23E14"
-        strokeWidth="0.5"
-        strokeDasharray="1.4 1.2"
-        fill="none"
-        opacity="0.4"
-      />
-
-      {/* green space: Piedmont Park, Grant Park */}
-      <ellipse cx="58" cy="38" rx="3.6" ry="2.6" fill="#4B5B30" opacity="0.22" />
-      <ellipse cx="52" cy="60" rx="3.2" ry="2.8" fill="#4B5B30" opacity="0.22" />
-
-      {/* downtown marker */}
-      <circle cx="50" cy="48" r="1.1" fill="#E2531C" opacity="0.75" />
-      <text x="50" y="45" fontSize="2.1" textAnchor="middle" fill="#15130E" opacity="0.45" fontFamily="var(--font-inter)" letterSpacing="0.05em">
-        DOWNTOWN
-      </text>
-
-      {/* intown neighborhoods Tiger Club actually gathers in */}
-      <text x="60" y="33" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">Old Fourth Ward</text>
-      <text x="44" y="63" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">Grant Park</text>
-      <text x="60" y="58" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">Cabbagetown</text>
-      <text x="30" y="40" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">West Midtown</text>
-      <text x="52" y="22" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">Midtown</text>
-      <text x="66" y="52" fontSize="1.8" fill="#15130E" opacity="0.35" fontFamily="var(--font-inter)">East Atlanta</text>
-      <text x="74" y="42" fontSize="1.8" fill="#15130E" opacity="0.3" fontFamily="var(--font-inter)">Decatur</text>
-
-      {/* perimeter towns, fainter */}
-      <text x="80" y="16" fontSize="1.6" fill="#15130E" opacity="0.2" fontFamily="var(--font-inter)">Duluth</text>
-      <text x="14" y="20" fontSize="1.6" fill="#15130E" opacity="0.2" fontFamily="var(--font-inter)">Marietta</text>
-      <text x="82" y="66" fontSize="1.6" fill="#15130E" opacity="0.2" fontFamily="var(--font-inter)">Stonecrest</text>
     </svg>
   );
 }

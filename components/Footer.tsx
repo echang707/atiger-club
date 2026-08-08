@@ -10,7 +10,9 @@ export default function Footer() {
             <span></span>
             <span></span>
           </span>
-          <span className="font-display text-lg">TIGER CLUB</span>
+          <span className="font-wordmark font-extrabold text-lg tracking-tight">
+            TIGER<span className="text-tiger">.</span>CLUB
+          </span>
         </div>
 
         <p className="annotation text-xl order-3 md:order-2">go do something.</p>

@@ -25,6 +25,8 @@ const config: Config = {
         sans: ["var(--font-inter)", "sans-serif"],
         hand: ["var(--font-caveat)", "cursive"],
         mono: ["var(--font-jetbrains)", "monospace"],
+        wordmark: ["var(--font-bricolage)", "sans-serif"],
+        tagline: ["var(--font-instrument)", "serif"],
       },
       letterSpacing: {
         tightest: "-0.045em",

@@ -23,9 +23,24 @@ const words: {
 export default function MediumsSpread() {
   return (
     <section className="relative max-w-content mx-auto px-6 md:px-10">
-      <p className="text-center text-xs tracking-wideish text-ink/35 uppercase pb-8 md:pb-12">
-        six ways to dive in
-      </p>
+      <div className="flex flex-col items-center pb-8 md:pb-12">
+        <motion.p
+          initial={{ opacity: 0, y: -26, rotate: -3 }}
+          whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+          className="text-center text-xs tracking-wideish text-ink/35 uppercase"
+        >
+          six ways to dive in
+        </motion.p>
+        <motion.span
+          initial={{ scaleX: 0, opacity: 0 }}
+          whileInView={{ scaleX: 1, opacity: 0.3 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2 h-px w-10 bg-tiger origin-center"
+        />
+      </div>
 
       {words.map((w, i) => (
         <motion.div

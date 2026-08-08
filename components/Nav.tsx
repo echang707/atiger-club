@@ -35,7 +35,9 @@ export default function Nav() {
             <span></span>
             <span></span>
           </span>
-          <span className="font-display text-base md:text-lg tracking-tightest">TIGER CLUB</span>
+          <span className="font-wordmark font-extrabold text-lg md:text-xl tracking-tight">
+            TIGER<span className="text-tiger">.</span>CLUB
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-9 text-sm">
