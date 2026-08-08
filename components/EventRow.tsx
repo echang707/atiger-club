@@ -59,9 +59,25 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
               </div>
               <div className="flex-1">
                 <p className="text-ink/70 leading-relaxed max-w-md">{event.description}</p>
-                <button className="mt-5 text-sm font-medium underline-stripe text-ink">
-                  RSVP on Discord
-                </button>
+                {event.link ? (
+                  <a
+                    href={event.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-block text-sm font-medium underline-stripe text-ink"
+                  >
+                    {event.linkLabel ?? "Learn More"}
+                  </a>
+                ) : (
+                  <a
+                    href="https://discord.gg/6u83g4P8Cb"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-block text-sm font-medium underline-stripe text-ink"
+                  >
+                    RSVP on Discord
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>

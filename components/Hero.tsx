@@ -1,65 +1,55 @@
 "use client";
 
 import { motion } from "framer-motion";
-import MediumWord from "./MediumWord";
-
-const words: { word: string; variant: "eat" | "create" | "move" | "explore" | "serve" | "learn"; href: string }[] = [
-  { word: "EAT", variant: "eat", href: "/events?medium=Eat" },
-  { word: "CREATE", variant: "create", href: "/events?medium=Create" },
-  { word: "MOVE", variant: "move", href: "/events?medium=Move" },
-  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore" },
-  { word: "SERVE", variant: "serve", href: "/events?medium=Serve" },
-  { word: "LEARN", variant: "learn", href: "/events?medium=Learn" },
-];
+import RotatingLine from "./RotatingLine";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen w-full flex flex-col justify-center px-6 md:px-10 pt-24 pb-16">
-      <div className="max-w-content mx-auto w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
+    <section className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28">
+      <div className="max-w-content mx-auto w-full flex flex-col items-center">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center"
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="stripe-mark text-tiger mb-6"
         >
-          <h1 className="font-display text-[15vw] sm:text-7xl md:text-8xl lg:text-9xl tracking-tightest leading-[0.9] text-ink">
-            TIGER CLUB
-          </h1>
-        </motion.div>
+          <span></span>
+          <span></span>
+          <span></span>
+        </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
+        <motion.h1
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mt-4 md:mt-6"
+          transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="font-display italic font-medium text-4xl sm:text-5xl md:text-6xl tracking-tight text-ink text-center"
         >
-          <p className="annotation text-3xl md:text-4xl">go do something.</p>
-          <p className="mt-4 text-ink/55 text-sm md:text-base max-w-md mx-auto">
-            dinners, walks, creative nights, adventures, and other reasons to leave the house.
-          </p>
-        </motion.div>
+          Tiger Club
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-5 font-display text-2xl md:text-3xl text-ink/85 text-center"
+        >
+          life is better together.
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mt-16 md:mt-24"
+          transition={{ duration: 0.9, delay: 0.45 }}
+          className="mt-3 w-full max-w-lg"
         >
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 md:gap-x-10">
-            {words.map((w) => (
-              <MediumWord key={w.word} word={w.word} variant={w.variant} href={w.href} />
-            ))}
-          </div>
-          <p className="text-center text-xs tracking-wideish text-ink/35 mt-10 uppercase">
-            six ways in — hover, then click
-          </p>
+          <RotatingLine />
         </motion.div>
       </div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
+        transition={{ delay: 1, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-ink/30"
       >
         <span className="text-[11px] tracking-wideish uppercase">scroll</span>
