@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { discordUrl } from "@/lib/events";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -37,12 +38,14 @@ export default function Nav() {
           </Link>
         </nav>
 
-        <Link
-          href="/events"
+        <a
+          href={discordUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-sm font-medium bg-ink text-ivory px-5 py-2.5 rounded-full hover:bg-rust transition-colors duration-300"
         >
           Join the Community
-        </Link>
+        </a>
       </div>
     </header>
   );

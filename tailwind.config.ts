@@ -30,6 +30,23 @@ const config: Config = {
       transitionTimingFunction: {
         smooth: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
+      fontSize: {
+        wordmark: ["clamp(3.5rem, 14vw, 11rem)", { lineHeight: "0.92" }],
+      },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        kenburns: {
+          "0%": { transform: "scale(1.08)" },
+          "100%": { transform: "scale(1)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 28s linear infinite",
+        kenburns: "kenburns 12s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+      },
     },
   },
   plugins: [],

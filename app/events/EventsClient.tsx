@@ -3,35 +3,38 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { events, categories, Category } from "@/lib/events";
-import EventCard from "@/components/EventCard";
+import EventFeature from "@/components/EventFeature";
+import EventRow from "@/components/EventRow";
 
 export default function EventsClient() {
   const [active, setActive] = useState<Category | "All">("All");
 
-  const filtered =
-    active === "All" ? events : events.filter((e) => e.category === active);
+  const [featured, ...rest] = events;
+  const filteredRest =
+    active === "All" ? rest : rest.filter((e) => e.category === active);
 
   return (
-    <main className="pt-32 md:pt-40 pb-24">
+    <main className="pt-28 md:pt-32 pb-24">
       <div className="max-w-content mx-auto px-6 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-xl mb-12 md:mb-16"
+          className="mb-10 md:mb-14"
         >
-          <span className="stripe-mark text-amber-deep mb-4">
-            <span></span><span></span><span></span>
-          </span>
-          <h1 className="font-display text-4xl md:text-5xl text-ink mt-3 leading-tight">
-            Experiences worth sharing.
+          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight">
+            Gather. Connect. Belong.
           </h1>
-          <p className="text-ink/60 mt-3">
-            Browse what&rsquo;s happening around the city — pick what pulls you in.
+          <p className="text-ink/60 mt-3 max-w-md">
+            Real Tiger Club experiences happening around Atlanta — pulled straight from what&rsquo;s on the calendar.
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap gap-2.5 mb-12 md:mb-16">
+        <div className="mb-14 md:mb-20">
+          <EventFeature event={featured} />
+        </div>
+
+        <div className="flex flex-wrap gap-2.5 mb-4">
           <button
             onClick={() => setActive("All")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
@@ -57,15 +60,15 @@ export default function EventsClient() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
-          {filtered.map((event, i) => (
-            <EventCard key={event.id} event={event} index={i} />
+        <div>
+          {filteredRest.map((event, i) => (
+            <EventRow key={event.id} event={event} index={i} />
           ))}
         </div>
 
-        {filtered.length === 0 && (
-          <p className="text-ink/50 text-sm mt-10">
-            Nothing in this category yet — check back soon.
+        {filteredRest.length === 0 && (
+          <p className="text-ink/50 text-sm py-16 border-t border-stone-dark">
+            Nothing on the calendar in this category yet — check back soon, or explore another category.
           </p>
         )}
       </div>

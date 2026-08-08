@@ -1,11 +1,13 @@
 import Hero from "@/components/Hero";
-import UpcomingStrip from "@/components/UpcomingStrip";
+import Marquee from "@/components/Marquee";
+import MissionLine from "@/components/MissionLine";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <UpcomingStrip />
+      <MissionLine />
+      <Marquee />
     </main>
   );
 }
