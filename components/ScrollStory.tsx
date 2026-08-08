@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const scatter = [
-  { rotate: -6, x: "2%", y: 0, w: "42%", tag: "07.16.26 · Tucker" },
-  { rotate: 4, x: "34%", y: 60, w: "30%", tag: "korean bbq, 52 ppl" },
-  { rotate: -3, x: "60%", y: -20, w: "34%", tag: "we ran out of tables" },
-  { rotate: 7, x: "14%", y: 190, w: "26%", tag: "still talk to 3 of them" },
-  { rotate: -8, x: "52%", y: 220, w: "32%", tag: "05.02.26" },
+  { rotate: -6, x: 0, y: 0, w: 32, tag: "07.16.26 · Tucker" },
+  { rotate: 4, x: 36, y: 10, w: 24, tag: "korean bbq, 52 ppl" },
+  { rotate: -3, x: 64, y: 0, w: 28, tag: "we ran out of tables" },
+  { rotate: 7, x: 6, y: 34, w: 24, tag: "still talk to 3 of them" },
+  { rotate: -8, x: 48, y: 38, w: 26, tag: "05.02.26" },
 ];
 
 const photoUrls = [
@@ -68,33 +68,35 @@ export default function ScrollStory() {
         </motion.p>
       </div>
 
-      <div className="h-[18vh] md:h-[22vh]" />
+      <div className="h-[10vh] md:h-[14vh]" />
 
-      <div className="relative max-w-content mx-auto px-6 md:px-10 h-[560px] md:h-[620px]">
-        {scatter.map((p, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 40, rotate: 0 }}
-            whileInView={{ opacity: 1, y: p.y, rotate: p.rotate }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute photo-frame"
-            style={{ left: p.x, width: p.w, top: 0 }}
-          >
-            <div className="relative w-full aspect-[4/5]">
-              <Image
-                src={photoUrls[(i + 1) % photoUrls.length]}
-                alt="Candid Tiger Club moment"
-                fill
-                sizes="30vw"
-                className="object-cover"
-              />
-            </div>
-            <span className="annotation absolute -bottom-1 left-3 text-lg text-jungle/80">
-              {p.tag}
-            </span>
-          </motion.div>
-        ))}
+      <div className="relative max-w-content mx-auto px-6 md:px-10">
+        <div className="relative w-full" style={{ paddingBottom: "70%" }}>
+          {scatter.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20, rotate: 0 }}
+              whileInView={{ opacity: 1, y: 0, rotate: p.rotate }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute photo-frame"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
+            >
+              <div className="relative w-full aspect-[4/3]">
+                <Image
+                  src={photoUrls[(i + 1) % photoUrls.length]}
+                  alt="Candid Tiger Club moment"
+                  fill
+                  sizes="30vw"
+                  className="object-cover"
+                />
+              </div>
+              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
+                {p.tag}
+              </span>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

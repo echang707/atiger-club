@@ -6,12 +6,12 @@ import RotatingLine from "./RotatingLine";
 export default function Hero() {
   return (
     <section className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28">
-      <div className="max-w-content mx-auto w-full flex flex-col items-center">
+      <div className="max-w-xl mx-auto w-full flex flex-col items-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="stripe-mark text-tiger mb-8"
+          className="stripe-mark text-tiger mb-7"
         >
           <span></span>
           <span></span>
@@ -22,7 +22,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display italic font-medium text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-ink text-center leading-[1.05]"
+          className="font-display italic font-medium text-3xl sm:text-4xl md:text-5xl tracking-tight text-ink text-center leading-[1.15]"
         >
           life is better together.
         </motion.h1>

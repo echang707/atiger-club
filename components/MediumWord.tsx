@@ -11,24 +11,23 @@ function randChar() {
   return SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
 }
 
-// "connection" in many languages, for the gap that opens in EXPLORE
-const CONNECTION_WORDS = [
-  "connection",
-  "conexión",
-  "connexion",
-  "conexão",
-  "connessione",
-  "Verbindung",
-  "つながり",
-  "연결",
-  "连接",
-  "kết nối",
-  "जुड़ाव",
-  "muunganisho",
-  "اتصال",
-  "ìsopọ̀",
-  "pilina",
-  "ukuxhumana",
+// "explore" itself, in many languages, for the gap that opens in EXPLORE
+const EXPLORE_WORDS = [
+  "explore",
+  "explorar",
+  "explorer",
+  "esplora",
+  "erkunden",
+  "探索",
+  "탐험",
+  "探検",
+  "khám phá",
+  "खोजें",
+  "chunguza",
+  "استكشف",
+  "ṣàwárí",
+  "ʻimi",
+  "hlola",
 ];
 
 export default function MediumWord({
@@ -73,30 +72,21 @@ export default function MediumWord({
       timers.current.forEach(clearTimeout);
       timers.current = [];
       setShowCheck(false);
-      letters.forEach((letter, i) => {
-        let ticks = 0;
-        const maxTicks = 6 + i * 3;
-        const iv = setInterval(() => {
-          ticks++;
-          setDisplay((prev) => {
-            const next = [...prev];
-            next[i] = ticks >= maxTicks ? letter : randChar();
-            return next;
-          });
-          if (ticks >= maxTicks) {
-            clearInterval(iv);
-            if (i === letters.length - 1) {
-              const t = setTimeout(() => {
-                setShowCheck(true);
-                const t2 = setTimeout(() => setShowCheck(false), 650);
-                timers.current.push(t2);
-              }, 80);
-              timers.current.push(t);
-            }
-          }
-        }, 40);
-        timers.current.push(iv);
-      });
+      let ticks = 0;
+      const maxTicks = 5;
+      const iv = setInterval(() => {
+        ticks++;
+        if (ticks >= maxTicks) {
+          clearInterval(iv);
+          setDisplay(letters);
+          setShowCheck(true);
+          const t = setTimeout(() => setShowCheck(false), 500);
+          timers.current.push(t);
+        } else {
+          setDisplay(letters.map(() => randChar()));
+        }
+      }, 55);
+      timers.current.push(iv);
     }
 
     if (variant === "serve") {
@@ -117,10 +107,10 @@ export default function MediumWord({
     }
 
     if (variant === "explore") {
-      setLangIndex((i) => (i + 1) % CONNECTION_WORDS.length);
+      setLangIndex((i) => (i + 1) % EXPLORE_WORDS.length);
       if (langTimer.current) clearInterval(langTimer.current);
       langTimer.current = setInterval(() => {
-        setLangIndex((i) => (i + 1) % CONNECTION_WORDS.length);
+        setLangIndex((i) => (i + 1) % EXPLORE_WORDS.length);
       }, 620);
     }
   }, [variant, letters]);
@@ -228,7 +218,7 @@ export default function MediumWord({
             const content = display[i] ?? letter;
 
             if (variant === "eat" && hovered) {
-              style.animation = `eat-bite 0.85s ${i * 0.09}s cubic-bezier(.6,-0.2,.4,1.4) 1`;
+              style.animation = `eat-bite 0.6s ${i * 0.07}s ease-out 1`;
             }
 
             if (variant === "create") {
@@ -267,7 +257,6 @@ export default function MediumWord({
                 style={style}
               >
                 {content}
-                {variant === "eat" && hovered && <EatCrumbs delay={i * 0.09} />}
               </span>
             );
           })}
@@ -298,40 +287,30 @@ export default function MediumWord({
       <style jsx global>{`
         @keyframes eat-bite {
           0% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 66% 100%, 66% 100%, 0% 100%);
-            transform: scale(1) rotate(0deg);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
             opacity: 1;
+            transform: translateY(0);
           }
-          28% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 66% 100%, 48% 58%, 0% 100%);
-            transform: scale(0.94) rotate(-4deg);
+          38% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 68% 100%, 54% 42%, 0% 100%);
             opacity: 1;
+            transform: translateY(2px);
           }
-          50% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 40% 100%, 15% 30%, 0% 100%);
-            transform: scale(0.7) translateY(8px) rotate(8deg);
-            opacity: 0.35;
-          }
-          64% {
+          55% {
             clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%);
-            transform: scale(0.25) translateY(14px) rotate(14deg);
             opacity: 0;
+            transform: translateY(5px);
           }
-          65% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 66% 100%, 66% 100%, 0% 100%);
-            transform: scale(0.25) translateY(-12px) rotate(0deg);
+          56% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
             opacity: 0;
+            transform: translateY(-4px);
           }
           100% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 66% 100%, 66% 100%, 0% 100%);
-            transform: scale(1) translateY(0) rotate(0deg);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
             opacity: 1;
+            transform: translateY(0);
           }
-        }
-        @keyframes crumb-fall {
-          0%, 40% { opacity: 0; transform: translate(0, 0) scale(0.6); }
-          52% { opacity: 1; transform: translate(var(--cx), 2px) scale(1); }
-          100% { opacity: 0; transform: translate(calc(var(--cx) * 1.6), 22px) scale(0.4); }
         }
         @keyframes create-ambient {
           0%, 100% { opacity: 0.55; clip-path: inset(0 0 0 0); }
@@ -347,27 +326,8 @@ export default function MediumWord({
   );
 }
 
-function EatCrumbs({ delay }: { delay: number }) {
-  return (
-    <>
-      <span
-        className="pointer-events-none absolute h-1 w-1 rounded-full bg-tiger-deep/70"
-        style={{ left: "60%", top: "60%", ["--cx" as string]: "6px", animation: `crumb-fall 0.85s ${delay}s ease-out 1` }}
-      />
-      <span
-        className="pointer-events-none absolute h-[3px] w-[3px] rounded-full bg-tiger-deep/60"
-        style={{ left: "45%", top: "68%", ["--cx" as string]: "-8px", animation: `crumb-fall 0.85s ${delay + 0.03}s ease-out 1` }}
-      />
-      <span
-        className="pointer-events-none absolute h-1 w-1 rounded-full bg-tiger-deep/50"
-        style={{ left: "52%", top: "50%", ["--cx" as string]: "3px", animation: `crumb-fall 0.85s ${delay + 0.06}s ease-out 1` }}
-      />
-    </>
-  );
-}
-
 // EXPLORE — the word splits open like a double door on hover, revealing a
-// gap where a rotating list of translations of "connection" appears.
+// gap where a rotating list of translations of "explore" appears.
 function ExploreDoor({
   letters,
   baseCls,
@@ -426,7 +386,7 @@ function ExploreDoor({
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               className="font-display italic text-tiger text-sm sm:text-base md:text-lg lg:text-xl"
             >
-              {CONNECTION_WORDS[langIndex]}
+              {EXPLORE_WORDS[langIndex]}
             </motion.span>
           )}
         </AnimatePresence>
