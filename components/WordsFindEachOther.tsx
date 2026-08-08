@@ -22,8 +22,8 @@ export default function WordsFindEachOther() {
           initial={{ opacity: 0, x: w.from.x, y: w.from.y, rotate: w.from.rotate, scale: 0.82, filter: "blur(6px)" }}
           animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, filter: "blur(0px)" }}
           transition={{
-            duration: 4.2,
-            delay: 0.3 + i * 0.22,
+            duration: 3.0,
+            delay: 0.25 + i * 0.16,
             ease: [0.11, 0.6, 0.15, 1],
           }}
           className="inline-block"
