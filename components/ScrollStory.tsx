@@ -73,7 +73,7 @@ export default function ScrollStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="annotation text-3xl md:text-4xl mt-10"
+          className="annotation text-3xl md:text-4xl mt-10 text-shield"
         >
           &ldquo;A meaningful life is a life connected to others.&rdquo;
         </motion.p>
@@ -87,7 +87,7 @@ export default function ScrollStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight"
+          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight text-shield"
         >
           made for the moments that become something more.
         </motion.p>
@@ -116,7 +116,7 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
+              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80 text-shield">
                 {p.caption}
               </span>
             </motion.div>

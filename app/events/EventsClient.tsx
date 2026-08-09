@@ -55,16 +55,16 @@ export default function EventsClient() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-xl mb-10 md:mb-14"
         >
-          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight">
+          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
             what are you doing this week?
           </h1>
-          <p className="text-ink/55 mt-3 text-sm md:text-base">
+          <p className="text-ink/55 mt-3 text-sm md:text-base text-shield">
             everything Tiger Club is hosting, sorted by how you want to leave the house.
           </p>
         </motion.div>
 
         <div className="mb-8 md:mb-10 flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[11px] tracking-wideish uppercase text-ink/35 mr-1">
+          <span className="font-mono text-[11px] tracking-wideish uppercase text-ink/35 mr-1 text-shield">
             city
           </span>
           {cities.map((c) => (
@@ -128,7 +128,7 @@ export default function EventsClient() {
                     />
                   </motion.span>
                   <span
-                    className={`font-display text-base md:text-lg leading-none ${
+                    className={`font-display text-base md:text-lg leading-none text-shield ${
                       active === m.name ? "text-tiger" : "text-ink"
                     }`}
                   >
@@ -141,7 +141,7 @@ export default function EventsClient() {
                         animate={{ opacity: 1, height: "auto", marginTop: 2 }}
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden text-[11px] md:text-xs leading-snug text-ink/50"
+                        className="overflow-hidden text-[11px] md:text-xs leading-snug text-ink/50 text-shield"
                       >
                         {m.description}
                       </motion.span>
@@ -161,7 +161,7 @@ export default function EventsClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className={`font-mono text-xs tracking-wideish uppercase mb-2 ${
+                className={`font-mono text-xs tracking-wideish uppercase mb-2 text-shield ${
                   group.label === "This Month" ? "text-tiger" : "text-ink/40"
                 }`}
               >
@@ -175,7 +175,7 @@ export default function EventsClient() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-ink/50 text-sm mt-10">Nothing in this category yet — check back soon.</p>
+          <p className="text-ink/50 text-sm mt-10 text-shield">Nothing in this category yet — check back soon.</p>
         )}
       </div>
     </main>

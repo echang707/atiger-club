@@ -57,7 +57,7 @@ export default function RotatingLine({
             className="flex items-center gap-2 text-ink/60 font-medium text-sm md:text-base text-center px-6"
           >
             <span className="h-1 w-1 rounded-full bg-tiger shrink-0" />
-            {lines[i]}
+            <span className="text-shield">{lines[i]}</span>
           </motion.p>
         )}
       </AnimatePresence>
