@@ -43,7 +43,7 @@ export default function Nav() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-9 text-sm justify-self-center">
-          <Link href="/events" className="underline-stripe text-ink/80 hover:text-ink transition-colors">
+          <Link href="/events" className="organic-underline text-ink/80 hover:text-ink transition-colors">
             Experiences
           </Link>
         </nav>

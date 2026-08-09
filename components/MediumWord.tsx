@@ -62,6 +62,12 @@ export default function MediumWord({
   const [langIndex, setLangIndex] = useState(0);
   const langTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // CREATE state — a brief rough/construction-line pass plays over the
+  // clean type on the way in, and again (reversed) on the way out.
+  const [roughPhase, setRoughPhase] = useState<"none" | "enter" | "leave">("none");
+  const [leaveCycle, setLeaveCycle] = useState(0);
+  const roughTimer = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   const runEnter = useCallback(() => {
@@ -132,6 +138,12 @@ export default function MediumWord({
         setLangIndex((i) => (i + 1) % EXPLORE_WORDS.length);
       }, 620);
     }
+
+    if (variant === "create") {
+      if (roughTimer.current) clearTimeout(roughTimer.current);
+      setRoughPhase("enter");
+      roughTimer.current = setTimeout(() => setRoughPhase("none"), 520);
+    }
   }, [variant, letters]);
 
   const runLeave = useCallback(() => {
@@ -150,6 +162,13 @@ export default function MediumWord({
     if (variant === "explore" && langTimer.current) {
       clearInterval(langTimer.current);
       langTimer.current = null;
+    }
+
+    if (variant === "create") {
+      if (roughTimer.current) clearTimeout(roughTimer.current);
+      setLeaveCycle((c) => c + 1);
+      setRoughPhase("leave");
+      roughTimer.current = setTimeout(() => setRoughPhase("none"), 460);
     }
   }, [variant, letters]);
 
@@ -204,14 +223,18 @@ export default function MediumWord({
             const content = display[i] ?? letter;
 
             if (variant === "eat" && hovered) {
-              style.animation = `eat-bite 0.6s ${i * 0.07}s ease-out 1`;
+              style.animation = `eat-crunch 0.62s ${i * 0.065}s cubic-bezier(0.36,0.07,0.19,0.97) 1`;
             }
 
             if (variant === "create") {
               style.display = "inline-block";
-              style.animation = hovered
-                ? `create-draw 0.55s ${i * 0.06}s cubic-bezier(0.22,1,0.36,1) 1`
-                : `create-ambient 3.4s ${i * 0.18}s ease-in-out infinite`;
+              if (hovered) {
+                style.animation = `create-draw 0.55s ${i * 0.06}s cubic-bezier(0.22,1,0.36,1) 1`;
+              } else if (roughPhase === "leave") {
+                style.animation = `create-erase 0.42s ${(letters.length - 1 - i) * 0.045}s cubic-bezier(0.22,1,0.36,1) 1`;
+              } else {
+                style.animation = `create-ambient 3.4s ${i * 0.18}s ease-in-out infinite`;
+              }
             }
 
             if (variant === "move" && hovered && ref.current) {
@@ -243,9 +266,62 @@ export default function MediumWord({
                 style={style}
               >
                 {content}
+                {variant === "eat" && hovered && (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="crumb pointer-events-none absolute rounded-[1px] bg-tiger"
+                      style={
+                        {
+                          width: 3,
+                          height: 3,
+                          left: "35%",
+                          bottom: "10%",
+                          animation: `crumb-fall 0.5s ${i * 0.065 + 0.13}s ease-in 1`,
+                          "--crumb-x": i % 2 === 0 ? "-7px" : "5px",
+                        } as React.CSSProperties
+                      }
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="crumb pointer-events-none absolute rounded-[1px] bg-tiger-deep/70"
+                      style={
+                        {
+                          width: 2,
+                          height: 2,
+                          left: "62%",
+                          bottom: "6%",
+                          animation: `crumb-fall 0.46s ${i * 0.065 + 0.19}s ease-in 1`,
+                          "--crumb-x": i % 2 === 0 ? "6px" : "-8px",
+                        } as React.CSSProperties
+                      }
+                    />
+                  </>
+                )}
               </span>
             );
           })}
+
+          {variant === "create" && roughPhase !== "none" && (
+            <span
+              key={roughPhase === "enter" ? `rough-in-${cycle}` : `rough-out-${leaveCycle}`}
+              aria-hidden="true"
+              className={
+                baseCls +
+                " rough-text absolute inset-0 pointer-events-none select-none whitespace-nowrap"
+              }
+              style={{
+                color: "transparent",
+                WebkitTextStroke: "1px #E2531C",
+                animation:
+                  roughPhase === "enter"
+                    ? "construction-in 0.48s cubic-bezier(0.22,1,0.36,1) 1"
+                    : "construction-out 0.42s cubic-bezier(0.22,1,0.36,1) 1",
+              }}
+            >
+              {word}
+            </span>
+          )}
 
           {variant === "serve" && (
             <span
@@ -271,32 +347,47 @@ export default function MediumWord({
       <span className="pointer-events-none absolute -bottom-2 left-0 h-px w-0 bg-ink/25 group-hover:w-full transition-all duration-500" />
 
       <style jsx global>{`
-        @keyframes eat-bite {
+        @keyframes eat-crunch {
           0% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
+            clip-path: inset(0 0 0 0);
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(0, 0) rotate(0deg) scale(1);
           }
-          38% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 68% 100%, 54% 42%, 0% 100%);
+          16% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 82% 100%, 76% 66%, 68% 100%, 58% 100%, 52% 70%, 44% 100%, 0% 100%);
             opacity: 1;
-            transform: translateY(2px);
+            transform: translate(-1px, 1px) rotate(-4deg) scale(0.99);
           }
-          55% {
-            clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%);
-            opacity: 0;
-            transform: translateY(5px);
+          34% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 86% 100%, 78% 38%, 66% 100%, 54% 100%, 46% 42%, 34% 100%, 20% 100%, 14% 44%, 0% 100%);
+            opacity: 1;
+            transform: translate(1px, 2px) rotate(5deg) scale(0.97);
           }
-          56% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
+          50% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 18%, 84% 30%, 70% 8%, 58% 28%, 44% 6%, 30% 26%, 16% 10%, 0% 22%);
+            opacity: 1;
+            transform: translate(-1px, 3px) rotate(-6deg) scale(0.92);
+          }
+          60% {
+            clip-path: inset(0 0 100% 0);
             opacity: 0;
-            transform: translateY(-4px);
+            transform: translate(0, 6px) rotate(2deg) scale(0.7);
+          }
+          61% {
+            clip-path: inset(0 0 100% 0);
+            opacity: 0;
+            transform: translate(0, -5px) rotate(0deg) scale(0.85);
           }
           100% {
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%, 0% 100%);
+            clip-path: inset(0 0 0 0);
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(0, 0) rotate(0deg) scale(1);
           }
+        }
+        @keyframes crumb-fall {
+          0% { opacity: 0; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+          12% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+          100% { opacity: 0; transform: translate(var(--crumb-x, 6px), 15px) scale(0.4) rotate(140deg); }
         }
         @keyframes create-ambient {
           0%, 100% { opacity: 0.55; clip-path: inset(0 0 0 0); }
@@ -306,6 +397,21 @@ export default function MediumWord({
           0% { clip-path: inset(0 100% 0 0); opacity: 0.3; }
           70% { clip-path: inset(0 0% 0 0); opacity: 1; }
           100% { clip-path: inset(0 0 0 0); opacity: 1; }
+        }
+        @keyframes create-erase {
+          0% { clip-path: inset(0 0 0 0); opacity: 1; }
+          45% { clip-path: inset(0 0 0 85%); opacity: 0.35; }
+          100% { clip-path: inset(0 0 0 0); opacity: 0.55; }
+        }
+        @keyframes construction-in {
+          0% { opacity: 0; transform: scale(1.035) rotate(-1.1deg); }
+          35% { opacity: 0.85; transform: scale(1.012) rotate(0.7deg); }
+          100% { opacity: 0; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes construction-out {
+          0% { opacity: 0; transform: scale(1) rotate(0deg); }
+          40% { opacity: 0.8; transform: scale(1.018) rotate(-0.9deg); }
+          100% { opacity: 0; transform: scale(1.03) rotate(0.5deg); }
         }
       `}</style>
     </div>

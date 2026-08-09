@@ -77,6 +77,38 @@ body {
   width: 100%;
 }
 
+/* Organic underline — a thin, slightly irregular hand-plotted line that
+   draws in on hover instead of a straight bar. This is the nav/footer/
+   link expression of the site's stripe language: a single mark, not a
+   pattern, that only reads as "line" until you look twice. */
+.organic-underline {
+  position: relative;
+}
+
+.organic-underline::after {
+  content: "";
+  position: absolute;
+  left: -1%;
+  right: -1%;
+  bottom: -7px;
+  height: 9px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M2,9 C20,4 34,13 52,7 C68,2 82,12 100,8 C116,4 132,12 148,7 C164,3 180,11 198,8' fill='none' stroke='%23E2531C' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  transition: background-size 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.organic-underline:hover::after,
+.organic-underline:focus-visible::after {
+  background-size: 100% 100%;
+}
+
+/* Same mark, lighter weight, for the dark closing section. */
+.organic-underline-invert::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M2,9 C20,4 34,13 52,7 C68,2 82,12 100,8 C116,4 132,12 148,7 C164,3 180,11 198,8' fill='none' stroke='%23F0A15F' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
 ::selection {
   background: #F0A15F;
   color: #15130E;
@@ -106,19 +138,24 @@ body {
   background-size: 3px 3px;
 }
 
-.paw-mark {
-  animation: paw-fade 0.95s ease-out forwards;
+/* Rough/hand-drawn wobble used briefly on CREATE's hover state — a stand-in
+   for "construction lines" before the clean type redraws over it. */
+.rough-text {
+  filter: url(#roughen);
 }
 
-@keyframes paw-fade {
-  0% { opacity: 0; transform: scale(0.6); }
-  12% { opacity: 0.6; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.25) translateY(4px); }
+/* Stripe-reveal: an image sits behind a handful of irregular vertical
+   bars at rest, then the bars retreat on hover so the slices between
+   them widen into the full photo. Bar geometry is randomized per-image
+   via inline style, so no two reveals look identical. */
+.stripe-reveal-bar {
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: var(--bar-origin, left center);
 }
 
-@keyframes paw-walk-fade {
-  0%, 100% { opacity: 0; }
-  15%, 85% { opacity: 0.5; }
+.stripe-reveal:hover .stripe-reveal-bar,
+.stripe-reveal:focus-within .stripe-reveal-bar {
+  transform: scaleX(0);
 }
 
 /* the little ripple that plays once under "six ways to dive in" */

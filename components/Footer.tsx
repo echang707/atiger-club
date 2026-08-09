@@ -20,13 +20,13 @@ export default function Footer() {
         <p className="annotation text-xl order-3 md:order-2">go do something.</p>
 
         <div className="flex items-center gap-6 text-sm text-ink/70 order-2 md:order-3">
-          <Link href="/events" className="hover:text-ink transition-colors">Experiences</Link>
-          <a href="mailto:hello@atigercub.com" className="hover:text-ink transition-colors">Contact</a>
+          <Link href="/events" className="organic-underline hover:text-ink transition-colors">Experiences</Link>
+          <a href="mailto:hello@atigercub.com" className="organic-underline hover:text-ink transition-colors">Contact</a>
           <a
             href="https://discord.gg/6u83g4P8Cb"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-tiger transition-colors"
+            className="organic-underline hover:text-tiger transition-colors"
           >
             Discord
           </a>

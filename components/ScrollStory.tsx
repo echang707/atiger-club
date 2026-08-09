@@ -3,14 +3,16 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { memories } from "@/lib/events";
+import StripeReveal from "./StripeReveal";
 
 // The hero postcard is Bite Club #01 — the event that started it all.
 const hero = memories[0];
 
 // The scatter of postcards pulls real Tiger Club gatherings — each caption
-// is the same note that goes with that specific photo, so they always match.
+// stays true to that specific photo's own note, so the words and the
+// image always describe the same moment.
 const scatter = [
-  { rotate: -5, x: 4, y: 4, w: 24, memory: memories[1], caption: "traded sketchbooks for phone numbers" },
+  { rotate: -5, x: 4, y: 4, w: 24, memory: memories[1], caption: "sketchbooks out, laptops out, one long debate about fonts" },
   { rotate: 3, x: 34, y: 0, w: 26, memory: memories[2], caption: "screamed at one shared screen, way too loud" },
   { rotate: -4, x: 66, y: 6, w: 26, memory: memories[3], caption: "ran badly together, finished together" },
   { rotate: 6, x: 14, y: 44, w: 24, memory: memories[4], caption: "gloves on, trash bags full, pizza after" },
@@ -29,7 +31,7 @@ export default function ScrollStory() {
           className="relative inline-block"
         >
           <div className="photo-frame -rotate-2 inline-block">
-            <div className="relative w-[78vw] max-w-md aspect-[4/5]">
+            <StripeReveal seed={0} barCount={5} className="relative w-[78vw] max-w-md aspect-[4/5]">
               <Image
                 src={hero.image}
                 alt={`${hero.title} — ${hero.location}`}
@@ -37,7 +39,7 @@ export default function ScrollStory() {
                 sizes="80vw"
                 className="object-cover"
               />
-            </div>
+            </StripeReveal>
           </div>
         </motion.div>
 
@@ -80,7 +82,7 @@ export default function ScrollStory() {
               className="absolute photo-frame"
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
             >
-              <div className="relative w-full aspect-[4/3]">
+              <StripeReveal seed={i + 1} barCount={4} className="relative w-full aspect-[4/3]">
                 <Image
                   src={p.memory.image}
                   alt={`${p.memory.title} — ${p.memory.location}`}
@@ -88,7 +90,7 @@ export default function ScrollStory() {
                   sizes="30vw"
                   className="object-cover"
                 />
-              </div>
+              </StripeReveal>
               <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
                 {p.caption}
               </span>

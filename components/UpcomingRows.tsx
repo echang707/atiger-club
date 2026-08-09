@@ -28,7 +28,7 @@ export default function UpcomingRows() {
 
       <Link
         href="/events"
-        className="inline-block mt-10 text-sm font-medium underline-stripe text-ink/70 hover:text-ink"
+        className="inline-block mt-10 text-sm font-medium organic-underline text-ink/70 hover:text-ink"
       >
         see everything coming up →
       </Link>
