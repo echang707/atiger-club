@@ -9,13 +9,39 @@ const hero = memories[0];
 
 // The scatter of postcards pulls real Tiger Club gatherings — each caption
 // stays true to that specific photo's own note, so the words and the
-// image always describe the same moment.
+// image always describe the same moment. Only the running shot is a
+// holdover from the old set; the rest are the new photography.
 const scatter = [
-  { rotate: -5, x: 4, y: 4, w: 24, memory: memories[1], caption: "sketchbooks out, laptops out, one long debate about fonts" },
-  { rotate: 3, x: 34, y: 0, w: 26, memory: memories[2], caption: "screamed at one shared screen, way too loud" },
-  { rotate: -4, x: 66, y: 6, w: 26, memory: memories[3], caption: "ran badly together, finished together" },
-  { rotate: 6, x: 14, y: 44, w: 24, memory: memories[4], caption: "gloves on, trash bags full, pizza after" },
-  { rotate: -6, x: 46, y: 48, w: 26, memory: memories[5], caption: "raced badly, cheered loudly, stayed anyway" },
+  {
+    rotate: -5, x: 4, y: 4, w: 24,
+    image: "/images/create-mural.jpg",
+    alt: "Tiger Club members painting a mural together",
+    caption: "three ladders, one wall, flowers by golden hour",
+  },
+  {
+    rotate: 3, x: 34, y: 0, w: 26,
+    image: "/images/eat-dinner.jpg",
+    alt: "Tiger Club dinner with wine and shared plates",
+    caption: "one pizza, five forks, the wine kept coming",
+  },
+  {
+    rotate: -4, x: 66, y: 6, w: 26,
+    image: memories[3].image,
+    alt: `${memories[3].title} — ${memories[3].location}`,
+    caption: "ran badly together, finished together",
+  },
+  {
+    rotate: 6, x: 14, y: 44, w: 24,
+    image: "/images/serve-treeplanting.jpg",
+    alt: "Tiger Club members planting a tree together",
+    caption: "gloves on, one tree in the ground, trash bags trailing behind",
+  },
+  {
+    rotate: -6, x: 46, y: 48, w: 26,
+    image: "/images/explore-festival.jpg",
+    alt: "Tiger Club exploring a cultural festival crowd",
+    caption: "didn't know the customs, followed the crowd anyway",
+  },
 ];
 
 export default function ScrollStory() {
@@ -73,7 +99,7 @@ export default function ScrollStory() {
         <div className="relative w-full" style={{ paddingBottom: "78%" }}>
           {scatter.map((p, i) => (
             <motion.div
-              key={p.memory.id}
+              key={p.image}
               initial={{ opacity: 0, y: 20, rotate: 0 }}
               whileInView={{ opacity: 1, y: 0, rotate: p.rotate }}
               viewport={{ once: true, margin: "-80px" }}
@@ -83,8 +109,8 @@ export default function ScrollStory() {
             >
               <div className="relative w-full aspect-[4/3] overflow-hidden">
                 <Image
-                  src={p.memory.image}
-                  alt={`${p.memory.title} — ${p.memory.location}`}
+                  src={p.image}
+                  alt={p.alt}
                   fill
                   sizes="30vw"
                   className="object-cover"

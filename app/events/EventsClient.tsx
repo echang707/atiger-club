@@ -17,6 +17,25 @@ export default function EventsClient() {
 
   const filtered = active === "All" ? events : events.filter((e) => e.medium === active);
 
+  // Group in chronological order (the source data is already ordered)
+  // under month headers, labeling whichever group matches the current
+  // real-world month as "This Month" so the page always opens on what's
+  // happening now, then rolls into the months after it.
+  const groups: { label: string; items: typeof filtered }[] = [];
+  const thisMonthAbbr = new Date().toLocaleString("en-US", { month: "short" }).toUpperCase();
+  for (const event of filtered) {
+    const last = groups[groups.length - 1];
+    if (last && last.items[0]?.month === event.month) {
+      last.items.push(event);
+    } else {
+      const label =
+        event.month === thisMonthAbbr
+          ? "This Month"
+          : new Date(`${event.month} 1, 2026`).toLocaleString("en-US", { month: "long" });
+      groups.push({ label, items: [event] });
+    }
+  }
+
   return (
     <main className="pt-28 md:pt-36 pb-24">
       <div className="max-w-content mx-auto px-6 md:px-10">
@@ -57,8 +76,23 @@ export default function EventsClient() {
         </div>
 
         <div>
-          {filtered.map((event, i) => (
-            <EventRow key={event.id} event={event} index={i} />
+          {groups.map((group, gi) => (
+            <div key={`${gi}-${group.label}`} className="mb-10 md:mb-14 last:mb-0">
+              <motion.h2
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className={`font-mono text-xs tracking-wideish uppercase mb-2 ${
+                  group.label === "This Month" ? "text-tiger" : "text-ink/40"
+                }`}
+              >
+                {group.label}
+              </motion.h2>
+              {group.items.map((event, i) => (
+                <EventRow key={event.id} event={event} index={gi * 10 + i} />
+              ))}
+            </div>
           ))}
         </div>
 

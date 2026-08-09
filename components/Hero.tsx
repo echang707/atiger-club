@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
-import ClawMark from "./ClawMark";
+import PawClickMark from "./PawClickMark";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -30,7 +30,7 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-tiger mb-7"
         >
-          <ClawMark className="h-7 w-9" />
+          <PawClickMark clawClassName="h-7 w-9" pawClassName="h-16 w-16" />
         </motion.div>
 
         <WordsFindEachOther closeness={closeness} />

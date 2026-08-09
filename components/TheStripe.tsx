@@ -63,27 +63,54 @@ export default function TheStripe() {
       preserveAspectRatio="none"
     >
       <defs>
-        <linearGradient id="stripeGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#15130E" />
-          <stop offset="12%" stopColor="#15130E" />
-          <stop offset="20%" stopColor="#E2531C" />
-          <stop offset="34%" stopColor="#E2531C" />
-          <stop offset="42%" stopColor="#15130E" />
-          <stop offset="58%" stopColor="#15130E" />
-          <stop offset="66%" stopColor="#E2531C" />
-          <stop offset="80%" stopColor="#E2531C" />
-          <stop offset="88%" stopColor="#15130E" />
-          <stop offset="100%" stopColor="#15130E" />
-        </linearGradient>
+        {/* Soft blur so the orange reads as a hue bleeding out from the
+            stripe's edge, the way light catches the ginger base of a
+            tiger's fur around a black guard-hair band — not a hard
+            second color. */}
+        <filter id="stripeGlow" x="-60%" y="-5%" width="220%" height="110%">
+          <feGaussianBlur stdDeviation="1.1" />
+        </filter>
       </defs>
+
+      {/* Orange undercoat — wide, blurred, low-opacity. Sits behind the
+          black line so only its edges peek out. */}
       <motion.path
         d={D}
         fill="none"
-        stroke="url(#stripeGradient)"
-        strokeWidth="1.4"
+        stroke="#E2531C"
+        strokeWidth="3.6"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
-        opacity={0.4}
+        filter="url(#stripeGlow)"
+        opacity={0.38}
+        style={prefersReduced ? undefined : { pathLength }}
+        initial={false}
+      />
+
+      {/* The black stripe itself — the actual tiger marking. */}
+      <motion.path
+        d={D}
+        fill="none"
+        stroke="#15130E"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        opacity={0.62}
+        style={prefersReduced ? undefined : { pathLength }}
+        initial={false}
+      />
+
+      {/* A hair-thin taper riding just off the black line's edge — like a
+          single stray strand catching the orange underneath. */}
+      <motion.path
+        d={D}
+        fill="none"
+        stroke="#F0A15F"
+        strokeWidth="0.5"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        transform="translate(0.9, 0)"
+        opacity={0.3}
         style={prefersReduced ? undefined : { pathLength }}
         initial={false}
       />
