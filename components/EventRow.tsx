@@ -20,23 +20,6 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
         onClick={() => setOpen((o) => !o)}
         className="relative w-full flex items-center gap-5 md:gap-10 py-6 md:py-7 text-left"
       >
-        {/* Two separate marks that drift toward the event on hover — the
-            same "come together" gesture as the hero, in miniature. */}
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-4 w-4 -translate-x-1 opacity-0 group-hover:opacity-40 group-hover:translate-x-3 transition-all duration-500 ease-smooth hidden md:block"
-        >
-          <path d="M2,20 C8,14 6,8 14,2" stroke="#E2531C" strokeWidth="1.3" strokeLinecap="round" fill="none" />
-        </svg>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 h-4 w-4 translate-x-1 opacity-0 group-hover:opacity-40 group-hover:-translate-x-3 transition-all duration-500 ease-smooth hidden md:block"
-        >
-          <path d="M22,4 C16,10 18,16 10,22" stroke="#E2531C" strokeWidth="1.3" strokeLinecap="round" fill="none" />
-        </svg>
-
         <span className="font-mono text-xs md:text-sm text-ink/40 w-14 md:w-16 shrink-0">
           {event.month} {event.day}
         </span>

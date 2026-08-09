@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { memories } from "@/lib/events";
-import StripeReveal from "./StripeReveal";
 
 // The hero postcard is Bite Club #01 — the event that started it all.
 const hero = memories[0];
@@ -31,7 +30,7 @@ export default function ScrollStory() {
           className="relative inline-block"
         >
           <div className="photo-frame -rotate-2 inline-block">
-            <StripeReveal seed={0} barCount={5} className="relative w-[78vw] max-w-md aspect-[4/5]">
+            <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image
                 src={hero.image}
                 alt={`${hero.title} — ${hero.location}`}
@@ -39,7 +38,7 @@ export default function ScrollStory() {
                 sizes="80vw"
                 className="object-cover"
               />
-            </StripeReveal>
+            </div>
           </div>
         </motion.div>
 
@@ -82,7 +81,7 @@ export default function ScrollStory() {
               className="absolute photo-frame"
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
             >
-              <StripeReveal seed={i + 1} barCount={4} className="relative w-full aspect-[4/3]">
+              <div className="relative w-full aspect-[4/3] overflow-hidden">
                 <Image
                   src={p.memory.image}
                   alt={`${p.memory.title} — ${p.memory.location}`}
@@ -90,7 +89,7 @@ export default function ScrollStory() {
                   sizes="30vw"
                   className="object-cover"
                 />
-              </StripeReveal>
+              </div>
               <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
                 {p.caption}
               </span>

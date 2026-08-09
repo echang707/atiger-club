@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import ClawMark from "./ClawMark";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -30,11 +31,7 @@ export default function Nav() {
     >
       <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 grid grid-cols-[1fr_auto_1fr] items-center">
         <Link href="/" className="flex items-center gap-2.5 text-ink justify-self-start" onClick={() => setOpen(false)}>
-          <span className="stripe-mark text-tiger">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
+          <ClawMark className="h-4 w-5 text-tiger" />
           <span className="font-wordmark font-extrabold text-lg md:text-xl tracking-tight inline-flex items-center">
             TIGER
             <span className="inline-block h-[0.22em] w-[0.22em] rounded-full bg-tiger mx-[0.14em]" />

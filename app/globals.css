@@ -36,28 +36,6 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Three faint claw-rake marks — a subtle nod to the tiger, used as the
-   little mark beside the wordmark instead of a generic bar/stripe. */
-.stripe-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 2.5px;
-  transform: rotate(-14deg);
-}
-
-.stripe-mark span {
-  display: block;
-  height: 15px;
-  width: 2.25px;
-  border-radius: 2px 2px 3px 3px;
-  background: linear-gradient(180deg, currentColor 0%, currentColor 55%, transparent 100%);
-  clip-path: polygon(20% 0%, 80% 0%, 100% 78%, 50% 100%, 0% 78%);
-}
-
-.stripe-mark span:nth-child(1) { opacity: 0.95; transform: translateY(-1px) scaleY(1); }
-.stripe-mark span:nth-child(2) { opacity: 0.75; transform: translateY(1px) scaleY(0.86); }
-.stripe-mark span:nth-child(3) { opacity: 0.5; transform: translateY(3px) scaleY(0.7); }
-
 .underline-stripe {
   position: relative;
 }

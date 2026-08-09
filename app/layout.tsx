@@ -3,7 +3,7 @@ import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrumen
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import ScrollThread from "@/components/ScrollThread";
+import TheStripe from "@/components/TheStripe";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -164,10 +164,16 @@ export default function RootLayout({
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </svg>
-        <ScrollThread />
-        <Nav />
-        {children}
-        <Footer />
+        {/* Relative wrapper gives The Stripe a box exactly as tall as the
+            whole page, so its z-index:-1 SVG paints above the paper
+            background but underneath every normal-flow element —
+            photos, cards, the footer — with no per-element bookkeeping. */}
+        <div className="relative">
+          <TheStripe />
+          <Nav />
+          {children}
+          <Footer />
+        </div>
       </body>
     </html>
   );
