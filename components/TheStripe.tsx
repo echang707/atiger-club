@@ -1,140 +1,93 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-// One single, thin, irregular line runs the full height of the site —
-// hugging the left margin, then the right, swinging fully across at a
-// few points to read as a section divider before continuing down. It's
-// drawn at z-index:-1 inside a `position: relative` wrapper, so it
-// paints above the plain paper background but *underneath* every piece
-// of normal content — meaning any photo, card, or opaque panel it
-// passes behind will simply hide it for that stretch, with no per-image
-// bookkeeping required. It only ever shows in the page's own negative
-// space. A tiger stripe, mostly disguised as an editorial rule.
-//
-// The path is authored in a tall, fixed viewBox and stretched to fill
-// the wrapper's real rendered height via preserveAspectRatio="none" —
-// vector-effect="non-scaling-stroke" keeps the line's weight constant
-// even though the vertical scale is arbitrary.
-const D = `
-  M6,0
-  C1,9 14,16 3,26
-  C-2,33 13,40 2,50
-  C-3,58 12,66 4,76
-  C-2,84 13,92 3,102
-  C-3,110 11,118 5,128
-  C-1,136 12,144 3,152
-  C-2,160 10,167 10,175
-  C25,180 55,188 92,200
-  C86,207 97,214 88,224
-  C93,232 84,240 92,250
-  C97,258 85,266 90,276
-  C95,284 83,292 91,302
-  C96,310 84,318 90,328
-  C95,336 83,344 91,354
-  C96,362 84,370 89,380
-  C93,388 85,396 90,406
-  C93,414 87,423 90,430
-  C70,435 40,442 8,455
-  C3,462 13,469 4,478
-  C-2,486 12,493 3,502
-  C-3,510 11,518 5,527
-  C-1,535 12,543 3,551
-  C-2,559 10,566 4,575
-  C-2,583 12,590 3,598
-  C-3,606 10,614 5,623
-  C-1,631 11,639 3,647
-  C-2,655 10,663 4,672
-  C-1,680 9,688 5,696
-  C3,701 6,703 6,705
-  C30,712 60,720 92,730
-  C86,738 97,745 88,755
-  C93,763 84,771 92,781
-  C97,789 85,797 90,807
-  C95,815 83,823 91,833
-  C93,838 89,839 90,840
-  C93,847 87,854 90,860
-  C65,865 35,872 10,882
-  C4,889 14,896 5,905
-  C-1,913 12,920 4,929
-  C-2,937 11,945 5,954
-  C-1,962 10,969 4,978
-  C0,986 9,993 6,1000
-`;
+// A single tiger-stripe mark: a tapered, curved black shape (pointed at
+// both ends, bulging in the middle — the actual silhouette of one stripe
+// on a tiger's coat) with a narrower orange shape nested inside it, so
+// the orange reads as the warm undercoat glowing through the middle of
+// the black marking. Both paths share the same bend, just offset inward,
+// so the black always reads as an even rim around the orange core.
+const OUTER =
+  "M6,22 C8,14 22,6 55,5 C95,4 140,8 175,16 C185,18 190,20 192,22 C189,25 178,28 160,30 C130,34 85,36 45,32 C22,30 8,29 6,22 Z";
+const INNER =
+  "M15,22 C17,16 28,10 56,9 C90,8 130,11 160,17 C167,19 171,20 173,22 C170,24 161,26 147,28 C121,31 84,32 50,29 C31,27 16,27 15,22 Z";
 
-export default function TheStripe() {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [mounted, setMounted] = useState(false);
+function StripeMark({ delay = 0 }: { delay?: number }) {
   const prefersReduced = useReducedMotion();
-
-  const { scrollYProgress } = useScroll();
-  const pathLength = useSpring(scrollYProgress, { stiffness: 55, damping: 22, mass: 0.3 });
-
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
-
   return (
-    <svg
-      ref={svgRef}
+    <motion.svg
+      viewBox="0 0 200 40"
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      style={{ zIndex: -1 }}
-      viewBox="0 0 100 1000"
-      preserveAspectRatio="none"
+      className="h-full w-full"
+      initial={prefersReduced ? undefined : { opacity: 0, scale: 0.82, x: -10 }}
+      whileInView={prefersReduced ? undefined : { opacity: 1, scale: 1, x: 0 }}
+      viewport={{ once: true, margin: "-15%" }}
+      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <defs>
-        {/* Soft blur so the orange reads as a hue bleeding out from the
-            stripe's edge, the way light catches the ginger base of a
-            tiger's fur around a black guard-hair band — not a hard
-            second color. */}
-        <filter id="stripeGlow" x="-60%" y="-5%" width="220%" height="110%">
-          <feGaussianBlur stdDeviation="1.1" />
-        </filter>
-      </defs>
+      <path d={OUTER} fill="#15130E" opacity={0.68} />
+      <path d={INNER} fill="#E2531C" opacity={0.55} />
+    </motion.svg>
+  );
+}
 
-      {/* Orange undercoat — wide, blurred, low-opacity. Sits behind the
-          black line so only its edges peek out. */}
-      <motion.path
-        d={D}
-        fill="none"
-        stroke="#E2531C"
-        strokeWidth="3.6"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-        filter="url(#stripeGlow)"
-        opacity={0.38}
-        style={prefersReduced ? undefined : { pathLength }}
-        initial={false}
-      />
+// Where each mark sits down the page (percentage of total document
+// height, so it works the same on a short page and a long one), which
+// margin it hugs, and how big/rotated/mirrored it is. Kept close to the
+// left/right edges of the content column on purpose — these are meant to
+// live in the page's negative space, not run through paragraphs of text.
+// A couple of larger, more central ones stand in for the old "swings
+// fully across" section dividers, but far smaller than before.
+const MARKS: {
+  top: string;
+  side: "left" | "right";
+  inset: string;
+  width: string;
+  rotate: number;
+  flip?: boolean;
+  big?: boolean;
+}[] = [
+  { top: "4%", side: "left", inset: "-2%", width: "min(15vw, 150px)", rotate: -8 },
+  { top: "13%", side: "right", inset: "-3%", width: "min(13vw, 130px)", rotate: 6, flip: true },
+  { top: "24%", side: "left", inset: "0%", width: "min(11vw, 110px)", rotate: -3 },
+  { top: "34%", side: "right", inset: "10%", width: "min(20vw, 210px)", rotate: 10, big: true },
+  { top: "45%", side: "left", inset: "-2%", width: "min(14vw, 140px)", rotate: -12, flip: true },
+  { top: "55%", side: "right", inset: "-2%", width: "min(12vw, 120px)", rotate: 4 },
+  { top: "65%", side: "left", inset: "8%", width: "min(19vw, 200px)", rotate: -9, big: true, flip: true },
+  { top: "76%", side: "right", inset: "-3%", width: "min(13vw, 130px)", rotate: 7 },
+  { top: "86%", side: "left", inset: "-2%", width: "min(15vw, 150px)", rotate: -5, flip: true },
+  { top: "95%", side: "right", inset: "0%", width: "min(11vw, 110px)", rotate: 8 },
+];
 
-      {/* The black stripe itself — the actual tiger marking. */}
-      <motion.path
-        d={D}
-        fill="none"
-        stroke="#15130E"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-        opacity={0.62}
-        style={prefersReduced ? undefined : { pathLength }}
-        initial={false}
-      />
-
-      {/* A hair-thin taper riding just off the black line's edge — like a
-          single stray strand catching the orange underneath. */}
-      <motion.path
-        d={D}
-        fill="none"
-        stroke="#F0A15F"
-        strokeWidth="0.5"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-        transform="translate(0.9, 0)"
-        opacity={0.3}
-        style={prefersReduced ? undefined : { pathLength }}
-        initial={false}
-      />
-    </svg>
+// A handful of individual tiger-stripe marks scattered down the site —
+// hugging the left margin, then the right, the way the old single line
+// did, but now each one is its own tapered stripe shape rather than a
+// continuous thread. They fade/settle into place once as they scroll
+// into view (no more continuous scroll-scrubbed motion), so nothing is
+// sweeping across the page while someone's mid-sentence reading an
+// event listing. It's drawn at z-index:-1 inside the layout's `relative`
+// wrapper, so it paints above the paper background but underneath every
+// normal-flow piece of content — any photo, card, or text block simply
+// sits in front of it.
+export default function TheStripe() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ zIndex: -1 }}>
+      {MARKS.map((m, i) => (
+        <div
+          key={i}
+          className="absolute"
+          style={{
+            top: m.top,
+            width: m.width,
+            aspectRatio: "5 / 1",
+            [m.side]: m.inset,
+            transform: `rotate(${m.rotate}deg)${m.flip ? " scaleX(-1)" : ""}`,
+            opacity: m.big ? 1 : 0.9,
+          } as React.CSSProperties}
+        >
+          <StripeMark delay={(i % 5) * 0.08} />
+        </div>
+      ))}
+    </div>
   );
 }
