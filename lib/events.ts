@@ -1,12 +1,36 @@
 export type Medium = "Eat" | "Create" | "Move" | "Explore" | "Serve" | "Learn";
 
-export const mediums: { name: Medium }[] = [
-  { name: "Eat" },
-  { name: "Create" },
-  { name: "Move" },
-  { name: "Explore" },
-  { name: "Serve" },
-  { name: "Learn" },
+export const mediums: { name: Medium; icon: string; description: string }[] = [
+  {
+    name: "Eat",
+    icon: "/images/icons/eat.png",
+    description: "Dinners, noodle nights, and tables full of strangers who won't stay strangers.",
+  },
+  {
+    name: "Create",
+    icon: "/images/icons/create.png",
+    description: "Paint, draw, build — hands-on nights with nothing to prove and no talent required.",
+  },
+  {
+    name: "Move",
+    icon: "/images/icons/move.png",
+    description: "Runs, watch parties, and anything that gets the heart rate up alongside people.",
+  },
+  {
+    name: "Explore",
+    icon: "/images/icons/explore.png",
+    description: "Festivals, traditions, and flavors from cultures near and far — Atlanta's whole world.",
+  },
+  {
+    name: "Serve",
+    icon: "/images/icons/serve.png",
+    description: "Cleanups, drives, and days spent leaving the city a little better than we found it.",
+  },
+  {
+    name: "Learn",
+    icon: "/images/icons/learn.png",
+    description: "Workshops, talks, and skills worth picking up alongside people just as curious.",
+  },
 ];
 
 export type TigerEvent = {

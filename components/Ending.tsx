@@ -14,7 +14,7 @@ export default function Ending() {
         transition={{ duration: 0.8 }}
         className="relative font-display text-3xl md:text-5xl text-center leading-tight max-w-xl"
       >
-        life&rsquo;s happening. come join it.
+        Life&rsquo;s calling. Pick up.
       </motion.p>
 
       <motion.a
@@ -25,20 +25,7 @@ export default function Ending() {
         transition={{ duration: 0.8, delay: 0.15 }}
         className="relative mt-8 text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
       >
-        see what&rsquo;s next →
-      </motion.a>
-
-      <motion.a
-        href="https://discord.gg/6u83g4P8Cb"
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="relative mt-4 text-paper/40 text-sm hover:text-paper/70 transition-colors"
-      >
-        join the community
+        see what&rsquo;s happening →
       </motion.a>
     </section>
   );

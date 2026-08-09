@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { events, mediums, Medium } from "@/lib/events";
@@ -53,26 +54,53 @@ export default function EventsClient() {
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap gap-2 mb-12 md:mb-16">
+        <div className="mb-12 md:mb-16">
           <button
             onClick={() => setActive("All")}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 mb-4 ${
               active === "All" ? "bg-ink text-paper" : "bg-paper-dim text-ink/70 hover:bg-ink/10"
             }`}
           >
             All
           </button>
-          {mediums.map((m) => (
-            <button
-              key={m.name}
-              onClick={() => setActive(m.name)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
-                active === m.name ? "bg-ink text-paper" : "bg-paper-dim text-ink/70 hover:bg-ink/10"
-              }`}
-            >
-              {m.name}
-            </button>
-          ))}
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-3">
+            {mediums.map((m, i) => (
+              <motion.button
+                key={m.name}
+                onClick={() => setActive(m.name)}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                className={`group relative flex flex-col items-center text-center gap-2 rounded-2xl border px-3 py-4 md:py-5 transition-colors duration-300 ${
+                  active === m.name
+                    ? "border-tiger bg-tiger/[0.06]"
+                    : "border-ink/10 bg-paper-dim/60 hover:border-ink/20 hover:bg-paper-dim"
+                }`}
+              >
+                <span className="relative h-14 w-14 md:h-16 md:w-16 shrink-0">
+                  <Image
+                    src={m.icon}
+                    alt=""
+                    fill
+                    sizes="64px"
+                    className="object-contain"
+                  />
+                </span>
+                <span
+                  className={`font-display text-base md:text-lg leading-none ${
+                    active === m.name ? "text-tiger" : "text-ink"
+                  }`}
+                >
+                  {m.name}
+                </span>
+                <span className="text-[11px] md:text-xs leading-snug text-ink/50">
+                  {m.description}
+                </span>
+              </motion.button>
+            ))}
+          </div>
         </div>
 
         <div>
