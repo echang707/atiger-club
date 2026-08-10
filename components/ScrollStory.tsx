@@ -75,12 +75,12 @@ export default function ScrollStory() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="annotation text-3xl md:text-4xl mt-16 md:mt-20"
         >
-          {/* "connected" is left unshielded and marked as a stripe
-              anchor on purpose — the line is meant to visibly run
-              through that word rather than duck behind an opaque
-              backdrop like the rest of the quote does. */}
+          {/* "connected" is a stripe anchor: the line aims for that
+              word specifically, then breaks cleanly behind it and picks
+              up on the far side as a new mark. It never paints over the
+              word — the word is the reason the line is there. */}
           <span className="text-shield">&ldquo;A meaningful life is a life</span>{" "}
-          <span data-stripe-anchor className="relative">
+          <span data-stripe-anchor className="relative text-shield">
             connected
           </span>{" "}
           <span className="text-shield">to others.&rdquo;</span>

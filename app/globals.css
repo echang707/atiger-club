@@ -136,24 +136,25 @@ body {
   transform: scaleX(0);
 }
 
-/* Text-shield: a background the same color as the page paper, applied
-   directly to headings/paragraphs/captions. It's invisible on its own
-   (same color as the page), but it means anything painted behind the
-   text — namely The Stripe — is fully hidden exactly where the words
-   are, line by line, instead of showing through the gaps between
-   letters. box-decoration-break:clone gives every wrapped line its own
-   background box rather than one rectangle around the whole paragraph. */
-.text-shield {
-  background-color: #F5F0E3;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  padding: 0.06em 0.28em;
-  margin: -0.06em -0.28em;
-  border-radius: 0.2em;
-}
+/* Text-shield is now a marker, not a paint job.
 
+   It used to set an opaque paper-colored background on every line of
+   text so The Stripe could be hidden behind it. That worked, but it
+   painted rectangles: wherever two shielded runs sat next to each
+   other, the seam between their boxes let a hard-edged sliver of the
+   stripe through, which is what made the shape of a text block
+   readable on the page. Worse, the negative side margins meant one
+   inline word's box overlapped its neighbor's, clipping the overhang
+   of italic glyphs — the missing tail on the "s" in "life is better
+   together" was a neighboring shield painting over it.
+
+   The stripe now measures these elements itself (per rendered line,
+   via a Range) and routes around them, breaking into separate tapered
+   marks where it can't. So nothing needs to be covered up, and the
+   class survives only as a hook the stripe can find. */
+.text-shield,
 .text-shield-invert {
-  background-color: #15130E;
+  background-color: transparent;
 }
 
 .dive-ripple {

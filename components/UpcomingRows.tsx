@@ -20,7 +20,13 @@ export default function UpcomingRows() {
         what are you doing this week?
       </motion.h2>
 
-      <div>
+      {/* The bottom edge of this list is the rule under the last event
+          row — and it's where The Stripe finishes. Marking it here (as
+          opposed to letting the line trail off into whitespace) means
+          the stripe lands flush on an existing horizontal line in the
+          layout instead of stopping in mid-air. Move the attribute to
+          a different element to move the finish. */}
+      <div data-stripe-end>
         {preview.map((event, i) => (
           <EventRow key={event.id} event={event} index={i} />
         ))}

@@ -2,27 +2,66 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, useScroll, useSpring, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
 
 type Pt = { x: number; y: number };
+type Box = { x0: number; y0: number; x1: number; y1: number };
+type Band = { y0: number; y1: number };
+type Metrics = { docHeight: number; winHeight: number; winWidth: number };
 
-// A page can opt individual elements into the route by giving them
-// `data-stripe-anchor` (see ScrollStory.tsx for the pattern: the hero
-// photo, the word "connected" in the pull-quote, each scattered memory
-// photo, and the closing CTA). On mount we measure where those elements
-// actually landed and thread the stripe through them, in document
-// order, so the line has a reason to be where it is — it's visiting
-// things — instead of an arbitrary decorative squiggle.
-//
-// The Stripe only runs on the homepage. Events and Work With Us don't
-// have a chain of photos/quotes for it to connect, so rather than fake
-// a route there it's simply not rendered on those pages.
+// The stripe is drawn in a fixed 100 x 1000 viewBox stretched over the
+// whole document (preserveAspectRatio="none"), so x is "percent of
+// viewport width" and y is "per-mille of document height".
+const VB_W = 100;
+const VB_H = 1000;
+
 const START: Pt = { x: 35, y: 0 };
 
-// Catmull-Rom → cubic-bezier sampling, so the route through a sparse set
-// of anchor points still reads as one continuous, gently curving stripe
-// rather than straight dot-to-dot segments.
-function sampleSmooth(points: Pt[], perSegment = 22): Pt[] {
+// How far past the bottom of the viewport the stripe is already drawn,
+// as a fraction of viewport height. The old version tied the drawn
+// length to scroll *progress*, which meant the leading edge sat at the
+// TOP of the viewport until you were most of the way down the page —
+// so a slow scroll looked like nothing was happening. Anchoring to
+// scroll position instead keeps the head just below what you're
+// reading, so the stripe is always visibly present and the drawing
+// happens at the bottom edge of the screen where it reads as motion.
+const LOOKAHEAD = 0.88;
+
+// Vertical distance over which the leading edge fades in, so the head
+// of the stripe dissolves into the page instead of being chopped flat.
+const HEAD_FADE = 22;
+
+// Stripe weight in real pixels (converted into the distorted viewBox
+// space per-sample, so thickness stays constant no matter which
+// direction the line is travelling). CORE_PX is the half-width at a
+// mark's fattest point, so the black reads about 13px across the belly
+// with roughly 2.4px of orange either side of it.
+const CORE_PX = 5.0;
+const RIM_PX = 2.4;
+
+// A tiger's markings are a run of separate short strokes, not one
+// unbroken band — so a long clear stretch of the route gets chopped
+// into marks of about this length, separated by small gaps, each
+// tapering to its own needle points.
+const TARGET_MARK_PX = 520;
+const MIN_MARK_PX = 150;
+const GAP_PX = 46;
+
+// Padding around measured text boxes, in px, so the stripe finishes its
+// taper cleanly before it reaches a letter rather than pinching out
+// right against the glyph.
+const TEXT_PAD_X = 10;
+const TEXT_PAD_Y = 5;
+
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+// ---------------------------------------------------------------------
+// Path construction
+// ---------------------------------------------------------------------
+
+// Catmull-Rom → sampled polyline, so a sparse set of anchors still reads
+// as one continuous curve rather than straight dot-to-dot hops.
+function sampleSmooth(points: Pt[], perSegment = 30): Pt[] {
   const p = points;
   if (p.length < 2) return p;
   const out: Pt[] = [];
@@ -35,160 +74,468 @@ function sampleSmooth(points: Pt[], perSegment = 22): Pt[] {
       const t = s / perSegment;
       const t2 = t * t;
       const t3 = t2 * t;
-      const x =
-        0.5 *
-        (2 * p1.x +
-          (-p0.x + p2.x) * t +
-          (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
-          (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
-      const y =
-        0.5 *
-        (2 * p1.y +
-          (-p0.y + p2.y) * t +
-          (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
-          (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
-      out.push({ x, y });
+      out.push({
+        x:
+          0.5 *
+          (2 * p1.x +
+            (-p0.x + p2.x) * t +
+            (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+            (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+        y:
+          0.5 *
+          (2 * p1.y +
+            (-p0.y + p2.y) * t +
+            (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+            (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
+      });
     }
   }
   out.push(p[p.length - 1]);
   return out;
 }
 
-// Turns the sampled centerline into a closed, filled ribbon. `widthAt(t)`
-// is passed in rather than baked in here so the orange edge can be
-// defined as "black's width plus a thin rim" instead of wobbling on its
-// own independent phase — that's what previously let it balloon into a
-// separate blobby shape instead of a tight outline.
-function ribbonPath(samples: Pt[], widthAt: (t: number) => number): string {
-  const n = samples.length;
+function boxBlur(values: number[], radius: number): number[] {
+  const n = values.length;
+  const out = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    let sum = 0;
+    let count = 0;
+    for (let k = -radius; k <= radius; k++) {
+      const j = clamp(i + k, 0, n - 1);
+      sum += values[j];
+      count++;
+    }
+    out[i] = sum / count;
+  }
+  return out;
+}
+
+// Widens a sparse set of spikes into plateaus, keeping the sign and
+// magnitude of the strongest value in each window. Blurring a spike
+// destroys its amplitude; blurring a plateau of the same height keeps
+// it. That difference is the whole reason the detour is visible.
+function extremeFilter(values: number[], radius: number): number[] {
+  const n = values.length;
+  const out = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    let best = 0;
+    for (let k = -radius; k <= radius; k++) {
+      const v = values[clamp(i + k, 0, n - 1)];
+      if (Math.abs(v) > Math.abs(best)) best = v;
+    }
+    out[i] = best;
+  }
+  return out;
+}
+
+// Steer the line out of text boxes where a modest sideways bend is
+// enough to clear them — "just make it take a different path." Each
+// pass measures how far it needs to move, spreads that requirement out
+// along the line, then smooths it, so what you see is one long lazy
+// bend around a paragraph rather than a jag that snaps out and back at
+// the paragraph's edges. Runs a few times because clearing one block
+// can nudge the line toward another. Where no reachable detour exists
+// (a full-bleed headline), the push stays at zero and the line breaks
+// behind it instead.
+function steerAroundText(samples: Pt[], boxes: Box[], maxPush: number): Pt[] {
+  let current = samples;
+
+  for (let pass = 0; pass < 3; pass++) {
+    let needed = false;
+    const push = current.map((p) => {
+      let best = 0;
+      for (const b of boxes) {
+        if (p.y < b.y0 || p.y > b.y1 || p.x < b.x0 || p.x > b.x1) continue;
+        const outLeft = p.x - b.x0 + 1.5;
+        const outRight = b.x1 - p.x + 1.5;
+        const d = outLeft < outRight ? -outLeft : outRight;
+        if (Math.abs(d) > Math.abs(best)) best = d;
+      }
+      if (Math.abs(best) > maxPush) return 0;
+      if (best !== 0) needed = true;
+      return best;
+    });
+
+    if (!needed) break;
+
+    const spread = boxBlur(boxBlur(extremeFilter(push, 26), 20), 20);
+    current = current.map((p, i) => ({ x: clamp(p.x + spread[i], 5, 95), y: p.y }));
+  }
+
+  return current;
+}
+
+// True wherever a sample sits inside a line of text. These become the
+// gaps in the stripe — and because each side of a gap tapers to a
+// needle point, the break reads as two separate tiger marks rather than
+// as a rectangle stamped out of a continuous line.
+function occlusionMask(samples: Pt[], boxes: Box[]): boolean[] {
+  const hidden = samples.map((p) =>
+    boxes.some((b) => p.x >= b.x0 && p.x <= b.x1 && p.y >= b.y0 && p.y <= b.y1)
+  );
+  // Grow the mask slightly so the taper is fully finished by the time
+  // the line reaches a glyph, never pinching out on top of one.
+  const grown = hidden.slice();
+  const GROW = 3;
+  for (let i = 0; i < hidden.length; i++) {
+    if (!hidden[i]) continue;
+    for (let k = -GROW; k <= GROW; k++) {
+      const j = clamp(i + k, 0, hidden.length - 1);
+      grown[j] = true;
+    }
+  }
+  return grown;
+}
+
+// The visible stretches between gaps. Very short slivers are dropped
+// outright — a 6px orphan between two words is the thing that made it
+// obvious a rectangle had been cut out of the line.
+function visibleRuns(hidden: boolean[], minLen: number): Array<[number, number]> {
+  const runs: Array<[number, number]> = [];
+  let start = -1;
+  for (let i = 0; i < hidden.length; i++) {
+    if (!hidden[i] && start === -1) start = i;
+    if ((hidden[i] || i === hidden.length - 1) && start !== -1) {
+      const end = hidden[i] ? i - 1 : i;
+      if (end - start >= minLen) runs.push([start, end]);
+      start = -1;
+    }
+  }
+  return runs;
+}
+
+// ---------------------------------------------------------------------
+// Tiger-stripe geometry
+// ---------------------------------------------------------------------
+
+// A real tiger marking isn't a constant-width line: it's a brush stroke
+// that comes to a needle point at each end, carries most of its weight
+// in a belly nearer one end than the other, and has two edges that
+// wander independently rather than staying parallel. `flip` swaps which
+// end is the blunt shoulder and which is the fine tip, so consecutive
+// marks down the page don't all point the same way.
+function tigerBody(t: number, seed: number, flip: boolean): number {
+  const u = flip ? 1 - t : t;
+  // sin^0.38 holds a full body for most of the mark, then collapses
+  // hard in the last few percent — that's what makes the ends read as
+  // sharp points instead of rounded caps.
+  const spine = Math.pow(Math.sin(Math.PI * clamp(u, 0, 1)), 0.38);
+  const belly = 0.72 + 0.36 * Math.exp(-Math.pow((u - 0.32) / 0.36, 2));
+  const wobble =
+    1 +
+    0.13 * Math.sin(u * Math.PI * 4.7 + seed) +
+    0.06 * Math.sin(u * Math.PI * 10.3 + seed * 2.1);
+  return Math.max(0, spine * belly * wobble);
+}
+
+// Deterministic 0..1 jitter — marks need to be irregular, but they also
+// need to be identical between renders and between server and client.
+function jitter(n: number): number {
+  const s = Math.sin(n * 12.9898) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+// Chops one clear stretch of the route into individual tiger marks.
+// Lengths are measured in real pixels along the curve, so marks stay
+// visually even whether the line is running steeply down the page or
+// cutting across it. A stretch too short to divide is left as one mark.
+function splitIntoMarks(
+  samples: Pt[],
+  from: number,
+  to: number,
+  sx: number,
+  sy: number
+): Array<[number, number]> {
+  const lens: number[] = [0];
+  for (let i = from + 1; i <= to; i++) {
+    const dx = (samples[i].x - samples[i - 1].x) * sx;
+    const dy = (samples[i].y - samples[i - 1].y) * sy;
+    lens.push(lens[lens.length - 1] + Math.hypot(dx, dy));
+  }
+  const total = lens[lens.length - 1];
+  if (total < MIN_MARK_PX * 2 + GAP_PX) return [[from, to]];
+
+  const count = clamp(Math.round(total / TARGET_MARK_PX), 1, 14);
+  if (count < 2) return [[from, to]];
+
+  const stride = total / count;
+  const atLength = (target: number) => {
+    let i = 0;
+    while (i < lens.length - 1 && lens[i + 1] < target) i++;
+    return from + i;
+  };
+
+  const marks: Array<[number, number]> = [];
+  for (let k = 0; k < count; k++) {
+    const gap = GAP_PX * (0.6 + 0.9 * jitter(from + k * 3.1));
+    const shrink = 0.86 + 0.2 * jitter(from + k * 7.7);
+    const startLen = k * stride + (k === 0 ? 0 : gap * 0.5);
+    const endLen = Math.min(total, startLen + (stride - gap) * shrink);
+    if (endLen - startLen < MIN_MARK_PX * 0.5) continue;
+    const a = atLength(startLen);
+    const b = atLength(endLen);
+    if (b - a >= 6) marks.push([a, b]);
+  }
+
+  return marks.length ? marks : [[from, to]];
+}
+
+// The two edges get their own phase offsets, so the mark's own centre
+// drifts a little inside its outline the way a real stripe does.
+function edgeScale(t: number, seed: number, side: number): number {
+  return 1 + 0.17 * Math.sin(t * Math.PI * (side > 0 ? 6.1 : 5.3) + seed * (side > 0 ? 1.3 : 2.7));
+}
+
+// Builds one filled tiger mark from a stretch of the centreline.
+// Widths arrive in pixels and are converted per-sample into viewBox
+// units using the local scale factors — without this, the 100x1000
+// viewBox stretched over a tall page makes a horizontal segment of the
+// stripe render many times thicker than a vertical one.
+function markPath(
+  samples: Pt[],
+  from: number,
+  to: number,
+  widthPx: (t: number, side: number) => number,
+  sx: number,
+  sy: number
+): string {
+  const n = to - from;
+  if (n < 2) return "";
   const left: Pt[] = [];
   const right: Pt[] = [];
-  for (let i = 0; i < n; i++) {
-    const prev = samples[Math.max(0, i - 1)];
-    const next = samples[Math.min(n - 1, i + 1)];
-    const dx = next.x - prev.x;
-    const dy = next.y - prev.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const nx = -dy / len;
-    const ny = dx / len;
-    const w = widthAt(i / n);
-    left.push({ x: samples[i].x + nx * w, y: samples[i].y + ny * w });
-    right.push({ x: samples[i].x - nx * w, y: samples[i].y - ny * w });
+
+  for (let i = from; i <= to; i++) {
+    const prev = samples[Math.max(from, i - 1)];
+    const next = samples[Math.min(to, i + 1)];
+    const dxPx = (next.x - prev.x) * sx;
+    const dyPx = (next.y - prev.y) * sy;
+    const lenPx = Math.hypot(dxPx, dyPx) || 1;
+    const nxPx = -dyPx / lenPx;
+    const nyPx = dxPx / lenPx;
+    const t = (i - from) / n;
+
+    const wl = widthPx(t, 1);
+    const wr = widthPx(t, -1);
+    left.push({ x: samples[i].x + (nxPx * wl) / sx, y: samples[i].y + (nyPx * wl) / sy });
+    right.push({ x: samples[i].x - (nxPx * wr) / sx, y: samples[i].y - (nyPx * wr) / sy });
   }
+
   return (
     `M ${left[0].x.toFixed(2)},${left[0].y.toFixed(2)} ` +
     left.slice(1).map((p) => `L ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ") +
     " " +
-    right.slice().reverse().map((p) => `L ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ") +
+    right.reverse().map((p) => `L ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ") +
     " Z"
   );
 }
 
-// Both ends of the whole route taper to a point over their first/last
-// 3% — like a brush lifting off the page — instead of stopping on a
-// blunt flat-cut edge. This is what gives the stripe a deliberate,
-// clean finish at the bottom rather than looking like it just ran out.
-function endTaper(t: number): number {
-  const rampIn = Math.min(1, t / 0.03);
-  const rampOut = Math.min(1, (1 - t) / 0.03);
-  return Math.max(0, Math.min(rampIn, rampOut));
+// Finds the emptiest vertical channel through a band of the page —
+// the column where the stripe can run from y0 to y1 crossing the least
+// text. The finish line sits under a dense stack of event rows that
+// are far too wide to bend around one at a time, so instead of
+// shredding the line into fragments there, the last leg picks a lane
+// and runs down it. Ties break toward the middle of the page.
+function bestChannel(boxes: Box[], y0: number, y1: number): number {
+  const span = Math.max(1, y1 - y0);
+  const relevant = boxes.filter((b) => b.y1 > y0 && b.y0 < y1);
+  let bestX = 50;
+  let bestScore = Infinity;
+
+  for (let x = 6; x <= 94; x += 0.5) {
+    let covered = 0;
+    for (const b of relevant) {
+      if (x >= b.x0 && x <= b.x1) covered += Math.min(y1, b.y1) - Math.max(y0, b.y0);
+    }
+    const score = covered + Math.abs(x - 50) * 0.002 * span;
+    if (score < bestScore) {
+      bestScore = score;
+      bestX = x;
+    }
+  }
+  return bestX;
 }
 
-// Core (black) stripe width — a slim marker-line, not a band. Two
-// overlapping sine waves at different frequencies keep a little organic
-// breathing without reading as jagged at this smaller scale.
-function coreWidth(t: number): number {
-  const base = 0.34 + 0.14 * (0.6 * Math.sin(t * Math.PI * 8) + 0.4 * Math.sin(t * Math.PI * 19));
-  return Math.max(0.16, base) * endTaper(t);
-}
+// ---------------------------------------------------------------------
+// Measurement
+// ---------------------------------------------------------------------
 
-// Orange edge — always the core's width plus a thin, near-constant rim,
-// so it hugs the black line as an outline instead of its own shape.
-function edgeWidth(t: number): number {
-  return coreWidth(t) + 0.22 * endTaper(t);
-}
+// Per-line text boxes, measured with a Range rather than element rects,
+// so a wrapped paragraph yields one tight box per rendered line instead
+// of one big rectangle around the block. Boxes are also intersected
+// with any overflow-hidden ancestor, so text inside a collapsed
+// accordion doesn't leave a phantom obstacle behind.
+function measureTextBoxes(m: Metrics): Box[] {
+  const root = document.querySelector("main");
+  if (!root) return [];
 
-// A section can opt itself into "invert" with `data-stripe-invert` (see
-// Ending.tsx) — the one dark section on the site, and the only place
-// the black core needs to swap to a pale color so it doesn't vanish.
-type Range = { y0: number; y1: number };
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const el = node.parentElement;
+      if (!el) return NodeFilter.FILTER_REJECT;
+      if (el.closest("svg, .sr-only, [data-stripe-ignore]")) return NodeFilter.FILTER_REJECT;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === "hidden" || cs.display === "none") return NodeFilter.FILTER_REJECT;
+      if (parseFloat(cs.opacity || "1") < 0.05) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+
+  const boxes: Box[] = [];
+  // Sibling text nodes share the same ancestor chain, so the clip
+  // bounds are resolved once per element rather than once per node.
+  const clipCache = new Map<HTMLElement, [number, number]>();
+
+  const clipBounds = (el: HTMLElement): [number, number] => {
+    const cached = clipCache.get(el);
+    if (cached) return cached;
+
+    // Nearest clipping ancestors, so collapsed or scrolled regions
+    // can't contribute text boxes that aren't actually on screen.
+    let top = -Infinity;
+    let bottom = Infinity;
+    for (let p: HTMLElement | null = el; p && p !== root; p = p.parentElement) {
+      const inherited = clipCache.get(p);
+      if (inherited && p !== el) {
+        top = Math.max(top, inherited[0]);
+        bottom = Math.min(bottom, inherited[1]);
+        break;
+      }
+      const cs = getComputedStyle(p);
+      if (cs.overflow !== "visible" || cs.overflowY !== "visible") {
+        const pr = p.getBoundingClientRect();
+        top = Math.max(top, pr.top);
+        bottom = Math.min(bottom, pr.bottom);
+      }
+    }
+
+    const result: [number, number] = [top, bottom];
+    clipCache.set(el, result);
+    return result;
+  };
+
+  let node: Node | null;
+
+  while ((node = walker.nextNode())) {
+    const el = (node as Text).parentElement!;
+    const [clipTop, clipBottom] = clipBounds(el);
+
+    const range = document.createRange();
+    range.selectNodeContents(node);
+
+    for (const r of Array.from(range.getClientRects())) {
+      if (r.width < 2 || r.height < 2) continue;
+      const top = Math.max(r.top, clipTop);
+      const bottom = Math.min(r.bottom, clipBottom);
+      if (bottom - top < 2) continue;
+
+      boxes.push({
+        x0: ((r.left - TEXT_PAD_X) / m.winWidth) * VB_W,
+        x1: ((r.right + TEXT_PAD_X) / m.winWidth) * VB_W,
+        y0: ((top + window.scrollY - TEXT_PAD_Y) / m.docHeight) * VB_H,
+        y1: ((bottom + window.scrollY + TEXT_PAD_Y) / m.docHeight) * VB_H,
+      });
+    }
+  }
+
+  return boxes;
+}
 
 export default function TheStripe() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [points, setPoints] = useState<Pt[] | null>(null);
-  const [invertRanges, setInvertRanges] = useState<Range[]>([]);
+  const [textBoxes, setTextBoxes] = useState<Box[]>([]);
+  const [invertBands, setInvertBands] = useState<Band[]>([]);
+  const [metrics, setMetrics] = useState<Metrics>({ docHeight: 1, winHeight: 1, winWidth: 1 });
   const prefersReduced = useReducedMotion();
 
   const onHomepage = pathname === "/";
 
   const measure = useCallback(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]"));
     const docHeight = Math.max(document.documentElement.scrollHeight, 1);
     const winWidth = Math.max(document.documentElement.clientWidth, 1);
+    const winHeight = Math.max(window.innerHeight, 1);
+    const m: Metrics = { docHeight, winWidth, winHeight };
+    setMetrics(m);
 
     const invertNodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-invert]"));
-    setInvertRanges(
+    setInvertBands(
       invertNodes.map((el) => {
         const rect = el.getBoundingClientRect();
         const top = rect.top + window.scrollY;
-        return { y0: (top / docHeight) * 1000, y1: ((top + rect.height) / docHeight) * 1000 };
+        return { y0: (top / docHeight) * VB_H, y1: ((top + rect.height) / docHeight) * VB_H };
       })
     );
 
-    if (nodes.length < 2) {
+    const boxes = measureTextBoxes(m);
+    setTextBoxes(boxes);
+
+    // The route stops dead on the element marked `data-stripe-end`
+    // (its bottom edge — see UpcomingRows, where it's the rule under
+    // the last event row). Anything below that line is not part of the
+    // journey, so anchors down there are dropped rather than dragging
+    // the line past its finish.
+    const endEl = document.querySelector<HTMLElement>("[data-stripe-end]");
+    const endRect = endEl?.getBoundingClientRect();
+    const endY = endRect
+      ? ((endRect.bottom + window.scrollY) / docHeight) * VB_H
+      : VB_H;
+    const endTop = endRect
+      ? ((endRect.top + window.scrollY) / docHeight) * VB_H
+      : VB_H;
+
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]"));
+    const anchors: Pt[] = nodes
+      .map((el) => {
+        const rect = el.getBoundingClientRect();
+        const pageY = rect.top + window.scrollY + rect.height / 2;
+        return {
+          x: clamp(((rect.left + rect.width / 2) / winWidth) * VB_W, 8, 92),
+          y: (pageY / docHeight) * VB_H,
+        };
+      })
+      .filter((a) => a.y < endY - 10);
+
+    if (anchors.length < 2) {
       setPoints(null);
       return;
     }
 
-    const anchors: Pt[] = nodes.map((el) => {
-      const rect = el.getBoundingClientRect();
-      const pageY = rect.top + window.scrollY + rect.height / 2;
-      const x = ((rect.left + rect.width / 2) / winWidth) * 100;
-      const y = (pageY / docHeight) * 1000;
-      return { x: Math.max(8, Math.min(92, x)), y };
-    });
-
-    // Sort top-to-bottom, but anchors that land in the same rough band
-    // of height (like the row of scattered photos) are ordered left to
-    // right within that band instead of by their exact y — otherwise a
-    // photo a few pixels higher than its neighbor jumps the queue and
-    // the line visits them out of reading order.
+    // Top-to-bottom, but anchors sharing a rough band of height (a row
+    // of scattered photos) are ordered left to right within it, so the
+    // line visits them in reading order.
     const BAND = 40;
     anchors.sort((a, b) => {
       const ba = Math.round(a.y / BAND);
       const bb = Math.round(b.y / BAND);
-      if (ba !== bb) return ba - bb;
-      return a.x - b.x;
+      return ba !== bb ? ba - bb : a.x - b.x;
     });
 
-    // A little meander between each pair of anchors — alternating left
-    // and right of the straight line between them — so the route still
-    // wanders like the rest of the stripe instead of connecting the
-    // dots in perfectly straight hops. The bend is scaled down when two
-    // anchors sit close together vertically, so a short gap gets a
-    // gentle curve instead of a sharp diagonal kink that reads as a
-    // separate chunk rather than part of one continuous line.
     const route: Pt[] = [START];
     anchors.forEach((a, i) => {
       const prev = i === 0 ? START : anchors[i - 1];
       const gapY = Math.max(1, a.y - prev.y);
       const bend = Math.min(16, gapY * 0.4) * (i % 2 === 0 ? 1 : -1);
-      const midX = (prev.x + a.x) / 2 + bend;
-      const midY = (prev.y + a.y) / 2;
-      route.push({ x: Math.max(6, Math.min(94, midX)), y: midY });
+      route.push({ x: clamp((prev.x + a.x) / 2 + bend, 6, 94), y: (prev.y + a.y) / 2 });
       route.push(a);
     });
 
-    // A short, deliberate tail past the last anchor (the closing CTA)
-    // that tapers to a point — not a long arbitrary meander all the way
-    // to the bottom of the document.
+    // Run out to the finish line and stop exactly on it, dropping into
+    // the clearest lane through the rows above it so the last stretch
+    // arrives as one continuous mark rather than crumbs between lines.
     const last = anchors[anchors.length - 1];
-    const tailDir = last.x > 50 ? -14 : 14;
+    const laneX = bestChannel(boxes, endTop - (endY - endTop) * 0.4, endY);
+    const approachY = endTop - (endY - endTop) * 0.35;
     route.push({
-      x: Math.max(6, Math.min(94, last.x + tailDir)),
-      y: Math.min(1000, last.y + 70),
+      x: clamp((last.x + laneX) / 2 + (last.x > laneX ? 6 : -6), 8, 92),
+      y: last.y + (approachY - last.y) * 0.5,
     });
+    route.push({ x: laneX, y: approachY });
+    // A slight drift on the way down the lane, so the final stretch
+    // still reads as a drawn mark rather than a ruled vertical.
+    route.push({ x: clamp(laneX - 1.1, 6, 94), y: approachY + (endY - approachY) * 0.55 });
+    route.push({ x: clamp(laneX + 1.2, 6, 94), y: endY });
 
     setPoints(route);
   }, []);
@@ -200,91 +547,147 @@ export default function TheStripe() {
   useEffect(() => {
     if (!mounted || !onHomepage) return;
     measure();
-    const onResize = () => measure();
+    // Resize fires in bursts and a full remeasure walks every text node
+    // on the page, so it's coalesced to one pass per settled resize.
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(measure, 150);
+    };
     window.addEventListener("resize", onResize);
     window.addEventListener("load", measure);
-    // Images and web fonts can still land after first paint and shift
-    // layout, so re-measure a couple of times after mount rather than
-    // trusting the very first pass.
-    const t1 = setTimeout(measure, 400);
-    const t2 = setTimeout(measure, 1400);
+    // Images and web fonts can land after first paint and reflow the
+    // text we route around, so re-measure a few times after mount.
+    const timers = [400, 1400, 2600].map((ms) => setTimeout(measure, ms));
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", measure);
-      clearTimeout(t1);
-      clearTimeout(t2);
+      clearTimeout(resizeTimer);
+      timers.forEach(clearTimeout);
     };
   }, [mounted, onHomepage, measure]);
 
-  // Tied to real scroll position, but through a spring — the same idea
-  // as a raw 1:1 tie, except a spring has a little momentum, so it
-  // eases and gently settles rather than snapping to a dead stop the
-  // instant you stop scrolling. That momentum is what actually reads
-  // as "flowing." Kept soft (low stiffness relative to damping) so the
-  // line visibly trails your scroll position for a beat before it
-  // catches up — matching the feel from the earlier version — without
-  // ever overshooting into a bounce or a multi-second trail.
-  const { scrollYProgress } = useScroll();
-  const revealProgress = useSpring(scrollYProgress, { stiffness: 55, damping: 22, mass: 0.3 });
-  const revealHeight = useTransform(revealProgress, (v) => v * 1000);
+  // Tied to scroll *position* (not progress) so the head of the stripe
+  // always sits just past the bottom of the viewport, then run through
+  // a spring so it trails your scroll for a beat and coasts to a stop
+  // instead of snapping. That trailing is the momentum.
+  //
+  // The projection is driven from an effect rather than a plain
+  // `useTransform` because it depends on measured page metrics: a
+  // transform only re-runs when the scroll value changes, so after a
+  // remeasure (fonts landing, a resize, an accordion opening) the head
+  // would sit at a position computed from the old document height
+  // until you happened to scroll again. Re-projecting on every
+  // remeasure keeps it honest.
+  const { scrollY } = useScroll();
+  const target = useMotionValue(0);
+  const revealY = useSpring(target, { stiffness: 90, damping: 18, mass: 0.6 });
 
-  const { blackD, orangeD } = useMemo(() => {
-    if (!points) return { blackD: "", orangeD: "" };
-    const samples = sampleSmooth(points, 22);
-    return {
-      blackD: ribbonPath(samples, coreWidth),
-      orangeD: ribbonPath(samples, edgeWidth),
-    };
-  }, [points]);
+  useEffect(() => {
+    const project = (v: number) =>
+      target.set(
+        Math.min(VB_H, ((v + metrics.winHeight * LOOKAHEAD) / metrics.docHeight) * VB_H)
+      );
+    project(scrollY.get());
+    return scrollY.on("change", project);
+  }, [scrollY, target, metrics]);
 
-  if (!mounted || !onHomepage || !points) return null;
+  const marks = useMemo(() => {
+    if (!points) return [];
+    const sx = metrics.winWidth / VB_W;
+    const sy = metrics.docHeight / VB_H;
+
+    const raw = sampleSmooth(points, 30);
+    const steered = steerAroundText(raw, textBoxes, 9);
+    const hidden = occlusionMask(steered, textBoxes);
+
+    // Clear stretches between text, then each stretch broken into
+    // individual tiger marks.
+    const runs = visibleRuns(hidden, 12).flatMap(([from, to]) =>
+      splitIntoMarks(steered, from, to, sx, sy)
+    );
+
+    return runs.map(([from, to], i) => {
+      const seed = i * 2.37 + 0.9;
+      const flip = i % 2 === 1;
+      const core = (t: number, side: number) =>
+        CORE_PX * tigerBody(t, seed, flip) * edgeScale(t, seed, side);
+      const rim = (t: number, side: number) =>
+        core(t, side) + RIM_PX * Math.pow(Math.sin(Math.PI * clamp(t, 0, 1)), 0.45);
+      return {
+        key: `${from}-${to}`,
+        core: markPath(steered, from, to, core, sx, sy),
+        rim: markPath(steered, from, to, rim, sx, sy),
+      };
+    });
+  }, [points, textBoxes, metrics]);
+
+  if (!mounted || !onHomepage || !points || marks.length === 0) return null;
 
   return (
     <svg
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 h-full w-full"
       style={{ zIndex: -1 }}
-      viewBox="0 0 100 1000"
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
       preserveAspectRatio="none"
     >
-      {invertRanges.map((r, i) => (
+      <defs>
+        <linearGradient id="stripeHead" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fff" stopOpacity="1" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {invertBands.map((b, i) => (
         <clipPath key={i} id={`stripeInvert-${i}`} clipPathUnits="userSpaceOnUse">
-          <rect x="0" y={r.y0} width="100" height={Math.max(0, r.y1 - r.y0)} />
+          <rect x="0" y={b.y0} width={VB_W} height={Math.max(0, b.y1 - b.y0)} />
         </clipPath>
       ))}
 
-      <clipPath id="stripeReveal" clipPathUnits="userSpaceOnUse">
+      {/* A mask rather than a hard clip, so the leading edge fades in
+          over HEAD_FADE units instead of being chopped off square.
+          `y`/`height` are passed as direct props (MotionValues), not via
+          `style` — elements inside mask/clip definitions aren't part of
+          the rendered box tree, so CSS-driven sizing isn't reliably
+          applied to them, but a raw SVG attribute set every frame is. */}
+      <mask id="stripeReveal" maskUnits="userSpaceOnUse" x="0" y="0" width={VB_W} height={VB_H}>
         {prefersReduced ? (
-          <rect x="0" y="0" width="100" height={1000} />
+          <rect x="0" y="0" width={VB_W} height={VB_H} fill="#fff" />
         ) : (
-          // `height` is passed as a direct prop (a MotionValue), not
-          // through `style`. Elements inside a <clipPath> aren't part
-          // of the normal rendered box tree, so browsers don't
-          // reliably apply CSS-driven sizing to them — the spring
-          // would compute correctly but the rect just wouldn't move.
-          // Framer Motion lets any prop take a MotionValue directly,
-          // which sets the raw SVG attribute every frame instead of
-          // going through CSS, so it animates regardless.
-          <motion.rect x="0" y="0" width="100" height={revealHeight} />
+          <>
+            <motion.rect x="0" y="0" width={VB_W} height={revealY} fill="#fff" />
+            <motion.rect
+              x="0"
+              y={revealY}
+              width={VB_W}
+              height={HEAD_FADE}
+              fill="url(#stripeHead)"
+            />
+          </>
         )}
-      </clipPath>
+      </mask>
 
-      <g clipPath="url(#stripeReveal)">
-        {/* Thin orange edge, hugging the black core as a tight rim — a
-            solid fill traced along the same centerline, not a blurred
-            or independently-wobbling band. */}
-        <path d={orangeD} fill="#E2531C" />
+      <g mask="url(#stripeReveal)">
+        {/* Thin orange rim, traced along the same centreline as the core
+            so it stays a tight outline rather than its own shape. */}
+        {marks.map((m) => (
+          <path key={`rim-${m.key}`} d={m.rim} fill="#E2531C" />
+        ))}
 
-        {/* The stripe itself: solid ink black everywhere by default. */}
-        <path d={blackD} fill="#15130E" />
+        {/* The marks themselves — ink black by default. */}
+        {marks.map((m) => (
+          <path key={`core-${m.key}`} d={m.core} fill="#15130E" />
+        ))}
 
-        {/* Over the one dark closing section, the core swaps to a pale
-            paper tone instead — painted as the same path again, clipped
-            to just that section's bounds — so it stays a deliberate,
-            reliable color swap rather than a blend-mode guess. */}
-        {invertRanges.map((_, i) => (
+        {/* Over the one dark section the core swaps to paper, repainted
+            clipped to that band — a deliberate colour swap, not a
+            blend-mode guess. */}
+        {invertBands.map((_, i) => (
           <g key={i} clipPath={`url(#stripeInvert-${i})`}>
-            <path d={blackD} fill="#F5F0E3" />
+            {marks.map((m) => (
+              <path key={`inv-${i}-${m.key}`} d={m.core} fill="#F5F0E3" />
+            ))}
           </g>
         ))}
       </g>
