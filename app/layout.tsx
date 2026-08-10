@@ -3,7 +3,6 @@ import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrumen
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import TheStripe from "@/components/TheStripe";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -164,12 +163,19 @@ export default function RootLayout({
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </svg>
-        {/* Relative wrapper gives The Stripe a box exactly as tall as the
-            whole page, so its z-index:-1 SVG paints above the paper
-            background but underneath every normal-flow element —
-            photos, cards, the footer — with no per-element bookkeeping. */}
+        {/* Relative wrapper gives The Stripe (rendered from within the
+            homepage's own tree, see app/page.tsx) a positioning context
+            exactly as tall as the whole page, so its z-index:-1 SVG
+            paints above the paper background but underneath every
+            normal-flow element — photos, cards, the footer — with no
+            per-element bookkeeping. TheStripe itself is intentionally
+            NOT rendered here: this layout is shared by every route, and
+            a component mounted here would need to reliably detect and
+            hide itself on /events and /work-with-us. Instead it only
+            exists inside the homepage's component tree, so it's
+            structurally impossible for it to render anywhere else —
+            no runtime check to trust, nothing to go stale. */}
         <div className="relative">
-          <TheStripe />
           <Nav />
           {children}
           <Footer />

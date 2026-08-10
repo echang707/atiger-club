@@ -257,7 +257,15 @@ export default function TheStripe() {
         {prefersReduced ? (
           <rect x="0" y="0" width="100" height={1000} />
         ) : (
-          <motion.rect x="0" y="0" width="100" style={{ height: revealHeight }} />
+          // `height` is passed as a direct prop (a MotionValue), not
+          // through `style`. Elements inside a <clipPath> aren't part
+          // of the normal rendered box tree, so browsers don't
+          // reliably apply CSS-driven sizing to them — the spring
+          // would compute correctly but the rect just wouldn't move.
+          // Framer Motion lets any prop take a MotionValue directly,
+          // which sets the raw SVG attribute every frame instead of
+          // going through CSS, so it animates regardless.
+          <motion.rect x="0" y="0" width="100" height={revealHeight} />
         )}
       </clipPath>
 
