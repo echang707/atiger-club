@@ -355,82 +355,26 @@ function bestChannel(boxes: Box[], y0: number, y1: number): number {
   return bestX;
 }
 
-
-// Build irregular tiger markings as tapered wedges that grow in from alternating
-// sides of the tail. This is intentionally not a dashed center stroke: real tiger
-// stripes hook and taper across the fur rather than reading as horizontal bars.
-function tigerStripeWedges(samples: Pt[], sx: number, sy: number): string[] {
-  if (samples.length < 8) return [];
-
-  const px = samples.map((p) => ({ x: p.x * sx, y: p.y * sy }));
-  const cumulative = [0];
-  for (let i = 1; i < px.length; i++) {
-    cumulative.push(cumulative[i - 1] + Math.hypot(px[i].x - px[i - 1].x, px[i].y - px[i - 1].y));
+// A last flourish before the tail disappears into the tiger: a small
+// loop, like the tip of a real tail curling on itself, before it
+// straightens out and drops the rest of the way to the rump. Swept past
+// a full 360° so the curve genuinely crosses itself instead of just
+// arcing — that overlap is what reads as a "loop" rather than a bend.
+function loopPoints(
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  startAngle: number,
+  sweep: number,
+  n: number
+): Pt[] {
+  const pts: Pt[] = [];
+  for (let i = 0; i <= n; i++) {
+    const a = startAngle + (sweep * i) / n;
+    pts.push({ x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry });
   }
-  const total = cumulative[cumulative.length - 1];
-  const HALF = 11.3;
-  const paths: string[] = [];
-
-  const indexAt = (d: number) => {
-    let lo = 0, hi = cumulative.length - 1;
-    while (lo < hi) {
-      const mid = Math.floor((lo + hi) / 2);
-      if (cumulative[mid] < d) lo = mid + 1; else hi = mid;
-    }
-    return clamp(lo, 1, samples.length - 2);
-  };
-
-  let d = 34;
-  let k = 0;
-  while (d < total - 28) {
-    const spacing = 34 + jitter(k * 7.13 + 2) * 22;
-    const length = 18 + jitter(k * 4.71 + 8) * 18;
-    const i0 = indexAt(Math.max(0, d - length * 0.5));
-    const i1 = indexAt(Math.min(total, d + length * 0.5));
-    const im = indexAt(d + length * (jitter(k + 12) - 0.5) * 0.12);
-
-    const tangent = (i: number) => {
-      const a = px[Math.max(0, i - 1)];
-      const b = px[Math.min(px.length - 1, i + 1)];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const len = Math.hypot(dx, dy) || 1;
-      return { nx: -dy / len, ny: dx / len };
-    };
-    const n0 = tangent(i0), nm = tangent(im), n1 = tangent(i1);
-    const side = k % 2 === 0 ? 1 : -1;
-    const reach = 0.45 + jitter(k * 9.31 + 1) * 0.45;
-    const outer = HALF * (0.94 + jitter(k * 2.17) * 0.08);
-    const tipAcross = -HALF * reach;
-
-    const P = (i: number, n: {nx:number;ny:number}, off: number) => ({
-      x: (px[i].x + n.nx * off) / sx,
-      y: (px[i].y + n.ny * off) / sy,
-    });
-
-    // Broad shoulder at the outside edge, narrowing to an inward-pointing hook.
-    const a = P(i0, n0, side * outer * 0.72);
-    const b = P(im, nm, side * outer);
-    const c = P(i1, n1, side * outer * 0.55);
-    const tip = P(i1, n1, side * tipAcross);
-    const inner = P(im, nm, side * HALF * 0.10);
-
-    paths.push(`M ${a.x.toFixed(2)},${a.y.toFixed(2)} Q ${b.x.toFixed(2)},${b.y.toFixed(2)} ${c.x.toFixed(2)},${c.y.toFixed(2)} L ${tip.x.toFixed(2)},${tip.y.toFixed(2)} Q ${inner.x.toFixed(2)},${inner.y.toFixed(2)} ${a.x.toFixed(2)},${a.y.toFixed(2)} Z`);
-
-    // Every few stripes, add a smaller sibling notch from the same side.
-    if (k % 5 === 2) {
-      const j0 = indexAt(Math.min(total - 4, d + length * 0.72));
-      const j1 = indexAt(Math.min(total - 2, d + length * 1.08));
-      const nA = tangent(j0), nB = tangent(j1);
-      const aa = P(j0, nA, side * HALF * 0.88);
-      const bb = P(j1, nB, side * HALF * 0.82);
-      const tt = P(j1, nB, side * -HALF * 0.24);
-      paths.push(`M ${aa.x.toFixed(2)},${aa.y.toFixed(2)} Q ${bb.x.toFixed(2)},${bb.y.toFixed(2)} ${tt.x.toFixed(2)},${tt.y.toFixed(2)} L ${aa.x.toFixed(2)},${aa.y.toFixed(2)} Z`);
-    }
-
-    d += spacing;
-    k++;
-  }
-  return paths;
+  return pts;
 }
 
 // ---------------------------------------------------------------------
@@ -605,40 +549,12 @@ export default function TheStripe() {
     });
 
     const route: Pt[] = [START];
-
-    // The tail tip begins at the period, curls once around the word
-    // “together,” then opens downward into the rest of the page. The loop
-    // is measured from the live glyph bounds, so it stays attached on every
-    // breakpoint instead of being positioned by a magic pixel offset.
-    const loopEl = document.querySelector<HTMLElement>("[data-stripe-loop-target]");
-    const loopRect = loopEl?.getBoundingClientRect();
-    if (loopRect) {
-      const lx0 = ((loopRect.left - 20) / winWidth) * VB_W;
-      const lx1 = ((loopRect.right + 28) / winWidth) * VB_W;
-      const ly0 = ((loopRect.top + window.scrollY - 18) / docHeight) * VB_H;
-      const ly1 = ((loopRect.bottom + window.scrollY + 24) / docHeight) * VB_H;
-      const cx = (lx0 + lx1) / 2;
-      const cy = (ly0 + ly1) / 2;
-
-      route.push({ x: clamp(lx1, 6, 96), y: cy - 1 });
-      route.push({ x: clamp(cx + 2, 6, 94), y: ly0 });
-      route.push({ x: clamp(lx0, 4, 94), y: cy });
-      route.push({ x: clamp(cx - 1, 6, 94), y: ly1 });
-      route.push({ x: clamp(lx1 - 2, 6, 96), y: cy + 3 });
-      route.push({ x: clamp(lx1 + 2, 6, 96), y: ly1 + 7 });
-    }
-
-    // Keep the route flowing rather than zig-zagging. We still honor the
-    // content anchors, but each turn is eased through a soft midpoint whose
-    // horizontal travel is capped; Catmull-Rom smoothing below does the rest.
-    let prev = route[route.length - 1];
-    anchors.forEach((a) => {
-      const dy = Math.max(1, a.y - prev.y);
-      if (dy < 5) return;
-      const dx = clamp(a.x - prev.x, -24, 24);
-      route.push({ x: clamp(prev.x + dx * 0.48, 6, 94), y: prev.y + dy * 0.46 });
-      route.push({ x: clamp(prev.x + dx, 6, 94), y: a.y });
-      prev = route[route.length - 1];
+    anchors.forEach((a, i) => {
+      const prev = i === 0 ? START : anchors[i - 1];
+      const gapY = Math.max(1, a.y - prev.y);
+      const bend = Math.min(16, gapY * 0.4) * (i % 2 === 0 ? 1 : -1);
+      route.push({ x: clamp((prev.x + a.x) / 2 + bend, 6, 94), y: (prev.y + a.y) / 2 });
+      route.push(a);
     });
 
     // Run out to the finish line and stop exactly on it, dropping into
@@ -652,10 +568,18 @@ export default function TheStripe() {
       y: last.y + (approachY - last.y) * 0.5,
     });
     route.push({ x: laneX, y: approachY });
-    // The last bend leaves the clearest lane and deliberately aims at
-    // the tiger's tail socket, so the wandering line resolves into a
-    // physical tail instead of simply stopping at a rule.
-    route.push({ x: clamp((laneX + endX) / 2, 6, 94), y: approachY + (endY - approachY) * 0.58 });
+
+    // Curl the tail on itself just above the tiger, then let it drop
+    // straight down into the rump — the wandering line resolves into a
+    // loop, then a physical tail, instead of simply aiming at a point.
+    const LOOP_PX = 30;
+    const loopRx = (LOOP_PX / winWidth) * VB_W;
+    const loopRy = (LOOP_PX / docHeight) * VB_H;
+    const loopCx = clamp((laneX + endX) / 2, 8, 92);
+    const loopCy = endY - loopRy * 2.6;
+    route.push({ x: loopCx - loopRx * 0.7, y: loopCy - loopRy * 0.9 });
+    route.push(...loopPoints(loopCx, loopCy, loopRx, loopRy, -Math.PI * 0.65, Math.PI * 2.25, 10));
+    route.push({ x: clamp((loopCx + endX) / 2, 6, 94), y: loopCy + loopRy * 1.6 });
     route.push({ x: endX, y: endY });
 
     setPoints(route);
@@ -717,31 +641,36 @@ export default function TheStripe() {
     return scrollY.on("change", project);
   }, [scrollY, target, metrics]);
 
-  const tailSamples = useMemo(() => {
-    if (!points) return [] as Pt[];
-    // More samples + two gentle blur passes remove the mechanical kinks that
-    // made the previous tail look like a bent tube. Only geometry changes;
-    // scrolling never moves the route left or right.
-    const raw = sampleSmooth(points, 46);
-    const steered = steerAroundText(raw, textBoxes, 10);
-    if (steered.length < 3) return steered;
-    const xs = boxBlur(boxBlur(steered.map((p) => p.x), 4), 4);
-    return steered.map((p, i) => ({ x: clamp(xs[i], 4, 96), y: p.y }));
+  const tailPath = useMemo(() => {
+    if (!points) return "";
+    const raw = sampleSmooth(points, 30);
+    const steered = steerAroundText(raw, textBoxes, 12);
+    if (steered.length < 2) return "";
+    return `M ${steered.map((p, i) => `${i ? "L" : ""} ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ")}`;
   }, [points, textBoxes]);
 
-  const tailPath = useMemo(() => {
-    if (tailSamples.length < 2) return "";
-    return `M ${tailSamples.map((p, i) => `${i ? "L" : ""} ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ")}`;
-  }, [tailSamples]);
+  // The black rings are real tiger marks — tapered brush strokes with a
+  // belly and needle points — built with the mark geometry above, not a
+  // dashed stroke (which just chops the line into flat horizontal-ish
+  // bars regardless of what direction it's travelling).
+  const markPaths = useMemo(() => {
+    if (!points) return [] as string[];
+    const raw = sampleSmooth(points, 30);
+    const steered = steerAroundText(raw, textBoxes, 12);
+    if (steered.length < 2) return [];
 
-  const stripeWedges = useMemo(() =>
-    tigerStripeWedges(
-      tailSamples,
-      metrics.winWidth / VB_W,
-      metrics.docHeight / VB_H
-    ),
-    [tailSamples, metrics.winWidth, metrics.docHeight]
-  );
+    const sx = metrics.winWidth / VB_W;
+    const sy = metrics.docHeight / VB_H;
+    const marks = splitIntoMarks(steered, 0, steered.length - 1, sx, sy);
+
+    return marks.map(([from, to], i) => {
+      const seed = jitter(from * 0.037 + i * 5.13) * 30;
+      const flip = i % 2 === 1;
+      const widthPx = (t: number, side: number) =>
+        CORE_PX * tigerBody(t, seed, flip) * edgeScale(t, seed, side);
+      return markPath(steered, from, to, widthPx, sx, sy);
+    });
+  }, [points, textBoxes, metrics]);
 
   if (!mounted || !onHomepage || !points || !tailPath) return null;
 
@@ -749,7 +678,7 @@ export default function TheStripe() {
     <svg
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 h-full w-full"
-      style={{ zIndex: 6 }}
+      style={{ zIndex: -1 }}
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       preserveAspectRatio="none"
     >
@@ -781,23 +710,23 @@ export default function TheStripe() {
         mask="url(#stripeReveal)"
         filter="url(#tailOrganicEdge)"
       >
-        {/* Broad orange body first. The irregular black rings sit *inside*
+        {/* Broad orange body first. The irregular black marks sit *inside*
             it, leaving a warm orange edge exactly like a real tiger tail. */}
         <path
           d={tailPath}
           fill="none"
           stroke="#D97721"
-          strokeWidth="25"
+          strokeWidth={(CORE_PX + RIM_PX) * 2}
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
         />
-        {/* Alternating tapered wedges create the hooked, side-growing black
-            markings of a real tiger tail. They follow the local curve instead
-            of stamping rectangular horizontal dashes down the center. */}
-        <g fill="#16140F">
-          {stripeWedges.map((d, i) => <path key={i} d={d} />)}
-        </g>
+        {/* Individual tapered marks — brush strokes with a belly and
+            needle-point ends, not a dashed line — so the tail reads as
+            fur rather than a ruler. */}
+        {markPaths.map((d, i) => (
+          <path key={i} d={d} fill="#16140F" />
+        ))}
         {/* A warm highlight breaks the flat vector look without turning the
             tail glossy. It is intentionally faint and irregular. */}
         <path
