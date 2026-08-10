@@ -108,6 +108,17 @@ export default function Ending() {
           so the tail vanished the instant it entered the one section
           where it needs to be visible: connecting into the tiger. */}
       <div className="absolute inset-0 -z-20 bg-ink" />
+      {/* A transition zone rather than a hard edge. The tail arrives from
+          the cream page above and has to stay legible the whole way in,
+          so the top of this section fades from paper to ink over ~220px
+          instead of switching in one scanline — which is where the tail
+          used to visually disappear for a beat. It sits at -z-20 with the
+          ink, so it is still behind the tail at z-index -1. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 -z-20 h-[220px]"
+        style={{ background: "linear-gradient(to bottom, #F4F0E6 0%, rgba(22,20,15,0) 100%)" }}
+      />
       <div className="absolute inset-0 -z-10 opacity-[0.04] paper-texture" />
 
       {/* A soft warm pool on the centre axis. It does no work on its own,

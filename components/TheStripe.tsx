@@ -152,13 +152,42 @@ export default function TheStripe() {
 
     // The base: a point just inside the top of the tiger's rump.
     const endEl = document.querySelector<HTMLElement>("[data-stripe-end]");
-    const END = endEl ? centreOf(endEl) : { x: winWidth / 2, y: docHeight - 240 };
+    // x is pinned to the exact centre of the viewport rather than taken
+    // from the marker, so the tail's endpoint and the tiger's rump share
+    // a coordinate by construction instead of by measurement luck.
+    const END = { x: winWidth / 2, y: endEl ? centreOf(endEl).y : docHeight - 240 };
 
     const anchors = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]")).map(
       centreOf
     );
 
-    const pts = buildRoute(START, END, anchors, boxes, winWidth);
+    // The word the hero flourish wraps. Measured on its own rather than
+    // taken from the whole headline, so the curve is built from the
+    // letters of "together" and nothing else.
+    const hugEl = document.querySelector<HTMLElement>("[data-stripe-hug]");
+    const hugRect = hugEl?.getBoundingClientRect();
+    const WORD: Box | null = hugRect
+      ? {
+          x0: hugRect.left,
+          x1: hugRect.right,
+          y0: hugRect.top + window.scrollY,
+          y1: hugRect.bottom + window.scrollY,
+        }
+      : null;
+
+    // The band the tail leaves the canvas for. Running it down through a
+    // list of event names and dates hurts both, so the path goes around
+    // the outside of this section instead.
+    const avoidEl = document.querySelector<HTMLElement>("[data-stripe-avoid]");
+    const avoidRect = avoidEl?.getBoundingClientRect();
+    const EVENTS = avoidRect
+      ? {
+          top: avoidRect.top + window.scrollY,
+          bottom: avoidRect.bottom + window.scrollY,
+        }
+      : null;
+
+    const pts = buildRoute(START, END, WORD, EVENTS, anchors, boxes, winWidth);
     setRoute(pts);
   }, []);
 

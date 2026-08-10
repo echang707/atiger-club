@@ -9,7 +9,10 @@ export default function UpcomingRows() {
   const preview = events.slice(0, 5);
 
   return (
-    <section className="max-w-content mx-auto px-6 md:px-10 py-24 md:py-32">
+    <section
+      data-stripe-avoid
+      className="relative max-w-content mx-auto px-6 md:px-10 py-24 md:py-32"
+    >
       <motion.h2
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}

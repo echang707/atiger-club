@@ -35,7 +35,7 @@ export const STEP = 6;
 // across, the banding stops reading as rings around a tail and starts
 // reading as a dashed line.
 const TIP_HALF = 3.2;
-const BASE_HALF = 16;
+const BASE_HALF = 18;
 
 // Padding around measured text, so the tail commits to a detour well
 // before it reaches a glyph.
@@ -200,11 +200,15 @@ function steerAroundText(
 
     if (!needed) break;
 
+    // Only samples that are actually being pushed get clamped back into
+    // the viewport. Clamping unconditionally is what used to drag the
+    // off-canvas excursion beside the events list back onto the page.
     const spread = boxBlur(boxBlur(extremeFilter(push, 22), 26), 26);
-    current = current.map((p, i) => ({
-      x: clamp(p.x + spread[i], width * 0.045, width * 0.955),
-      y: p.y,
-    }));
+    current = current.map((p, i) =>
+      Math.abs(spread[i]) < 0.01
+        ? p
+        : { x: clamp(p.x + spread[i], width * 0.045, width * 0.955), y: p.y }
+    );
   }
 
   return current;
@@ -256,53 +260,141 @@ function bestChannel(boxes: Box[], y0: number, y1: number, width: number): numbe
   return bestX;
 }
 
-// The loop at the tip. An opening spiral, not a circle: the radius grows
-// as it sweeps, so the last turn passes outside the first and the tail
-// genuinely crosses over itself. The sweep ends at angle 0, where the
-// tangent points straight down the page, so the loop unwinds into the
-// descent instead of flicking sideways out of it.
-function curlAt(centre: Pt, radius: number): { pts: Pt[]; exit: Pt } {
-  const SWEEP = Math.PI * 1.86;
-  const a0 = Math.PI * 2 - SWEEP; // ≈ 0.14π
-  const r0 = radius * 0.46;
+// ---------------------------------------------------------------------
+// The hero flourish
+//
+// This is authored, not solved. An earlier version generated a spiral
+// and then searched a list of candidate offsets for somewhere it would
+// fit — which is why it kept ending up as an ornament sitting beside the
+// headline rather than doing anything to it. There is no search here and
+// no circle: six cubic Bézier segments, laid out from the measured box
+// of the word itself, that pass under the word, around its left side,
+// back over the top, and away to the right. The word sits in the
+// negative space. The loop never closes and never crosses itself.
+// ---------------------------------------------------------------------
 
-  const pts: Pt[] = [];
-  const N = 46;
-  for (let i = 0; i <= N; i++) {
-    const t = i / N;
-    const a = a0 + SWEEP * t;
-    const r = r0 + (radius - r0) * t;
-    pts.push({ x: centre.x + Math.cos(a) * r, y: centre.y + Math.sin(a) * r });
+function cubic(p0: Pt, c1: Pt, c2: Pt, p1: Pt, n: number, skipFirst: boolean): Pt[] {
+  const out: Pt[] = [];
+  for (let i = skipFirst ? 1 : 0; i <= n; i++) {
+    const t = i / n;
+    const u = 1 - t;
+    out.push({
+      x: u * u * u * p0.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * p1.x,
+      y: u * u * u * p0.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * p1.y,
+    });
   }
-  return { pts, exit: pts[pts.length - 1] };
+  return out;
 }
 
-// Places that loop in clear space. It has to read as belonging to the
-// period at the end of the tagline, but it must not sit on the words: an
-// earlier version pinned the spiral's first point exactly to the period,
-// which swung the whole circle back over "together". So the centre is
-// tried at a handful of offsets around the period — nearest first — and
-// the first one whose circle clears every measured line of type wins.
-function placeCurl(anchor: Pt, radius: number, boxes: Box[], width: number): Pt {
-  const R = radius * 1.2; // the circle, plus the tail's own weight
+// `period` is the full stop after the word — the tail's tip, and the
+// only point the path is pinned to. `word` is the measured box of
+// "together" on its own.
+function heroHug(period: Pt, word: Box, winWidth: number): { pts: Pt[]; exit: Pt } {
+  const w = word.x1 - word.x0;
+  const h = word.y1 - word.y0;
 
-  const candidates: Pt[] = [
-    { x: anchor.x + radius * 1.75, y: anchor.y - radius * 0.15 },
-    { x: anchor.x + radius * 1.75, y: anchor.y + radius * 0.6 },
-    { x: anchor.x + radius * 2.4, y: anchor.y + radius * 0.2 },
-    { x: anchor.x + radius * 1.2, y: anchor.y + radius * 1.6 },
-    { x: anchor.x - radius * 0.2, y: anchor.y + radius * 1.95 },
-  ];
+  // Clearance from the letters. Held between roughly 30 and 50px, and
+  // deliberately unequal above and below so the shape doesn't read as a
+  // machined outline of the word.
+  const tight = winWidth < 620;
+  const padUnder = tight ? 26 : 46;
+  const padOver = tight ? 22 : 37;
+  const padLeft = tight ? 24 : 42;
 
-  const clears = (c: Pt) =>
-    c.x + R < width * 0.97 &&
-    c.x - R > width * 0.03 &&
-    !boxes.some((b) => c.x + R > b.x0 && c.x - R < b.x1 && c.y + R > b.y0 && c.y - R < b.y1);
+  const yUnder = word.y1 + padUnder;
+  const yOver = word.y0 - padOver;
+  const xLeft = Math.max(winWidth * 0.03, word.x0 - padLeft);
+  const xRight = Math.min(winWidth * 0.965, word.x1 + padLeft * 1.5);
+  const cy = (word.y0 + word.y1) / 2;
 
-  for (const c of candidates) if (clears(c)) return c;
-  // Nothing clear beside the tagline — a narrow phone, most likely. Drop
-  // the loop into the gap below it, where there is always room.
-  return { x: clamp(anchor.x, width * 0.42, width * 0.78), y: anchor.y + radius * 2.2 };
+  // Waypoints. Deliberately unequal at every turn: the underside runs
+  // deepest near the tip and rises as it travels left, the top stroke
+  // does the opposite, and the left shoulder is a broad round sweep
+  // while the exit is a long shallow one. Matching them up would produce
+  // a racetrack — a rounded rectangle with the word parked in it — which
+  // is exactly what this is trying not to be.
+  const U1 = { x: word.x0 + w * 0.64, y: yUnder + h * 0.16 };
+  const U2 = { x: word.x0 + w * 0.08, y: yUnder - h * 0.17 };
+  const T1 = { x: word.x0 + w * 0.12, y: yOver + h * 0.15 };
+  const T2 = { x: word.x0 + w * 0.9, y: yOver - h * 0.14 };
+  const exit = { x: xRight, y: cy - h * 0.05 };
+
+  const pts: Pt[] = [];
+  // 1 — leaves the period on a short outward flick before dropping and
+  //     turning back under the word. Going straight down instead reads
+  //     as a hook dangling inside the loop; the flick makes the full
+  //     stop the start of a stroke rather than the end of one.
+  pts.push(
+    ...cubic(
+      period,
+      { x: period.x + w * 0.05, y: period.y + h * 0.34 },
+      { x: U1.x + w * 0.42, y: yUnder + h * 0.34 },
+      U1,
+      18,
+      false
+    )
+  );
+  // 2 — under the word, sagging low then rising toward the left.
+  pts.push(
+    ...cubic(
+      U1,
+      { x: word.x0 + w * 0.44, y: yUnder + h * 0.2 },
+      { x: word.x0 + w * 0.22, y: yUnder + h * 0.02 },
+      U2,
+      18,
+      true
+    )
+  );
+  // 3 — the left shoulder: one broad round sweep, controls pushed well
+  //     past xLeft so it opens out instead of turning a corner.
+  pts.push(
+    ...cubic(
+      U2,
+      { x: xLeft - w * 0.13, y: yUnder - h * 0.34 },
+      { x: xLeft - w * 0.14, y: yOver + h * 0.42 },
+      T1,
+      22,
+      true
+    )
+  );
+  // 4 — back across the top, arcing highest just past the middle.
+  pts.push(
+    ...cubic(
+      T1,
+      { x: word.x0 + w * 0.3, y: yOver - h * 0.13 },
+      { x: word.x0 + w * 0.6, y: yOver - h * 0.15 },
+      T2,
+      18,
+      true
+    )
+  );
+  // 5 — out past the final letters on a long shallow turn down the
+  //     right, kept wide of the tip so the two strands never pinch.
+  pts.push(
+    ...cubic(
+      T2,
+      { x: word.x1 + padLeft * 1.15, y: yOver - h * 0.06 },
+      { x: xRight + w * 0.07, y: cy - h * 0.55 },
+      exit,
+      18,
+      true
+    )
+  );
+  // 6 — and away down the page, still leaning rather than dropping
+  //     plumb, so the flourish hands off to the descent.
+  const away = { x: xRight + w * 0.05, y: word.y1 + h * 2.9 };
+  pts.push(
+    ...cubic(
+      exit,
+      { x: xRight + w * 0.03, y: cy + h * 0.8 },
+      { x: away.x - w * 0.02, y: away.y - h * 0.9 },
+      away,
+      18,
+      true
+    )
+  );
+
+  return { pts, exit: away };
 }
 
 // ---------------------------------------------------------------------
@@ -320,10 +412,11 @@ type BandSpec = { s0: number; s1: number; seed: number; side: number; tip: boole
 function planBands(totalLen: number, halfAt: (s: number) => number): BandSpec[] {
   const bands: BandSpec[] = [];
 
-  // Tigers have a solid black tip. Starting on black also means the
-  // thinnest, most fragile stretch of the tail reads as deliberate
-  // rather than as a thread that failed to render.
-  const tipLen = clamp(totalLen * 0.012, 40, 96);
+  // The very point is solid, which is what lets the black full stop at
+  // the end of the headline read as the tip of the tail rather than as a
+  // dot the tail happens to start next to. It is kept short so it reads
+  // as a point, not as a band.
+  const tipLen = clamp(totalLen * 0.004, 26, 46);
   bands.push({ s0: -STEP, s1: tipLen, seed: 0.5, side: 0, tip: true });
 
   let s = tipLen;
@@ -336,9 +429,16 @@ function planBands(totalLen: number, halfAt: (s: number) => number): BandSpec[] 
     // fixed minimum pitch was the bug that made the thin upper stretch
     // read as a dashed line.
     const pitch = Math.max(24, w * 4.2);
-    s += pitch * (0.30 + 0.11 * jitter(k * 3.7));
+    // Spacing and length both vary widely, and every so often a much
+    // wider gap or a much shorter mark lands. Evenly spaced marks of
+    // equal size read as a pattern stamped onto the tail; real markings
+    // are irregular enough that you can't find the repeat.
+    const rare = jitter(k * 11.7);
+    const gapMul = rare > 0.88 ? 1.9 : rare < 0.12 ? 0.55 : 1;
+    const lenMul = jitter(k * 13.3) > 0.82 ? 0.5 : 1;
+    s += pitch * (0.26 + 0.2 * jitter(k * 3.7)) * gapMul;
     if (s >= totalLen - 30) break;
-    const s1 = Math.min(totalLen, s + pitch * (0.26 + 0.12 * jitter(k * 5.1)));
+    const s1 = Math.min(totalLen, s + pitch * (0.22 + 0.2 * jitter(k * 5.1)) * lenMul);
 
     // Alternate which flank the mark grows from — but not mechanically.
     // Roughly one in five repeats the previous side, which is what stops
@@ -416,11 +516,19 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
   const hR = new Array<number>(m);
   for (let i = 0; i < m; i++) {
     const u = i / (m - 1);
-    const grow = TIP_HALF + (BASE_HALF - TIP_HALF) * Math.pow(u, 0.55);
-    const flare = 1 + 0.42 * smoothstep(0.965, 1, u);
+    // Thin for most of the run, thickening toward the base — a tail is
+    // heaviest where it meets the animal. The earlier pow(u, 0.55) put
+    // nearly full weight on within the first fifth of the page, which
+    // left nothing to grow into.
+    const t = 0.45 * u + 0.55 * Math.pow(u, 1.9);
+    const grow = TIP_HALF + (BASE_HALF - TIP_HALF) * t;
+    const flare = 1 + 0.3 * smoothstep(0.9, 1, u);
     const base = grow * flare;
-    hL[i] = base * (1 + 0.055 * Math.sin(i * 0.031) + 0.03 * Math.sin(i * 0.091 + 1.7));
-    hR[i] = base * (1 + 0.055 * Math.sin(i * 0.027 + 2.4) + 0.03 * Math.sin(i * 0.085 + 4.1));
+    // The first few samples close to a point, so the tail ends in a tip
+    // rather than a flat cap sticking out from under the full stop.
+    const point = 0.34 + 0.66 * smoothstep(0, 26, i * STEP);
+    hL[i] = base * point * (1 + 0.055 * Math.sin(i * 0.031) + 0.03 * Math.sin(i * 0.091 + 1.7));
+    hR[i] = base * point * (1 + 0.055 * Math.sin(i * 0.027 + 2.4) + 0.03 * Math.sin(i * 0.085 + 4.1));
   }
 
   // Where the tail can't avoid a line of type, it goes behind it. These
@@ -538,9 +646,9 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
     }
 
     const side = spec.side;
-    const reach = 1.55 + 0.4 * jitter(spec.seed + 1.1);
-    const lean = 0.5 * signed(spec.seed + 2.3);
-    const curve = 0.3 * signed(spec.seed + 3.1);
+    const reach = 1.15 + 0.78 * jitter(spec.seed + 1.1);
+    const lean = 0.85 * signed(spec.seed + 2.3);
+    const curve = 0.55 * signed(spec.seed + 3.1);
     // Roots aren't flat cuts: one corner sits further along the tail.
     const rootSkew = 0.3 * signed(spec.seed + 4.7);
 
@@ -609,53 +717,62 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
   return out;
 }
 
-// Builds the route the tail follows: the curl at the tip, the wander
-// through the page's anchors, and the straightened descent into the
-// tiger. Pure, so the same route can be generated in a test harness.
+// Builds the route the tail follows: the flourish around the headline,
+// the wander down the page, the excursion off-canvas past the events
+// list, and the centred descent into the tiger. Pure, so the same route
+// can be generated in a test harness.
 export function buildRoute(
   start: Pt,
   end: Pt,
+  word: Box | null,
+  events: { top: number; bottom: number } | null,
   anchors: Pt[],
   boxes: Box[],
   winWidth: number
 ): Pt[] | null {
-  const usable = anchors.filter((a) => a.y > start.y + 80 && a.y < end.y - 200);
-  if (usable.length < 2) return null;
+  void boxes;
 
-  // Top to bottom. Anchors within ~110px of each other vertically are
-  // one row (the scatter of postcards) and get ordered left to right
-  // within it, so the tail visits them in reading order instead of
-  // doubling back up the page.
-  usable.sort((a, b) => {
-    const ra = Math.round(a.y / 110);
-    const rb = Math.round(b.y / 110);
-    return ra !== rb ? ra - rb : a.x - b.x;
-  });
+  // --- 1. the flourish around the headline --------------------------
+  // Without a measured word there is nothing to hug, so the tail simply
+  // falls from the period rather than inventing a shape.
+  const hug = word
+    ? heroHug(start, word, winWidth)
+    : { pts: [start, { x: start.x, y: start.y + 260 }], exit: { x: start.x, y: start.y + 260 } };
 
-  // --- 1. the loop at the tip ---------------------------------------
-  const curlR = clamp(winWidth * 0.052, 32, 62);
-  const { pts: curl, exit } = curlAt(placeCurl(start, curlR, boxes, winWidth), curlR);
+  const pts: Pt[] = [...hug.pts];
+  const exit = hug.exit;
 
-  const pts: Pt[] = [...curl];
-  // Leave the curl travelling straight down before the route starts
-  // reaching for anchors, so the exit tangent is honoured.
-  pts.push({ x: exit.x, y: exit.y + curlR * 1.5 });
+  // Anything above the flourish's exit belongs to the headline, not to
+  // the descent.
+  const cutoff = exit.y + 60;
+  const eventsTop = events ? events.top : end.y - 900;
+  const eventsBottom = events ? events.bottom : end.y - 300;
+
+  const usable = anchors
+    .filter((a) => a.y > cutoff && a.y < eventsTop - 120)
+    .sort((a, b) => {
+      // Anchors within ~110px of each other vertically are one row and
+      // get ordered left to right within it, so the tail visits them in
+      // reading order instead of doubling back up the page.
+      const ra = Math.round(a.y / 110);
+      const rb = Math.round(b.y / 110);
+      return ra !== rb ? ra - rb : a.x - b.x;
+    });
 
   // --- 2. the wander down the page ----------------------------------
-  // Anchors are waypoints, not commands. Left to itself the route will
-  // swing the full width of the page between two anchors only a couple
-  // of hundred pixels apart vertically, and no amount of smoothing turns
-  // that into anything but a hairpin. So each anchor's x is pulled back
-  // toward the previous one until the leg's horizontal travel is at most
-  // its vertical drop: the tail can lean hard, but it can never double
-  // back on itself. This is what keeps the whole descent one continuous
-  // S rather than a zigzag, and it holds for any content — a row of
-  // scattered photos at nearly the same height simply gets visited as a
-  // gentle drift instead of a saw blade.
+  // Anchors are waypoints, not commands. Left to itself the route swings
+  // the full width of the page between two anchors a couple of hundred
+  // pixels apart vertically, and no amount of smoothing turns that into
+  // anything but a hairpin. So each anchor's x is pulled back toward the
+  // previous one until a leg's horizontal travel is at most its vertical
+  // drop: the tail can lean hard, but it can never double back. That is
+  // what keeps the descent one continuous S rather than a zigzag, and it
+  // holds for any content — a row of scattered photos at nearly the same
+  // height is visited as a drift rather than a saw blade.
   const MAX_SLOPE = 0.9;
   {
-    let px = pts[pts.length - 1].x;
-    let py = pts[pts.length - 1].y;
+    let px = exit.x;
+    let py = exit.y;
     for (const a of usable) {
       const room = Math.max(50, (a.y - py) * MAX_SLOPE);
       a.x = clamp(a.x, px - room, px + room);
@@ -667,11 +784,6 @@ export function buildRoute(
   let prev = pts[pts.length - 1];
   for (const a of usable) {
     const dy = Math.max(1, a.y - prev.y);
-    // A single easing point between anchors keeps the curve full and
-    // lazy. Its sideways offset leans toward wherever the next anchor
-    // is, rather than alternating blindly — blind alternation is what
-    // threw the old line into a hairpin whenever two anchors happened
-    // to sit on the same side of the page.
     const lean = clamp((a.x - prev.x) * 0.18, -95, 95);
     pts.push({
       x: clamp((prev.x + a.x) / 2 + lean, winWidth * 0.06, winWidth * 0.94),
@@ -681,20 +793,45 @@ export function buildRoute(
     prev = a;
   }
 
-  // --- 3. the descent into the tiger --------------------------------
-  // Drop into the clearest lane through the rows above the animal, then
-  // straighten to vertical well before the join, so the tail meets the
-  // rump square-on and reads as attached to it.
-  const laneTop = prev.y + (end.y - prev.y) * 0.32;
-  const laneX = bestChannel(boxes, laneTop, end.y - 140, winWidth);
+  // --- 3. out past the events list ----------------------------------
+  // Running a tail down through a list of dates and event names makes
+  // both harder to read, so it doesn't: the same continuous path sweeps
+  // out to the right, leaves the canvas beside the list, and comes back
+  // in below it. The SVG clips at the viewport edge, so the off-canvas
+  // control points cost nothing to draw.
+  const OFF = winWidth + 240;
   pts.push({
-    x: clamp((prev.x + laneX) / 2 + (prev.x > laneX ? 60 : -60), winWidth * 0.08, winWidth * 0.92),
-    y: prev.y + (laneTop - prev.y) * 0.55,
+    x: clamp(prev.x + (winWidth * 0.88 - prev.x) * 0.55, winWidth * 0.1, winWidth * 0.92),
+    y: prev.y + (eventsTop - prev.y) * 0.5,
   });
-  pts.push({ x: laneX, y: laneTop });
-  pts.push({ x: (laneX + end.x) / 2, y: end.y - Math.max(280, (end.y - laneTop) * 0.42) });
-  pts.push({ x: end.x, y: end.y - 150 });
-  pts.push({ x: end.x, y: end.y });
+  // Off the canvas ABOVE the list, not beside its first row — otherwise
+  // the sweep out still clips the top couple of event names.
+  pts.push({ x: winWidth * 0.92, y: eventsTop - 210 });
+  pts.push({ x: OFF, y: eventsTop - 10 });
+  pts.push({ x: OFF, y: eventsTop + (eventsBottom - eventsTop) * 0.34 });
+  pts.push({ x: OFF + 30, y: eventsTop + (eventsBottom - eventsTop) * 0.72 });
+  pts.push({ x: winWidth * 0.93, y: eventsBottom + 70 });
+
+  // --- 4. the return, and the descent into the tiger ----------------
+  // One broad curve back toward the centre, a last gentle S, and only
+  // then a short straight run into the rump. Straightening earlier than
+  // that turns the tail into a flagpole.
+  const cx = winWidth / 2;
+  // Waypoints are placed as fractions of the remaining drop and in
+  // strictly descending order. Mixing fractional and fixed offsets here
+  // is what previously put one waypoint above the one before it, which
+  // folded the return into a near-horizontal run along the bottom of the
+  // page instead of a descent.
+  const span = Math.max(460, end.y - eventsBottom);
+  const at = (f: number) => end.y - span * f;
+
+  pts.push({ x: winWidth * 0.84, y: at(0.82) });
+  pts.push({ x: cx + winWidth * 0.105, y: at(0.62) });
+  pts.push({ x: cx - winWidth * 0.032, y: at(0.4) });
+  // Straight only for the last stretch. Any longer and the tail stops
+  // being a tail and starts being a flagpole.
+  pts.push({ x: cx, y: end.y - 215 });
+  pts.push({ x: cx, y: end.y });
 
   return pts;
 }
