@@ -1,11 +1,9 @@
 import Link from "next/link";
 import TigerWordmark from "./TigerWordmark";
-import MarbleField from "./MarbleField";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-ink/10 bg-paper">
-      <MarbleField contain={1300} opacity={0.3} className="-z-10" />
+    <footer className="border-t border-ink/10 bg-paper">
       <div className="max-w-content mx-auto px-6 md:px-10 py-12 md:py-14 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
         <div className="flex items-center text-ink">
           <TigerWordmark className="text-lg" />

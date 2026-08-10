@@ -200,7 +200,7 @@ export default function MediumWord({
     }
   }
 
-  const baseCls = `font-display ${size} leading-none tracking-tightest text-ink`;
+  const baseCls = `font-display ${size} leading-none tracking-tightest text-ink glyph-halo`;
 
   return (
     <div
@@ -214,6 +214,12 @@ export default function MediumWord({
       onMouseMove={onMove}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
+      {/* Local quiet zone: a soft cream cluster sized in ems off the
+          word's own font-size (via the `size` classes), so it scales
+          with EAT vs EXPLORE automatically and clears well outside
+          each word's letterforms without ever reading as a box. */}
+      <span aria-hidden="true" className={`quiet-zone-word ${size}`} />
+
       {variant === "explore" ? (
         <ExploreDoor letters={letters} baseCls={baseCls} hovered={hovered} langIndex={langIndex} />
       ) : (

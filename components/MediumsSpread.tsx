@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import MediumWord from "./MediumWord";
-import MarbleField from "./MarbleField";
 
 // `weave` is the side of the row the tail is told to pass on — always
 // the side the word ISN'T. Without these the tail had no reason to
@@ -29,25 +28,27 @@ const words: {
 
 export default function MediumsSpread() {
   return (
-    <section className="relative w-full overflow-hidden">
-      <MarbleField contain={1400} className="-z-10" />
-      <div className="max-w-content mx-auto px-6 md:px-10">
-      <div className="flex flex-col items-center pb-8 md:pb-12">
+    <section className="relative max-w-content mx-auto px-6 md:px-10">
+      <div className="relative flex flex-col items-center pb-8 md:pb-12">
+        <div
+          aria-hidden="true"
+          className="quiet-zone absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[120px] md:w-[320px] md:h-[140px]"
+        />
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}
           whileInView={{ opacity: 1, y: 0, rotate: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-          className="text-center text-sm md:text-base font-semibold tracking-wideish text-tiger-deep uppercase"
+          className="glyph-halo relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
         >
           six ways to dive in
         </motion.p>
         <motion.span
           initial={{ scaleX: 0, opacity: 0 }}
-          whileInView={{ scaleX: 1, opacity: 0.3 }}
+          whileInView={{ scaleX: 1, opacity: 0.5 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-2 h-px w-10 bg-tiger origin-center"
+          className="relative z-10 mt-2 h-px w-10 bg-tiger origin-center"
         />
       </div>
 
@@ -65,7 +66,6 @@ export default function MediumsSpread() {
         >
           <span
             aria-hidden="true"
-            data-stripe-anchor
             className={`pointer-events-none absolute top-1/2 h-px w-px ${
               w.weave === "right" ? "right-[8%]" : "left-[8%]"
             }`}
@@ -80,7 +80,6 @@ export default function MediumsSpread() {
           )}
         </motion.div>
       ))}
-      </div>
     </section>
   );
 }
