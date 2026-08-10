@@ -117,6 +117,8 @@ export default function TheStripe() {
   const [mounted, setMounted] = useState(false);
   const [points, setPoints] = useState<Pt[] | null>(null);
   const [invertRanges, setInvertRanges] = useState<Range[]>([]);
+  const [revealY, setRevealY] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   const onHomepage = pathname === "/";
 
@@ -214,6 +216,42 @@ export default function TheStripe() {
     };
   }, [mounted, onHomepage, measure]);
 
+  // The reveal is tied directly to raw scroll position — no spring, no
+  // easing that trails behind. At the top of the page almost none of
+  // the stripe shows; scrolling down draws more of it in as you go, in
+  // lockstep, so it visibly moves with you instead of either being
+  // fully there before you've scrolled or catching up late.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !onHomepage) return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const doc = document.documentElement;
+        const scrollable = Math.max(1, doc.scrollHeight - doc.clientHeight);
+        const progress = Math.min(1, Math.max(0, window.scrollY / scrollable));
+        setRevealY(progress * 1000);
+        ticking = false;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [mounted, onHomepage]);
+
   const { blackD, orangeD } = useMemo(() => {
     if (!points) return { blackD: "", orangeD: "" };
     const samples = sampleSmooth(points, 22);
@@ -239,29 +277,35 @@ export default function TheStripe() {
         </clipPath>
       ))}
 
-      {/* No scroll-linked reveal here on purpose — an earlier version
-          animated the stripe in as you scrolled, but the smoothing lag
-          meant it was always trailing behind where you'd actually
-          scrolled to. Simpler and more legible: it's just there,
-          in full, as soon as the page has measured its anchors. */}
+      <clipPath id="stripeReveal" clipPathUnits="userSpaceOnUse">
+        <rect
+          x="0"
+          y="0"
+          width="100"
+          height={reducedMotion ? 1000 : revealY}
+          style={{ transition: "height 80ms linear" }}
+        />
+      </clipPath>
 
-      {/* Thin orange edge, hugging the black core as a tight rim — a
-          solid fill traced along the same centerline, not a blurred
-          or independently-wobbling band. */}
-      <path d={orangeD} fill="#E2531C" />
+      <g clipPath="url(#stripeReveal)">
+        {/* Thin orange edge, hugging the black core as a tight rim — a
+            solid fill traced along the same centerline, not a blurred
+            or independently-wobbling band. */}
+        <path d={orangeD} fill="#E2531C" />
 
-      {/* The stripe itself: solid ink black everywhere by default. */}
-      <path d={blackD} fill="#15130E" />
+        {/* The stripe itself: solid ink black everywhere by default. */}
+        <path d={blackD} fill="#15130E" />
 
-      {/* Over the one dark closing section, the core swaps to a pale
-          paper tone instead — painted as the same path again, clipped
-          to just that section's bounds — so it stays a deliberate,
-          reliable color swap rather than a blend-mode guess. */}
-      {invertRanges.map((_, i) => (
-        <g key={i} clipPath={`url(#stripeInvert-${i})`}>
-          <path d={blackD} fill="#F5F0E3" />
-        </g>
-      ))}
+        {/* Over the one dark closing section, the core swaps to a pale
+            paper tone instead — painted as the same path again, clipped
+            to just that section's bounds — so it stays a deliberate,
+            reliable color swap rather than a blend-mode guess. */}
+        {invertRanges.map((_, i) => (
+          <g key={i} clipPath={`url(#stripeInvert-${i})`}>
+            <path d={blackD} fill="#F5F0E3" />
+          </g>
+        ))}
+      </g>
     </svg>
   );
 }
