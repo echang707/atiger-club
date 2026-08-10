@@ -155,6 +155,13 @@ body {
 .text-shield,
 .text-shield-invert {
   background-color: transparent;
+  /* The tail sits at z-index -1 inside the page-tall wrapper, so ordinary
+     flow content already paints over it. This makes that guarantee
+     explicit rather than incidental: any shielded run is lifted into its
+     own positioned layer, so no future wrapper that happens to create a
+     stacking context can drop a word underneath the tail. */
+  position: relative;
+  z-index: 1;
 }
 
 .dive-ripple {

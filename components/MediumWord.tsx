@@ -212,7 +212,7 @@ export default function MediumWord({
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
-      className="group relative inline-flex cursor-pointer select-none py-3"
+      className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
       {variant === "explore" ? (
         <ExploreDoor letters={letters} baseCls={baseCls} hovered={hovered} langIndex={langIndex} />

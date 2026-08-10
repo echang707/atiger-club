@@ -3,6 +3,11 @@
 import { motion } from "framer-motion";
 import MediumWord from "./MediumWord";
 
+// `weave` is the side of the row the tail is told to pass on — always
+// the side the word ISN'T. Without these the tail had no reason to
+// leave the middle of the page and simply fell straight through CREATE.
+// They're waypoints, not hard constraints: the tail still bends around
+// the measured type on its way between them.
 const words: {
   word: string;
   variant: "eat" | "create" | "move" | "explore" | "serve" | "learn";
@@ -11,13 +16,14 @@ const words: {
   offset: string;
   rotate: number;
   num: string;
+  weave: "left" | "right";
 }[] = [
-  { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01" },
-  { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02" },
-  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03" },
-  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04" },
-  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05" },
-  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06" },
+  { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01", weave: "right" },
+  { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02", weave: "left" },
+  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03", weave: "right" },
+  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
+  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
+  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
 ];
 
 export default function MediumsSpread() {
@@ -49,11 +55,19 @@ export default function MediumsSpread() {
           whileInView={{ opacity: 1, y: 0, rotate: w.rotate }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className={`flex items-center gap-4 md:gap-6 py-7 md:py-12 ${
+          className={`relative flex items-center gap-4 md:gap-6 py-7 md:py-12 ${
             w.align === "start" ? "justify-start" : w.align === "end" ? "justify-end" : "justify-center"
           } ${w.offset} ${i % 2 === 1 ? "md:mt-2" : "md:-mt-2"}`}
           style={{ transformOrigin: w.align === "end" ? "right center" : "left center" }}
         >
+          <span
+            aria-hidden="true"
+            data-stripe-anchor
+            className={`pointer-events-none absolute top-1/2 h-px w-px ${
+              w.weave === "right" ? "right-[3%]" : "left-[3%]"
+            }`}
+          />
+
           {w.align !== "end" && (
             <span className="font-mono text-xs text-ink/30 hidden sm:block">{w.num}</span>
           )}

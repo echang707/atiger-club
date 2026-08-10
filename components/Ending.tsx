@@ -12,8 +12,12 @@ function TigerAtTheEnd() {
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       className="pointer-events-none relative mx-auto my-8 sm:my-10 md:my-14 w-[190px] sm:w-[230px] md:w-[285px]"
     >
-      {/* The page-long tail resolves exactly into this point at the top of the rump. */}
-      <span data-stripe-end className="absolute left-[50%] top-[3.5%] h-px w-px" />
+      {/* The page-long tail ends here, a little way INSIDE the rump rather
+          than kissing its outline. The tiger sits at z-10 and the tail at
+          z-index -1, so those last few pixels are covered by the animal's
+          own body — which is what makes the join read as one creature
+          instead of a line stopping next to a shape. */}
+      <span data-stripe-end className="absolute left-[50%] top-[8%] h-px w-px" />
 
       <svg viewBox="0 0 300 390" className="block h-auto w-full overflow-visible">
         <defs>
