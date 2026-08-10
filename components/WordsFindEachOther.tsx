@@ -40,7 +40,7 @@ function Word({
       }}
       className="inline-block"
     >
-      <motion.span className="inline-block" style={{ x: nudgeX }}>
+      <motion.span className="inline-block text-shield" style={{ x: nudgeX }}>
         {w.text}
       </motion.span>
     </motion.span>

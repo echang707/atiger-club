@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 
 export default function Ending() {
   return (
-    <section className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-6">
+    <section
+      data-stripe-invert
+      className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-6"
+    >
       <div className="absolute inset-0 opacity-[0.04] paper-texture" />
 
       <motion.p
@@ -19,6 +22,7 @@ export default function Ending() {
 
       <motion.a
         href="/events"
+        data-stripe-anchor
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}

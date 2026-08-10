@@ -55,7 +55,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative inline-block"
         >
-          <div className="photo-frame -rotate-2 inline-block">
+          <div data-stripe-anchor className="photo-frame -rotate-2 inline-block">
             <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image
                 src={hero.image}
@@ -73,13 +73,21 @@ export default function ScrollStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="annotation text-3xl md:text-4xl mt-10"
+          className="annotation text-3xl md:text-4xl mt-16 md:mt-20"
         >
-          &ldquo;A meaningful life is a life connected to others.&rdquo;
+          {/* "connected" is left unshielded and marked as a stripe
+              anchor on purpose — the line is meant to visibly run
+              through that word rather than duck behind an opaque
+              backdrop like the rest of the quote does. */}
+          <span className="text-shield">&ldquo;A meaningful life is a life</span>{" "}
+          <span data-stripe-anchor className="relative">
+            connected
+          </span>{" "}
+          <span className="text-shield">to others.&rdquo;</span>
         </motion.p>
       </div>
 
-      <div className="h-[24vh] md:h-[32vh]" />
+      <div className="h-[28vh] md:h-[36vh]" />
 
       <div className="max-w-2xl mx-auto px-6 text-center">
         <motion.p
@@ -87,7 +95,7 @@ export default function ScrollStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight"
+          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight text-shield"
         >
           made for the moments that become something more.
         </motion.p>
@@ -105,6 +113,7 @@ export default function ScrollStory() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
               className="absolute photo-frame"
+              data-stripe-anchor
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
             >
               <div className="relative w-full aspect-[4/3] overflow-hidden">
@@ -116,7 +125,7 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
+              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80 text-shield">
                 {p.caption}
               </span>
             </motion.div>
