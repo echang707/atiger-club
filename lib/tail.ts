@@ -256,21 +256,15 @@ function bestChannel(boxes: Box[], y0: number, y1: number, width: number): numbe
   return bestX;
 }
 
-// The curl at the tip. An opening spiral, not a circle: the radius grows
+// The loop at the tip. An opening spiral, not a circle: the radius grows
 // as it sweeps, so the last turn passes outside the first and the tail
-// genuinely crosses over itself. It's laid out backwards from its exit —
-// the final angle is pinned at 0, where the tangent points straight down
-// the page, so the curl unwinds into the descent instead of flicking
-// sideways out of it.
-function tipCurl(anchor: Pt, radius: number): { pts: Pt[]; exit: Pt } {
+// genuinely crosses over itself. The sweep ends at angle 0, where the
+// tangent points straight down the page, so the loop unwinds into the
+// descent instead of flicking sideways out of it.
+function curlAt(centre: Pt, radius: number): { pts: Pt[]; exit: Pt } {
   const SWEEP = Math.PI * 1.86;
   const a0 = Math.PI * 2 - SWEEP; // ≈ 0.14π
   const r0 = radius * 0.46;
-
-  // Solve for the centre that puts the first point of the spiral exactly
-  // on the anchor — the period at the end of the hero tagline.
-  const cx = anchor.x - Math.cos(a0) * r0;
-  const cy = anchor.y - Math.sin(a0) * r0;
 
   const pts: Pt[] = [];
   const N = 46;
@@ -278,9 +272,37 @@ function tipCurl(anchor: Pt, radius: number): { pts: Pt[]; exit: Pt } {
     const t = i / N;
     const a = a0 + SWEEP * t;
     const r = r0 + (radius - r0) * t;
-    pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+    pts.push({ x: centre.x + Math.cos(a) * r, y: centre.y + Math.sin(a) * r });
   }
   return { pts, exit: pts[pts.length - 1] };
+}
+
+// Places that loop in clear space. It has to read as belonging to the
+// period at the end of the tagline, but it must not sit on the words: an
+// earlier version pinned the spiral's first point exactly to the period,
+// which swung the whole circle back over "together". So the centre is
+// tried at a handful of offsets around the period — nearest first — and
+// the first one whose circle clears every measured line of type wins.
+function placeCurl(anchor: Pt, radius: number, boxes: Box[], width: number): Pt {
+  const R = radius * 1.2; // the circle, plus the tail's own weight
+
+  const candidates: Pt[] = [
+    { x: anchor.x + radius * 1.75, y: anchor.y - radius * 0.15 },
+    { x: anchor.x + radius * 1.75, y: anchor.y + radius * 0.6 },
+    { x: anchor.x + radius * 2.4, y: anchor.y + radius * 0.2 },
+    { x: anchor.x + radius * 1.2, y: anchor.y + radius * 1.6 },
+    { x: anchor.x - radius * 0.2, y: anchor.y + radius * 1.95 },
+  ];
+
+  const clears = (c: Pt) =>
+    c.x + R < width * 0.97 &&
+    c.x - R > width * 0.03 &&
+    !boxes.some((b) => c.x + R > b.x0 && c.x - R < b.x1 && c.y + R > b.y0 && c.y - R < b.y1);
+
+  for (const c of candidates) if (clears(c)) return c;
+  // Nothing clear beside the tagline — a narrow phone, most likely. Drop
+  // the loop into the gap below it, where there is always room.
+  return { x: clamp(anchor.x, width * 0.42, width * 0.78), y: anchor.y + radius * 2.2 };
 }
 
 // ---------------------------------------------------------------------
@@ -293,7 +315,7 @@ function tipCurl(anchor: Pt, radius: number): { pts: Pt[]; exit: Pt } {
 // orange gaps that tighten toward a solid black tip.
 // ---------------------------------------------------------------------
 
-type BandSpec = { s0: number; s1: number; seed: number; eye: boolean };
+type BandSpec = { s0: number; s1: number; seed: number; side: number; tip: boolean };
 
 function planBands(totalLen: number, halfAt: (s: number) => number): BandSpec[] {
   const bands: BandSpec[] = [];
@@ -302,29 +324,29 @@ function planBands(totalLen: number, halfAt: (s: number) => number): BandSpec[] 
   // thinnest, most fragile stretch of the tail reads as deliberate
   // rather than as a thread that failed to render.
   const tipLen = clamp(totalLen * 0.012, 40, 96);
-  bands.push({ s0: -STEP, s1: tipLen, seed: 0.5, eye: false });
+  bands.push({ s0: -STEP, s1: tipLen, seed: 0.5, side: 0, tip: true });
 
   let s = tipLen;
   let k = 1;
+  let side = 1;
   while (s < totalLen - 40) {
     const w = halfAt(s);
-    // Pitch scales with the tail's own thickness, so a ring is always
-    // about as long as the tail is wide no matter where you are along
-    // it. A fixed minimum pitch was the bug that made the thin upper
-    // stretch look like a dashed line: long marks on a narrow tail read
-    // as dashes, not as bands wrapping around it.
-    const pitch = Math.max(30, w * 5.4);
-    s += pitch * (0.46 + 0.13 * jitter(k * 3.7));
+    // Pitch scales with the tail's own thickness, so a mark is always
+    // about as long as the tail is wide wherever you are along it. A
+    // fixed minimum pitch was the bug that made the thin upper stretch
+    // read as a dashed line.
+    const pitch = Math.max(24, w * 4.2);
+    s += pitch * (0.30 + 0.11 * jitter(k * 3.7));
     if (s >= totalLen - 30) break;
-    const s1 = Math.min(totalLen, s + pitch * (0.46 + 0.16 * jitter(k * 5.1)));
-    bands.push({
-      s0: s,
-      s1,
-      seed: k * 1.37,
-      // The occasional enclosed orange spot inside a band — the detail
-      // that reads as a real pelt rather than a repeating pattern.
-      eye: jitter(k * 9.13) > 0.86 && s1 - s > 26 && w > 9,
-    });
+    const s1 = Math.min(totalLen, s + pitch * (0.26 + 0.12 * jitter(k * 5.1)));
+
+    // Alternate which flank the mark grows from — but not mechanically.
+    // Roughly one in five repeats the previous side, which is what stops
+    // the run reading as a zip.
+    if (jitter(k * 7.31) > 0.8) side = -side;
+    bands.push({ s0: s, s1, seed: k * 1.37, side, tip: false });
+    side = -side;
+
     s = s1;
     k++;
   }
@@ -340,7 +362,7 @@ function planBands(totalLen: number, halfAt: (s: number) => number): BandSpec[] 
 // eyeballed outside a browser.
 // ---------------------------------------------------------------------
 
-export type Segment = { body: string; bands: string[]; eyes: string[] };
+export type Segment = { body: string; bands: string[] };
 
 export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment[] {
   if (!route || route.length < 3) return [];
@@ -362,7 +384,7 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
   // light relax is cosmetic: it takes the last small kinks out of the
   // corrections without undoing them.
   let path = steerAroundText(dense, textBoxes, width, freedom);
-  path = relax(path, 26, 0.4, freedom);
+  path = relax(path, 42, 0.42, freedom);
   path = steerAroundText(path, textBoxes, width, freedom);
   path = relax(path, 6, 0.25, freedom);
 
@@ -486,63 +508,61 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
   // break instead of restarting at every word.
   const bands = planBands(len, halfAt);
 
-  // A ring is described by two smooth curves running across the tail —
-  // where the black starts and where it ends — rather than by a
-  // rectangle with decoration bolted on:
+  // A tiger's tail marking is not a bar across the tail and not a blob:
+  // it is a brush stroke that ROOTS on one flank and grows inward,
+  // widest where it meets the edge and tapering to a needle point
+  // somewhere past the middle. Consecutive marks root on opposite
+  // flanks, and each drifts along the tail as it reaches inward, so the
+  // run leans with the curve instead of sitting square to it.
   //
-  //   tilt   leans the whole ring, so one edge of the tail meets it
-  //          before the other. Tiger rings are almost never square to
-  //          the tail.
-  //   bow    bends both curves the same way, which is what turns a bar
-  //          into a chevron.
-  //   pinch  narrows the ring toward one edge, so it tapers to a soft
-  //          point on one side instead of ending as a blunt block.
-  //
-  // The previous shape used an odd-powered term that put a notch in the
-  // outline, which is why the marks came out looking chipped.
-  const NV = 20; // cross-samples per band edge
-  const bandPath = (spec: BandSpec, lo: number, hi: number): string => {
+  //   reach  how far across it gets — under 1 stops short of centre,
+  //          near 2 almost touches the far flank and reads as a ring.
+  //   lean   drift along the tail from root to point.
+  //   curve  extra bend in that drift, so the stroke hooks rather than
+  //          running dead straight.
+  const NV = 18;
+  const stripePath = (spec: BandSpec, lo: number, hi: number): string => {
     const c = (spec.s0 + spec.s1) / 2;
-    const hl = (spec.s1 - spec.s0) / 2;
-    if (hl <= 1) return "";
+    const w0 = (spec.s1 - spec.s0) / 2;
+    if (w0 <= 0.6) return "";
+    const at = (sv: number) => clamp(sv, lo, hi);
 
-    const tilt = 0.4 * signed(spec.seed + 0.3);
-    const bow = 0.36 * signed(spec.seed + 1.1);
-    const pinch = 0.16 + 0.34 * jitter(spec.seed + 2.3);
-    const pinchSide = signed(spec.seed + 3.5) > 0 ? 1 : -1;
-
-    const mid = (v: number) => c + hl * (tilt * v + bow * (v * v - 1 / 3));
-    const thick = (v: number) =>
-      hl * (1 - pinch * (0.5 + 0.5 * pinchSide * v)) * (1 - 0.16 * v * v);
-
-    const at = (v: number, side: number) => clamp(mid(v) + side * thick(v), lo, hi);
-
-    const vs: number[] = [];
-    for (let j = 0; j <= NV; j++) vs.push(-1 + (2 * j) / NV);
-
-    const out: Pt[] = [];
-    // leading edge, one flank to the other
-    for (let j = 0; j <= NV; j++) out.push(P(at(vs[j], -1), vs[j]));
-    // along the tail's own curvature to the far end of the ring
-    for (let i = idx(at(1, -1)) + 1; i < idx(at(1, 1)); i++) out.push(P(i * STEP, 1));
-    // trailing edge, coming back
-    for (let j = NV; j >= 0; j--) out.push(P(at(vs[j], 1), vs[j]));
-    for (let i = idx(at(-1, 1)) - 1; i > idx(at(-1, -1)); i--) out.push(P(i * STEP, -1));
-
-    return poly(out);
-  };
-
-  const eyePath = (spec: BandSpec): string => {
-    const c = (spec.s0 + spec.s1) / 2;
-    const hl = (spec.s1 - spec.s0) / 2;
-    const rs = hl * 0.58;
-    const off = 0.16 * signed(spec.seed + 5.1);
-    const out: Pt[] = [];
-    for (let a = 0; a < 22; a++) {
-      const th = (a / 22) * Math.PI * 2;
-      out.push(P(c + Math.cos(th) * rs, clamp(off + Math.sin(th) * 0.5, -0.7, 0.7)));
+    // The solid tip is the one mark that does wrap the whole tail.
+    if (spec.tip) {
+      const out: Pt[] = [];
+      const i0 = idx(Math.max(0, spec.s0));
+      const i1 = idx(spec.s1);
+      for (let i = i0; i <= i1; i++) out.push(P(i * STEP, 1));
+      for (let i = i1; i >= i0; i--) out.push(P(i * STEP, -1));
+      return poly(out);
     }
-    return poly(out);
+
+    const side = spec.side;
+    const reach = 1.55 + 0.4 * jitter(spec.seed + 1.1);
+    const lean = 0.5 * signed(spec.seed + 2.3);
+    const curve = 0.3 * signed(spec.seed + 3.1);
+    // Roots aren't flat cuts: one corner sits further along the tail.
+    const rootSkew = 0.3 * signed(spec.seed + 4.7);
+
+    const front: Pt[] = [];
+    const back: Pt[] = [];
+    for (let j = 0; j <= NV; j++) {
+      const t = j / NV;
+      const v = clamp(side * (1 - reach * t), -1, 1);
+      const drift = w0 * (lean * t + curve * t * t) - w0 * rootSkew * (1 - t);
+      // Full weight at the root, held well past halfway, then closed to
+      // a point. Shedding width early — a linear taper, or a low power
+      // of (1 - t) — collapses the stroke into a triangle sitting on the
+      // edge, which is what made the first attempt read as sawteeth.
+      // Note the stroke is deliberately SHORT along the tail and LONG
+      // across it: that ratio is the difference between a stripe and a
+      // thumbprint.
+      const hw = w0 * Math.sqrt(Math.max(0, 1 - Math.pow(t, 2.4)));
+      front.push(P(at(c + drift - hw), v));
+      back.push(P(at(c + drift + hw), v));
+    }
+
+    return poly([...front, ...back.reverse()]);
   };
 
   // Body slices are painted tip-first, one per band, so where the curl
@@ -581,8 +601,7 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
       const band = mine[k];
       out.push({
         body: poly(edge),
-        bands: band ? [bandPath(band, cuts[k], cuts[k + 1])].filter(Boolean) : [],
-        eyes: band && band.eye ? [eyePath(band)].filter(Boolean) : [],
+        bands: band ? [stripePath(band, cuts[k] - STEP, cuts[k + 1] + STEP)].filter(Boolean) : [],
       });
     }
   }
@@ -613,9 +632,9 @@ export function buildRoute(
     return ra !== rb ? ra - rb : a.x - b.x;
   });
 
-  // --- 1. the curl at the tip ---------------------------------------
+  // --- 1. the loop at the tip ---------------------------------------
   const curlR = clamp(winWidth * 0.052, 32, 62);
-  const { pts: curl, exit } = tipCurl(start, curlR);
+  const { pts: curl, exit } = curlAt(placeCurl(start, curlR, boxes, winWidth), curlR);
 
   const pts: Pt[] = [...curl];
   // Leave the curl travelling straight down before the route starts
@@ -623,6 +642,28 @@ export function buildRoute(
   pts.push({ x: exit.x, y: exit.y + curlR * 1.5 });
 
   // --- 2. the wander down the page ----------------------------------
+  // Anchors are waypoints, not commands. Left to itself the route will
+  // swing the full width of the page between two anchors only a couple
+  // of hundred pixels apart vertically, and no amount of smoothing turns
+  // that into anything but a hairpin. So each anchor's x is pulled back
+  // toward the previous one until the leg's horizontal travel is at most
+  // its vertical drop: the tail can lean hard, but it can never double
+  // back on itself. This is what keeps the whole descent one continuous
+  // S rather than a zigzag, and it holds for any content — a row of
+  // scattered photos at nearly the same height simply gets visited as a
+  // gentle drift instead of a saw blade.
+  const MAX_SLOPE = 0.9;
+  {
+    let px = pts[pts.length - 1].x;
+    let py = pts[pts.length - 1].y;
+    for (const a of usable) {
+      const room = Math.max(50, (a.y - py) * MAX_SLOPE);
+      a.x = clamp(a.x, px - room, px + room);
+      px = a.x;
+      py = a.y;
+    }
+  }
+
   let prev = pts[pts.length - 1];
   for (const a of usable) {
     const dy = Math.max(1, a.y - prev.y);

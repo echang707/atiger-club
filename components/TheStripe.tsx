@@ -246,9 +246,6 @@ export default function TheStripe() {
             {seg.bands.map((d, j) => (
               <path key={`b${j}`} d={d} fill="#16140F" />
             ))}
-            {seg.eyes.map((d, j) => (
-              <path key={`e${j}`} d={d} fill="#D97721" />
-            ))}
           </g>
         ))}
       </g>

@@ -12,12 +12,11 @@ function TigerAtTheEnd() {
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       className="pointer-events-none relative mx-auto my-8 sm:my-10 md:my-14 w-[190px] sm:w-[230px] md:w-[285px]"
     >
-      {/* The page-long tail ends here, a little way INSIDE the rump rather
-          than kissing its outline. The tiger sits at z-10 and the tail at
-          z-index -1, so those last few pixels are covered by the animal's
-          own body — which is what makes the join read as one creature
-          instead of a line stopping next to a shape. */}
-      <span data-stripe-end className="absolute left-[50%] top-[8%] h-px w-px" />
+      {/* Dead centre of the rump, and a little way INSIDE it. The tiger
+          sits at z-10 and the tail at z-index -1, so the last stretch is
+          covered by the root wedge above — which is what makes the join
+          read as one creature rather than a line stopping near a shape. */}
+      <span data-stripe-end className="absolute left-[50%] top-[7%] h-px w-px" />
 
       <svg viewBox="0 0 300 390" className="block h-auto w-full overflow-visible">
         <defs>
@@ -28,6 +27,15 @@ function TigerAtTheEnd() {
         </defs>
 
         <g filter="url(#tiger-paper-edge)">
+          {/* The tail root. The page-long tail stops a little way inside
+              this wedge, which is drawn above it — so the join isn't a
+              line meeting a shape, it's the tail thickening into the
+              animal's own body. Its top edge is cut to roughly the
+              tail's arriving width and it flares out to meet the rump. */}
+          <path d="M127 -24 C126 4 122 28 116 58 L184 58 C178 28 174 4 173 -24 Z" fill="#D97721" />
+          <path d="M129 -6 C137 2 143 10 147 22 C139 20 132 16 126 10 Z" fill="#16140F" />
+          <path d="M171 14 C163 22 157 31 154 42 C162 39 169 34 174 27 Z" fill="#16140F" />
+
           {/* top-down/back-view body: rump first, head pointing into the section */}
           <path
             d="M150 18 C110 18 80 43 77 84 C72 129 85 173 93 212 C99 242 100 277 111 307 C121 335 135 351 150 354 C165 351 179 335 189 307 C200 277 201 242 207 212 C215 173 228 129 223 84 C220 43 190 18 150 18 Z"
@@ -102,17 +110,37 @@ export default function Ending() {
       <div className="absolute inset-0 -z-20 bg-ink" />
       <div className="absolute inset-0 -z-10 opacity-[0.04] paper-texture" />
 
-      <div className="relative z-10 w-full max-w-6xl min-h-[64vh] flex flex-col">
+      {/* A soft warm pool on the centre axis. It does no work on its own,
+          but it puts the brightest point of the section exactly where the
+          tail lands, so the eye follows the tail down into the animal
+          instead of drifting to the two lines of copy. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[70%]"
+        style={{
+          background:
+            "radial-gradient(60% 55% at 50% 62%, rgba(217,119,33,0.13), rgba(217,119,33,0) 70%)",
+        }}
+      />
+
+      <div className="relative z-10 w-full max-w-6xl min-h-[64vh] flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-[1fr_180px_1fr] items-start gap-3 md:gap-8 pt-16 md:pt-24"
+          className="grid w-full grid-cols-1 md:grid-cols-[1fr_260px_1fr] items-baseline gap-3 md:gap-0 pt-16 md:pt-24"
         >
-          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-right">Life is happening.</p>
+          {/* Split either side of a wide centre gutter. The gutter is not
+              decoration — it is the lane the tail comes down, which is why
+              it is sized against the tail's weight rather than by eye. */}
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-right text-shield-invert">
+            Life is happening.
+          </p>
           <div aria-hidden="true" />
-          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-left">Grab it by the tail.</p>
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-left text-shield-invert">
+            Grab it by the tail.
+          </p>
         </motion.div>
 
         <TigerAtTheEnd />
