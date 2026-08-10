@@ -6,14 +6,14 @@ function TigerAtTheEnd() {
   return (
     <motion.div
       aria-hidden="true"
-      initial={{ opacity: 0, y: -10, rotate: 0.8 }}
+      initial={{ opacity: 0, y: -10, rotate: 0.6 }}
       whileInView={{ opacity: 1, y: 0, rotate: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 w-[190px] sm:w-[230px] md:w-[285px]"
+      className="pointer-events-none relative z-10 mx-auto mt-10 w-[205px] sm:w-[245px] md:w-[300px]"
     >
-      {/* The page-long tail resolves exactly into this point at the top of the rump. */}
-      <span data-stripe-end className="absolute left-[50%] top-[3.5%] h-px w-px" />
+      {/* Exact tail socket. The page-long SVG ends here, centered on the rump. */}
+      <span data-stripe-end className="absolute left-1/2 top-0 h-px w-px -translate-x-1/2" />
 
       <svg viewBox="0 0 300 390" className="block h-auto w-full overflow-visible">
         <defs>
@@ -24,60 +24,48 @@ function TigerAtTheEnd() {
         </defs>
 
         <g filter="url(#tiger-paper-edge)">
-          {/* top-down/back-view body: rump first, head pointing into the section */}
-          <path
-            d="M150 18 C110 18 80 43 77 84 C72 129 85 173 93 212 C99 242 100 277 111 307 C121 335 135 351 150 354 C165 351 179 335 189 307 C200 277 201 242 207 212 C215 173 228 129 223 84 C220 43 190 18 150 18 Z"
-            fill="#D97721"
-          />
+          {/* Rear-facing/top-down body. The broad rump is intentionally at the top so the tail plugs in naturally. */}
+          <path d="M150 8 C108 8 77 35 74 81 C70 126 83 170 91 210 C97 242 98 279 109 310 C120 341 135 358 150 362 C165 358 180 341 191 310 C202 279 203 242 209 210 C217 170 230 126 226 81 C223 35 192 8 150 8 Z" fill="#D97721" />
+          <path d="M80 73 C54 84 43 111 47 147 C51 178 66 196 93 201 C87 158 78 119 80 73 Z" fill="#D97721" />
+          <path d="M220 73 C246 84 257 111 253 147 C249 178 234 196 207 201 C213 158 222 119 220 73 Z" fill="#D97721" />
+          <path d="M88 165 C61 181 51 207 56 235 C60 256 73 270 92 272 C99 241 100 208 96 179 Z" fill="#D97721" />
+          <path d="M212 165 C239 181 249 207 244 235 C240 256 227 270 208 272 C201 241 200 208 204 179 Z" fill="#D97721" />
+          <path d="M58 227 C43 235 38 250 44 263 C49 276 66 280 83 269" fill="#D97721" />
+          <path d="M242 227 C257 235 262 250 256 263 C251 276 234 280 217 269" fill="#D97721" />
+          <path d="M108 282 C92 292 86 311 93 330 C100 350 118 360 150 361 C182 360 200 350 207 330 C214 311 208 292 192 282 Z" fill="#D97721" />
+          <path d="M121 334 C116 359 127 382 150 386 C173 382 184 359 179 334 Z" fill="#D97721" />
+          <path d="M124 346 L108 336 L114 359 Z" fill="#D97721" />
+          <path d="M176 346 L192 336 L186 359 Z" fill="#D97721" />
 
-          {/* haunches create a real rear silhouette instead of a pill-shaped mascot */}
-          <path d="M83 78 C56 88 45 114 49 148 C53 177 67 194 93 199 C87 159 79 122 83 78 Z" fill="#D97721" />
-          <path d="M217 78 C244 88 255 114 251 148 C247 177 233 194 207 199 C213 159 221 122 217 78 Z" fill="#D97721" />
+          <path d="M122 296 C132 306 139 313 150 317 C161 313 168 306 178 296 C174 319 166 330 150 334 C134 330 126 319 122 296 Z" fill="#F5F0E3" opacity="0.9" />
+          <path d="M132 361 C138 369 144 373 150 374 C156 373 162 369 168 361 C164 377 158 384 150 386 C142 384 136 377 132 361 Z" fill="#F5F0E3" opacity="0.9" />
 
-          {/* rear legs and paws */}
-          <path d="M88 164 C62 179 52 204 57 231 C61 252 73 265 91 268 C98 239 100 206 96 177 Z" fill="#D97721" />
-          <path d="M212 164 C238 179 248 204 243 231 C239 252 227 265 209 268 C202 239 200 206 204 177 Z" fill="#D97721" />
-          <path d="M58 224 C44 232 39 247 44 260 C49 272 65 276 82 266" fill="#D97721" />
-          <path d="M242 224 C256 232 261 247 256 260 C251 272 235 276 218 266" fill="#D97721" />
-
-          {/* shoulders, neck and small head at the far end, so we're clearly looking down its back */}
-          <path d="M108 278 C92 288 86 307 93 326 C100 346 118 356 150 357 C182 356 200 346 207 326 C214 307 208 288 192 278 Z" fill="#D97721" />
-          <path d="M121 330 C116 355 127 378 150 382 C173 378 184 355 179 330 Z" fill="#D97721" />
-          <path d="M124 342 L108 332 L114 355 Z" fill="#D97721" />
-          <path d="M176 342 L192 332 L186 355 Z" fill="#D97721" />
-
-          {/* cream flashes soften the animal and echo the illustrated reference */}
-          <path d="M122 292 C132 302 139 309 150 313 C161 309 168 302 178 292 C174 315 166 326 150 330 C134 326 126 315 122 292 Z" fill="#F5F0E3" opacity="0.9" />
-          <path d="M132 357 C138 365 144 369 150 370 C156 369 162 365 168 357 C164 373 158 380 150 382 C142 380 136 373 132 357 Z" fill="#F5F0E3" opacity="0.9" />
-
-          {/* Organic, asymmetrical stripes. They follow the tiger's anatomy instead of sitting as horizontal bars. */}
+          {/* Long, tapered, anatomical markings so the tiger matches the tail instead of reading like a mascot. */}
           <g fill="#16140F">
-            <path d="M107 40 C121 47 132 54 143 69 C132 67 118 65 101 58 C96 54 99 45 107 40 Z" />
-            <path d="M193 40 C179 47 168 54 157 69 C168 67 182 65 199 58 C204 54 201 45 193 40 Z" />
-            <path d="M91 71 C111 78 126 88 140 105 C122 101 106 98 84 91 C80 84 82 77 91 71 Z" />
-            <path d="M209 71 C189 78 174 88 160 105 C178 101 194 98 216 91 C220 84 218 77 209 71 Z" />
-            <path d="M82 106 C105 113 123 124 139 143 C119 137 101 134 78 128 C74 121 76 112 82 106 Z" />
-            <path d="M218 106 C195 113 177 124 161 143 C181 137 199 134 222 128 C226 121 224 112 218 106 Z" />
-            <path d="M81 145 C105 149 124 160 141 178 C120 173 101 171 79 169 C76 162 77 152 81 145 Z" />
-            <path d="M219 145 C195 149 176 160 159 178 C180 173 199 171 221 169 C224 162 223 152 219 145 Z" />
-            <path d="M91 188 C110 190 127 201 142 218 C125 214 111 213 96 215 C91 209 89 198 91 188 Z" />
-            <path d="M209 188 C190 190 173 201 158 218 C175 214 189 213 204 215 C209 209 211 198 209 188 Z" />
-            <path d="M99 228 C115 229 130 239 143 253 C128 250 116 250 104 253 C99 247 97 237 99 228 Z" />
-            <path d="M201 228 C185 229 170 239 157 253 C172 250 184 250 196 253 C201 247 203 237 201 228 Z" />
-            <path d="M108 267 C124 270 137 278 146 289 C131 286 120 286 110 289 C106 282 106 275 108 267 Z" />
-            <path d="M192 267 C176 270 163 278 154 289 C169 286 180 286 190 289 C194 282 194 275 192 267 Z" />
-            <path d="M121 316 C131 318 140 323 147 331 C136 330 129 331 121 334 C118 328 118 322 121 316 Z" />
-            <path d="M179 316 C169 318 160 323 153 331 C164 330 171 331 179 334 C182 328 182 322 179 316 Z" />
-            {/* short central markings make the back read furry rather than perfectly mirrored */}
-            <path d="M143 80 C148 85 151 92 150 100 C146 96 143 91 141 86 Z" />
-            <path d="M155 117 C151 124 149 132 151 140 C155 136 158 130 159 123 Z" />
-            <path d="M143 156 C149 161 152 168 151 176 C147 172 144 168 141 162 Z" />
-            <path d="M156 198 C151 204 149 211 151 218 C155 215 158 209 160 204 Z" />
-            <path d="M145 238 C149 244 151 250 150 256 C146 253 143 249 142 244 Z" />
+            <path d="M104 29 C121 38 134 50 145 67 C128 63 112 59 94 51 C91 43 95 35 104 29 Z" />
+            <path d="M196 29 C179 38 166 50 155 67 C172 63 188 59 206 51 C209 43 205 35 196 29 Z" />
+            <path d="M89 64 C112 73 128 85 142 104 C122 99 104 95 81 86 C78 78 81 70 89 64 Z" />
+            <path d="M211 64 C188 73 172 85 158 104 C178 99 196 95 219 86 C222 78 219 70 211 64 Z" />
+            <path d="M80 101 C105 109 124 121 141 142 C119 136 100 132 76 125 C73 116 75 108 80 101 Z" />
+            <path d="M220 101 C195 109 176 121 159 142 C181 136 200 132 224 125 C227 116 225 108 220 101 Z" />
+            <path d="M79 142 C104 147 125 158 142 178 C120 172 100 169 77 167 C74 159 75 150 79 142 Z" />
+            <path d="M221 142 C196 147 175 158 158 178 C180 172 200 169 223 167 C226 159 225 150 221 142 Z" />
+            <path d="M89 185 C110 188 128 199 143 217 C125 212 110 211 94 213 C89 206 87 195 89 185 Z" />
+            <path d="M211 185 C190 188 172 199 157 217 C175 212 190 211 206 213 C211 206 213 195 211 185 Z" />
+            <path d="M98 226 C115 228 130 238 144 253 C128 249 115 249 103 252 C98 246 96 236 98 226 Z" />
+            <path d="M202 226 C185 228 170 238 156 253 C172 249 185 249 197 252 C202 246 204 236 202 226 Z" />
+            <path d="M107 267 C124 270 138 278 147 290 C132 286 120 286 109 290 C105 283 105 275 107 267 Z" />
+            <path d="M193 267 C176 270 162 278 153 290 C168 286 180 286 191 290 C195 283 195 275 193 267 Z" />
+            <path d="M120 318 C132 320 141 325 148 333 C137 332 129 333 120 336 C117 330 117 324 120 318 Z" />
+            <path d="M180 318 C168 320 159 325 152 333 C163 332 171 333 180 336 C183 330 183 324 180 318 Z" />
+            <path d="M143 76 C149 82 152 90 150 99 C146 95 142 89 140 83 Z" />
+            <path d="M156 115 C151 123 149 131 151 140 C156 136 159 130 160 122 Z" />
+            <path d="M143 155 C149 161 152 169 151 177 C147 173 143 168 140 162 Z" />
+            <path d="M157 197 C151 204 149 212 151 219 C156 216 159 210 161 203 Z" />
+            <path d="M145 239 C150 245 152 251 150 258 C146 254 143 250 141 244 Z" />
           </g>
 
-          {/* dark claws / paw definition */}
-          <path d="M49 251 l-9 6 M55 256 l-8 8 M251 251 l9 6 M245 256 l8 8" stroke="#16140F" strokeWidth="4" strokeLinecap="round" />
+          <path d="M48 254 l-9 6 M54 259 l-8 8 M252 254 l9 6 M246 259 l8 8" stroke="#16140F" strokeWidth="4" strokeLinecap="round" />
         </g>
       </svg>
     </motion.div>
@@ -88,21 +76,23 @@ export default function Ending() {
   return (
     <section
       data-stripe-invert
-      className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-visible px-6"
+      className="relative min-h-[92vh] overflow-visible px-6 text-paper"
     >
-      <div className="absolute inset-0 opacity-[0.04] paper-texture" />
+      {/* Separate background layer: the page-long tail sits above this dark field, while the section copy/tiger sit above the tail. */}
+      <div className="absolute inset-0 z-0 bg-ink" />
+      <div className="absolute inset-0 z-0 opacity-[0.04] paper-texture" />
 
-      <div className="relative z-10 w-full max-w-6xl min-h-[64vh] flex flex-col">
+      <div className="relative z-10 mx-auto flex min-h-[88vh] w-full max-w-6xl flex-col items-center pt-16 md:pt-24 pb-14">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-[1fr_180px_1fr] items-start gap-3 md:gap-8 pt-16 md:pt-24"
+          className="grid w-full grid-cols-1 items-start gap-3 md:grid-cols-[1fr_220px_1fr] md:gap-8"
         >
-          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-right">Life is happening.</p>
+          <p className="font-display text-3xl leading-tight text-center md:text-right md:text-5xl">Life is happening.</p>
           <div aria-hidden="true" />
-          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-left">Grab it by the tail.</p>
+          <p className="font-display text-3xl leading-tight text-center md:text-left md:text-5xl">Grab it by the tail.</p>
         </motion.div>
 
         <TigerAtTheEnd />
@@ -113,7 +103,7 @@ export default function Ending() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, delay: 0.15 }}
-          className="mt-auto mb-14 self-center text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
+          className="mt-8 text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
         >
           see what&rsquo;s happening →
         </motion.a>

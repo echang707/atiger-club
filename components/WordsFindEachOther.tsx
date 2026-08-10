@@ -18,7 +18,13 @@ function Word({ w, i, closeness }: { w: (typeof words)[number]; i: number; close
       transition={{ duration: 1.9, delay: 0.15 + i * 0.11, ease: [0.11, 0.6, 0.15, 1] }}
       className="inline-block"
     >
-      <motion.span className="inline-block text-shield" style={{ x: nudgeX }}>{w.text}</motion.span>
+      <motion.span
+        data-stripe-loop-target={w.text === "together" ? "" : undefined}
+        className="inline-block text-shield"
+        style={{ x: nudgeX }}
+      >
+        {w.text}
+      </motion.span>
     </motion.span>
   );
 }
