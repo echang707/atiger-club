@@ -15,7 +15,7 @@ export default function UpcomingRows() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="font-display text-4xl md:text-6xl text-ink mb-12 md:mb-16 text-shield"
+        className="font-display text-4xl md:text-6xl text-ink mb-12 md:mb-16"
       >
         what are you doing this week?
       </motion.h2>

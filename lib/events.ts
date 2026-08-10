@@ -33,17 +33,10 @@ export const mediums: { name: Medium; icon: string; description: string }[] = [
   },
 ];
 
-// Cities Tiger Club operates in. Atlanta is the only one live today, but
-// every event carries a `city` field and the filter UI already supports
-// more than one option — so adding the next city is just: add it here,
-// and start tagging events with it in the array below.
-export const cities: string[] = ["Atlanta"];
-
 export type TigerEvent = {
   id: string;
   title: string;
   medium: Medium;
-  city: string;
   date: string;
   month: string;
   day: string;
@@ -60,7 +53,6 @@ export const events: TigerEvent[] = [
     id: "world-cup-watch-party",
     title: "World Cup Semifinal Watch Party",
     medium: "Move",
-    city: "Atlanta",
     date: "Jul 15",
     month: "JUL",
     day: "15",
@@ -72,7 +64,6 @@ export const events: TigerEvent[] = [
     id: "bite-club-korea",
     title: "Bite Club: Bite of Korea",
     medium: "Eat",
-    city: "Atlanta",
     date: "Jul 16",
     month: "JUL",
     day: "16",
@@ -86,7 +77,6 @@ export const events: TigerEvent[] = [
     id: "creative-coffee-doraville",
     title: "Creative Coffee Meetup",
     medium: "Create",
-    city: "Atlanta",
     date: "Jul 17",
     month: "JUL",
     day: "17",
@@ -100,7 +90,6 @@ export const events: TigerEvent[] = [
     id: "creative-cafe-social",
     title: "Creative Café Social",
     medium: "Create",
-    city: "Atlanta",
     date: "Sep 11",
     month: "SEP",
     day: "11",
@@ -112,7 +101,6 @@ export const events: TigerEvent[] = [
     id: "dragon-boat-festival",
     title: "Atlanta Hong Kong Dragon Boat Festival",
     medium: "Explore",
-    city: "Atlanta",
     date: "Sep 12",
     month: "SEP",
     day: "12",
@@ -126,7 +114,6 @@ export const events: TigerEvent[] = [
     id: "mini-kennycon",
     title: "Mini-KennyCon 2026",
     medium: "Learn",
-    city: "Atlanta",
     date: "Sep 12",
     month: "SEP",
     day: "12",
@@ -140,7 +127,6 @@ export const events: TigerEvent[] = [
     id: "bite-club-mexico",
     title: "Bite Club: A Taste of México",
     medium: "Eat",
-    city: "Atlanta",
     date: "Sep 16",
     month: "SEP",
     day: "16",
@@ -152,7 +138,6 @@ export const events: TigerEvent[] = [
     id: "refuge-coffee-run",
     title: "The Refuge Coffee Run: Welcome Home",
     medium: "Move",
-    city: "Atlanta",
     date: "Sep 19",
     month: "SEP",
     day: "19",
@@ -166,7 +151,6 @@ export const events: TigerEvent[] = [
     id: "japanfest",
     title: "JapanFest 2026",
     medium: "Explore",
-    city: "Atlanta",
     date: "Sep 20",
     month: "SEP",
     day: "20",
@@ -180,7 +164,6 @@ export const events: TigerEvent[] = [
     id: "compassioncon",
     title: "CompassionCon",
     medium: "Serve",
-    city: "Atlanta",
     date: "Oct 25",
     month: "OCT",
     day: "25",

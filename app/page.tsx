@@ -4,7 +4,6 @@ import MediumsSpread from "@/components/MediumsSpread";
 import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
-import TheStripe from "@/components/TheStripe";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -24,14 +23,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      {/* Lives only in the homepage's tree — see the note in
-          app/layout.tsx for why it's not mounted up there instead.
-          Its own "absolute inset-0 h-full w-full" still resolves
-          against the layout's page-tall `relative` wrapper, since CSS
-          absolute positioning looks for the nearest positioned
-          ancestor regardless of how deep in the tree it's rendered
-          from — it doesn't need to be a direct child of it. */}
-      <TheStripe />
       <Hero />
       <MediumsSpread />
       <ScrollStory />

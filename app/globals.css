@@ -136,26 +136,7 @@ body {
   transform: scaleX(0);
 }
 
-/* Text-shield: a background the same color as the page paper, applied
-   directly to headings/paragraphs/captions. It's invisible on its own
-   (same color as the page), but it means anything painted behind the
-   text — namely The Stripe — is fully hidden exactly where the words
-   are, line by line, instead of showing through the gaps between
-   letters. box-decoration-break:clone gives every wrapped line its own
-   background box rather than one rectangle around the whole paragraph. */
-.text-shield {
-  background-color: #F5F0E3;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-  padding: 0.06em 0.28em;
-  margin: -0.06em -0.28em;
-  border-radius: 0.2em;
-}
-
-.text-shield-invert {
-  background-color: #15130E;
-}
-
+/* the little ripple that plays once under "six ways to dive in" */
 .dive-ripple {
   animation: dive-ripple 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transform-origin: center;

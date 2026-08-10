@@ -43,9 +43,6 @@ export default function Nav() {
           <Link href="/events" className="organic-underline text-ink/80 hover:text-ink transition-colors">
             Experiences
           </Link>
-          <Link href="/work-with-us" className="organic-underline text-ink/80 hover:text-ink transition-colors">
-            Work With Us
-          </Link>
         </nav>
 
         <div className="flex items-center gap-3 justify-self-end">
@@ -91,9 +88,6 @@ export default function Nav() {
             <div className="max-w-content mx-auto px-6 py-6 flex flex-col gap-5 text-lg">
               <Link href="/events" className="font-display text-ink" onClick={() => setOpen(false)}>
                 Experiences
-              </Link>
-              <Link href="/work-with-us" className="font-display text-ink" onClick={() => setOpen(false)}>
-                Work With Us
               </Link>
             </div>
           </motion.nav>
