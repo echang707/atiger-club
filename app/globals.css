@@ -136,22 +136,32 @@ body {
   transform: scaleX(0);
 }
 
-/* Hero tagline: sized as a fraction of its own box (cqw) rather than the
-   viewport, so "life is better together." always fits on one line no
-   matter how the surrounding layout constrains this element's width.
-   The vw-based value is a fallback for browsers without container query
-   support; the @supports block overrides it once cqw is available. */
-.hero-tagline {
-  font-size: clamp(1.6rem, 7vw, 3.75rem);
-}
+/* Text-shield is now a marker, not a paint job.
 
-@supports (container-type: inline-size) {
-  .hero-tagline-wrap {
-    container-type: inline-size;
-  }
-  .hero-tagline {
-    font-size: clamp(1.35rem, 6.5cqw, 3.75rem);
-  }
+   It used to set an opaque paper-colored background on every line of
+   text so The Stripe could be hidden behind it. That worked, but it
+   painted rectangles: wherever two shielded runs sat next to each
+   other, the seam between their boxes let a hard-edged sliver of the
+   stripe through, which is what made the shape of a text block
+   readable on the page. Worse, the negative side margins meant one
+   inline word's box overlapped its neighbor's, clipping the overhang
+   of italic glyphs — the missing tail on the "s" in "life is better
+   together" was a neighboring shield painting over it.
+
+   The stripe now measures these elements itself (per rendered line,
+   via a Range) and routes around them, breaking into separate tapered
+   marks where it can't. So nothing needs to be covered up, and the
+   class survives only as a hook the stripe can find. */
+.text-shield,
+.text-shield-invert {
+  background-color: transparent;
+  /* The tail sits at z-index -1 inside the page-tall wrapper, so ordinary
+     flow content already paints over it. This makes that guarantee
+     explicit rather than incidental: any shielded run is lifted into its
+     own positioned layer, so no future wrapper that happens to create a
+     stacking context can drop a word underneath the tail. */
+  position: relative;
+  z-index: 1;
 }
 
 .dive-ripple {
@@ -177,54 +187,37 @@ body {
   position: relative;
   display: inline-block;
   margin: 0 0.035em;
-  overflow: hidden;
   color: #E2531C;
 }
 
+/* The stripe overlay repeats the glyph as text and clips the stripe
+   gradient to that text's own painted pixels (background-clip: text),
+   instead of the letter's rectangular box. A box-based cutout used to
+   paint stripes across the G's counters and corners too — anywhere
+   inside the bounding box the ink didn't actually reach — so dark
+   stripes read as loose bars floating near the letter rather than
+   marks on it. Clipping to the text itself keeps every stripe inside
+   the glyph's own strokes, no matter how tight the curve of the G. */
 .tiger-wordmark-g::after {
-  content: "";
+  content: "G";
   position: absolute;
-  inset: 0.02em -0.02em;
+  inset: 0;
   pointer-events: none;
   background:
     linear-gradient(103deg,
       transparent 0 24%,
-      #F5F0E3 24% 28%,
+      #15130E 24% 28%,
       transparent 28% 49%,
-      #F5F0E3 49% 53%,
+      #15130E 49% 53%,
       transparent 53% 74%,
-      #F5F0E3 74% 78%,
+      #15130E 74% 78%,
       transparent 78% 100%);
-  mix-blend-mode: normal;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 /* When the sticky nav gains its translucent paper backdrop, the G's cutouts
    stay visually integrated with the page rather than reading as white bars. */
 header .tiger-wordmark-g::after { opacity: 0.98; }
-
-/* Click-anywhere paw prints. Each mark stamps in with a brief scale +
-   fade, then holds at its resting rotation/opacity for the rest of the
-   session — --paw-rot and --paw-opacity are set per-print inline. */
-.paw-print-mark {
-  transform: translate(-50%, -50%) rotate(var(--paw-rot, 0deg));
-  transform-origin: center;
-  opacity: var(--paw-opacity, 0.2);
-  animation: paw-stamp-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes paw-stamp-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6) rotate(var(--paw-rot, 0deg));
-  }
-  to {
-    opacity: var(--paw-opacity, 0.2);
-    transform: translate(-50%, -50%) scale(1) rotate(var(--paw-rot, 0deg));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .paw-print-mark {
-    animation: none;
-  }
-}

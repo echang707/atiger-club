@@ -51,13 +51,13 @@ export default function WorkWithUsClient() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl mb-12 md:mb-16"
         >
-          <p className="font-mono text-xs tracking-wideish uppercase text-tiger mb-3">
+          <p className="font-mono text-xs tracking-wideish uppercase text-tiger mb-3 text-shield">
             work with us
           </p>
-          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight">
+          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
             we turn your ideas into real experiences.
           </h1>
-          <p className="text-ink/55 mt-4 text-sm md:text-base max-w-xl">
+          <p className="text-ink/55 mt-4 text-sm md:text-base max-w-xl text-shield">
             Got something you&rsquo;ve wanted to see happen in Atlanta — a
             dinner, a workshop, a cleanup, a wild idea with no category yet?
             Tell us about it. We&rsquo;ll work with you to plan it, host it,
@@ -75,7 +75,7 @@ export default function WorkWithUsClient() {
         >
           <div className="grid sm:grid-cols-2 gap-5">
             <label className="grid gap-1.5 text-sm">
-              <span className="text-ink/60">Your name</span>
+              <span className="text-ink/60 text-shield">Your name</span>
               <input
                 required
                 value={name}
@@ -85,7 +85,7 @@ export default function WorkWithUsClient() {
               />
             </label>
             <label className="grid gap-1.5 text-sm">
-              <span className="text-ink/60">Email</span>
+              <span className="text-ink/60 text-shield">Email</span>
               <input
                 required
                 type="email"
@@ -98,7 +98,7 @@ export default function WorkWithUsClient() {
           </div>
 
           <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/60">City</span>
+            <span className="text-ink/60 text-shield">City</span>
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
@@ -113,7 +113,7 @@ export default function WorkWithUsClient() {
           </label>
 
           <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/60">What&rsquo;s the idea, in a few words?</span>
+            <span className="text-ink/60 text-shield">What&rsquo;s the idea, in a few words?</span>
             <input
               required
               value={idea}
@@ -124,7 +124,7 @@ export default function WorkWithUsClient() {
           </label>
 
           <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/60">Tell us more</span>
+            <span className="text-ink/60 text-shield">Tell us more</span>
             <textarea
               required
               rows={5}
@@ -147,13 +147,13 @@ export default function WorkWithUsClient() {
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-sm text-ink/50"
+                className="text-sm text-ink/50 text-shield"
               >
                 Opening your email — just hit send.
               </motion.span>
             )}
           </div>
-          <p className="text-xs text-ink/40 -mt-1">
+          <p className="text-xs text-ink/40 -mt-1 text-shield">
             This opens an email to {CONTACT_EMAIL}, pre-filled with what you enter above.
           </p>
         </motion.form>

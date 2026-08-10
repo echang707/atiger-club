@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import MediumWord from "./MediumWord";
+import MarbleField from "./MarbleField";
 
 // `weave` is the side of the row the tail is told to pass on — always
 // the side the word ISN'T. Without these the tail had no reason to
@@ -28,14 +29,16 @@ const words: {
 
 export default function MediumsSpread() {
   return (
-    <section className="relative max-w-content mx-auto px-6 md:px-10">
+    <section className="relative w-full overflow-hidden">
+      <MarbleField contain={1400} className="-z-10" />
+      <div className="max-w-content mx-auto px-6 md:px-10">
       <div className="flex flex-col items-center pb-8 md:pb-12">
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}
           whileInView={{ opacity: 1, y: 0, rotate: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-          className="text-center text-xs tracking-wideish text-ink/35 uppercase"
+          className="text-center text-sm md:text-base font-semibold tracking-wideish text-tiger-deep uppercase"
         >
           six ways to dive in
         </motion.p>
@@ -62,6 +65,7 @@ export default function MediumsSpread() {
         >
           <span
             aria-hidden="true"
+            data-stripe-anchor
             className={`pointer-events-none absolute top-1/2 h-px w-px ${
               w.weave === "right" ? "right-[8%]" : "left-[8%]"
             }`}
@@ -76,6 +80,7 @@ export default function MediumsSpread() {
           )}
         </motion.div>
       ))}
+      </div>
     </section>
   );
 }

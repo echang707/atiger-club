@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { memories } from "@/lib/events";
+import MarbleField from "./MarbleField";
 
 // The hero postcard is Bite Club #01 — the event that started it all.
 const hero = memories[0];
@@ -47,6 +48,8 @@ const scatter = [
 export default function ScrollStory() {
   return (
     <section className="relative">
+      <div className="relative">
+      <MarbleField contain={820} className="-z-10" />
       <div className="max-w-3xl mx-auto px-6 md:px-10 py-40 md:py-56 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
@@ -55,7 +58,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative inline-block"
         >
-          <div className="photo-frame -rotate-2 inline-block">
+          <div data-stripe-anchor className="photo-frame -rotate-2 inline-block">
             <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image
                 src={hero.image}
@@ -79,30 +82,40 @@ export default function ScrollStory() {
               word specifically, then breaks cleanly behind it and picks
               up on the far side as a new mark. It never paints over the
               word — the word is the reason the line is there. */}
-          <span>&ldquo;A meaningful life is a life</span>{" "}
-          <span className="relative">
+          <span className="text-shield">&ldquo;A meaningful life is a life</span>{" "}
+          <span data-stripe-anchor className="relative text-shield">
             connected
           </span>{" "}
-          <span>to others.&rdquo;</span>
+          <span className="text-shield">to others.&rdquo;</span>
         </motion.p>
       </div>
+      </div>
 
-      <div className="h-[28vh] md:h-[36vh]" />
+      <div className="relative h-[28vh] md:h-[36vh]">
+        <MarbleField rich className="-z-10" />
+      </div>
 
+      <div className="relative">
+      <MarbleField contain={720} className="-z-10" />
       <div className="max-w-2xl mx-auto px-6 text-center">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight"
+          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight text-shield"
         >
           made for the moments that become something more.
         </motion.p>
       </div>
+      </div>
 
-      <div className="h-[10vh] md:h-[14vh]" />
+      <div className="relative h-[10vh] md:h-[14vh]">
+        <MarbleField rich className="-z-10" />
+      </div>
 
+      <div className="relative">
+      <MarbleField contain={1400} className="-z-10" />
       <div className="relative max-w-content mx-auto px-6 md:px-10">
         <div className="relative w-full" style={{ paddingBottom: "78%" }}>
           {scatter.map((p, i) => (
@@ -113,6 +126,7 @@ export default function ScrollStory() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
               className="absolute photo-frame"
+              data-stripe-anchor
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
             >
               <div className="relative w-full aspect-[4/3] overflow-hidden">
@@ -124,12 +138,13 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
+              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80 text-shield">
                 {p.caption}
               </span>
             </motion.div>
           ))}
         </div>
+      </div>
       </div>
     </section>
   );

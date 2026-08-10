@@ -1,87 +1,118 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
+import MarbleField from "./MarbleField";
 
-// The one tail moment on the site. It's the actual drawn tiger — tail,
-// body and all one illustration — so the tail is physically part of the
-// animal at every viewport size by construction, not a separate shape
-// that has to be lined up against it. It sits off the right edge of the
-// section and sweeps in once as the section enters view, then settles.
+// The hand-drawn tiger, tail curled up over its own back. It replaces
+// the old top-down SVG rump: this one already carries its own tail, so
+// it doesn't need to be the literal spot the page-long tail line (see
+// TheStripe) walks into — it just needs to sit small enough to read as
+// "the tiger" inside this one section, nudged toward the right so the
+// curl at the top of its own tail lands close under "Grab it by the
+// tail." above it, which is the whole joke.
 function TigerAtTheEnd() {
-  const prefersReduced = useReducedMotion();
-
   return (
     <motion.div
       aria-hidden="true"
-      initial={prefersReduced ? false : { opacity: 0, x: 90, rotate: -2 }}
-      whileInView={{ opacity: 1, x: 0, rotate: 0 }}
-      viewport={{ once: true, margin: "-120px" }}
-      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-      className="pointer-events-none absolute bottom-0 right-[-14%] top-auto z-0 w-[68vw] max-w-[300px] sm:right-[-8%] sm:w-[52vw] sm:max-w-[380px] md:right-[-6%] md:w-[38vw] md:max-w-[520px] lg:right-[-3%]"
+      initial={{ opacity: 0, y: -10, rotate: 0.8 }}
+      whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      className="pointer-events-none relative mx-auto mt-2 mb-8 sm:mt-3 sm:mb-10 md:mb-14 w-[160px] sm:w-[190px] md:w-[225px] md:ml-[9%] lg:ml-[11%] md:-mt-2"
     >
-      <Image
-        src="/images/tiger-illustration.png"
-        alt=""
-        width={989}
-        height={1467}
-        priority={false}
-        className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-      />
+      {/* Sits just inside the top-left of the frame, which is where the
+          drawing's own tail curls — close enough to where the page's
+          drawn tail line (see TheStripe) arrives that the two read as
+          one continuous stroke, and covered by the opaque artwork
+          either way so the join never shows as a line stopping short. */}
+      <span data-stripe-end className="absolute left-[18%] top-[10%] h-px w-px" />
+
+      <div className="relative w-full aspect-[3/2]">
+        <Image
+          src="/images/tiger-drawn.png"
+          alt="Illustrated tiger, tail curled, crouched and roaring"
+          fill
+          sizes="(min-width: 768px) 225px, 160px"
+          className="object-contain"
+          priority={false}
+        />
+      </div>
     </motion.div>
   );
 }
 
 export default function Ending() {
   return (
-    <section className="relative overflow-x-hidden text-paper min-h-[85vh] flex flex-col justify-center py-24 md:py-32">
-      {/* The dark backdrop lives on its own layer beneath everything else
-          in the section, including the tiger. */}
+    <section
+      data-stripe-invert
+      className="relative text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-visible px-6"
+    >
+      {/* The dark backdrop lives on its own layer, well below TheStripe's
+          z-index (-1). Previously this was just `bg-ink` on the section
+          itself, which paints at stacking level 0 — ABOVE the stripe —
+          so the tail vanished the instant it entered the one section
+          where it needs to be visible: connecting into the tiger. */}
       <div className="absolute inset-0 -z-20 bg-ink" />
-      <div className="absolute inset-0 -z-10 opacity-[0.04] paper-texture" />
-
-      {/* A soft warm pool behind where the tiger lands, so the eye is
-          drawn there rather than drifting. */}
+      {/* A transition zone rather than a hard edge. The tail arrives from
+          the cream page above and has to stay legible the whole way in,
+          so the top of this section fades from paper to ink over ~220px
+          instead of switching in one scanline — which is where the tail
+          used to visually disappear for a beat. It sits at -z-20 with the
+          ink, so it is still behind the tail at z-index -1. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-[70%]"
+        className="absolute inset-x-0 top-0 -z-20 h-[220px]"
+        style={{ background: "linear-gradient(to bottom, #F4F0E6 0%, rgba(22,20,15,0) 100%)" }}
+      />
+      <div className="absolute inset-0 -z-10 opacity-[0.04] paper-texture" />
+      <MarbleField variant="dark" contain={1000} className="-z-10" />
+
+      {/* A soft warm pool on the centre axis. It does no work on its own,
+          but it puts the brightest point of the section exactly where the
+          tail lands, so the eye follows the tail down into the animal
+          instead of drifting to the two lines of copy. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[70%]"
         style={{
           background:
-            "radial-gradient(55% 60% at 78% 60%, rgba(217,119,33,0.16), rgba(217,119,33,0) 70%)",
+            "radial-gradient(60% 55% at 50% 62%, rgba(217,119,33,0.13), rgba(217,119,33,0) 70%)",
         }}
       />
 
-      <div className="relative z-10 w-full max-w-content mx-auto px-6 md:px-10">
+      <div className="relative z-10 w-full max-w-6xl min-h-[64vh] flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="max-w-md md:max-w-lg text-center md:text-left mx-auto md:mx-0"
+          className="grid w-full grid-cols-1 md:grid-cols-[1fr_260px_1fr] items-baseline gap-3 md:gap-0 pt-16 md:pt-24"
         >
-          <p className="font-display text-3xl md:text-5xl leading-tight">
+          {/* Split either side of a wide centre gutter. The gutter is not
+              decoration — it is the lane the tail comes down, which is why
+              it is sized against the tail's weight rather than by eye. */}
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-right text-shield-invert">
             Life is happening.
-            <br />
+          </p>
+          <div aria-hidden="true" />
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-left text-shield-invert">
             Grab it by the tail.
           </p>
-
-          <motion.a
-            href="/events"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="mt-8 inline-block text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
-          >
-            see what&rsquo;s happening →
-          </motion.a>
         </motion.div>
-      </div>
 
-      {/* Reserves room below the copy on mobile, where the tiger stacks
-          under the text instead of sitting beside it. */}
-      <div className="relative z-0 mt-14 h-[46vh] w-full sm:h-[50vh] md:absolute md:inset-0 md:mt-0 md:h-auto">
         <TigerAtTheEnd />
+
+        <motion.a
+          href="/events"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="mt-auto mb-14 self-center text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
+        >
+          see what&rsquo;s happening →
+        </motion.a>
       </div>
     </section>
   );

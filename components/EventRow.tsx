@@ -20,15 +20,15 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
         onClick={() => setOpen((o) => !o)}
         className="relative w-full flex items-center gap-5 md:gap-10 py-6 md:py-7 text-left"
       >
-        <span className="font-mono text-xs md:text-sm text-ink/40 w-14 md:w-16 shrink-0">
+        <span className="font-mono text-xs md:text-sm text-ink/40 w-14 md:w-16 shrink-0 text-shield">
           {event.month} {event.day}
         </span>
 
         <span className="flex-1 min-w-0">
-          <span className="font-display text-xl md:text-3xl text-ink leading-snug block truncate group-hover:italic transition-all">
+          <span className="font-display text-xl md:text-3xl text-ink leading-snug block truncate group-hover:italic transition-all text-shield">
             {event.title}
           </span>
-          <span className="text-xs md:text-sm text-ink/45">
+          <span className="text-xs md:text-sm text-ink/45 text-shield">
             {event.location} · {event.medium}
           </span>
           {/* Full description stays in the DOM (visually hidden, not
@@ -62,7 +62,7 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
                 <Image src={event.image} alt={event.title} fill sizes="(max-width: 768px) 90vw, 256px" className="object-cover" />
               </div>
               <div className="flex-1">
-                <p className="text-ink/70 leading-relaxed max-w-md">{event.description}</p>
+                <p className="text-ink/70 leading-relaxed max-w-md text-shield">{event.description}</p>
                 {event.link ? (
                   <a
                     href={event.link}

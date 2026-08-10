@@ -4,18 +4,21 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { events } from "@/lib/events";
 import EventRow from "./EventRow";
+import MarbleField from "./MarbleField";
 
 export default function UpcomingRows() {
   const preview = events.slice(0, 5);
 
   return (
-    <section className="max-w-content mx-auto px-6 md:px-10 py-24 md:py-32">
+    <section data-stripe-avoid className="relative w-full overflow-hidden">
+      <MarbleField contain={1300} className="-z-10" />
+      <div className="max-w-content mx-auto px-6 md:px-10 py-24 md:py-32">
       <motion.h2
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="font-display text-4xl md:text-6xl text-ink mb-12 md:mb-16"
+        className="font-display text-4xl md:text-6xl text-ink mb-12 md:mb-16 text-shield"
       >
         what are you doing this week?
       </motion.h2>
@@ -32,6 +35,7 @@ export default function UpcomingRows() {
       >
         see everything coming up →
       </Link>
+      </div>
     </section>
   );
 }

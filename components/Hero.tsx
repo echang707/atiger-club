@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
+import MarbleField from "./MarbleField";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -22,6 +23,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28 overflow-hidden"
     >
+      <MarbleField contain={640} className="-z-10" />
       <div className="max-w-xl mx-auto w-full flex flex-col items-center relative">
         <WordsFindEachOther closeness={closeness} />
 
