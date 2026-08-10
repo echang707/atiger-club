@@ -3,6 +3,7 @@ import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrumen
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import PawPrints from "@/components/PawPrints";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -153,6 +154,19 @@ export default function RootLayout({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Tiger-marble background: one continuous image fixed to the
+            viewport, so it never restarts or reflows per section as the
+            page scrolls. A very light cream wash sits on top of it —
+            just enough to keep body text legible without flattening the
+            marble pattern underneath. Both layers sit behind everything
+            (z-index -20/-10), well under the paw prints (z-index 1) and
+            the grain overlay (z-index 60). */}
+        <div
+          aria-hidden="true"
+          className="fixed inset-0 -z-20 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/tiger-marble-bg.jpg')" }}
+        />
+        <div aria-hidden="true" className="fixed inset-0 -z-10 bg-paper/20" />
         <div className="grain" aria-hidden="true" />
         {/* Shared filter used for the brief "hand-drawn" wobble on CREATE's
             hover state — kept out-of-band so any component can reference
@@ -163,22 +177,11 @@ export default function RootLayout({
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </svg>
-        {/* Relative wrapper gives The Stripe (rendered from within the
-            homepage's own tree, see app/page.tsx) a positioning context
-            exactly as tall as the whole page, so its z-index:-1 SVG
-            paints above the paper background but underneath every
-            normal-flow element — photos, cards, the footer — with no
-            per-element bookkeeping. TheStripe itself is intentionally
-            NOT rendered here: this layout is shared by every route, and
-            a component mounted here would need to reliably detect and
-            hide itself on /events and /work-with-us. Instead it only
-            exists inside the homepage's component tree, so it's
-            structurally impossible for it to render anywhere else —
-            no runtime check to trust, nothing to go stale. */}
         <div className="relative">
           <Nav />
           {children}
           <Footer />
+          <PawPrints />
         </div>
       </body>
     </html>

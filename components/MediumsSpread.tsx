@@ -62,7 +62,6 @@ export default function MediumsSpread() {
         >
           <span
             aria-hidden="true"
-            data-stripe-anchor
             className={`pointer-events-none absolute top-1/2 h-px w-px ${
               w.weave === "right" ? "right-[8%]" : "left-[8%]"
             }`}

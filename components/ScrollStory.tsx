@@ -55,7 +55,7 @@ export default function ScrollStory() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative inline-block"
         >
-          <div data-stripe-anchor className="photo-frame -rotate-2 inline-block">
+          <div className="photo-frame -rotate-2 inline-block">
             <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image
                 src={hero.image}
@@ -79,11 +79,11 @@ export default function ScrollStory() {
               word specifically, then breaks cleanly behind it and picks
               up on the far side as a new mark. It never paints over the
               word — the word is the reason the line is there. */}
-          <span className="text-shield">&ldquo;A meaningful life is a life</span>{" "}
-          <span data-stripe-anchor className="relative text-shield">
+          <span>&ldquo;A meaningful life is a life</span>{" "}
+          <span className="relative">
             connected
           </span>{" "}
-          <span className="text-shield">to others.&rdquo;</span>
+          <span>to others.&rdquo;</span>
         </motion.p>
       </div>
 
@@ -95,7 +95,7 @@ export default function ScrollStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight text-shield"
+          className="font-display italic text-3xl md:text-5xl text-ink/85 leading-tight"
         >
           made for the moments that become something more.
         </motion.p>
@@ -113,7 +113,6 @@ export default function ScrollStory() {
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.8, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
               className="absolute photo-frame"
-              data-stripe-anchor
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${p.w}%` }}
             >
               <div className="relative w-full aspect-[4/3] overflow-hidden">
@@ -125,7 +124,7 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80 text-shield">
+              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
                 {p.caption}
               </span>
             </motion.div>
