@@ -167,3 +167,42 @@ body {
   55% { transform: scaleX(1.08); opacity: 0.5; }
   100% { transform: scaleX(1); opacity: 0.28; }
 }
+
+/* Tiger Club wordmark: the G carries the brand cue, borrowing the segmented
+   rhythm of a tiger tail without turning the whole logo into an illustration. */
+.tiger-wordmark {
+  color: #E2531C;
+  white-space: nowrap;
+  letter-spacing: -0.055em;
+}
+
+.tiger-wordmark-g {
+  position: relative;
+  display: inline-block;
+  margin: 0 0.035em;
+  overflow: hidden;
+  color: #E2531C;
+}
+
+.tiger-wordmark-g::after {
+  content: "";
+  position: absolute;
+  inset: 0.02em -0.02em;
+  pointer-events: none;
+  background:
+    linear-gradient(101deg,
+      transparent 0 15%,
+      #F5F0E3 15% 22%,
+      transparent 22% 38%,
+      #F5F0E3 38% 46%,
+      transparent 46% 61%,
+      #F5F0E3 61% 69%,
+      transparent 69% 83%,
+      #F5F0E3 83% 90%,
+      transparent 90% 100%);
+  mix-blend-mode: normal;
+}
+
+/* When the sticky nav gains its translucent paper backdrop, the G's cutouts
+   stay visually integrated with the page rather than reading as white bars. */
+header .tiger-wordmark-g::after { opacity: 0.98; }

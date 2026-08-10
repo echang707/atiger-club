@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
-import PawClickMark from "./PawClickMark";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -24,15 +23,6 @@ export default function Hero() {
       className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28 overflow-hidden"
     >
       <div className="max-w-xl mx-auto w-full flex flex-col items-center relative">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-tiger mb-7"
-        >
-          <PawClickMark clawClassName="h-7 w-9" pawClassName="h-16 w-16" />
-        </motion.div>
-
         <WordsFindEachOther closeness={closeness} />
 
         <div className="mt-8 md:mt-10 w-full max-w-lg">

@@ -484,6 +484,9 @@ export default function TheStripe() {
     const endTop = endRect
       ? ((endRect.top + window.scrollY) / docHeight) * VB_H
       : VB_H;
+    const endX = endRect
+      ? clamp(((endRect.left + endRect.width / 2) / winWidth) * VB_W, 8, 92)
+      : 50;
 
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]"));
     const anchors: Pt[] = nodes
@@ -532,10 +535,11 @@ export default function TheStripe() {
       y: last.y + (approachY - last.y) * 0.5,
     });
     route.push({ x: laneX, y: approachY });
-    // A slight drift on the way down the lane, so the final stretch
-    // still reads as a drawn mark rather than a ruled vertical.
-    route.push({ x: clamp(laneX - 1.1, 6, 94), y: approachY + (endY - approachY) * 0.55 });
-    route.push({ x: clamp(laneX + 1.2, 6, 94), y: endY });
+    // The last bend leaves the clearest lane and deliberately aims at
+    // the tiger's tail socket, so the wandering line resolves into a
+    // physical tail instead of simply stopping at a rule.
+    route.push({ x: clamp((laneX + endX) / 2, 6, 94), y: approachY + (endY - approachY) * 0.58 });
+    route.push({ x: endX, y: endY });
 
     setPoints(route);
   }, []);
@@ -592,37 +596,17 @@ export default function TheStripe() {
     return scrollY.on("change", project);
   }, [scrollY, target, metrics]);
 
-  const marks = useMemo(() => {
-    if (!points) return [];
-    const sx = metrics.winWidth / VB_W;
-    const sy = metrics.docHeight / VB_H;
-
+  const tailPath = useMemo(() => {
+    if (!points) return "";
     const raw = sampleSmooth(points, 30);
-    const steered = steerAroundText(raw, textBoxes, 9);
-    const hidden = occlusionMask(steered, textBoxes);
+    // Keep the existing intelligent text avoidance, but the visual is now
+    // one continuous tail rather than a collection of detached markings.
+    const steered = steerAroundText(raw, textBoxes, 12);
+    if (steered.length < 2) return "";
+    return `M ${steered.map((p, i) => `${i ? "L" : ""} ${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ")}`;
+  }, [points, textBoxes]);
 
-    // Clear stretches between text, then each stretch broken into
-    // individual tiger marks.
-    const runs = visibleRuns(hidden, 12).flatMap(([from, to]) =>
-      splitIntoMarks(steered, from, to, sx, sy)
-    );
-
-    return runs.map(([from, to], i) => {
-      const seed = i * 2.37 + 0.9;
-      const flip = i % 2 === 1;
-      const core = (t: number, side: number) =>
-        CORE_PX * tigerBody(t, seed, flip) * edgeScale(t, seed, side);
-      const rim = (t: number, side: number) =>
-        core(t, side) + RIM_PX * Math.pow(Math.sin(Math.PI * clamp(t, 0, 1)), 0.45);
-      return {
-        key: `${from}-${to}`,
-        core: markPath(steered, from, to, core, sx, sy),
-        rim: markPath(steered, from, to, rim, sx, sy),
-      };
-    });
-  }, [points, textBoxes, metrics]);
-
-  if (!mounted || !onHomepage || !points || marks.length === 0) return null;
+  if (!mounted || !onHomepage || !points || !tailPath) return null;
 
   return (
     <svg
@@ -639,57 +623,69 @@ export default function TheStripe() {
         </linearGradient>
       </defs>
 
-      {invertBands.map((b, i) => (
-        <clipPath key={i} id={`stripeInvert-${i}`} clipPathUnits="userSpaceOnUse">
-          <rect x="0" y={b.y0} width={VB_W} height={Math.max(0, b.y1 - b.y0)} />
-        </clipPath>
-      ))}
-
-      {/* A mask rather than a hard clip, so the leading edge fades in
-          over HEAD_FADE units instead of being chopped off square.
-          `y`/`height` are passed as direct props (MotionValues), not via
-          `style` — elements inside mask/clip definitions aren't part of
-          the rendered box tree, so CSS-driven sizing isn't reliably
-          applied to them, but a raw SVG attribute set every frame is. */}
+      {/* The reveal mask keeps the old scroll-following momentum: the tail
+          trails behind the scroll position and coasts for a beat after the
+          user stops. Text rectangles are punched out so the tail can weave
+          through the page without compromising legibility. */}
       <mask id="stripeReveal" maskUnits="userSpaceOnUse" x="0" y="0" width={VB_W} height={VB_H}>
         {prefersReduced ? (
           <rect x="0" y="0" width={VB_W} height={VB_H} fill="#fff" />
         ) : (
           <>
             <motion.rect x="0" y="0" width={VB_W} height={revealY} fill="#fff" />
-            <motion.rect
-              x="0"
-              y={revealY}
-              width={VB_W}
-              height={HEAD_FADE}
-              fill="url(#stripeHead)"
-            />
+            <motion.rect x="0" y={revealY} width={VB_W} height={HEAD_FADE} fill="url(#stripeHead)" />
           </>
         )}
+        {textBoxes.map((b, i) => (
+          <rect
+            key={`text-cut-${i}`}
+            x={b.x0}
+            y={b.y0}
+            width={Math.max(0, b.x1 - b.x0)}
+            height={Math.max(0, b.y1 - b.y0)}
+            fill="#000"
+          />
+        ))}
       </mask>
 
       <g mask="url(#stripeReveal)">
-        {/* Thin orange rim, traced along the same centreline as the core
-            so it stays a tight outline rather than its own shape. */}
-        {marks.map((m) => (
-          <path key={`rim-${m.key}`} d={m.rim} fill="#E2531C" />
-        ))}
-
-        {/* The marks themselves — ink black by default. */}
-        {marks.map((m) => (
-          <path key={`core-${m.key}`} d={m.core} fill="#15130E" />
-        ))}
-
-        {/* Over the one dark section the core swaps to paper, repainted
-            clipped to that band — a deliberate colour swap, not a
-            blend-mode guess. */}
-        {invertBands.map((_, i) => (
-          <g key={i} clipPath={`url(#stripeInvert-${i})`}>
-            {marks.map((m) => (
-              <path key={`inv-${i}-${m.key}`} d={m.core} fill="#F5F0E3" />
-            ))}
-          </g>
-        ))}
+        {/* Orange body + short black rings = a literal tiger tail.  Using
+            non-scaling strokes keeps its weight consistent even though the
+            SVG stretches over the full document. */}
+        <path
+          d={tailPath}
+          fill="none"
+          stroke="#E2531C"
+          strokeWidth="19"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={tailPath}
+          fill="none"
+          stroke="#15130E"
+          strokeWidth="19.5"
+          strokeLinecap="butt"
+          strokeLinejoin="round"
+          strokeDasharray="24 48"
+          strokeDashoffset="7"
+          vectorEffect="non-scaling-stroke"
+        />
+        {/* A narrow orange pass softens the ring edges and keeps the pattern
+            closer to the segmented hand-drawn tail reference than a barcode. */}
+        <path
+          d={tailPath}
+          fill="none"
+          stroke="#E2531C"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="18 54"
+          strokeDashoffset="-10"
+          vectorEffect="non-scaling-stroke"
+          opacity="0.32"
+        />
       </g>
     </svg>
   );
