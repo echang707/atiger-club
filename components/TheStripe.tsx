@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
 
 type Pt = { x: number; y: number };
 type Box = { x0: number; y0: number; x1: number; y1: number };
@@ -585,7 +585,15 @@ export default function TheStripe() {
   // remeasure keeps it honest.
   const { scrollY } = useScroll();
   const target = useMotionValue(0);
-  const revealY = useSpring(target, { stiffness: 90, damping: 18, mass: 0.6 });
+  const revealY = useSpring(target, { stiffness: 82, damping: 16, mass: 0.72 });
+
+  // The tail has a little physical weight of its own. Scroll velocity nudges
+  // the entire body sideways, then this loose spring lets it keep drifting
+  // for a moment after the wheel/trackpad stops. The amount is deliberately
+  // small: it should feel alive, never like a ribbon chasing the cursor.
+  const scrollVelocity = useVelocity(scrollY);
+  const swayTarget = useTransform(scrollVelocity, [-2400, 0, 2400], [-9, 0, 9]);
+  const tailSway = useSpring(swayTarget, { stiffness: 48, damping: 10, mass: 1.05 });
 
   useEffect(() => {
     const project = (v: number) =>
@@ -621,12 +629,14 @@ export default function TheStripe() {
           <stop offset="0%" stopColor="#fff" stopOpacity="1" />
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
+        <filter id="tailOrganicEdge" x="-15%" y="-5%" width="130%" height="110%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.06" numOctaves="2" seed="14" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.25" xChannelSelector="R" yChannelSelector="B" />
+        </filter>
       </defs>
 
-      {/* The reveal mask keeps the old scroll-following momentum: the tail
-          trails behind the scroll position and coasts for a beat after the
-          user stops. Text rectangles are punched out so the tail can weave
-          through the page without compromising legibility. */}
+      {/* One uninterrupted reveal. The route itself is steered around copy,
+          so the tail never gets rectangular holes punched through it. */}
       <mask id="stripeReveal" maskUnits="userSpaceOnUse" x="0" y="0" width={VB_W} height={VB_H}>
         {prefersReduced ? (
           <rect x="0" y="0" width={VB_W} height={VB_H} fill="#fff" />
@@ -636,57 +646,49 @@ export default function TheStripe() {
             <motion.rect x="0" y={revealY} width={VB_W} height={HEAD_FADE} fill="url(#stripeHead)" />
           </>
         )}
-        {textBoxes.map((b, i) => (
-          <rect
-            key={`text-cut-${i}`}
-            x={b.x0}
-            y={b.y0}
-            width={Math.max(0, b.x1 - b.x0)}
-            height={Math.max(0, b.y1 - b.y0)}
-            fill="#000"
-          />
-        ))}
       </mask>
 
-      <g mask="url(#stripeReveal)">
-        {/* Orange body + short black rings = a literal tiger tail.  Using
-            non-scaling strokes keeps its weight consistent even though the
-            SVG stretches over the full document. */}
+      <motion.g
+        mask="url(#stripeReveal)"
+        style={prefersReduced ? undefined : { x: tailSway }}
+        filter="url(#tailOrganicEdge)"
+      >
+        {/* Broad orange body first. The irregular black rings sit *inside*
+            it, leaving a warm orange edge exactly like a real tiger tail. */}
         <path
           d={tailPath}
           fill="none"
-          stroke="#E2531C"
+          stroke="#D97721"
+          strokeWidth="25"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={tailPath}
+          fill="none"
+          stroke="#16140F"
           strokeWidth="19"
           strokeLinecap="round"
           strokeLinejoin="round"
+          strokeDasharray="18 22 31 18 13 26 36 20 24 17 12 27"
+          strokeDashoffset="5"
           vectorEffect="non-scaling-stroke"
         />
+        {/* A warm highlight breaks the flat vector look without turning the
+            tail glossy. It is intentionally faint and irregular. */}
         <path
           d={tailPath}
           fill="none"
-          stroke="#15130E"
-          strokeWidth="19.5"
-          strokeLinecap="butt"
-          strokeLinejoin="round"
-          strokeDasharray="24 48"
-          strokeDashoffset="7"
-          vectorEffect="non-scaling-stroke"
-        />
-        {/* A narrow orange pass softens the ring edges and keeps the pattern
-            closer to the segmented hand-drawn tail reference than a barcode. */}
-        <path
-          d={tailPath}
-          fill="none"
-          stroke="#E2531C"
-          strokeWidth="8"
+          stroke="#F0A04B"
+          strokeWidth="4.5"
           strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="18 54"
-          strokeDashoffset="-10"
+          strokeDasharray="46 24 14 56 31 38"
+          strokeDashoffset="-11"
           vectorEffect="non-scaling-stroke"
-          opacity="0.32"
+          opacity="0.38"
         />
-      </g>
+      </motion.g>
     </svg>
   );
 }

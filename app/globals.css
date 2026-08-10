@@ -190,16 +190,14 @@ body {
   inset: 0.02em -0.02em;
   pointer-events: none;
   background:
-    linear-gradient(101deg,
-      transparent 0 15%,
-      #F5F0E3 15% 22%,
-      transparent 22% 38%,
-      #F5F0E3 38% 46%,
-      transparent 46% 61%,
-      #F5F0E3 61% 69%,
-      transparent 69% 83%,
-      #F5F0E3 83% 90%,
-      transparent 90% 100%);
+    linear-gradient(103deg,
+      transparent 0 24%,
+      #F5F0E3 24% 28%,
+      transparent 28% 49%,
+      #F5F0E3 49% 53%,
+      transparent 53% 74%,
+      #F5F0E3 74% 78%,
+      transparent 78% 100%);
   mix-blend-mode: normal;
 }
 

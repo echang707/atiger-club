@@ -1,17 +1,12 @@
 import Link from "next/link";
-import PawClickMark from "./PawClickMark";
+import TigerWordmark from "./TigerWordmark";
 
 export default function Footer() {
   return (
     <footer className="border-t border-ink/10 bg-paper">
       <div className="max-w-content mx-auto px-6 md:px-10 py-12 md:py-14 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-        <div className="flex items-center gap-2.5 text-ink">
-          <PawClickMark clawClassName="h-4 w-5" pawClassName="h-10 w-10" />
-          <span className="font-wordmark font-extrabold text-lg tracking-tight inline-flex items-center">
-            TIGER
-            <span className="inline-block h-[0.22em] w-[0.22em] rounded-full bg-tiger mx-[0.14em]" />
-            CLUB
-          </span>
+        <div className="flex items-center text-ink">
+          <TigerWordmark className="text-lg" />
         </div>
 
         <p className="annotation text-xl order-3 md:order-2">go do something.</p>
