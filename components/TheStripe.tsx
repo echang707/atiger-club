@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring } from "framer-motion";
 
 type Pt = { x: number; y: number };
 type Box = { x0: number; y0: number; x1: number; y1: number };
@@ -15,7 +15,7 @@ type Metrics = { docHeight: number; winHeight: number; winWidth: number };
 const VB_W = 100;
 const VB_H = 1000;
 
-const START: Pt = { x: 35, y: 0 };
+const FALLBACK_START: Pt = { x: 50, y: 0 };
 
 // How far past the bottom of the viewport the stripe is already drawn,
 // as a fraction of viewport height. The old version tied the drawn
@@ -471,6 +471,17 @@ export default function TheStripe() {
     const boxes = measureTextBoxes(m);
     setTextBoxes(boxes);
 
+    // Begin at the period in the hero tagline. This makes the punctuation feel
+    // like the tip of the tail instead of letting the tail cut through the words.
+    const startEl = document.querySelector<HTMLElement>("[data-stripe-start]");
+    const startRect = startEl?.getBoundingClientRect();
+    const START: Pt = startRect
+      ? {
+          x: clamp(((startRect.left + startRect.width / 2) / winWidth) * VB_W, 6, 94),
+          y: ((startRect.top + window.scrollY + startRect.height / 2) / docHeight) * VB_H,
+        }
+      : FALLBACK_START;
+
     // The route stops dead on the element marked `data-stripe-end`
     // (its bottom edge — see UpcomingRows, where it's the rule under
     // the last event row). Anything below that line is not part of the
@@ -587,13 +598,9 @@ export default function TheStripe() {
   const target = useMotionValue(0);
   const revealY = useSpring(target, { stiffness: 82, damping: 16, mass: 0.72 });
 
-  // The tail has a little physical weight of its own. Scroll velocity nudges
-  // the entire body sideways, then this loose spring lets it keep drifting
-  // for a moment after the wheel/trackpad stops. The amount is deliberately
-  // small: it should feel alive, never like a ribbon chasing the cursor.
-  const scrollVelocity = useVelocity(scrollY);
-  const swayTarget = useTransform(scrollVelocity, [-2400, 0, 2400], [-9, 0, 9]);
-  const tailSway = useSpring(swayTarget, { stiffness: 48, damping: 10, mass: 1.05 });
+  // Momentum lives only in the reveal spring above: the tail continues to
+  // advance for a beat after scrolling stops, but its route never sways or
+  // oscillates left/right.
 
   useEffect(() => {
     const project = (v: number) =>
@@ -650,7 +657,6 @@ export default function TheStripe() {
 
       <motion.g
         mask="url(#stripeReveal)"
-        style={prefersReduced ? undefined : { x: tailSway }}
         filter="url(#tailOrganicEdge)"
       >
         {/* Broad orange body first. The irregular black rings sit *inside*
@@ -668,11 +674,11 @@ export default function TheStripe() {
           d={tailPath}
           fill="none"
           stroke="#16140F"
-          strokeWidth="19"
-          strokeLinecap="round"
+          strokeWidth="20"
+          strokeLinecap="butt"
           strokeLinejoin="round"
-          strokeDasharray="18 22 31 18 13 26 36 20 24 17 12 27"
-          strokeDashoffset="5"
+          strokeDasharray="8 15 11 18 7 16 13 20 9 17 12 19"
+          strokeDashoffset="4"
           vectorEffect="non-scaling-stroke"
         />
         {/* A warm highlight breaks the flat vector look without turning the

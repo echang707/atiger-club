@@ -10,7 +10,7 @@ function TigerAtTheEnd() {
       whileInView={{ opacity: 1, y: 0, rotate: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      className="pointer-events-none absolute right-[4%] md:right-[9%] top-0 -translate-y-[22%] w-[190px] sm:w-[230px] md:w-[300px]"
+      className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 w-[190px] sm:w-[230px] md:w-[285px]"
     >
       {/* The page-long tail resolves exactly into this point at the top of the rump. */}
       <span data-stripe-end className="absolute left-[50%] top-[3.5%] h-px w-px" />
@@ -90,29 +90,34 @@ export default function Ending() {
       data-stripe-invert
       className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-visible px-6"
     >
-      <TigerAtTheEnd />
       <div className="absolute inset-0 opacity-[0.04] paper-texture" />
 
-      <motion.p
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-        className="relative font-display text-3xl md:text-5xl text-center leading-tight max-w-xl"
-      >
-        Life&rsquo;s calling. Pick up.
-      </motion.p>
+      <div className="relative z-10 w-full max-w-6xl min-h-[64vh] flex flex-col">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="grid grid-cols-1 md:grid-cols-[1fr_180px_1fr] items-start gap-3 md:gap-8 pt-16 md:pt-24"
+        >
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-right">Life is happening.</p>
+          <div aria-hidden="true" />
+          <p className="font-display text-3xl md:text-5xl leading-tight text-center md:text-left">Grab it by the tail.</p>
+        </motion.div>
 
-      <motion.a
-        href="/events"
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, delay: 0.15 }}
-        className="relative mt-8 text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
-      >
-        see what&rsquo;s happening →
-      </motion.a>
+        <TigerAtTheEnd />
+
+        <motion.a
+          href="/events"
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="mt-auto mb-14 self-center text-tiger-soft text-lg md:text-xl font-medium organic-underline organic-underline-invert"
+        >
+          see what&rsquo;s happening →
+        </motion.a>
+      </div>
     </section>
   );
 }
