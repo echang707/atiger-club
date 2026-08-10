@@ -150,12 +150,14 @@ export default function TheStripe() {
     const startEl = document.querySelector<HTMLElement>("[data-stripe-start]");
     const START = startEl ? centreOf(startEl) : { x: winWidth / 2, y: docHeight * 0.08 };
 
-    // The base: a point just inside the top of the tiger's rump.
+    // The base: a point just inside the top of the tiger's rump. Taken
+    // straight from the marker's own position — including its x — since
+    // the tiger is drawn in an asymmetric three-quarter pose rather than
+    // a symmetrical mascot centred on the page, and the tail's final
+    // curl needs to arrive at the rump's actual position, not the page's
+    // centre line.
     const endEl = document.querySelector<HTMLElement>("[data-stripe-end]");
-    // x is pinned to the exact centre of the viewport rather than taken
-    // from the marker, so the tail's endpoint and the tiger's rump share
-    // a coordinate by construction instead of by measurement luck.
-    const END = { x: winWidth / 2, y: endEl ? centreOf(endEl).y : docHeight - 240 };
+    const END = endEl ? centreOf(endEl) : { x: winWidth / 2, y: docHeight - 240 };
 
     const anchors = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]")).map(
       centreOf
@@ -175,6 +177,12 @@ export default function TheStripe() {
         }
       : null;
 
+    // The right edge of whatever sits immediately before "together" on
+    // the same line ("better"). With the headline fixed on one line,
+    // this is the boundary the flourish's left shoulder can't cross.
+    const hugLimitEl = document.querySelector<HTMLElement>("[data-stripe-hug-limit]");
+    const wordLeftLimit = hugLimitEl ? hugLimitEl.getBoundingClientRect().right : null;
+
     // The band the tail leaves the canvas for. Running it down through a
     // list of event names and dates hurts both, so the path goes around
     // the outside of this section instead.
@@ -187,7 +195,7 @@ export default function TheStripe() {
         }
       : null;
 
-    const pts = buildRoute(START, END, WORD, EVENTS, anchors, boxes, winWidth);
+    const pts = buildRoute(START, END, WORD, EVENTS, anchors, boxes, winWidth, wordLeftLimit);
     setRoute(pts);
   }, []);
 

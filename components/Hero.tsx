@@ -22,7 +22,12 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28 overflow-hidden"
     >
-      <div className="max-w-xl mx-auto w-full flex flex-col items-center relative">
+      {/* No max-width here: "life is better together." is now fixed to
+          one line (see WordsFindEachOther), so this wrapper has to be
+          free to hold whatever width that line actually needs at the
+          current viewport instead of a fixed measure sized for the old
+          two-line layout. */}
+      <div className="w-full flex flex-col items-center relative">
         <WordsFindEachOther closeness={closeness} />
 
         <div className="mt-8 md:mt-10 w-full max-w-lg">

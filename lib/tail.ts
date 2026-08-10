@@ -29,13 +29,19 @@ export type Box = { x0: number; y0: number; x1: number; y1: number };
 // coarse enough that a very long page stays cheap.
 export const STEP = 6;
 
-// Tail half-width at the tip and at the rump. A real tail tapers the
-// whole way; the growth is what sells which end is which. These are
-// deliberately heavier than a decorative hairline — below about 24px
-// across, the banding stops reading as rings around a tail and starts
-// reading as a dashed line.
-const TIP_HALF = 3.2;
-const BASE_HALF = 18;
+// Tail half-width. Unlike the old build — which tapered continuously
+// from tip to rump over the whole length — a real tail is nearly the
+// same thickness for almost its entire run: it only narrows to a point
+// in the last few inches, and only thickens again right where it meets
+// the body. TIP_HALF is the very point (tapers in over the first ~6% of
+// the path), MID_HALF is the sustained plate thickness held for the
+// other ~88%, and RUMP_MULT is how much heavier it gets over the last
+// ~6%, right before the join. MID_HALF is roughly 1.8x the old build's
+// mid-run thickness — heavy enough to carry the banding as bands, not a
+// hairline with dashes on it.
+const TIP_HALF = 4.2;
+const MID_HALF = 15.5;
+const RUMP_MULT = 1.22;
 
 // Padding around measured text, so the tail commits to a detour well
 // before it reaches a glyph.
@@ -288,22 +294,34 @@ function cubic(p0: Pt, c1: Pt, c2: Pt, p1: Pt, n: number, skipFirst: boolean): P
 
 // `period` is the full stop after the word — the tail's tip, and the
 // only point the path is pinned to. `word` is the measured box of
-// "together" on its own.
-function heroHug(period: Pt, word: Box, winWidth: number): { pts: Pt[]; exit: Pt } {
+// "together" on its own. `leftLimit`, when given, is the right edge of
+// whatever sits immediately before "together" on the same line (with
+// "life is better together." now fixed on one line, that's "better" —
+// there is no longer empty page to swing out into on the left, so the
+// curl's own left shoulder must never reach past it).
+function heroHug(period: Pt, word: Box, winWidth: number, leftLimit?: number): { pts: Pt[]; exit: Pt } {
   const w = word.x1 - word.x0;
   const h = word.y1 - word.y0;
 
   // Clearance from the letters. Held between roughly 30 and 50px, and
   // deliberately unequal above and below so the shape doesn't read as a
-  // machined outline of the word.
+  // machined outline of the word. The left side is the exception: it's
+  // however much room is actually free next to the previous word, which
+  // on one line is only a fraction of the vertical clearance — the curl
+  // stays open and generous above and below "together" and simply
+  // tucks in close on that one side instead of forcing room that isn't
+  // there.
   const tight = winWidth < 620;
   const padUnder = tight ? 26 : 46;
   const padOver = tight ? 22 : 37;
-  const padLeft = tight ? 24 : 42;
+  const padLeftWanted = tight ? 24 : 42;
+  const padLeftAvail = leftLimit != null ? Math.max(6, word.x0 - leftLimit - 4) : padLeftWanted;
+  const padLeft = Math.min(padLeftWanted, padLeftAvail);
 
   const yUnder = word.y1 + padUnder;
   const yOver = word.y0 - padOver;
-  const xLeft = Math.max(winWidth * 0.03, word.x0 - padLeft);
+  const hardLeft = leftLimit != null ? leftLimit + 4 : winWidth * 0.03;
+  const xLeft = Math.max(hardLeft, word.x0 - padLeft);
   const xRight = Math.min(winWidth * 0.965, word.x1 + padLeft * 1.5);
   const cy = (word.y0 + word.y1) / 2;
 
@@ -345,13 +363,19 @@ function heroHug(period: Pt, word: Box, winWidth: number): { pts: Pt[]; exit: Pt
       true
     )
   );
-  // 3 — the left shoulder: one broad round sweep, controls pushed well
-  //     past xLeft so it opens out instead of turning a corner.
+  // 3 — the left shoulder: one broad round sweep. When there's a whole
+  //     empty line to swing into, the controls push well past xLeft so
+  //     it opens out instead of turning a corner; when "together" sits
+  //     hard against the previous word, that overshoot is capped to the
+  //     actual clearance (padLeft) instead of the word's own width, so
+  //     the curve's control points — and by the convex-hull property of
+  //     a Bézier, the curve itself — never cross hardLeft into it.
+  const shoulderOvershoot = Math.min(w * 0.13, padLeft * 0.55);
   pts.push(
     ...cubic(
       U2,
-      { x: xLeft - w * 0.13, y: yUnder - h * 0.34 },
-      { x: xLeft - w * 0.14, y: yOver + h * 0.42 },
+      { x: Math.max(hardLeft, xLeft - shoulderOvershoot), y: yUnder - h * 0.34 },
+      { x: Math.max(hardLeft, xLeft - shoulderOvershoot * 1.05), y: yOver + h * 0.42 },
       T1,
       22,
       true
@@ -506,29 +530,34 @@ export function buildTail(route: Pt[], textBoxes: Box[], width: number): Segment
     ny[i] = dx / d;
   }
 
-  // Thickness: a slow taper from tip to rump, with a gentle flare where
-  // it meets the animal. The two edges carry their own low-frequency
-  // wobble at different phases, so the tail breathes slightly instead of
-  // reading as a constant-width ribbon — and because the wobble is keyed
-  // to sample index rather than normalised position, it stays the same
-  // physical size whether the page is short or very long.
+  // Thickness: taper in at the tip, hold nearly constant for almost the
+  // whole run, flare where it meets the animal. The two edges carry
+  // their own low-frequency wobble at different phases, so the tail
+  // breathes slightly instead of reading as a mechanically constant
+  // ribbon — and because the wobble is keyed to sample index rather
+  // than normalised position, it stays the same physical size whether
+  // the page is short or very long.
   const hL = new Array<number>(m);
   const hR = new Array<number>(m);
   for (let i = 0; i < m; i++) {
     const u = i / (m - 1);
-    // Thin for most of the run, thickening toward the base — a tail is
-    // heaviest where it meets the animal. The earlier pow(u, 0.55) put
-    // nearly full weight on within the first fifth of the page, which
-    // left nothing to grow into.
-    const t = 0.45 * u + 0.55 * Math.pow(u, 1.9);
-    const grow = TIP_HALF + (BASE_HALF - TIP_HALF) * t;
-    const flare = 1 + 0.3 * smoothstep(0.9, 1, u);
-    const base = grow * flare;
+    // Tip taper over the first ~6%, a held plateau for the ~88% in the
+    // middle, and a flare into the rump over the last ~6%. Nearly
+    // constant thickness for the great majority of the length is what
+    // reads as one substantial rope rather than a line that's always
+    // subtly thinning or fattening.
+    const tipT = smoothstep(0, 0.06, u);
+    const rumpT = smoothstep(0.94, 1, u);
+    const grow = TIP_HALF + (MID_HALF - TIP_HALF) * tipT;
+    const base = grow * (1 + (RUMP_MULT - 1) * rumpT);
     // The first few samples close to a point, so the tail ends in a tip
     // rather than a flat cap sticking out from under the full stop.
     const point = 0.34 + 0.66 * smoothstep(0, 26, i * STEP);
-    hL[i] = base * point * (1 + 0.055 * Math.sin(i * 0.031) + 0.03 * Math.sin(i * 0.091 + 1.7));
-    hR[i] = base * point * (1 + 0.055 * Math.sin(i * 0.027 + 2.4) + 0.03 * Math.sin(i * 0.085 + 4.1));
+    // A very light breathing wobble — small relative to MID_HALF now
+    // that the plateau itself carries the weight, so it reads as a
+    // living surface rather than a perfectly mechanical tube.
+    hL[i] = base * point * (1 + 0.035 * Math.sin(i * 0.031) + 0.02 * Math.sin(i * 0.091 + 1.7));
+    hR[i] = base * point * (1 + 0.035 * Math.sin(i * 0.027 + 2.4) + 0.02 * Math.sin(i * 0.085 + 4.1));
   }
 
   // Where the tail can't avoid a line of type, it goes behind it. These
@@ -728,7 +757,8 @@ export function buildRoute(
   events: { top: number; bottom: number } | null,
   anchors: Pt[],
   boxes: Box[],
-  winWidth: number
+  winWidth: number,
+  wordLeftLimit?: number | null
 ): Pt[] | null {
   void boxes;
 
@@ -736,7 +766,7 @@ export function buildRoute(
   // Without a measured word there is nothing to hug, so the tail simply
   // falls from the period rather than inventing a shape.
   const hug = word
-    ? heroHug(start, word, winWidth)
+    ? heroHug(start, word, winWidth, wordLeftLimit ?? undefined)
     : { pts: [start, { x: start.x, y: start.y + 260 }], exit: { x: start.x, y: start.y + 260 } };
 
   const pts: Pt[] = [...hug.pts];
@@ -812,11 +842,17 @@ export function buildRoute(
   pts.push({ x: OFF + 30, y: eventsTop + (eventsBottom - eventsTop) * 0.72 });
   pts.push({ x: winWidth * 0.93, y: eventsBottom + 70 });
 
-  // --- 4. the return, and the descent into the tiger ----------------
-  // One broad curve back toward the centre, a last gentle S, and only
-  // then a short straight run into the rump. Straightening earlier than
-  // that turns the tail into a flagpole.
-  const cx = winWidth / 2;
+  // --- 4. the return, and the curl into the tiger --------------------
+  // One broad curve back in from off-canvas, passing above and beside
+  // the tiger, tightening into a single expressive curl that meets the
+  // rump at an angle. There is no straight run at the end — a plumb
+  // line into the animal is what made the old ending read as a website
+  // line stuck onto a mascot rather than the animal's own tail. Every
+  // waypoint here keeps at least a slight lean, right up to `end`
+  // itself, and `end.x` is the rump anchor's own measured position
+  // (usually off-centre, since the tiger is in a three-quarter pose)
+  // rather than the page's centre line.
+  //
   // Waypoints are placed as fractions of the remaining drop and in
   // strictly descending order. Mixing fractional and fixed offsets here
   // is what previously put one waypoint above the one before it, which
@@ -824,14 +860,18 @@ export function buildRoute(
   // page instead of a descent.
   const span = Math.max(460, end.y - eventsBottom);
   const at = (f: number) => end.y - span * f;
+  const lean = clamp(end.x - winWidth / 2, -winWidth * 0.12, winWidth * 0.12);
 
-  pts.push({ x: winWidth * 0.84, y: at(0.82) });
-  pts.push({ x: cx + winWidth * 0.105, y: at(0.62) });
-  pts.push({ x: cx - winWidth * 0.032, y: at(0.4) });
-  // Straight only for the last stretch. Any longer and the tail stops
-  // being a tail and starts being a flagpole.
-  pts.push({ x: cx, y: end.y - 215 });
-  pts.push({ x: cx, y: end.y });
+  pts.push({ x: winWidth * 0.86, y: at(0.8) });
+  pts.push({ x: winWidth * 0.68, y: at(0.6) });
+  // The broad curl: swings out beside/above the tiger before turning
+  // in, rather than beelining for the rump.
+  pts.push({ x: end.x + winWidth * 0.15 + lean * 0.3, y: at(0.36) });
+  pts.push({ x: end.x + winWidth * 0.05, y: end.y - 150 });
+  // Final approach still carries a real angle into the join — never the
+  // same x twice in a row.
+  pts.push({ x: end.x + winWidth * 0.016, y: end.y - 55 });
+  pts.push({ x: end.x, y: end.y });
 
   return pts;
 }
