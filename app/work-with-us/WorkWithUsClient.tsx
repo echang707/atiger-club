@@ -54,7 +54,7 @@ export default function WorkWithUsClient() {
           <p className="font-mono text-xs tracking-wideish uppercase text-tiger mb-3 text-shield">
             work with us
           </p>
-          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
+          <h1 data-stripe-anchor className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
             we turn your ideas into real experiences.
           </h1>
           <p className="text-ink/55 mt-4 text-sm md:text-base max-w-xl text-shield">
@@ -139,6 +139,7 @@ export default function WorkWithUsClient() {
             <button
               type="submit"
               disabled={!canSubmit}
+              data-stripe-anchor
               className="px-6 py-3 rounded-full text-sm font-medium bg-ink text-paper hover:bg-tiger transition-colors duration-300 disabled:opacity-40 disabled:hover:bg-ink"
             >
               Send it our way

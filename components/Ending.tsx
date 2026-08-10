@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 
 export default function Ending() {
   return (
-    <section className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-6">
+    <section
+      data-stripe-invert
+      className="relative bg-ink text-paper min-h-[80vh] flex flex-col items-center justify-center overflow-hidden px-6"
+    >
       <div className="absolute inset-0 opacity-[0.04] paper-texture" />
 
       <motion.p

@@ -16,14 +16,11 @@ type Pt = { x: number; y: number };
 // anchors (events, work with us) fall back to a fixed, hand-tuned
 // wander down the page.
 const FALLBACK: Pt[] = [
-  { x: 82, y: 0 },
-  { x: 90, y: 120 },
-  { x: 80, y: 260 },
-  { x: 91, y: 400 },
-  { x: 79, y: 540 },
-  { x: 90, y: 680 },
-  { x: 81, y: 820 },
-  { x: 89, y: 960 },
+  { x: 84, y: 0 },
+  { x: 88, y: 180 },
+  { x: 80, y: 380 },
+  { x: 87, y: 580 },
+  { x: 79, y: 780 },
   { x: 84, y: 1000 },
 ];
 
@@ -65,11 +62,13 @@ function sampleSmooth(points: Pt[], perSegment = 22): Pt[] {
 }
 
 // Turns the sampled centerline into a closed, filled ribbon whose width
-// breathes as it travels (two overlapping sine waves at different
-// frequencies so it doesn't read as a mechanical pulse) — a fat-then-
-// tapering-then-fat-again silhouette, the way an actual tiger stripe
-// (or a brush stroke) varies, instead of a uniform-width ruled line.
-function ribbonPath(samples: Pt[], base: number, wobble: number, phase = 0): string {
+// breathes as it travels — a thin brush-stroke silhouette, the way an
+// actual tiger stripe varies, instead of a uniform-width ruled line.
+// `widthAt(t)` is passed in rather than baked in here so the orange
+// edge can be defined as "black's width plus a thin rim" (see below)
+// instead of wobbling on its own independent phase — that's what kept
+// the old two-ribbon version from staying a tight outline.
+function ribbonPath(samples: Pt[], widthAt: (t: number) => number): string {
   const n = samples.length;
   const left: Pt[] = [];
   const right: Pt[] = [];
@@ -81,13 +80,7 @@ function ribbonPath(samples: Pt[], base: number, wobble: number, phase = 0): str
     const len = Math.hypot(dx, dy) || 1;
     const nx = -dy / len;
     const ny = dx / len;
-    const t = i / n;
-    const w = Math.max(
-      0.4,
-      base +
-        wobble *
-          (0.6 * Math.sin(t * Math.PI * 8 + phase) + 0.4 * Math.sin(t * Math.PI * 19 + phase * 1.6))
-    );
+    const w = widthAt(i / n);
     left.push({ x: samples[i].x + nx * w, y: samples[i].y + ny * w });
     right.push({ x: samples[i].x - nx * w, y: samples[i].y - ny * w });
   }
@@ -100,9 +93,30 @@ function ribbonPath(samples: Pt[], base: number, wobble: number, phase = 0): str
   );
 }
 
+// Core (black) stripe width — a slim marker-line, not a band. Two
+// overlapping sine waves at different frequencies so the breathing
+// doesn't read as a mechanical pulse.
+function coreWidth(t: number): number {
+  return Math.max(0.22, 0.5 + 0.28 * (0.6 * Math.sin(t * Math.PI * 8) + 0.4 * Math.sin(t * Math.PI * 19)));
+}
+
+// Orange edge — always the core's width plus a thin, fairly constant
+// rim, so it hugs the black line as an outline instead of ballooning
+// into its own independent shape.
+function edgeWidth(t: number): number {
+  return coreWidth(t) + 0.38 + 0.08 * Math.sin(t * Math.PI * 8 + 1.1);
+}
+
+// A section can opt itself into "invert" with `data-stripe-invert` (see
+// Ending.tsx) — that's the one dark section on the site, and the only
+// place the black core needs to swap to a pale color so it doesn't
+// vanish into a near-black background.
+type Range = { y0: number; y1: number };
+
 export default function TheStripe() {
   const [mounted, setMounted] = useState(false);
   const [points, setPoints] = useState<Pt[]>(FALLBACK);
+  const [invertRanges, setInvertRanges] = useState<Range[]>([]);
   const prefersReduced = useReducedMotion();
   const pathname = usePathname();
 
@@ -110,6 +124,15 @@ export default function TheStripe() {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-anchor]"));
     const docHeight = Math.max(document.documentElement.scrollHeight, 1);
     const winWidth = Math.max(document.documentElement.clientWidth, 1);
+
+    const invertNodes = Array.from(document.querySelectorAll<HTMLElement>("[data-stripe-invert]"));
+    setInvertRanges(
+      invertNodes.map((el) => {
+        const rect = el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        return { y0: (top / docHeight) * 1000, y1: ((top + rect.height) / docHeight) * 1000 };
+      })
+    );
 
     if (nodes.length < 2) {
       setPoints(FALLBACK);
@@ -129,11 +152,16 @@ export default function TheStripe() {
     // A little meander between each pair of anchors — alternating left
     // and right of the straight line between them — so the route still
     // wanders like the rest of the stripe instead of connecting the
-    // dots in perfectly straight hops.
+    // dots in perfectly straight hops. The bend is scaled down when two
+    // anchors sit close together vertically, so a short gap gets a
+    // gentle curve instead of a sharp diagonal kink that reads as a
+    // separate chunk rather than part of one continuous line.
     const route: Pt[] = [START];
     anchors.forEach((a, i) => {
       const prev = i === 0 ? START : anchors[i - 1];
-      const midX = (prev.x + a.x) / 2 + (i % 2 === 0 ? 16 : -16);
+      const gapY = Math.max(1, a.y - prev.y);
+      const bend = Math.min(16, gapY * 0.4) * (i % 2 === 0 ? 1 : -1);
+      const midX = (prev.x + a.x) / 2 + bend;
       const midY = (prev.y + a.y) / 2;
       route.push({ x: Math.max(6, Math.min(94, midX)), y: midY });
       route.push(a);
@@ -173,8 +201,8 @@ export default function TheStripe() {
   const { blackD, orangeD } = useMemo(() => {
     const samples = sampleSmooth(points, 22);
     return {
-      blackD: ribbonPath(samples, 2.3, 1.2, 0),
-      orangeD: ribbonPath(samples, 5, 1.6, 0.5),
+      blackD: ribbonPath(samples, coreWidth),
+      orangeD: ribbonPath(samples, edgeWidth),
     };
   }, [points]);
 
@@ -202,17 +230,30 @@ export default function TheStripe() {
         )}
       </clipPath>
 
+      {invertRanges.map((r, i) => (
+        <clipPath key={i} id={`stripeInvert-${i}`} clipPathUnits="userSpaceOnUse">
+          <rect x="0" y={r.y0} width="100" height={Math.max(0, r.y1 - r.y0)} />
+        </clipPath>
+      ))}
+
       <g clipPath="url(#stripeReveal)">
-        {/* Thick orange band, fitted snugly around the black — a solid
-            fill traced along the same centerline, not a blurred hue. */}
+        {/* Thin orange edge, hugging the black core as a tight rim — a
+            solid fill traced along the same centerline, not a blurred
+            or independently-wobbling band. */}
         <path d={orangeD} fill="#E2531C" />
 
-        {/* The stripe itself. Filled with "paper minus ink" and blended
-            with mix-blend-mode: difference against whatever sits behind
-            it, so it self-adjusts to true ink-black on the cream page
-            and to a pale, visible tone over the dark closing section —
-            it never again disappears into a matching-color background. */}
-        <path d={blackD} fill="#E0DDD5" style={{ mixBlendMode: "difference" }} />
+        {/* The stripe itself: solid ink black everywhere by default. */}
+        <path d={blackD} fill="#15130E" />
+
+        {/* Over the one dark closing section, the core swaps to a pale
+            paper tone instead — painted as the same path again, clipped
+            to just that section's bounds — so it stays a deliberate,
+            reliable color swap rather than a blend-mode guess. */}
+        {invertRanges.map((_, i) => (
+          <g key={i} clipPath={`url(#stripeInvert-${i})`}>
+            <path d={blackD} fill="#F5F0E3" />
+          </g>
+        ))}
       </g>
     </svg>
   );

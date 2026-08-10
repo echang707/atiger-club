@@ -55,7 +55,7 @@ export default function EventsClient() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-xl mb-10 md:mb-14"
         >
-          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
+          <h1 data-stripe-anchor className="font-display text-4xl md:text-6xl text-ink leading-tight text-shield">
             what are you doing this week?
           </h1>
           <p className="text-ink/55 mt-3 text-sm md:text-base text-shield">
@@ -93,7 +93,7 @@ export default function EventsClient() {
             All
           </button>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-3">
+          <div data-stripe-anchor className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-3">
             {mediums.map((m, i) => {
               const expanded = active === m.name || hoveredMedium === m.name;
               return (
@@ -157,6 +157,7 @@ export default function EventsClient() {
           {groups.map((group, gi) => (
             <div key={`${gi}-${group.label}`} className="mb-10 md:mb-14 last:mb-0">
               <motion.h2
+                data-stripe-anchor={gi === 0 ? true : undefined}
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
