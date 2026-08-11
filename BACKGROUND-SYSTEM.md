@@ -322,3 +322,68 @@ Copy trimmed by ~1,400 characters (paragraphs merged, lists cut from 6→4 and
 5→4, principle bodies tightened) and the vertical rhythm pulled in across 24
 padding values. Page height 10.5 → **9.4 screens** desktop, 9.2 on mobile.
 All ten narrative beats are intact — the page is denser, not shorter on story.
+
+---
+
+# Revision — About simplified, and "Go mild → Go wild"
+
+## /about, cut down
+
+Ten movements became five: why we exist → what we believe → what makes it a
+Tiger Club experience → what we're building → made/with/found and the close.
+
+Fixed by subtraction, not compression: eyebrow labels removed from nearly every
+section, the tiger-name irony folded into section 01 as a single line instead of
+owning a section, the "only in person" list collapsed to one sentence, and the
+competing display sizes reduced so only the four principles are loud.
+
+**4 headings on the page** (was 12). Height 9.4 → **8.2 screens** desktop,
+9.2 → **7.8** on mobile.
+
+The four principles are the centrepiece: full-width rows on a hairline rule,
+oversized index in its own column, name / claim / one line of body. No cards, no
+grid, no icons.
+
+## The closing animation
+
+Replaced the physical-contact attempt with wordplay. The line loads as
+**"Life's happening. Go mild."**, holds ~1.2s so it can actually be read, then:
+
+```
+tail whips  →  gust travels left  →  m is blown away  →  w blows in  →  Go wild.
+```
+
+All beats run off one clock (`T` at the top of `Ending.tsx`) so cause and effect
+stay legible; nothing animates on its own schedule.
+
+**The whip.** The tail is a locked raster we can't redraw, so it's sliced into 26
+vertical strips, each translated on its own delay and amplitude — base barely
+moves, delay and amplitude both grow toward the tip. That reads as a wave
+travelling out and snapping, rather than a rigid image rotating. Strips overlap
+0.6% so no hairline gaps open up when they move apart.
+
+**The letters.** Only the first character animates; "Go " and "ild." never move.
+The container is measured from real rendered glyphs and animates between the
+m-width and the w-width, so "ild." glides across the difference instead of
+jumping, and the finished "wild" keeps its natural kerning. The h2 carries
+`aria-label="Life's happening. Go wild."` so screen readers get the final line.
+
+Reduced motion shows the finished "Go wild." immediately.
+
+### Two bugs caught in review
+
+- The letter container had only absolutely-positioned children, so it collapsed
+  to zero height and **both glyphs rendered below the baseline** — "Go mild."
+  was broken even at rest. Fixed with an invisible in-flow "w" that establishes
+  height and baseline.
+- The gust was anchored to the *right* of the tail tip, so the wind visibly blew
+  away from the word it was meant to hit. Moved left of the tip.
+
+### Testing note
+
+Puppeteer's `screenshot({clip})` uses **page** coordinates, not viewport — with a
+clip set it silently captures the top of the document no matter where you've
+scrolled. That produced two rounds of screenshots that looked like the animation
+wasn't running at all. Combined with `scroll-behavior: smooth` (scroll with
+`behavior:'instant'`) and Next's post-hydration scroll reset, these are the three
+things to get right before trusting a headless check on this site.
