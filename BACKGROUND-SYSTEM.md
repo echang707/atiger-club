@@ -387,3 +387,58 @@ scrolled. That produced two rounds of screenshots that looked like the animation
 wasn't running at all. Combined with `scroll-behavior: smooth` (scroll with
 `behavior:'instant'`) and Next's post-hydration scroll reset, these are the three
 things to get right before trusting a headless check on this site.
+
+---
+
+# Revision — bigger/faster whip, real m→w flip, About cut to four, jungle wash
+
+## The whip
+
+Slice amplitude 46 → **118px**; measured peak travel in Chromium is **110px**
+(was ~46). Whip duration 0.72s → 0.56s and the rest before it drops from 1.2s to
+0.5s, so the joke starts almost immediately.
+
+The gust is now synced to the *measured* peak of the snap. The tip reaches
+maximum travel at ~0.98s (slice delay 0.78 + 30% of a 0.56s curve), so
+`T.gust` moved 0.8 → 0.98. Previously the wind left before the tail had
+finished loading up.
+
+Full sequence: rest 0–0.5s · whip 0.58–1.1s · gust at 0.98s · flip 1.15–1.75s.
+
+## The letter now physically flips
+
+It is one glyph, not two. A lowercase **m turned over on its horizontal axis is
+a w**, so this is a true two-faced 180° flip: `m` on the front, `w` on the back
+pre-rotated so it lands upright, `backface-visibility: hidden` on both, with
+`preserve-3d` and perspective on the parent. Halfway through, the glyph is
+edge-on and you watch the same character tumble through — it lifts, rides the
+gust, overshoots ~16° and settles.
+
+Verified by reading the live transform matrix: rotateX goes 0 → 59 → 149 → 180
+and lands at exactly **180**.
+
+The container's width transition is timed to the middle of the flip, when the
+glyph is edge-on, so "ild." slides across the m/w width difference at the one
+moment nothing is legible.
+
+## /about cut to four ideas
+
+Why we exist · what makes a Tiger Club experience · what we're building · the
+standard. Made/With/Found deleted, as were the "what we believe" definitions and
+every supporting paragraph under the principles.
+
+The principles are now roughly half the page and the largest type on it: index,
+name, and a two-or-three-word claim. No bodies, no cards.
+
+Height **8.2 → 5.4 screens** desktop, 7.8 → **4.4** on mobile. Cut roughly in
+half again, on top of the previous pass.
+
+## Jungle wash
+
+`components/JungleWash.tsx` + `.jungle-wash` in globals.css. The marble,
+blurred and pulled 70% toward cream, held at **12% opacity** (8% on mobile) and
+masked to nothing top and bottom — net intensity a few percent. It reads as the
+paper warming, not as a pattern.
+
+Used in exactly **two** places on the homepage: after the hero, and before the
+finale. It is not a background for every section.

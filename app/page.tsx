@@ -4,6 +4,7 @@ import MediumsSpread from "@/components/MediumsSpread";
 import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
+import JungleWash from "@/components/JungleWash";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -35,9 +36,13 @@ export default function Home() {
     // lives only where it can be shown at full strength.
     <main>
       <Hero />
+      {/* Softens the step down from full-strength marble into cream. */}
+      <JungleWash />
       <MediumsSpread />
       <ScrollStory />
       <UpcomingRows />
+      {/* And warms the page back up on the approach to the finale. */}
+      <JungleWash late />
       <Ending />
     </main>
   );

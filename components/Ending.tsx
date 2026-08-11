@@ -11,14 +11,12 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
    are sequenced off one clock (T, below) rather than each animating
    whenever it feels like it:
 
-     0.00  rest — you get a beat to actually read "Go mild."
-     1.20  tail winds up
-     1.35  whip travels down the tail
-     1.62  tip snaps; gust launches from the tip
-     1.90  gust reaches the word
-     1.92  m is caught and swept left
-     2.02  w blows in from the right
-     2.30  everything settles
+     0.00  rest — a short beat to read "Go mild."
+     0.50  tail winds up
+     0.58  whip travels down the tail
+     0.80  tip snaps; gust launches
+     1.00  the gust reaches the m and tumbles it over
+     1.35  the flip lands as a w and settles
 
    The tail is a raster asset we are not allowed to redraw, so the whip
    is done by slicing the image into vertical strips and translating each
@@ -28,14 +26,16 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
    --------------------------------------------------------------------- */
 
 const T = {
-  windUp: 1.2,
-  whip: 1.35,
-  snap: 1.62,
-  gust: 1.62,
-  mOut: 1.92,
-  wIn: 2.02,
-};
-
+  windUp: 0.5,
+  whip: 0.58,
+  // Measured: the tip reaches maximum travel at ~0.98s (slice delay 0.78
+  // + 30% of a 0.56s curve). The gust launches exactly there, so the wind
+  // leaves the tail at the peak of the snap rather than before it.
+  snap: 0.98,
+  gust: 0.98,
+  mOut: 1.15,
+  wIn: 1.15,
+}
 const TAIL_W = 1200;
 const TAIL_H = 363;
 const SLICES = 26;
@@ -50,8 +50,9 @@ function TailWhip({ play }: { play: boolean }) {
     >
       {Array.from({ length: SLICES }).map((_, i) => {
         const tipness = 1 - i / (SLICES - 1); // 1 at the tip, 0 at the base
-        const amp = 46 * Math.pow(tipness, 1.7);
-        const delay = T.whip + (1 - tipness) * -0.0 + tipness * 0.26;
+        const amp = 118 * Math.pow(tipness, 1.7);
+        // Delay grows toward the tip so the bend travels outward.
+        const delay = T.whip + tipness * 0.2;
         return (
           <motion.div
             key={i}
@@ -66,15 +67,15 @@ function TailWhip({ play }: { play: boolean }) {
             animate={
               play
                 ? {
-                    y: [0, 0.18 * amp, -amp, 0.42 * amp, -0.16 * amp, 0.05 * amp, 0],
+                    y: [0, 0.22 * amp, -amp, 0.46 * amp, -0.18 * amp, 0.06 * amp, 0],
                   }
                 : { y: 0 }
             }
             transition={{
-              duration: 0.72,
+              duration: 0.56,
               delay,
               ease: "easeOut",
-              times: [0, 0.14, 0.34, 0.53, 0.72, 0.87, 1],
+              times: [0, 0.12, 0.3, 0.5, 0.7, 0.86, 1],
             }}
           >
             <div
@@ -133,11 +134,11 @@ function Gust({ play }: { play: boolean }) {
               : { strokeDashoffset: s.len, opacity: 0, x: 26 }
           }
           transition={{
-            duration: 0.62,
+            duration: 0.46,
             delay: T.gust + s.delay,
             ease: "easeOut",
             times: [0, 0.45, 1],
-            opacity: { duration: 0.62, times: [0, 0.2, 0.66, 1], delay: T.gust + s.delay },
+            opacity: { duration: 0.46, times: [0, 0.2, 0.66, 1], delay: T.gust + s.delay },
           }}
         />
       ))}
@@ -174,13 +175,16 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
+  // The width transition is timed to the middle of the flip, when the
+  // glyph is edge-on, so "ild." slides across the m/w width difference
+  // exactly when nothing is legible — you never see it jump.
   useEffect(() => {
     if (reduced) {
       setSwapped(true);
       return;
     }
     if (!play) return;
-    const id = window.setTimeout(() => setSwapped(true), T.mOut * 1000);
+    const id = window.setTimeout(() => setSwapped(true), (T.mOut + 0.16) * 1000);
     return () => window.clearTimeout(id);
   }, [play, reduced]);
 
@@ -202,47 +206,59 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
         aria-hidden="true"
         className="relative inline-block align-baseline"
         animate={{ width: w ? (showW ? w.w : w.m) : undefined }}
-        transition={{ duration: 0.26, ease: "easeOut" }}
-        style={{ width: w ? (showW ? w.w : w.m) : undefined }}
+        transition={{ duration: 0.3, delay: T.mOut + 0.16, ease: "easeOut" }}
+        style={{ width: w ? (showW ? w.w : w.m) : undefined, perspective: 620 }}
       >
-        {/* An in-flow glyph is what gives this box its height and, more
-            importantly, its baseline. Without it the container collapses
-            to zero height and both absolutely-positioned letters drop
-            below the line. It is always the final "w" so the finished
-            word keeps the right metrics; it is invisible, and the width
-            above is what actually drives layout. */}
+        {/* An in-flow glyph gives this box its height and, crucially, its
+            baseline. Without it the container collapses and the letter
+            renders below the line. Invisible; the animated width above is
+            what actually drives layout. */}
         <span className="invisible">w</span>
 
-        {/* the m, caught by the gust and swept off to the left */}
-        <motion.span
-          className="absolute left-0 top-0 inline-block"
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-          animate={
-            reduced
-              ? { opacity: 0 }
-              : play
-              ? { x: [0, -34, -240], y: [0, -16, -54], rotate: [0, -14, -38], opacity: [1, 1, 0] }
-              : { x: 0, y: 0, rotate: 0, opacity: 1 }
-          }
-          transition={{ duration: 0.46, delay: T.mOut, ease: "easeIn", times: [0, 0.28, 1] }}
-        >
-          m
-        </motion.span>
+        {/* ONE character that physically flips.
 
-        {/* the w, carried in on the same gust, with a small overshoot */}
+            A lowercase m turned over on its horizontal axis is a w — so
+            this is a real 180° flip with two faces rather than a swap.
+            The m is the front, the w is the back pre-rotated 180° so it
+            lands upright. Halfway through, the glyph is edge-on and you
+            genuinely see the same letter tumble through. It lifts, rides
+            the gust, overshoots a few degrees and settles. */}
         <motion.span
           className="absolute left-0 top-0 inline-block"
-          initial={{ x: 210, y: -34, rotate: 22, opacity: 0 }}
+          style={{ transformStyle: "preserve-3d" }}
+          initial={{ rotateX: 0, x: 0, y: 0, rotate: 0 }}
           animate={
             reduced
-              ? { x: 0, y: 0, rotate: 0, opacity: 1 }
+              ? { rotateX: 180, x: 0, y: 0, rotate: 0 }
               : play
-              ? { x: [210, -9, 3, 0], y: [-34, 2, -1, 0], rotate: [22, -3, 1, 0], opacity: [0, 1, 1, 1] }
-              : { x: 210, y: -34, rotate: 22, opacity: 0 }
+              ? {
+                  // caught, lifted, tumbled, dropped back into place
+                  rotateX: [0, 62, 150, 196, 174, 180],
+                  y: [0, -30, -38, -8, 3, 0],
+                  x: [0, -13, -16, -5, 1, 0],
+                  rotate: [0, -9, -13, -4, 1.5, 0],
+                }
+              : { rotateX: 0, x: 0, y: 0, rotate: 0 }
           }
-          transition={{ duration: 0.5, delay: T.wIn, ease: "easeOut", times: [0, 0.62, 0.84, 1] }}
+          transition={{
+            duration: 0.62,
+            delay: T.mOut,
+            ease: [0.3, 0.9, 0.3, 1],
+            times: [0, 0.2, 0.44, 0.7, 0.87, 1],
+          }}
         >
-          w
+          <span
+            className="absolute left-0 top-0 inline-block"
+            style={{ backfaceVisibility: "hidden" }}
+          >
+            m
+          </span>
+          <span
+            className="inline-block"
+            style={{ backfaceVisibility: "hidden", transform: "rotateX(180deg)" }}
+          >
+            w
+          </span>
         </motion.span>
       </motion.span>
     </>

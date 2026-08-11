@@ -363,3 +363,59 @@ body {
     rgba(244, 233, 214, 0) 66%
   );
 }
+
+/* ---------------------------------------------------------------------
+   Transitional jungle wash.
+
+   The page runs cream between two loud bookends — the marble hero and the
+   animated tail finale — and the jump from full-strength artwork to flat
+   cream was too abrupt. This is the in-between: the same marble, blurred
+   and pulled 70% of the way to cream, then held at ~12% opacity and
+   masked to nothing top and bottom.
+
+   Net visual intensity is a few percent. It should register as the paper
+   warming slightly rather than as a pattern. Used in exactly two places
+   on the homepage; it is not a decorative background for every section.
+   --------------------------------------------------------------------- */
+.jungle-wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("/images/jungle-wash.webp");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.12;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 42%,
+    #000 58%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 42%,
+    #000 58%,
+    transparent 100%
+  );
+}
+
+/* Second placement sits closer to the finale, so it leans a touch warmer
+   and enters from the opposite edge for variation. */
+.jungle-wash-late {
+  opacity: 0.15;
+  background-position: 20% center;
+  transform: scaleX(-1);
+}
+
+@media (max-width: 767px) {
+  /* Mobile stays cleaner: less of it, and softer. */
+  .jungle-wash {
+    opacity: 0.08;
+  }
+  .jungle-wash-late {
+    opacity: 0.1;
+  }
+}
