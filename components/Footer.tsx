@@ -14,6 +14,7 @@ export default function Footer() {
         <div className="flex items-center gap-6 text-sm text-ink/80 order-2 md:order-3">
           <Link href="/events" className="organic-underline hover:text-ink transition-colors">Experiences</Link>
           <Link href="/work-with-us" className="organic-underline hover:text-ink transition-colors">Work With Us</Link>
+          <Link href="/about" className="hover:text-tiger-text transition-colors">About</Link>
           <a href="mailto:hello@atigercub.com" className="organic-underline hover:text-ink transition-colors">Contact</a>
           <a
             href="https://discord.gg/6u83g4P8Cb"

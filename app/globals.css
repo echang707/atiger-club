@@ -239,13 +239,13 @@ body {
   inset: 0;
   z-index: -10;
   background-color: #F4E9D6;
-  background-image: url("/images/tiger-marble-bg.jpg");
+  background-image: url("/images/tiger-marble-bg.webp");
   background-repeat: no-repeat;
   /* Shifted so the dense right-hand markings sit further right and clear
      of the centred tagline. Some of the pattern runs off the edge, which
      is fine — the composition reads better than the collision did. */
   background-size: 122% auto;
-  background-position: 41% 46%;
+  background-position: 30% 46%;
 }
 
 /* Tall windows crop the sides too hard at 118% width, so size off the
@@ -254,6 +254,21 @@ body {
   .marble-field {
     background-size: auto 126%;
     background-position: 38% 46%;
+  }
+}
+
+/* Phones need their own crop. A narrow window only shows a thin vertical
+   slice of the artwork, and the desktop shift-right lands that slice in
+   the middle of the cream — a blank hero. This pulls the frame back onto
+   the diagonal so the markings sweep across the lower half while the
+   tagline still sits on clean cream above them. */
+@media (max-width: 767px) {
+  .marble-field {
+    /* Phones see only a narrow slice of the artwork. This frames the
+       slice on the clean part of the diagonal so the tagline sits on
+       cream, with the markings gathering toward the lower edge. */
+    background-size: auto 122%;
+    background-position: 42% 100%;
   }
 }
 
@@ -280,7 +295,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: -10;
-  background-image: url("/images/tiger-marble-bg.jpg");
+  background-image: url("/images/tiger-marble-bg.webp");
   background-size: 126% auto;
   background-position: 50% 50%;
   opacity: var(--edge, 0);

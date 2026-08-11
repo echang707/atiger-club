@@ -196,3 +196,86 @@ ratio from a constant, so update it there if you swap the art again.
   today or later. Dates in `lib/events.ts` have no year, so `EVENT_YEAR = 2026`
   at the top of `EventsClient.tsx` supplies it — update that constant when the
   data rolls over.
+
+---
+
+# Mobile pass
+
+Checked at 390×844 after the crop shift. One real regression found and fixed:
+
+- **The mobile hero had gone nearly blank.** A phone only sees a thin vertical
+  slice of the artwork, and shifting the desktop crop right landed that slice in
+  the middle of the cream — no tiger at all. Phones now get their own crop
+  (`auto 128%` at `68% 26%`, `max-width: 767px`), which puts the diagonal across
+  the lower half while the tagline and subline stay on clean cream above it.
+
+Verified fine on mobile: nav (wordmark, Join button and menu all clear at the
+larger logo size), the finale tail, and the events list.
+
+**One deliberate exception:** the seven mediums wrap 4 + 3 on phones rather than
+sitting on one line. Seven tiles across 390px would leave roughly 45px each —
+the icons would be unreadable. The one-line rule holds from `sm` (640px) up.
+
+---
+
+# Revision — /about, the tail whip, sharper background
+
+## Background sharpness
+
+The softness was **CSS upscaling**, not the source. The asset was 1672px wide
+but the hero renders it at `122%` of the viewport — 2342px on a 1920 screen, so
+the browser was upsampling it ~40% with bilinear filtering.
+
+Now: the new lossless PNG is colour-matched, **supersampled 2× to 3344×1882**
+with an unsharp pass, and saved as WebP (630 KB, down from a 1.7 MB JPEG). Large
+viewports downsample it instead of upsampling. The new source is also
+considerably richer — darks land at `rgb(28,15,8)` versus `rgb(49,37,24)` before,
+and 20.4% of the image is near-black.
+
+Crop pushed right to `30%`: ink behind the tagline measures **0.7%** (was 2.3%),
+with the right edge still at 76–81%.
+
+## The tail whip
+
+`Ending.tsx`. Headline is now "Life's happening. Go wild." The tail rests, winds
+back, snaps across, and the tip catches **wild** — which jolts and shakes for
+~420ms while every other word stays perfectly still. Each of the five characters
+carries its own amplitude, spin and delay (`LETTER_FEEL`), so the shake reads as
+five things absorbing one hit rather than one block sliding. The tail rebounds
+off the collision instead of snapping straight back — the physics lives in the
+`times` arrays, not in easing.
+
+Fires **once**, on a single `useInView` shared by the word and the tail so they
+can't drift apart. Reduced-motion gets the settled composition with no whip.
+
+*Bug found in review:* the first build wrapped the tail in `display: contents`,
+which generates no layout box, so its IntersectionObserver never fired and the
+tail never appeared at all. Replaced with one `useInView` on the section.
+
+## /about
+
+New route: `app/about/page.tsx` (metadata) + `AboutClient.tsx` + `StripeRule.tsx`.
+Nothing else was touched — the homepage, events and work-with-us pages are
+unchanged apart from About being added to the nav and footer.
+
+Ten movements, built from the existing system only: Fraunces display, Instrument
+italic for the turn-lines, JetBrains for small caps labels, the ink/cream/tiger
+palette, `max-w-content`, `organic-underline`, and the same rise-on-enter motion
+as the homepage. No new dependencies, no stock photography, no feature cards.
+
+The four principles are the centrepiece: each gets a full-width editorial row
+that alternates side, with the index number in its own column. *They first
+shipped as oversized watermarks behind the type — at that scale they collided
+with every claim, so they were moved into the grid.*
+
+Tiger motif is stripes only, entering from the outer edges, never behind copy.
+
+## Mobile
+
+Took three passes on the hero. A phone sees only a narrow vertical slice of the
+artwork, so the crop has to choose what the slice contains: the first attempt
+put markings straight through "together.", the second removed them entirely.
+Final framing (`auto 122%` at `42% 100%`) keeps the tagline on clean cream with
+the diagonal gathering in the lower third.
+
+About and the closing section were verified at 390×844.

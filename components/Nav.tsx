@@ -46,7 +46,7 @@ export default function Nav() {
           <TigerWordmark className="text-[13px] sm:text-base md:text-xl" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-9 text-[15px] justify-self-center">
+        <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
           <Link
             href="/events"
             className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
@@ -58,6 +58,12 @@ export default function Nav() {
             className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
           >
             Work With Us
+          </Link>
+          <Link
+            href="/about"
+            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+          >
+            About
           </Link>
         </nav>
 
@@ -107,6 +113,9 @@ export default function Nav() {
               </Link>
               <Link href="/work-with-us" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
                 Work With Us
+              </Link>
+              <Link href="/about" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
+                About
               </Link>
             </div>
           </motion.nav>
