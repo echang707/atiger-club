@@ -245,7 +245,7 @@ body {
      of the centred tagline. Some of the pattern runs off the edge, which
      is fine — the composition reads better than the collision did. */
   background-size: 122% auto;
-  background-position: 30% 46%;
+  background-position: 14% 46%;
 }
 
 /* Tall windows crop the sides too hard at 118% width, so size off the

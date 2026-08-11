@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 // The closing statement, and the one joke on the page.
@@ -25,13 +24,13 @@ const LETTERS = ["w", "i", "l", "d", "."];
 // object being translated. The full stop barely moves — it's tiny.
 const LETTER_FEEL = [
   { amp: 1.0, spin: 1.0, delay: 0.0 },
-  { amp: 0.82, spin: 1.35, delay: 0.018 },
-  { amp: 0.94, spin: 0.75, delay: 0.032 },
-  { amp: 1.12, spin: 1.15, delay: 0.048 },
-  { amp: 0.45, spin: 1.6, delay: 0.062 },
+  { amp: 0.78, spin: 1.45, delay: 0.026 },
+  { amp: 1.06, spin: 0.68, delay: 0.045 },
+  { amp: 1.24, spin: 1.2, delay: 0.066 },
+  { amp: 0.4, spin: 1.8, delay: 0.086 },
 ];
 
-function WildWord({ play }: { play: boolean }) {
+function WildWord() {
   return (
     <span className="inline-block whitespace-nowrap">
       {LETTERS.map((ch, i) => {
@@ -40,21 +39,28 @@ function WildWord({ play }: { play: boolean }) {
           <motion.span
             key={i}
             className="inline-block"
-            initial={false}
-            animate={
-              play
-                ? {
-                    x: [0, -13 * f.amp, 8 * f.amp, -4.5 * f.amp, 2 * f.amp, 0],
-                    y: [0, 2.5 * f.amp, -1.5 * f.amp, 1 * f.amp, 0, 0],
-                    rotate: [0, -6 * f.spin, 3.4 * f.spin, -1.7 * f.spin, 0.7 * f.spin, 0],
-                  }
-                : { x: 0, y: 0, rotate: 0 }
-            }
+            initial={{ x: 0, y: 0, rotate: 0, scale: 1 }}
+            whileInView={{
+              x: [0, -46 * f.amp, 28 * f.amp, -17 * f.amp, 9 * f.amp, -4 * f.amp, 0],
+              y: [0, 9 * f.amp, -6 * f.amp, 4 * f.amp, -2 * f.amp, 1 * f.amp, 0],
+              rotate: [
+                0,
+                -19 * f.spin,
+                12 * f.spin,
+                -7 * f.spin,
+                3.5 * f.spin,
+                -1.5 * f.spin,
+                0,
+              ],
+              scale: [1, 1.06, 0.97, 1.02, 0.995, 1.005, 1],
+            }}
+            // once:false — the hit lands every time you scroll onto it.
+            viewport={{ once: false, amount: 0.6 }}
             transition={{
-              duration: 0.42,
+              duration: 0.72,
               delay: IMPACT + f.delay,
               ease: "easeOut",
-              times: [0, 0.12, 0.32, 0.56, 0.78, 1],
+              times: [0, 0.08, 0.22, 0.4, 0.58, 0.76, 1],
             }}
           >
             {ch}
@@ -65,14 +71,8 @@ function WildWord({ play }: { play: boolean }) {
   );
 }
 
-function Tail({ play, settled }: { play: boolean; settled: boolean }) {
+function Tail() {
   const reduced = useReducedMotion();
-
-  // rest -> wind back -> WHIP -> overshoot past the word -> rebound -> settle
-  const whip = {
-    x: ["6%", "9.5%", "-7%", "-2.5%", "0.6%", "0%"],
-    rotate: [1.6, 3.2, -5.4, -1.2, 0.5, 0],
-  };
 
   return (
     <motion.div
@@ -83,23 +83,27 @@ function Tail({ play, settled }: { play: boolean; settled: boolean }) {
                  md:bottom-[8%] md:w-[66%]
                  lg:bottom-[8%] lg:w-[59%]
                  origin-right"
-      initial={reduced ? false : { x: "16%", opacity: 0, rotate: 2.4 }}
-      animate={
-        reduced || settled
+      initial={reduced ? { x: "0%", opacity: 1, rotate: 0 } : { x: "16%", opacity: 0, rotate: 2.4 }}
+      whileInView={
+        reduced
           ? { x: "0%", opacity: 1, rotate: 0 }
-          : play
-          ? { x: whip.x, rotate: whip.rotate, opacity: 1 }
-          : { x: "16%", opacity: 0, rotate: 2.4 }
+          : {
+              // swing in -> wind back -> WHIP -> overshoot -> rebound -> settle
+              x: ["16%", "6%", "13%", "-14%", "-4%", "1.5%", "0%"],
+              rotate: [2.4, 1.6, 6.5, -11, -2.6, 1, 0],
+              opacity: 1,
+            }
       }
+      viewport={{ once: false, amount: 0.35 }}
       transition={
         reduced
           ? { duration: 0 }
           : {
-              opacity: { duration: 0.45, ease: "easeOut" },
-              // Slow wind-up, violent snap, soft settle — the `times`
-              // array is where the physics lives.
-              x: { duration: 1.35, times: [0, 0.42, 0.53, 0.68, 0.84, 1], ease: "easeOut" },
-              rotate: { duration: 1.35, times: [0, 0.42, 0.53, 0.68, 0.84, 1], ease: "easeOut" },
+              opacity: { duration: 0.35, ease: "easeOut" },
+              // The physics lives in `times`: slow wind-up, violent snap,
+              // soft settle — not in the easing curve.
+              x: { duration: 1.7, times: [0, 0.22, 0.42, 0.55, 0.7, 0.85, 1], ease: "easeOut" },
+              rotate: { duration: 1.7, times: [0, 0.22, 0.42, 0.55, 0.7, 0.85, 1], ease: "easeOut" },
             }
       }
     >
@@ -117,18 +121,8 @@ function Tail({ play, settled }: { play: boolean; settled: boolean }) {
 }
 
 export default function Ending() {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  // One trigger for both the word and the tail, so the smack and the shake
-  // can never drift apart. Once only — a loop would wear out fast.
-  const inView = useInView(ref, { once: true, amount: 0.4 });
-  const play = inView && !reduced;
-
   return (
-    <section
-      ref={ref}
-      className="relative overflow-hidden flex items-center min-h-[78vh] md:min-h-[88vh] py-24 md:py-28"
-    >
+    <section className="relative overflow-hidden flex items-center min-h-[78vh] md:min-h-[88vh] py-24 md:py-28">
       <div className="relative z-10 w-full max-w-content mx-auto px-6 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
@@ -143,8 +137,7 @@ export default function Ending() {
         >
           Life&rsquo;s happening.
           <br />
-          Go{" "}
-          <WildWord play={play} />
+          Go <WildWord />
         </motion.h2>
 
         <motion.a
@@ -161,7 +154,7 @@ export default function Ending() {
         </motion.a>
       </div>
 
-      <Tail play={play} settled={!!reduced && inView} />
+      <Tail />
     </section>
   );
 }

@@ -279,3 +279,46 @@ Final framing (`auto 122%` at `42% 100%`) keeps the tagline on clean cream with
 the diagonal gathering in the lower third.
 
 About and the closing section were verified at 390×844.
+
+---
+
+# Revision — crop, bigger repeating whip, shorter /about
+
+## Hero crop
+
+Pushed further right: `background-position-x` 30% → **14%**. Ink behind the
+tagline drops from 4.1% to ~2.4% and behind the subline from 12.5% to ~6.8%,
+while the right edge stays rich at 73–78%.
+
+## The whip: bigger, and it replays
+
+Letter throw went from 13px to **46px**, rotation from 6° to **19°**, with a
+scale pulse and an extra oscillation; the shake runs 720ms instead of 420ms.
+The tail swings harder too (−7% → −14% travel, −5.4° → −11°).
+
+Measured in Chromium across three separate scroll-ins: **55px maximum
+displacement, up to 33° rotation, on every pass.**
+
+Two bugs found and fixed during review, both of which made the animation not
+run at all:
+
+1. `initial={false}` on the letters. That tells framer to jump straight to the
+   target rather than animate — so the shake never played.
+2. The `once:false` + `useInView` + `key`-remount machinery never propagated
+   its play flag, and it also made the tail *vanish* whenever the section was
+   only partly on screen. Both were replaced with plain `whileInView` +
+   `viewport={{ once: false }}` — the same mechanism the rest of the site uses,
+   which replays on re-entry by design and needs no state at all.
+
+Reduced-motion still gets the settled composition with no whip.
+
+*Testing note:* the site sets `scroll-behavior: smooth`, so any headless check
+must scroll with `behavior: 'instant'` or it measures mid-scroll and reports
+nothing moving. Two false negatives came from exactly that.
+
+## /about shortened
+
+Copy trimmed by ~1,400 characters (paragraphs merged, lists cut from 6→4 and
+5→4, principle bodies tightened) and the vertical rhythm pulled in across 24
+padding values. Page height 10.5 → **9.4 screens** desktop, 9.2 on mobile.
+All ten narrative beats are intact — the page is denser, not shorter on story.

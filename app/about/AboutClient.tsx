@@ -61,7 +61,7 @@ function Movement({
   id?: string;
 }) {
   return (
-    <section id={id} className={`relative py-20 md:py-32 ${className}`}>
+    <section id={id} className={`relative py-10 md:py-16 ${className}`}>
       <div className="max-w-content mx-auto px-6 md:px-10">{children}</div>
     </section>
   );
@@ -86,30 +86,20 @@ export default function AboutClient() {
           </h1>
         </Rise>
         <Rise delay={0.15}>
-          <StripeRule className="mt-12 md:mt-16" />
+          <StripeRule className="mt-7 md:mt-9" />
         </Rise>
 
-        <div className="mt-12 md:mt-16 grid md:grid-cols-2 gap-10 md:gap-16 max-w-4xl">
-          <Rise delay={0.1}>
-            <p className="text-base md:text-lg text-ink/75 leading-relaxed">
-              As kids and students we have social infrastructure built in without
-              ever asking for it. Classrooms. Teams. Clubs. Dorms. Playgrounds.
-              Places you return to, with the same faces, week after week.
-              Relationships form because the structure keeps putting you in the
-              same room.
-            </p>
-          </Rise>
-          <Rise delay={0.18}>
-            <p className="text-base md:text-lg text-ink/75 leading-relaxed">
-              Adulthood quietly removes most of that. Meanwhile more of life has
-              moved behind a screen. So you can live surrounded by people and
-              still find it strangely difficult to meet any of them.
-            </p>
-          </Rise>
-        </div>
+        <Rise delay={0.1}>
+          <p className="mt-7 md:mt-9 text-base md:text-lg text-ink/75 leading-relaxed max-w-2xl">
+            Classrooms, teams, clubs, dorms — as students we get social
+            infrastructure without asking for it. Adulthood quietly takes it
+            away, and more of life has moved behind a screen. You can end up
+            surrounded by people and still find it hard to meet any.
+          </p>
+        </Rise>
 
         <Rise delay={0.1}>
-          <p className="font-tagline italic mt-14 md:mt-20 text-ink text-[7vw] sm:text-[5vw] md:text-[3.6vw] lg:text-[3.1vw] leading-[1.15] max-w-[20ch]">
+          <p className="font-tagline italic mt-8 md:mt-11 text-ink text-[7vw] sm:text-[5vw] md:text-[3.6vw] lg:text-[3.1vw] leading-[1.15] max-w-[20ch]">
             Maybe we don&rsquo;t need another social network. Maybe we need more
             reasons to be social in the real world.
           </p>
@@ -132,9 +122,9 @@ export default function AboutClient() {
             </Rise>
             <Rise delay={0.08}>
               <p className="text-base md:text-lg text-ink/75 leading-relaxed mb-6">
-                A Tiger Cub began around a broader mission: making meaningful
-                relationships, community and belonging easier to find. Tiger Club
-                grew out of one realisation inside that.
+                A Tiger Cub began with a broader mission: making relationships,
+                community and belonging easier to find. Tiger Club grew from one
+                realisation inside it.
               </p>
             </Rise>
             <Rise delay={0.14}>
@@ -150,9 +140,9 @@ export default function AboutClient() {
             </Rise>
             <Rise delay={0.26}>
               <p className="mt-8 text-base md:text-lg text-ink/75 leading-relaxed">
-                The activity gives people a reason to show up.{" "}
+                The activity is the reason to show up.{" "}
                 <span className="text-ink font-medium">
-                  The shared experience gives them a reason to connect.
+                  The shared experience is the reason to connect.
                 </span>
               </p>
             </Rise>
@@ -161,7 +151,7 @@ export default function AboutClient() {
       </Movement>
 
       {/* ---------- 3. WHY A TIGER — the irony, set as the loudest type ---------- */}
-      <section className="relative py-24 md:py-40 overflow-hidden">
+      <section className="relative py-12 md:py-20 overflow-hidden">
         {/* Stripes entering from both edges, never behind the words. */}
         <StripeBand />
         <div className="max-w-content mx-auto px-6 md:px-10 relative z-10">
@@ -176,11 +166,9 @@ export default function AboutClient() {
             </h2>
           </Rise>
           <Rise delay={0.16}>
-            <p className="mt-10 md:mt-14 text-base md:text-lg text-ink/75 leading-relaxed max-w-xl">
-              There is intentional irony in the name. Tigers live almost entirely
-              alone. Increasingly, so do we — eating alone, working behind
-              screens, moving through cities full of people we will never meet.
-              Tiger Club pushes in the opposite direction.
+            <p className="mt-8 md:mt-11 text-base md:text-lg text-ink/75 leading-relaxed max-w-xl">
+              The irony is deliberate. Tigers live almost entirely alone —
+              and increasingly, so do we. Tiger Club pushes the other way.
             </p>
           </Rise>
         </div>
@@ -194,12 +182,10 @@ export default function AboutClient() {
           </h2>
         </Rise>
 
-        <ul className="mt-12 md:mt-16 max-w-3xl">
+        <ul className="mt-7 md:mt-9 max-w-3xl">
           {[
             "The unexpected conversation.",
-            "Sharing food around a table.",
             "Being terrible at something new together.",
-            "Getting talked into something you'd normally skip.",
             "Laughing about something nobody planned.",
             "Meeting someone whose path would never have crossed yours.",
           ].map((line, i) => (
@@ -209,7 +195,7 @@ export default function AboutClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.07, ease: EASE }}
-              className="flex items-baseline gap-5 border-b border-ink/10 py-5 md:py-6"
+              className="flex items-baseline gap-5 border-b border-ink/10 py-4 md:py-5"
             >
               <span className="font-mono text-[10px] text-tiger-text shrink-0 w-6">
                 {String(i + 1).padStart(2, "0")}
@@ -222,7 +208,7 @@ export default function AboutClient() {
         </ul>
 
         <Rise delay={0.1}>
-          <div className="mt-12 md:mt-16 max-w-xl">
+          <div className="mt-7 md:mt-9 max-w-xl">
             <p className="text-base md:text-lg text-ink/75 leading-relaxed">
               Technology is good at helping us find each other.
             </p>
@@ -230,8 +216,8 @@ export default function AboutClient() {
               But it can&rsquo;t replace being there.
             </p>
             <p className="mt-6 text-base md:text-lg text-ink/75 leading-relaxed">
-              So we use technology for exactly one thing: helping people get off
-              it and into the world.
+              So we use it for one thing: helping people get off it and into the
+              world.
             </p>
           </div>
         </Rise>
@@ -249,7 +235,7 @@ export default function AboutClient() {
         </Rise>
 
         <Rise delay={0.12}>
-          <p className="mt-12 md:mt-16 text-base md:text-lg text-ink/75">
+          <p className="mt-7 md:mt-9 text-base md:text-lg text-ink/75">
             A meaningful experience leaves you more connected to:
           </p>
         </Rise>
@@ -273,11 +259,10 @@ export default function AboutClient() {
           )}
         </div>
 
-        <div className="mt-14 md:mt-20 max-w-2xl space-y-3">
+        <div className="mt-8 md:mt-11 max-w-2xl space-y-3">
           {[
             "Come for dinner, discover another culture.",
             "Come for a run, find someone you run with again.",
-            "Come for a workshop, find out you can make something.",
             "Come alone, leave knowing someone.",
           ].map((t, i) => (
             <Rise key={t} delay={i * 0.06}>
@@ -296,7 +281,7 @@ export default function AboutClient() {
       <Principles />
 
       {/* ---------- 7. THE BIGGER IDEA ---------- */}
-      <section className="relative py-24 md:py-40 overflow-hidden">
+      <section className="relative py-12 md:py-20 overflow-hidden">
         <StripeBand flip />
         <div className="max-w-content mx-auto px-6 md:px-10 relative z-10">
           <Rise>
@@ -313,19 +298,17 @@ export default function AboutClient() {
               <span className="text-ink font-medium">
                 social infrastructure for modern life
               </span>{" "}
-              — the places, experiences, communities and recurring rituals that
-              make it easier to encounter one another, build relationships,
-              take part in your city and feel like you belong somewhere.
+              — the places, rituals and communities that make it easier to meet
+              people, take part in your city, and feel like you belong somewhere.
             </p>
           </Rise>
 
-          <div className="mt-14 md:mt-20 max-w-3xl border-t border-ink/10">
+          <div className="mt-8 md:mt-11 max-w-3xl border-t border-ink/10">
             {[
               "A reason to leave the apartment.",
               "A place where coming alone is normal.",
               "A way into communities you weren't already part of.",
-              "A way to discover what's around you.",
-              "Something recurring enough that relationships have time to form.",
+              "Recurring enough that relationships have time to form.",
             ].map((t, i) => (
               <motion.p
                 key={t}
@@ -341,7 +324,7 @@ export default function AboutClient() {
           </div>
 
           <Rise delay={0.12}>
-            <div className="mt-14 md:mt-20 max-w-2xl">
+            <div className="mt-8 md:mt-11 max-w-2xl">
               <p className="font-mono text-[11px] tracking-wideish uppercase text-ink/55 mb-4">
                 The question isn&rsquo;t only
               </p>
@@ -366,9 +349,8 @@ export default function AboutClient() {
         </Rise>
         <Rise delay={0.08}>
           <p className="text-base md:text-lg text-ink/75 max-w-xl leading-relaxed">
-            Over time we want seeing{" "}
-            <span className="font-display text-ink">Tiger Club</span> on an
-            experience to tell you something.
+            Over time, seeing <span className="font-display text-ink">Tiger Club</span>{" "}
+            on an experience should tell you something. Not:
           </p>
         </Rise>
 
@@ -387,18 +369,17 @@ export default function AboutClient() {
         </Rise>
 
         <Rise delay={0.18}>
-          <p className="mt-12 md:mt-16 font-display text-ink tracking-tight leading-[1.02] text-[8.5vw] sm:text-[6vw] md:text-[4.2vw] lg:text-[3.6vw] max-w-[18ch]">
+          <p className="mt-7 md:mt-9 font-display text-ink tracking-tight leading-[1.02] text-[8.5vw] sm:text-[6vw] md:text-[4.2vw] lg:text-[3.6vw] max-w-[18ch]">
             It should mean someone thought about how this would actually feel.
           </p>
         </Rise>
 
-        <div className="mt-12 md:mt-16 max-w-2xl space-y-3">
+        <div className="mt-7 md:mt-9 max-w-2xl space-y-3">
           {[
             "You can come alone.",
             "You'll take part instead of watch.",
-            "You'll probably meet someone.",
-            "You'll discover something.",
-            "And somewhere in there, something might happen you weren't expecting.",
+            "You'll probably meet someone, and discover something.",
+            "And something might happen you weren't expecting.",
           ].map((t, i) => (
             <Rise key={t} delay={i * 0.06}>
               <p className="text-base md:text-lg text-ink/75">{t}</p>
@@ -426,27 +407,27 @@ export default function AboutClient() {
         </Rise>
         <Rise delay={0.1}>
           <p className="mt-6 text-base md:text-lg text-ink/75 max-w-xl">
-            Seeing something on Tiger Club doesn&rsquo;t automatically mean Tiger
-            Club produced it. Here&rsquo;s how to tell the difference.
+            Seeing something on Tiger Club doesn&rsquo;t mean we produced it.
+            Here&rsquo;s how to tell.
           </p>
         </Rise>
 
-        <div className="mt-12 md:mt-16 border-t border-ink/12">
+        <div className="mt-7 md:mt-9 border-t border-ink/12">
           {[
             {
               kind: "Made by us",
               name: "Tiger Club Experiences",
-              body: "Designed by us, start to finish, around the full experience philosophy above.",
+              body: "Designed by us, start to finish, around everything above.",
             },
             {
               kind: "Made with us",
               name: "Tiger Club ×",
-              body: "Our partners bring what they do best. We bring the social and experience-design layer.",
+              body: "Partners bring what they do best. We bring the social layer.",
             },
             {
               kind: "Found by us",
               name: "Tiger Picks",
-              body: "Great things already happening around the city that we think more people should know about.",
+              body: "Things already happening around the city that more people should know about.",
             },
           ].map((row, i) => (
             <motion.div
@@ -455,7 +436,7 @@ export default function AboutClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.65, delay: i * 0.1, ease: EASE }}
-              className="grid md:grid-cols-[190px_1fr] gap-2 md:gap-10 border-b border-ink/12 py-7 md:py-9"
+              className="grid md:grid-cols-[190px_1fr] gap-2 md:gap-10 border-b border-ink/12 py-5 md:py-7"
             >
               <p className="font-mono text-[11px] tracking-wideish uppercase text-tiger-text md:pt-2">
                 {row.kind}
@@ -474,7 +455,7 @@ export default function AboutClient() {
       </Movement>
 
       {/* ---------- 10. CLOSING ---------- */}
-      <section className="relative py-28 md:py-44 overflow-hidden">
+      <section className="relative py-14 md:py-24 overflow-hidden">
         <StripeBand />
         <div className="max-w-content mx-auto px-6 md:px-10 relative z-10">
           <Rise>
@@ -483,11 +464,10 @@ export default function AboutClient() {
             </h2>
           </Rise>
           <Rise delay={0.12}>
-            <p className="mt-10 md:mt-14 text-base md:text-lg text-ink/75 leading-relaxed max-w-2xl">
+            <p className="mt-8 md:mt-11 text-base md:text-lg text-ink/75 leading-relaxed max-w-2xl">
               We&rsquo;re building more reasons to leave the house, more places
-              where showing up alone is normal, more encounters with people you
-              wouldn&rsquo;t otherwise meet, and more ways to take part in the
-              place you call home.
+              where showing up alone is normal, and more ways to take part in
+              the place you call home.
             </p>
           </Rise>
           <Rise delay={0.18}>
@@ -498,7 +478,7 @@ export default function AboutClient() {
           <Rise delay={0.24}>
             <Link
               href="/events"
-              className="organic-underline mt-12 md:mt-16 inline-block font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink hover:text-tiger-text transition-colors"
+              className="organic-underline mt-7 md:mt-9 inline-block font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink hover:text-tiger-text transition-colors"
             >
               see what&rsquo;s happening →
             </Link>
@@ -567,31 +547,31 @@ const PRINCIPLES = [
     n: "01",
     title: "No spectators",
     claim: "Don't just attend. Participate.",
-    body: "The people aren't an audience. They're part of what makes the experience happen at all.",
+    body: "The people aren't an audience. They're part of what makes it happen.",
   },
   {
     n: "02",
     title: "Strangers don't leave as strangers",
     claim: "Connection by design, not by chance.",
-    body: "Natural reasons to talk, without forced networking or awkward icebreakers. Someone should be able to arrive alone and still belong.",
+    body: "Natural reasons to talk — no forced networking, no icebreakers. Arrive alone and still belong.",
   },
   {
     n: "03",
     title: "Break the script",
     claim: "There should be something you didn't expect.",
-    body: "Every experience contains one moment that breaks the normal script — playful, surprising, thoughtful, strange. Internally we call it the Wild Card.",
+    body: "Every experience holds one moment that breaks the script. Internally we call it the Wild Card.",
   },
   {
     n: "04",
     title: "Discovery by design",
     claim: "Leave knowing something you didn't before.",
-    body: "A person. A place. A culture, skill, idea, perspective, neighbourhood — or a side of yourself.",
+    body: "A person, a place, a skill, an idea — or a side of yourself.",
   },
 ];
 
 function Principles() {
   return (
-    <section className="relative py-20 md:py-32">
+    <section className="relative py-10 md:py-16">
       <div className="max-w-content mx-auto px-6 md:px-10">
         <Rise>
           <Label>The Tiger Club experience</Label>
@@ -599,13 +579,13 @@ function Principles() {
         <Rise delay={0.08}>
           <p className="font-display text-ink tracking-tight leading-[1.04] text-[8vw] sm:text-[5.5vw] md:text-[3.8vw] lg:text-[3.2vw] max-w-[22ch]">
             We&rsquo;re not interested in putting people in the same room. We
-            design so that something can happen{" "}
+            design so something happens{" "}
             <span className="text-tiger">between them.</span>
           </p>
         </Rise>
       </div>
 
-      <div className="mt-16 md:mt-28">
+      <div className="mt-8 md:mt-12">
         {PRINCIPLES.map((p, i) => (
           <motion.article
             key={p.n}
@@ -613,7 +593,7 @@ function Principles() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-90px" }}
             transition={{ duration: 0.8, ease: EASE }}
-            className="relative border-t border-ink/12 py-14 md:py-24"
+            className="relative border-t border-ink/12 py-8 md:py-12"
           >
             <div className="max-w-content mx-auto px-6 md:px-10">
               {/* The index sits in its own column rather than as a watermark
