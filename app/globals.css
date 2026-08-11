@@ -19,7 +19,7 @@ html {
 body {
   background-color: #F4E9D6;
   background-image: url("data:image/webp;base64,UklGRrQFAABXRUJQVlA4IKgFAAAQZwCdASqAAoACPp1On04lpCMjIAgYsBOJaW7hajNo2Jv8T4ADw7E8Me5mdX/j/i+gCe16MvOrEddHrcQ6qk2TcKCGxdqpRhauqb5LMfobY7LWjLxQd9Zh8cqROKohHwRExMfX8J225hqr0fMoF2WVS+2UQVqPc3AeHrHXfBECBSQ4FUjVytja8kZhI6q89Pff2dD6nVXnp8XhC04ymYJj7NktaIVHEOqpNkxFtmBCttBaG32bKQd3baB45UiccguAsmvCccha+PFqeHecGJfHjCt9JrtMHM2lUiccdNSi2+kyq1l3tI0fBv68YER4jnr0Zj9DuZEFY3yjojn6ougKfAnHIIbF2IJ2rKJaLk5ouibfro9biHVUmyYjbSeT2D789ejLxHPYGwgnHYQevRl4j5/AiPEc9ejLxHUdOYgnHIIapHsRiHVUmzO78+AgP5tk+GCvfgTfMrxyCKEibZOHVU4LjLGDsXYgnFbClEb4Zak3bZ7V8lJIh7J2Sxx0fkREOYjDjpO7oyPMK5MW1ksQmBQQzLSmaFr46Toztk2TEPaTy7Wyak2TEOqpNlbGqpO0SOqQWGTL336EfLiZeJA70ZeV9yGjwKYpHPXZZGSaSOevRl51hkW58KX6ja89dmDnsGzglVMW5uAacIPYsDzHG+AKGrEl+dsoZIJN7qXnvSRzuSsQmghvRJ2jBe+/lCO3cY63T1LMeFHEOqrkTfkYzvXxl4kvy8UL1L+ThY5ELd9+jH8r4joucYgnHJGIrxHPXo0I3vvz16MvEc9ekm/LxHPXoy8Rz16MvEddHrcRCye8HihiYh1VJsmIfqdVSbJhdKJEFIKnmuy8Q6qk2TDAD2TEOmId4D6odirhqO5tbataPo1AoCo9za3C4S0lanmYbXkE3a+fgP8hUYl+5PdikJtMCPpm/zqvY2+Sh8NiCj28Q6qk2Z3f2dN2twuN+COJixJ5bi0NeehGQTQ6q89PfguTAMLGrCy7ffyhLh9R0CAZKDiqq67uyxMPpFJtR9qT4PZMQ6sHoRAmx7fXk2jAQFI8fBHeMqq3j8Hchpl8MxSnXk3dvQuEOqqHW4XLw0PEc9pTv0ZCaPMH6KDXoy4R8AD++5EPrdixUo71jwLwbUtzkfwkRffM21eWewFrFOrx7YPi8E04cy060OLqFtbDSA7zLnSJsglinIRXdQrhyatYCBt5nT6+hk8MRdF/2eMcKkESqK6JWYMvVfGmX5kfQDGNXw1lmfjiiIUtDKr1CAAdAA9VXQKbkC0uchtO9RXlzFPe1HbWgA+udW0Ee/gv9CvwnLPbYpG/Tydxb9auThBMYGkfqrq1ENBlHHlzizLWSESXTjHc8RK8+AHkdp40b3yv8K43eP4X1tDQpEoTZFYJ7olpFqPLbYWzc5rJk09zaXZ+hxyl7EgjAiENPOfQiHB6QsvRFkKU6gV8dPs2oXr7Lxx/5cCr3CBwslOlZlxfVhqKQVAq1EZtme01Lt9uWjkvKDpFbMhDLP5pLKsf5CMt6Wf+5QIhx693NAOdY20FBGnWWl2kXCG/Y2T3Y7bURR1Y8Dc9gtu09kBuGd1wABWptm+UcKAdhV+ugsGFEdAEYsrj6a/YxRiNDLMkRKDYha8ow2/KFjlUrPpXCnn8XR8VwurxPNcW0sX5b7LHhB1utAB1+9pBoBM3qVaGBEPKute3CjXKrgn+NyQH806Q2mvy6TydzRJUDfwByd8shLCDK/dCltkByn2GSpB7x/d3IQlTSxPJOstsmiKuekSde1fTorfSBkZ909iAJmNJtm83xXoCnhmFwMxw2K6WKK8LNLaBmwWS3tqi41UB3ELjtnwt4UCwqUMjKJWnqhE1XjN7C3MLeadMWjIYiKiLDgdjrx3TE4qQwCUfROpodbyOAQa0NyqNiQ2lGXhqCQyP9uyRcULpGEsAAA==");
-  background-size: 520px 520px;
+  background-size: 460px 460px;
   color: #15130E;
   position: relative;
 }
@@ -114,7 +114,9 @@ body {
 
 .photo-frame {
   background: #fbf8f1;
-  padding: 10px 10px 34px 10px;
+  /* bottom padding is the caption well; tighter on phones where the
+     caption is hidden and the extra white margin just wastes space */
+  padding: 8px 8px 12px 8px;
   box-shadow: 0 18px 40px -18px rgba(21,19,14,0.35), 0 2px 6px rgba(21,19,14,0.08);
 }
 
@@ -385,7 +387,7 @@ body {
   background-image: url("/images/jungle-wash.webp");
   background-size: cover;
   background-position: center;
-  opacity: 0.12;
+  opacity: 0.34;
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -405,7 +407,7 @@ body {
 /* Second placement sits closer to the finale, so it leans a touch warmer
    and enters from the opposite edge for variation. */
 .jungle-wash-late {
-  opacity: 0.15;
+  opacity: 0.42;
   background-position: 20% center;
   transform: scaleX(-1);
 }
@@ -413,9 +415,15 @@ body {
 @media (max-width: 767px) {
   /* Mobile stays cleaner: less of it, and softer. */
   .jungle-wash {
-    opacity: 0.08;
+    opacity: 0.24;
   }
   .jungle-wash-late {
-    opacity: 0.1;
+    opacity: 0.3;
+  }
+}
+
+@media (min-width: 640px) {
+  .photo-frame {
+    padding: 10px 10px 34px 10px;
   }
 }

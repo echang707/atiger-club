@@ -6,7 +6,9 @@ export default function JungleWash({ late = false }: { late?: boolean }) {
   return (
     <div
       aria-hidden="true"
-      className="relative h-[160px] md:h-[240px] overflow-hidden pointer-events-none"
+      className={`relative overflow-hidden pointer-events-none ${
+        late ? "h-[110px] md:h-[150px]" : "h-[170px] md:h-[250px]"
+      }`}
     >
       <div className={`jungle-wash ${late ? "jungle-wash-late" : ""}`} />
     </div>

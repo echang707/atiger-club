@@ -11,6 +11,7 @@ import EventRow from "@/components/EventRow";
 const EVENT_YEAR = 2026;
 
 export default function EventsClient() {
+  const [showPast, setShowPast] = useState(false);
   const params = useSearchParams();
   const [active, setActive] = useState<Medium | "All">("All");
   const [activeCity, setActiveCity] = useState<string>(cities[0]);
@@ -95,10 +96,10 @@ export default function EventsClient() {
           </span>
         </div>
 
-        <div className="mb-12 md:mb-16">
+        <div className="mb-8 md:mb-10">
           <button
             onClick={() => setActive("All")}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 mb-4 ${
+            className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-300 mb-3 ${
               active === "All" ? "bg-ink text-paper" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
             }`}
           >
@@ -109,7 +110,7 @@ export default function EventsClient() {
               small icon, small label, and the description lifted out to one
               shared line beneath the row rather than expanding each tile and
               pushing the list down the page. */}
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 md:gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-1 md:gap-1.5">
             {mediums.map((m, i) => {
               const expanded = active === m.name || hoveredMedium === m.name;
               return (
@@ -124,14 +125,18 @@ export default function EventsClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  className={`group relative flex flex-col items-center text-center gap-1 rounded-xl border px-1.5 py-2.5 transition-colors duration-300 ${
+                  // The tiles were reading as heavy boxes. The border and fill are
+                  // now only drawn on the active/hovered one — the rest sit on
+                  // plain cream, so the row is the tigers and their labels
+                  // rather than seven containers.
+                  className={`group relative flex flex-col items-center text-center gap-0.5 rounded-lg border px-1 py-1.5 transition-colors duration-300 ${
                     active === m.name
-                      ? "border-tiger bg-tiger/[0.06]"
-                      : "border-ink/10 bg-paper-dim/60 hover:border-ink/20 hover:bg-paper-dim"
+                      ? "border-tiger/60 bg-tiger/[0.07]"
+                      : "border-transparent hover:bg-ink/[0.04]"
                   }`}
                 >
                   <motion.span
-                    className="relative h-9 w-9 md:h-11 md:w-11 shrink-0"
+                    className="relative h-8 w-8 md:h-9 md:w-9 shrink-0"
                     animate={{ scale: expanded ? 1.1 : 1, rotate: expanded ? -4 : 0 }}
                     transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
                   >
@@ -139,12 +144,12 @@ export default function EventsClient() {
                       src={m.icon}
                       alt=""
                       fill
-                      sizes="44px"
+                      sizes="36px"
                       className="object-contain"
                     />
                   </motion.span>
                   <span
-                    className={`font-display text-[12px] md:text-sm leading-none ${
+                    className={`font-display text-[11px] md:text-[13px] leading-none ${
                       active === m.name ? "text-tiger-text" : "text-ink"
                     }`}
                   >
@@ -156,7 +161,7 @@ export default function EventsClient() {
           </div>
 
           {/* One shared line instead of seven expanding tiles. */}
-          <p className="mt-3 min-h-[1.5rem] text-xs md:text-sm text-ink/70">
+          <p className="mt-2 min-h-[1.25rem] text-xs text-ink/70">
             {mediums.find((m) => m.name === (hoveredMedium ?? active))?.description ?? ""}
           </p>
         </div>
@@ -188,19 +193,35 @@ export default function EventsClient() {
           </p>
         )}
 
+        {/* Past events stay collapsed so what's actually bookable is the
+            whole page until you ask for the archive. */}
         {past.length > 0 && (
-          <section className="mt-20 md:mt-28 border-t border-ink/10 pt-10 md:pt-14">
-            <h2 className="font-mono text-xs tracking-wideish uppercase text-ink/55 mb-2">
-              Already happened
-            </h2>
-            <p className="text-sm text-ink/70 mb-6 max-w-md">
-              What the club got up to recently. Nothing here is bookable.
-            </p>
-            <div className="opacity-70">
-              {past.map((event, i) => (
-                <EventRow key={event.id} event={event} index={i} />
-              ))}
-            </div>
+          <section className="mt-12 md:mt-16 border-t border-ink/10 pt-8 md:pt-10">
+            <button
+              onClick={() => setShowPast((v) => !v)}
+              aria-expanded={showPast}
+              className="organic-underline font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink/70 hover:text-tiger-text transition-colors"
+            >
+              {showPast ? "hide past events" : `view past events (${past.length}) →`}
+            </button>
+
+            <AnimatePresence initial={false}>
+              {showPast && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-6 opacity-65">
+                    {past.map((event, i) => (
+                      <EventRow key={event.id} event={event} index={i} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
         )}
       </div>

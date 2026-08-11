@@ -16,31 +16,31 @@ const scatter = [
     rotate: -5, x: 4, y: 4, w: 24,
     image: "/images/create-mural.jpg",
     alt: "Tiger Club members painting a mural together",
-    caption: "three ladders, one wall, flowers by golden hour",
+    caption: "left our mark",
   },
   {
     rotate: 3, x: 34, y: 0, w: 26,
     image: "/images/eat-dinner.jpg",
     alt: "Tiger Club dinner with wine and shared plates",
-    caption: "one pizza, five forks, the wine kept coming",
+    caption: "we needed a bigger table",
   },
   {
     rotate: -4, x: 66, y: 6, w: 26,
     image: memories[3].image,
     alt: `${memories[3].title} — ${memories[3].location}`,
-    caption: "ran badly together, finished together",
+    caption: "somehow we became a running club",
   },
   {
     rotate: 6, x: 14, y: 44, w: 24,
     image: "/images/serve-treeplanting.jpg",
     alt: "Tiger Club members planting a tree together",
-    caption: "gloves on, one tree in the ground, trash bags trailing behind",
+    caption: "good day to get lost",
   },
   {
     rotate: -6, x: 46, y: 48, w: 26,
     image: "/images/explore-festival.jpg",
     alt: "Tiger Club exploring a cultural festival crowd",
-    caption: "didn't know the customs, followed the crowd anyway",
+    caption: "right place, right time",
   },
 ];
 
@@ -126,7 +126,10 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              <span className="annotation absolute bottom-1 left-3 text-lg text-jungle/80">
+              {/* On phones each polaroid is ~95px wide, so a caption can only wrap
+                  into an unreadable column — the scatter reads as a collage
+                  there instead. Captions return from sm up. */}
+              <span className="annotation hidden sm:block px-3 pt-2 text-sm md:text-base leading-tight text-jungle/80 truncate">
                 {p.caption}
               </span>
             </motion.div>

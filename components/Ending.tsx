@@ -26,15 +26,12 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
    --------------------------------------------------------------------- */
 
 const T = {
-  windUp: 0.5,
-  whip: 0.58,
-  // Measured: the tip reaches maximum travel at ~0.98s (slice delay 0.78
-  // + 30% of a 0.56s curve). The gust launches exactly there, so the wind
-  // leaves the tail at the peak of the snap rather than before it.
-  snap: 0.98,
-  gust: 0.98,
-  mOut: 1.15,
-  wIn: 1.15,
+  whip: 0.22,
+  // The tip reaches full extension at whip + 0.16 (slice delay) + 45% of
+  // the 0.5s arc. The gust launches exactly there — one gust, at the top
+  // of the swing.
+  gust: 0.6,
+  flip: 0.78,
 }
 const TAIL_W = 1200;
 const TAIL_H = 363;
@@ -50,9 +47,9 @@ function TailWhip({ play }: { play: boolean }) {
     >
       {Array.from({ length: SLICES }).map((_, i) => {
         const tipness = 1 - i / (SLICES - 1); // 1 at the tip, 0 at the base
-        const amp = 118 * Math.pow(tipness, 1.7);
+        const amp = 150 * Math.pow(tipness, 1.7);
         // Delay grows toward the tip so the bend travels outward.
-        const delay = T.whip + tipness * 0.2;
+        const delay = T.whip + tipness * 0.16;
         return (
           <motion.div
             key={i}
@@ -67,15 +64,18 @@ function TailWhip({ play }: { play: boolean }) {
             animate={
               play
                 ? {
-                    y: [0, 0.22 * amp, -amp, 0.46 * amp, -0.18 * amp, 0.06 * amp, 0],
+                    // A single powerful arc — load, swing up, come down, one small
+                    // elastic settle. Not an oscillation: the earlier version
+                    // read as a jerk back and forth rather than a whip.
+                    y: [0, -0.30 * amp, -amp, -0.34 * amp, 0.06 * amp, 0],
                   }
                 : { y: 0 }
             }
             transition={{
-              duration: 0.56,
+              duration: 0.5,
               delay,
               ease: "easeOut",
-              times: [0, 0.12, 0.3, 0.5, 0.7, 0.86, 1],
+              times: [0, 0.2, 0.45, 0.68, 0.86, 1],
             }}
           >
             <div
@@ -98,10 +98,12 @@ function TailWhip({ play }: { play: boolean }) {
 /* Two or three thin, imperfect streaks leaving the tip and running left.
    Drawn, not puffed: no cloud, no sparkle, no swoosh. */
 function Gust({ play }: { play: boolean }) {
+  // One gust, three strokes reading as a single body of moving air —
+  // launched together rather than staggered into separate puffs.
   const streaks = [
-    { d: "M196 20 C150 12, 96 16, 8 9", w: 2.2, delay: 0, y: -14, len: 210 },
-    { d: "M198 34 C142 34, 78 30, 4 36", w: 1.6, delay: 0.05, y: 4, len: 210 },
-    { d: "M192 50 C154 58, 104 54, 30 60", w: 1.3, delay: 0.1, y: 20, len: 180 },
+    { d: "M198 16 C148 6, 92 12, 2 4", w: 2.8, delay: 0, len: 215 },
+    { d: "M198 34 C140 34, 74 28, 0 34", w: 2.0, delay: 0.02, len: 215 },
+    { d: "M194 52 C152 60, 100 56, 24 62", w: 1.5, delay: 0.04, len: 190 },
   ];
   return (
     <svg
@@ -121,7 +123,7 @@ function Gust({ play }: { play: boolean }) {
           stroke="currentColor"
           strokeWidth={s.w}
           strokeLinecap="round"
-          className="text-ink/55"
+          className="text-ink/60"
           style={{ strokeDasharray: s.len }}
           initial={{ strokeDashoffset: s.len, opacity: 0, x: 26 }}
           animate={
@@ -129,12 +131,12 @@ function Gust({ play }: { play: boolean }) {
               ? {
                   strokeDashoffset: [s.len, 0, -s.len * 0.9],
                   opacity: [0, 0.9, 0.9, 0],
-                  x: [26, 0, -34],
+                  x: [30, -4, -58],
                 }
               : { strokeDashoffset: s.len, opacity: 0, x: 26 }
           }
           transition={{
-            duration: 0.46,
+            duration: 0.5,
             delay: T.gust + s.delay,
             ease: "easeOut",
             times: [0, 0.45, 1],
@@ -184,7 +186,7 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
       return;
     }
     if (!play) return;
-    const id = window.setTimeout(() => setSwapped(true), (T.mOut + 0.16) * 1000);
+    const id = window.setTimeout(() => setSwapped(true), (T.flip + 0.16) * 1000);
     return () => window.clearTimeout(id);
   }, [play, reduced]);
 
@@ -206,7 +208,7 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
         aria-hidden="true"
         className="relative inline-block align-baseline"
         animate={{ width: w ? (showW ? w.w : w.m) : undefined }}
-        transition={{ duration: 0.3, delay: T.mOut + 0.16, ease: "easeOut" }}
+        transition={{ duration: 0.3, delay: T.flip + 0.16, ease: "easeOut" }}
         style={{ width: w ? (showW ? w.w : w.m) : undefined, perspective: 620 }}
       >
         {/* An in-flow glyph gives this box its height and, crucially, its
@@ -242,7 +244,7 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
           }
           transition={{
             duration: 0.62,
-            delay: T.mOut,
+            delay: T.flip,
             ease: [0.3, 0.9, 0.3, 1],
             times: [0, 0.2, 0.44, 0.7, 0.87, 1],
           }}
@@ -268,13 +270,20 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
 export default function Ending() {
   const reduced = !!useReducedMotion();
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.4 });
-  const play = inView && !reduced;
+  // once:false — the whole moment replays every time you scroll back to it.
+  const inView = useInView(ref, { once: false, amount: 0.35 });
+  // Bumping a run counter and keying the animating nodes off it restarts
+  // the keyframes cleanly on each re-entry.
+  const [runs, setRuns] = useState(0);
+  useEffect(() => {
+    if (inView) setRuns((r) => r + 1);
+  }, [inView]);
+  const play = runs > 0 && !reduced;
 
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden flex items-center min-h-[78vh] md:min-h-[88vh] py-24 md:py-28"
+      className="relative overflow-hidden flex items-center min-h-[70vh] md:min-h-[82vh] pt-10 md:pt-12 pb-20 md:pb-24"
     >
       <div className="relative z-10 w-full max-w-content mx-auto px-6 md:px-10">
         <motion.h2
@@ -292,7 +301,7 @@ export default function Ending() {
           <span aria-hidden="true">
             Life&rsquo;s happening.
             <br />
-            Go <MildToWild play={play} reduced={reduced} />
+            Go <MildToWild key={`m${runs}`} play={play} reduced={reduced} />
             ild.
           </span>
         </motion.h2>
@@ -326,8 +335,8 @@ export default function Ending() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="relative translate-x-[12%] md:translate-x-[9%]">
-          <TailWhip play={play} />
-          <Gust play={play} />
+          <TailWhip key={`t${runs}`} play={play} />
+          <Gust key={`g${runs}`} play={play} />
         </div>
       </motion.div>
     </section>

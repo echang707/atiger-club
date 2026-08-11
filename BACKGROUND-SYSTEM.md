@@ -442,3 +442,83 @@ paper warming, not as a pattern.
 
 Used in exactly **two** places on the homepage: after the hero, and before the
 finale. It is not a background for every section.
+
+---
+
+# Final polish pass
+
+## Homepage
+
+**Gap before the finale** cut from ~430px to **150px** (~65%): the upcoming-rows
+bottom padding, the finale's top padding, and the late wash band were all
+contributing, so all three were trimmed rather than just one.
+
+**Textures noticeably stronger.** The wash asset now keeps 42% of the artwork's
+contrast (was 30%) with less blur, and opacity went 12% → **34%** (late band
+42%, mobile 24/30%). Grain tile tightened 520 → 460px. Body copy contrast is
+unchanged — the wash sits behind sections, not under text.
+
+**The whip is one arc, not a jerk.** The keyframes were an oscillation
+(down-up-down-up-down); they're now load → swing → return → one small elastic
+settle. Measured on the tip: **peak 145px** (was 110), and only **2 direction
+changes** across the whole move, on three consecutive passes. Amplitude 118 →
+150, duration 0.56 → 0.5s, and the pause before it drops to **0.22s**.
+
+One gust, not three staggered puffs: the strokes now launch together at the
+measured top of the swing (0.6s) and travel further.
+
+`once: false` plus a run counter keyed into the animating nodes, so the whole
+moment replays every time you scroll back to it. Verified across three passes.
+
+## Events
+
+Medium tiles were reading as seven heavy boxes. Border and fill are now drawn
+only on the active or hovered tile — the rest sit on plain cream, so the row is
+tigers and labels rather than containers. Tiger icons 44 → 36px, labels and
+padding down, filter block bottom gap 12/16 → 8/10.
+
+**Past events are collapsed** behind `view past events (n) →`, animated open.
+Upcoming events are the whole page until you ask for the archive.
+
+## /about recomposed
+
+Not just tighter margins — a different page. Real event photography throughout
+(`bite-club-01`, `create-mural`, `eat-dinner`, `explore-festival`,
+`serve-treeplanting`), images cropped tall and bleeding off the outer page edge,
+composition alternating left / right / centre down the scroll, the tail entering
+low on "Events are just the start", and the medium tigers signing off the last
+section.
+
+Copy is the four things worth saying — the childhood/screens/solitary-tigers
+explanation is gone, replaced by the two-line goal statement.
+
+*Bug caught in review:* the principle images were bleeding toward the copy
+instead of the outer edge, so #04's photo ran under its headline. With
+`direction: rtl` the image sits right and must bleed right; unflipped it sits
+left and bleeds left. It was reversed.
+
+## Mobile
+
+Verified at 390×844: About stacks photo-above-claim with the images full-bleed,
+the events medium row wraps 4+3 cleanly with the lighter tiles, and the finale
+settles on "Go wild." with the tail in frame.
+
+---
+
+# Captions
+
+New copy on the five polaroids: left our mark · we needed a bigger table ·
+somehow we became a running club · good day to get lost · right place, right time.
+
+Also fixed the layout bug in the screenshot: the caption was absolutely
+positioned (`absolute bottom-1 left-3`) with no width constraint, so a long line
+wrapped out of the polaroid and printed across the photo. It is now in normal
+flow inside the frame's own 34px bottom padding — the well that was always there
+for it — so it cannot escape regardless of length.
+
+On phones each polaroid is ~95px wide, where any caption can only wrap into an
+unreadable column, so captions show from `sm` up and the scatter reads as a
+collage below that. Frame padding tightens to match.
+
+Verified programmatically at 1440 and 390: no caption's bounding box exceeds its
+frame on either.
