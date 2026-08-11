@@ -522,3 +522,48 @@ collage below that. Frame padding tightens to match.
 
 Verified programmatically at 1440 and 390: no caption's bounding box exceeds its
 frame on either.
+
+---
+
+# Final: Bricolage categories, PLAY pong, About redesign
+
+## Seven Ways to Dive In
+
+All seven words now set in **Bricolage Grotesque** (`font-wordmark`) at extrabold
+— the wordmark face, so the section ties to the logo. Flat ink, tighter
+tracking.
+
+Decoration removed so personality comes from the interactions only:
+- `medium-illum` (the glow-ish treatment behind each word) dropped.
+- CREATE's rough "construction line" overlay deleted — it printed a second
+  orange outline on top of the type. The letters' own draw-in carries the idea.
+- EXPLORE's multilingual gap text moved off italic serif onto the same face.
+
+## PLAY plays pong
+
+The word rallies a 9px orange ball against itself. Ball leaves the **P**, is
+returned by the **Y**, and comes back — **three legs, ~1.4s**, each a little
+quicker than the last, then it exits and the word is exactly as it started.
+
+Only the two outer letters react, and only on the frame the ball reaches them:
+a 4px nudge outward plus a 1.1 scaleY, released after 110ms. No particles, no
+bounce on the inner letters.
+
+Positions are read from the rendered letter boxes at run time, so the rally
+stays aligned to the glyphs at every breakpoint. Fires once on entering the
+viewport, and is skipped entirely under `prefers-reduced-motion`.
+
+Verified in Chromium: ball visible 56 frames, x travel 194 → 298px, **2
+direction changes** (three legs), and the element is removed at the end.
+
+## /about redesigned
+
+No images. Four statements at four scales, composition doing the work: the
+opening headline runs near full-bleed with the supporting copy indented to the
+right column, the four principles are a numbered list in the largest type on
+the site, and the close is a single line.
+
+"When you see Tiger Club, it should mean something" is gone, along with the
+photography, the medium-tiger row and the mission language. What's left says
+only that Tiger Club makes experiences that give people a reason to get out,
+try something, and meet the people around them.

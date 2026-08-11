@@ -62,6 +62,14 @@ export default function MediumWord({
   const [langIndex, setLangIndex] = useState(0);
   const langTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // PLAY state — the word rallies a ball against itself. `playBall` holds
+  // the ball's live x/y in px relative to the word; `playHit` names the
+  // letter index being struck on this frame so it can flinch.
+  const [playBall, setPlayBall] = useState<{ x: number; y: number } | null>(null);
+  const [playHit, setPlayHit] = useState<number | null>(null);
+  const playRaf = useRef<number | null>(null);
+  const playedOnce = useRef(false);
+
   // CREATE state — a brief rough/construction-line pass plays over the
   // clean type on the way in, and again (reversed) on the way out.
   const [roughPhase, setRoughPhase] = useState<"none" | "enter" | "leave">("none");
@@ -69,6 +77,79 @@ export default function MediumWord({
   const roughTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  // Run the PLAY rally: the ball leaves the P, is returned by the Y, and
+  // comes back — three contacts over ~1.7s, then it exits and the word is
+  // exactly as it started. Positions come from the rendered letter boxes,
+  // so it stays aligned at every breakpoint.
+  const runPlay = useCallback(() => {
+    if (variant !== "play" || playedOnce.current) return;
+    const first = letterRefs.current[0];
+    const last = letterRefs.current[letters.length - 1];
+    if (!first || !last) return;
+    playedOnce.current = true;
+
+    const leftX = first.offsetLeft + first.offsetWidth * 0.92;
+    const rightX = last.offsetLeft + last.offsetWidth * 0.08;
+    const midY = first.offsetTop + first.offsetHeight * 0.52;
+    const arc = first.offsetHeight * 0.3;
+
+    // p -> y -> p -> y, each leg a little quicker than the last
+    const legs = [
+      { from: leftX, to: rightX, dur: 460, up: true, hit: letters.length - 1 },
+      { from: rightX, to: leftX, dur: 400, up: false, hit: 0 },
+      { from: leftX, to: rightX, dur: 340, up: true, hit: letters.length - 1 },
+    ];
+
+    let leg = 0;
+    let legStart = performance.now();
+
+    const frame = (now: number) => {
+      const l = legs[leg];
+      const t = Math.min((now - legStart) / l.dur, 1);
+      // ease-out on the way, so contact reads as the fast moment
+      const e = 1 - Math.pow(1 - t, 1.7);
+      const x = l.from + (l.to - l.from) * e;
+      const y = midY - Math.sin(Math.PI * t) * arc * (l.up ? 1 : -1);
+      setPlayBall({ x, y });
+
+      if (t >= 1) {
+        setPlayHit(l.hit);
+        window.setTimeout(() => setPlayHit(null), 110);
+        leg += 1;
+        if (leg >= legs.length) {
+          // ball leaves the way it came in
+          window.setTimeout(() => setPlayBall(null), 150);
+          return;
+        }
+        legStart = now;
+      }
+      playRaf.current = requestAnimationFrame(frame);
+    };
+    playRaf.current = requestAnimationFrame(frame);
+  }, [variant, letters.length]);
+
+  // Fires once, when the word enters the viewport.
+  useEffect(() => {
+    if (variant !== "play") return;
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          window.setTimeout(runPlay, 220);
+        }
+      },
+      { threshold: 0.6 }
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      if (playRaf.current) cancelAnimationFrame(playRaf.current);
+    };
+  }, [variant, runPlay]);
 
   const runEnter = useCallback(() => {
     setHovered(true);
@@ -200,7 +281,10 @@ export default function MediumWord({
     }
   }
 
-  const baseCls = `font-display ${size} leading-none tracking-tightest text-ink medium-illum`;
+  // All seven category words are set in Bricolage Grotesque — the wordmark
+  // face — at heavy weight. Flat ink, no decorative treatment: the
+  // personality is in the interactions, not the lettering.
+  const baseCls = `font-wordmark font-extrabold ${size} leading-none tracking-tight text-ink`;
 
   return (
     <div
@@ -237,9 +321,17 @@ export default function MediumWord({
               }
             }
 
-            if (variant === "play" && hovered) {
+            if (variant === "play") {
+              // The outer letters are the paddles, so only they react — and
+              // only on the frame the ball actually reaches them.
               style.display = "inline-block";
-              style.animation = `play-bounce 0.62s ${i * 0.055}s cubic-bezier(0.34,1.56,0.64,1) 1`;
+              const isPaddle = i === 0 || i === letters.length - 1;
+              if (isPaddle && playHit === i) {
+                style.transform = `translateX(${i === 0 ? -4 : 4}px) scaleY(1.1)`;
+                style.transition = "transform 90ms ease-out";
+              } else {
+                style.transition = "transform 260ms cubic-bezier(0.22,1,0.36,1)";
+              }
             }
 
             if (variant === "move" && hovered && ref.current) {
@@ -307,26 +399,23 @@ export default function MediumWord({
             );
           })}
 
-          {variant === "create" && roughPhase !== "none" && (
+          {variant === "play" && playBall && (
             <span
-              key={roughPhase === "enter" ? `rough-in-${cycle}` : `rough-out-${leaveCycle}`}
               aria-hidden="true"
-              className={
-                baseCls +
-                " rough-text absolute inset-0 pointer-events-none select-none whitespace-nowrap"
-              }
+              className="pointer-events-none absolute rounded-full bg-tiger"
               style={{
-                color: "transparent",
-                WebkitTextStroke: "1px #e0521c",
-                animation:
-                  roughPhase === "enter"
-                    ? "construction-in 0.48s cubic-bezier(0.22,1,0.36,1) 1"
-                    : "construction-out 0.42s cubic-bezier(0.22,1,0.36,1) 1",
+                width: 9,
+                height: 9,
+                left: playBall.x - 4.5,
+                top: playBall.y - 4.5,
               }}
-            >
-              {word}
-            </span>
+            />
           )}
+
+          {/* The rough "construction line" overlay that used to print on top
+              of CREATE has been removed — it was decoration layered over the
+              type rather than a real interaction. The draw-in animation on
+              the letters themselves carries the idea. */}
 
           {variant === "serve" && (
             <span
@@ -490,7 +579,7 @@ function ExploreDoor({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display italic text-tiger text-sm sm:text-base md:text-lg lg:text-xl"
+              className="font-wordmark font-semibold text-tiger text-sm sm:text-base md:text-lg lg:text-xl"
             >
               {EXPLORE_WORDS[langIndex]}
             </motion.span>
