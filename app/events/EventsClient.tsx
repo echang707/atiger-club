@@ -58,13 +58,13 @@ export default function EventsClient() {
           <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight">
             what are you doing this week?
           </h1>
-          <p className="text-ink/55 mt-3 text-sm md:text-base">
+          <p className="text-ink/70 mt-3 text-sm md:text-base">
             everything Tiger Club is hosting, sorted by how you want to leave the house.
           </p>
         </motion.div>
 
         <div className="mb-8 md:mb-10 flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[11px] tracking-wideish uppercase text-ink/35 mr-1">
+          <span className="font-mono text-[11px] tracking-wideish uppercase text-ink/55 mr-1">
             city
           </span>
           {cities.map((c) => (
@@ -72,13 +72,13 @@ export default function EventsClient() {
               key={c}
               onClick={() => setActiveCity(c)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
-                activeCity === c ? "bg-tiger text-paper" : "bg-paper-dim text-ink/70 hover:bg-ink/10"
+                activeCity === c ? "bg-tiger-fill text-[#FFF7EF]" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
               }`}
             >
               {c}
             </button>
           ))}
-          <span className="px-4 py-1.5 rounded-full text-sm font-medium text-ink/30 border border-dashed border-ink/15 cursor-default">
+          <span className="px-4 py-1.5 rounded-full text-sm font-medium text-ink/45 border border-dashed border-ink/15 cursor-default">
             more cities soon
           </span>
         </div>
@@ -87,7 +87,7 @@ export default function EventsClient() {
           <button
             onClick={() => setActive("All")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 mb-4 ${
-              active === "All" ? "bg-ink text-paper" : "bg-paper-dim text-ink/70 hover:bg-ink/10"
+              active === "All" ? "bg-ink text-paper" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
             }`}
           >
             All
@@ -129,7 +129,7 @@ export default function EventsClient() {
                   </motion.span>
                   <span
                     className={`font-display text-base md:text-lg leading-none ${
-                      active === m.name ? "text-tiger" : "text-ink"
+                      active === m.name ? "text-tiger-text" : "text-ink"
                     }`}
                   >
                     {m.name}
@@ -141,7 +141,7 @@ export default function EventsClient() {
                         animate={{ opacity: 1, height: "auto", marginTop: 2 }}
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
                         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden text-[11px] md:text-xs leading-snug text-ink/50"
+                        className="overflow-hidden text-[11px] md:text-xs leading-snug text-ink/65"
                       >
                         {m.description}
                       </motion.span>
@@ -162,7 +162,7 @@ export default function EventsClient() {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className={`font-mono text-xs tracking-wideish uppercase mb-2 ${
-                  group.label === "This Month" ? "text-tiger" : "text-ink/40"
+                  group.label === "This Month" ? "text-tiger-text" : "text-ink/55"
                 }`}
               >
                 {group.label}
@@ -175,7 +175,7 @@ export default function EventsClient() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-ink/50 text-sm mt-10">Nothing in this category yet — check back soon.</p>
+          <p className="text-ink/70 text-sm mt-10">Nothing in this category yet — check back soon.</p>
         )}
       </div>
     </main>

@@ -68,3 +68,83 @@ city guides, community groups, calendar, and notifications are not built.
 The data model (`lib/events.ts`) and component structure are set up so these
 can be added later without a rewrite — e.g. `TigerEvent` can gain a `saved`
 relation, and category filtering already exists as a pattern.
+
+---
+
+## Background system update
+
+The tiger-marble was previously `fixed inset-0` at full strength behind every
+section (`app/layout.tsx`). That is why each block carried its own blurred
+cream blob — the pattern and the copy were fighting and the glow was the
+referee. That layer is gone, and with it `.quiet-zone`, `.quiet-zone-word`
+and `.glyph-halo` (zero references remain).
+
+The material now appears deliberately:
+
+```
+Hero ............. marble, full strength
+MediumsSpread .... quiet cream
+ScrollStory ...... quiet cream + one fragment cutting behind the postcard
+MarbleWedge ...... accent from the left edge
+UpcomingRows ..... quiet cream
+MarbleWedge ...... accent from the right edge
+Ending ........... marble returning, scroll-driven
+```
+
+The page surface is cream plus a seamless grain tile cut from the marble's own
+cream, so the connection survives where the pattern doesn't.
+
+**Cream matching.** The supplied marble's cream measured `rgb(248,229,199)`.
+Its highlights were corrected so the cream lands exactly on `#F4E9D6`, blacks
+and oranges untouched. Re-exporting the pattern means redoing this, or the
+seam between hero and page will show.
+
+**Hero crop.** The artwork was gridded for ink coverage and the crop
+(`118%` at `66% 46%`, `.marble-field`) puts the tagline on the image's own
+cream — measured under 1% ink behind the type, 50–88% down the right edge.
+Position does the work a scrim used to do badly. Re-check both wide and tall
+window shapes if you move it.
+
+## Colour
+
+`#e0521c` is THE Tiger Club orange and is used wherever brand orange is meant.
+It is 3.24:1 on cream — fine for graphics (needs 3:1), below AA for small text
+(needs 4.5:1). So two deeper steps exist *only* where orange carries text or
+sits behind it, leaving the brand orange itself uncompromised:
+
+| Token | Value | Use |
+|---|---|---|
+| `tiger` | `#e0521c` | rules, marks, borders, the wordmark artwork |
+| `tiger-text` | `#BE3F0E` | small orange text (4.47:1) |
+| `tiger-fill` | `#CC4413` | button fills w/ `#FFF7EF` text (4.50:1) |
+| `tiger-deep` | `#A9350C` | hover on filled buttons |
+
+## Ending section
+
+Copy left, tiger right, bottom-aligned so the tail (which sits ~63% down the
+illustration) lands beside the headline rather than stranded below it. Section
+height and top padding keep the tiger's head clear of the fixed nav, which
+overlays the first 78px of the viewport.
+
+A clip-path wipe originally "drew" the tail outward but the inset interpolation
+reliably stalled near 18%, permanently chopping off the tail tip. It is now a
+fade plus a short slide — less clever, always renders the whole animal. Runs
+once, then settles.
+
+`.finale-copy` sits above the tiger in z-order, so the tail may pass behind
+type but can never sit on top of it.
+
+## Known gap: the PLAY icon
+
+`public/images/icons/play.png` is a **placeholder**. The other six icons are
+illustrated tiger mascots; this one is a striped ball drawn to match the
+palette, outline weight and flat style, but it is not a mascot and will not
+pass close inspection beside the others. Commission a matching PLAY tiger and
+drop it in at 500×344 RGBA — no code change needed.
+
+## Build note
+
+`next/font/google` fetches at build time. Verified compiling clean (all 8
+routes prerender). Screenshots were taken with the fonts temporarily stubbed
+because this sandbox cannot reach `fonts.googleapis.com`; the shipped
+`app/layout.tsx` contains the real font implementation.

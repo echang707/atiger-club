@@ -1,4 +1,4 @@
-export type Medium = "Eat" | "Create" | "Move" | "Explore" | "Serve" | "Learn";
+export type Medium = "Eat" | "Create" | "Move" | "Explore" | "Serve" | "Learn" | "Play";
 
 export const mediums: { name: Medium; icon: string; description: string }[] = [
   {
@@ -30,6 +30,11 @@ export const mediums: { name: Medium; icon: string; description: string }[] = [
     name: "Learn",
     icon: "/images/icons/learn.png",
     description: "Workshops, talks, and skills worth picking up alongside people just as curious.",
+  },
+  {
+    name: "Play",
+    icon: "/images/icons/play.png",
+    description: "Game nights, pickup matches, and the kind of nonsense that needs no reason.",
   },
 ];
 

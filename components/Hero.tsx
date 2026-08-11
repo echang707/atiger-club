@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
 
@@ -22,16 +22,22 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-[92vh] w-full flex flex-col items-center justify-center px-6 md:px-10 py-28 overflow-hidden"
     >
-      {/* Quiet zone: keeps the marble calm behind the tagline + rotating
-          line (and the transparent nav sitting on top of this section)
-          without ever touching the section's own edges, so the pattern
-          stays rich right up to the corners. */}
-      <div
-        aria-hidden="true"
-        className="quiet-zone absolute left-1/2 top-[46%] -translate-x-1/2 -translate-y-1/2 w-[130%] sm:w-[105%] md:w-[92%] h-[85%] md:h-[78%]"
-      />
+      {/* The marble at full strength, and only here (plus the closing
+          section). The crop is measured, not eyeballed: the artwork was
+          gridded for ink coverage, and at this size/position the tagline
+          sits on the image's own cream negative space — under 1% ink —
+          while the heavy markings stay parked in the top-left corner,
+          down the right edge and along the bottom. That is why there is
+          no cream blob behind the type any more. It was never needed;
+          the image just wasn't positioned. */}
+      <div aria-hidden="true" className="marble-field" />
 
-      <div className="max-w-xl mx-auto w-full flex flex-col items-center relative z-10">
+      {/* Pattern thins into the cream page below. The image's cream is
+          colour-matched to #F4E9D6, so this reads as the material running
+          out rather than as a seam between two panels. */}
+      <div aria-hidden="true" className="marble-fade-bottom" />
+
+      <div className="max-w-3xl mx-auto w-full flex flex-col items-center relative z-10">
         <WordsFindEachOther closeness={closeness} />
 
         <div className="mt-8 md:mt-10 w-full max-w-lg">

@@ -10,7 +10,7 @@ import MediumWord from "./MediumWord";
 // the measured type on its way between them.
 const words: {
   word: string;
-  variant: "eat" | "create" | "move" | "explore" | "serve" | "learn";
+  variant: "eat" | "create" | "move" | "explore" | "serve" | "learn" | "play";
   href: string;
   align: "start" | "center" | "end";
   offset: string;
@@ -24,24 +24,24 @@ const words: {
   { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
   { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
   { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
+  // PLAY closes the list. It returns to the left edge, where EAT opened —
+  // so seven items still read as a deliberate loop rather than six plus a
+  // spare, and the column of numbers ends flush with where it began.
+  { word: "PLAY", variant: "play", href: "/events?medium=Play", align: "start", offset: "md:ml-6 lg:ml-16", rotate: -3, num: "07", weave: "right" },
 ];
 
 export default function MediumsSpread() {
   return (
     <section className="relative max-w-content mx-auto px-6 md:px-10">
       <div className="relative flex flex-col items-center pb-8 md:pb-12">
-        <div
-          aria-hidden="true"
-          className="quiet-zone absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[120px] md:w-[320px] md:h-[140px]"
-        />
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}
           whileInView={{ opacity: 1, y: 0, rotate: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-          className="glyph-halo relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
+          className="relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
         >
-          six ways to dive in
+          seven ways to dive in
         </motion.p>
         <motion.span
           initial={{ scaleX: 0, opacity: 0 }}

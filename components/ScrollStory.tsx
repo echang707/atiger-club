@@ -55,7 +55,16 @@ export default function ScrollStory() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative inline-block"
         >
-          <div className="photo-frame -rotate-2 inline-block">
+          {/* The pattern cutting out from behind the postcard. This is the
+              "frame a photo" beat: a fragment sitting off the corner of
+              the print, masked so it fades out on the diagonal. It backs
+              an image, never copy, and it's the only marble in this
+              otherwise quiet section. */}
+          <div
+            aria-hidden="true"
+            className="marble-behind-photo -left-8 -top-8 h-[62%] w-[58%] md:-left-14 md:-top-12"
+          />
+          <div className="photo-frame -rotate-2 inline-block relative">
             <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image
                 src={hero.image}
@@ -69,10 +78,6 @@ export default function ScrollStory() {
         </motion.div>
 
         <div className="relative">
-          <div
-            aria-hidden="true"
-            className="quiet-zone absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] sm:w-[140%] h-[280%]"
-          />
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -96,10 +101,6 @@ export default function ScrollStory() {
       <div className="h-[28vh] md:h-[36vh]" />
 
       <div className="max-w-2xl mx-auto px-6 text-center relative">
-        <div
-          aria-hidden="true"
-          className="quiet-zone absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[280%]"
-        />
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}

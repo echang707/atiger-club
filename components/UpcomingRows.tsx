@@ -10,14 +10,9 @@ export default function UpcomingRows() {
 
   return (
     <section className="relative max-w-content mx-auto px-6 md:px-10 py-24 md:py-32">
-      {/* One large quiet zone under the whole heading + list, rather than
-          one per row — this reads as a text-heavy block, so it gets a
-          calm surface throughout while the marble stays rich in the
-          section's own margins outside max-content. */}
-      <div
-        aria-hidden="true"
-        className="quiet-zone absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[112%] sm:w-[106%] h-[130%]"
-      />
+      {/* No quiet zone here any more. This is the most text-heavy block
+          on the page, so it now sits on plain cream — the marble simply
+          isn't behind it. Readability by absence rather than by scrim. */}
 
       <motion.h2
         initial={{ opacity: 0, y: 14 }}
@@ -37,7 +32,7 @@ export default function UpcomingRows() {
 
       <Link
         href="/events"
-        className="relative z-10 inline-block mt-10 text-sm font-medium organic-underline text-ink/70 hover:text-ink"
+        className="relative z-10 inline-block mt-10 text-[15px] font-semibold organic-underline text-ink hover:text-tiger-text"
       >
         see everything coming up →
       </Link>

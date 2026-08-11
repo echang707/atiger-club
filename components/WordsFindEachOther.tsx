@@ -30,7 +30,7 @@ export default function WordsFindEachOther({ closeness }: { closeness: MotionVal
     // has anywhere to wrap to regardless of how the surrounding layout
     // constrains this element's width.
     <div className="hero-tagline-wrap w-full">
-      <h1 className="hero-tagline font-tagline italic font-normal tracking-tight text-ink text-center leading-[1.1] flex flex-nowrap items-baseline justify-center whitespace-nowrap gap-x-[0.28em]">
+      <h1 className="hero-tagline font-tagline italic font-normal tracking-tight text-ink text-center leading-[1.06] flex flex-nowrap items-baseline justify-center whitespace-nowrap gap-x-[0.26em]">
         {words.map((w, i) => <Word key={w.text} w={w} i={i} closeness={closeness} />)}
         <motion.span
           initial={{ opacity: 0, scale: 0.82 }}

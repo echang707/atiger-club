@@ -4,15 +4,22 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cfc4a3 #F5F0E3;
+  scrollbar-color: #cfc4a3 #F4E9D6;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+/* The page surface. Cream, plus a seamless tile cut from the cream inside
+   the tiger-marble image itself and flattened to about half contrast. It
+   reads as paper rather than pattern, which is the point: after the hero
+   the material is still present, just whispering. It is the same physical
+   stock, not a different one. */
 body {
-  background-color: #F5F0E3;
+  background-color: #F4E9D6;
+  background-image: url("data:image/webp;base64,UklGRrQFAABXRUJQVlA4IKgFAAAQZwCdASqAAoACPp1On04lpCMjIAgYsBOJaW7hajNo2Jv8T4ADw7E8Me5mdX/j/i+gCe16MvOrEddHrcQ6qk2TcKCGxdqpRhauqb5LMfobY7LWjLxQd9Zh8cqROKohHwRExMfX8J225hqr0fMoF2WVS+2UQVqPc3AeHrHXfBECBSQ4FUjVytja8kZhI6q89Pff2dD6nVXnp8XhC04ymYJj7NktaIVHEOqpNkxFtmBCttBaG32bKQd3baB45UiccguAsmvCccha+PFqeHecGJfHjCt9JrtMHM2lUiccdNSi2+kyq1l3tI0fBv68YER4jnr0Zj9DuZEFY3yjojn6ougKfAnHIIbF2IJ2rKJaLk5ouibfro9biHVUmyYjbSeT2D789ejLxHPYGwgnHYQevRl4j5/AiPEc9ejLxHUdOYgnHIIapHsRiHVUmzO78+AgP5tk+GCvfgTfMrxyCKEibZOHVU4LjLGDsXYgnFbClEb4Zak3bZ7V8lJIh7J2Sxx0fkREOYjDjpO7oyPMK5MW1ksQmBQQzLSmaFr46Toztk2TEPaTy7Wyak2TEOqpNlbGqpO0SOqQWGTL336EfLiZeJA70ZeV9yGjwKYpHPXZZGSaSOevRl51hkW58KX6ja89dmDnsGzglVMW5uAacIPYsDzHG+AKGrEl+dsoZIJN7qXnvSRzuSsQmghvRJ2jBe+/lCO3cY63T1LMeFHEOqrkTfkYzvXxl4kvy8UL1L+ThY5ELd9+jH8r4joucYgnHJGIrxHPXo0I3vvz16MvEc9ekm/LxHPXoy8Rz16MvEddHrcRCye8HihiYh1VJsmIfqdVSbJhdKJEFIKnmuy8Q6qk2TDAD2TEOmId4D6odirhqO5tbataPo1AoCo9za3C4S0lanmYbXkE3a+fgP8hUYl+5PdikJtMCPpm/zqvY2+Sh8NiCj28Q6qk2Z3f2dN2twuN+COJixJ5bi0NeehGQTQ6q89PfguTAMLGrCy7ffyhLh9R0CAZKDiqq67uyxMPpFJtR9qT4PZMQ6sHoRAmx7fXk2jAQFI8fBHeMqq3j8Hchpl8MxSnXk3dvQuEOqqHW4XLw0PEc9pTv0ZCaPMH6KDXoy4R8AD++5EPrdixUo71jwLwbUtzkfwkRffM21eWewFrFOrx7YPi8E04cy060OLqFtbDSA7zLnSJsglinIRXdQrhyatYCBt5nT6+hk8MRdF/2eMcKkESqK6JWYMvVfGmX5kfQDGNXw1lmfjiiIUtDKr1CAAdAA9VXQKbkC0uchtO9RXlzFPe1HbWgA+udW0Ee/gv9CvwnLPbYpG/Tydxb9auThBMYGkfqrq1ENBlHHlzizLWSESXTjHc8RK8+AHkdp40b3yv8K43eP4X1tDQpEoTZFYJ7olpFqPLbYWzc5rJk09zaXZ+hxyl7EgjAiENPOfQiHB6QsvRFkKU6gV8dPs2oXr7Lxx/5cCr3CBwslOlZlxfVhqKQVAq1EZtme01Lt9uWjkvKDpFbMhDLP5pLKsf5CMt6Wf+5QIhx693NAOdY20FBGnWWl2kXCG/Y2T3Y7bURR1Y8Dc9gtu09kBuGd1wABWptm+UcKAdhV+ugsGFEdAEYsrj6a/YxRiNDLMkRKDYha8ow2/KFjlUrPpXCnn8XR8VwurxPNcW0sX5b7LHhB1utAB1+9pBoBM3qVaGBEPKute3CjXKrgn+NyQH806Q2mvy6TydzRJUDfwByd8shLCDK/dCltkByn2GSpB7x/d3IQlTSxPJOstsmiKuekSde1fTorfSBkZ909iAJmNJtm83xXoCnhmFwMxw2K6WKK8LNLaBmwWS3tqi41UB3ELjtnwt4UCwqUMjKJWnqhE1XjN7C3MLeadMWjIYiKiLDgdjrx3TE4qQwCUfROpodbyOAQa0NyqNiQ2lGXhqCQyP9uyRcULpGEsAAA==");
+  background-size: 520px 520px;
   color: #15130E;
   position: relative;
 }
@@ -47,7 +54,7 @@ body {
   bottom: -6px;
   height: 2px;
   width: 0%;
-  background: linear-gradient(90deg, #E2531C, #B23E14);
+  background: linear-gradient(90deg, #e0521c, #A9350C);
   transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -70,7 +77,7 @@ body {
   right: -1%;
   bottom: -7px;
   height: 9px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M2,9 C20,4 34,13 52,7 C68,2 82,12 100,8 C116,4 132,12 148,7 C164,3 180,11 198,8' fill='none' stroke='%23E2531C' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M2,9 C20,4 34,13 52,7 C68,2 82,12 100,8 C116,4 132,12 148,7 C164,3 180,11 198,8' fill='none' stroke='%23e0521c' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left center;
   background-size: 0% 100%;
@@ -94,7 +101,7 @@ body {
 
 .annotation {
   font-family: var(--font-caveat), cursive;
-  color: #B23E14;
+  color: #A9350C;
 }
 
 .tape {
@@ -142,7 +149,7 @@ body {
    The vw-based value is a fallback for browsers without container query
    support; the @supports block overrides it once cqw is available. */
 .hero-tagline {
-  font-size: clamp(1.85rem, 7.8vw, 4.35rem);
+  font-size: clamp(2.1rem, 8.7vw, 5.1rem);
 }
 
 @supports (container-type: inline-size) {
@@ -150,7 +157,7 @@ body {
     container-type: inline-size;
   }
   .hero-tagline {
-    font-size: clamp(1.55rem, 7.2cqw, 4.35rem);
+    font-size: clamp(1.75rem, 8.1cqw, 5.1rem);
   }
 }
 
@@ -165,38 +172,9 @@ body {
   100% { transform: scaleX(1); opacity: 0.28; }
 }
 
-/* Tiger Club wordmark: the G carries the brand cue, borrowing the segmented
-   rhythm of a tiger tail without turning the whole logo into an illustration. */
-.tiger-wordmark {
-  color: #E2531C;
-  white-space: nowrap;
-  letter-spacing: -0.055em;
-}
-
-.tiger-wordmark-g {
-  position: relative;
-  display: inline-block;
-  margin: 0 0.035em;
-  overflow: hidden;
-  color: #E2531C;
-}
-
-.tiger-wordmark-g::after {
-  content: "";
-  position: absolute;
-  inset: 0.02em -0.02em;
-  pointer-events: none;
-  background:
-    linear-gradient(103deg,
-      transparent 0 24%,
-      #15130E 24% 28%,
-      transparent 28% 49%,
-      #15130E 49% 53%,
-      transparent 53% 74%,
-      #15130E 74% 78%,
-      transparent 78% 100%);
-  mix-blend-mode: normal;
-}
+/* The wordmark is now the supplied artwork (public/images/wordmark.webp),
+   drawn with real claw marks through the G, so the CSS reconstruction of
+   it that used to live here is gone. See components/TigerWordmark.tsx. */
 
 /* Click-anywhere paw prints. Each mark stamps in with a brief scale +
    fade, then holds at its resting rotation/opacity for the rest of the
@@ -226,59 +204,168 @@ body {
 }
 
 /* ---------------------------------------------------------------------
-   Layered marble background system
+   The marble background system
    ---------------------------------------------------------------------
-   The tiger-marble image sits fixed and full-strength behind everything
-   (see layout.tsx). On its own it reads busy directly behind type, so
-   two local, decorative-only layers sit between the marble and the
-   foreground copy:
+   The tiger-marble is a brand device, not wallpaper. It appears at full
+   strength in exactly two places — the hero and the closing section —
+   and as thin decorative fragments in between. Everything else is the
+   quiet cream surface set on `body` above.
 
-   1. `.quiet-zone` — a big, soft, blurred cluster of cream radial
-      gradients for block-level copy (headlines, quotes, event lists).
-      Sized well larger than the copy it sits behind so the fade happens
-      far outside the letterforms — it should never read as a card edge.
-      Give the element real width/height (inline style or utilities);
-      the gradient positions below are percentages of that box.
+   The rhythm down the homepage:
 
-   2. `.quiet-zone-word` — the same idea sized in `em`s so it scales
-      with font-size automatically. Meant to sit inside a single
-      position:relative word/line as its first child.
+     LOUD HERO -> quiet -> quiet -> accent -> quiet -> accent -> BIG END
 
-   Both are `aria-hidden` decoration only, z-indexed below the text
-   they support (text needs its own `relative z-10`). Neither is meant
-   to reach full opacity at the same rate everywhere — the uneven,
-   overlapping gradient centers are what keep the fade organic instead
-   of a uniform vignette. */
-.quiet-zone {
-  pointer-events: none;
+   The pattern hits harder because it is allowed to disappear.
+
+   There is deliberately no scrim, halo or blurred cream blob behind any
+   copy. The previous build needed those because the marble ran fixed
+   behind every section. Instead the image is cropped so its own cream
+   negative space falls where the type goes: the artwork was gridded and
+   the crop below measures under 1% ink behind the headline while the
+   right edge stays 50-88% ink. Position is doing the work that a glow
+   used to do badly.
+   --------------------------------------------------------------------- */
+
+/* Full-strength marble, cropped to put type on the image's own cream.
+   `--marble-size` / `--marble-pos` are overridden per breakpoint below. */
+.marble-field {
   position: absolute;
-  z-index: -1;
-  filter: blur(34px);
-  background:
-    radial-gradient(48% 46% at 34% 38%, rgba(245, 240, 227, 0.96), rgba(245, 240, 227, 0) 72%),
-    radial-gradient(46% 50% at 66% 62%, rgba(245, 240, 227, 0.93), rgba(245, 240, 227, 0) 74%),
-    radial-gradient(60% 55% at 50% 50%, rgba(245, 240, 227, 0.68), rgba(245, 240, 227, 0) 80%);
+  inset: 0;
+  z-index: -10;
+  background-color: #F4E9D6;
+  background-image: url("/images/tiger-marble-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: 118% auto;
+  background-position: 66% 46%;
 }
 
-.quiet-zone-word {
-  pointer-events: none;
-  position: absolute;
-  z-index: -1;
-  inset: -0.75em -0.55em -0.8em -0.55em;
-  filter: blur(0.4em);
-  background:
-    radial-gradient(52% 54% at 35% 40%, rgba(245, 240, 227, 0.99), rgba(245, 240, 227, 0) 76%),
-    radial-gradient(50% 56% at 66% 62%, rgba(245, 240, 227, 0.97), rgba(245, 240, 227, 0) 78%),
-    radial-gradient(60% 60% at 50% 50%, rgba(245, 240, 227, 0.86), rgba(245, 240, 227, 0) 82%);
+/* Tall windows crop the sides too hard at 118% width, so size off the
+   height instead and keep the clean diagonal in the middle of the frame. */
+@media (max-aspect-ratio: 16 / 10) {
+  .marble-field {
+    background-size: auto 122%;
+    background-position: 62% 46%;
+  }
 }
 
-/* Extra insurance directly on glyphs for the big medium words and the
-   "six ways to dive in" label — a soft cream halo that hugs the actual
-   letterforms (not a box), so type stays crisp even where the blob
-   underneath is still mid-fade. */
-.glyph-halo {
+/* Barely-there directional wash over the type column only. Not a halo:
+   it has no centre and no falloff ring, it just lifts the far-left edge
+   where the pattern runs closest to the copy. */
+.marble-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(244, 233, 214, 0.46) 0%,
+    rgba(244, 233, 214, 0.26) 34%,
+    rgba(244, 233, 214, 0) 60%
+  );
+}
+
+/* The hand-off from a marble section into the cream page. Because the
+   image's cream is colour-matched to #F4E9D6 exactly, this reads as the
+   pattern thinning out rather than as one panel ending and another
+   beginning. */
+.marble-fade-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 190px;
+  z-index: -9;
+  background: linear-gradient(to bottom, rgba(244, 233, 214, 0), #F4E9D6 88%);
+  pointer-events: none;
+}
+
+/* Accent fragments: a wedge of pattern entering from one outer edge,
+   cut on the diagonal and masked so it dissolves before it reaches the
+   middle of the page. Decorative only — never behind copy. */
+.marble-wedge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(56%, 720px);
+  background-image: url("/images/tiger-marble-bg.jpg");
+  background-size: cover;
+  pointer-events: none;
+}
+
+.marble-wedge-left {
+  left: 0;
+  background-position: 6% 74%;
+  clip-path: polygon(0 0, 100% 34%, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 97%);
+  mask-image: linear-gradient(90deg, #000 42%, transparent 97%);
+}
+
+.marble-wedge-right {
+  right: 0;
+  background-position: 94% 30%;
+  clip-path: polygon(0 36%, 100% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(270deg, #000 42%, transparent 97%);
+  mask-image: linear-gradient(270deg, #000 42%, transparent 97%);
+}
+
+/* Closing section: the same material returning, masked to the outer
+   frame so the middle stays clean cream for the headline. Opacity is
+   driven from JS by scroll position, so the texture builds as you
+   approach rather than snapping on. */
+.marble-frame {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  background-image: url("/images/tiger-marble-bg.jpg");
+  background-size: 126% auto;
+  background-position: 50% 50%;
+  opacity: var(--edge, 0);
+  -webkit-mask-image: radial-gradient(122% 96% at 40% 50%, transparent 0 44%, #000 82%);
+  mask-image: radial-gradient(122% 96% at 40% 50%, transparent 0 44%, #000 82%);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .marble-frame {
+    background-size: auto 118%;
+    -webkit-mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
+    mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
+  }
+}
+
+/* A fragment cutting out from behind a photo — the pattern framing an
+   image rather than backing text. */
+.marble-behind-photo {
+  position: absolute;
+  z-index: -1;
+  background-image: url("/images/tiger-marble-bg.jpg");
+  background-size: cover;
+  background-position: 88% 62%;
+  -webkit-mask-image: linear-gradient(115deg, #000 30%, transparent 82%);
+  mask-image: linear-gradient(115deg, #000 30%, transparent 82%);
+  pointer-events: none;
+}
+
+/* Medium-word hover illumination.
+   The old `.glyph-halo` was a three-layer cream text-shadow at 0.92/0.85/0.60
+   alpha — it existed to punch type out of the marble that used to sit behind
+   every section, and it read as a glow. The marble is gone from these
+   sections, so the halo's job is gone with it. What remains is roughly a
+   sixth of that strength, in warm orange rather than cream, and only on
+   hover: enough to feel like the word lights up slightly when you touch it,
+   not enough to read as a glow at rest or in a screenshot. */
+.medium-illum {
+  transition: text-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .medium-illum {
   text-shadow:
-    0 0 0.14em rgba(245, 240, 227, 0.92),
-    0 0 0.32em rgba(245, 240, 227, 0.85),
-    0 0 0.6em rgba(245, 240, 227, 0.6);
+    0 0 0.10em rgba(224, 82, 28, 0.15),
+    0 0 0.26em rgba(224, 82, 28, 0.11),
+    0 0 0.5em rgba(224, 82, 28, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medium-illum {
+    transition: none;
+  }
 }

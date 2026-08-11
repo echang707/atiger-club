@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
-type Variant = "eat" | "create" | "move" | "explore" | "serve" | "learn";
+type Variant = "eat" | "create" | "move" | "explore" | "serve" | "learn" | "play";
 
 const SCRAMBLE = "!@#$%^&*+=?<>XQZKY";
 function randChar() {
@@ -200,7 +200,7 @@ export default function MediumWord({
     }
   }
 
-  const baseCls = `font-display ${size} leading-none tracking-tightest text-ink glyph-halo`;
+  const baseCls = `font-display ${size} leading-none tracking-tightest text-ink medium-illum`;
 
   return (
     <div
@@ -214,12 +214,6 @@ export default function MediumWord({
       onMouseMove={onMove}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
-      {/* Local quiet zone: a soft cream cluster sized in ems off the
-          word's own font-size (via the `size` classes), so it scales
-          with EAT vs EXPLORE automatically and clears well outside
-          each word's letterforms without ever reading as a box. */}
-      <span aria-hidden="true" className={`quiet-zone-word ${size}`} />
-
       {variant === "explore" ? (
         <ExploreDoor letters={letters} baseCls={baseCls} hovered={hovered} langIndex={langIndex} />
       ) : (
@@ -241,6 +235,11 @@ export default function MediumWord({
               } else {
                 style.animation = `create-ambient 3.4s ${i * 0.18}s ease-in-out infinite`;
               }
+            }
+
+            if (variant === "play" && hovered) {
+              style.display = "inline-block";
+              style.animation = `play-bounce 0.62s ${i * 0.055}s cubic-bezier(0.34,1.56,0.64,1) 1`;
             }
 
             if (variant === "move" && hovered && ref.current) {
@@ -318,7 +317,7 @@ export default function MediumWord({
               }
               style={{
                 color: "transparent",
-                WebkitTextStroke: "1px #E2531C",
+                WebkitTextStroke: "1px #e0521c",
                 animation:
                   roughPhase === "enter"
                     ? "construction-in 0.48s cubic-bezier(0.22,1,0.36,1) 1"
@@ -390,6 +389,15 @@ export default function MediumWord({
             transform: translate(0, 0) rotate(0deg) scale(1);
           }
         }
+        /* PLAY: each letter hops, staggered, like something bouncing
+           down a line. Playful without being a cartoon. */
+        @keyframes play-bounce {
+          0%   { transform: translateY(0) rotate(0deg); }
+          35%  { transform: translateY(-0.16em) rotate(-3deg); }
+          65%  { transform: translateY(0.03em) rotate(2deg); }
+          100% { transform: translateY(0) rotate(0deg); }
+        }
+
         @keyframes crumb-fall {
           0% { opacity: 0; transform: translate(0, 0) scale(0.5) rotate(0deg); }
           12% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }

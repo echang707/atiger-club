@@ -45,7 +45,7 @@ export default function RotatingLine({
   }, [intervalMs, startDelayMs]);
 
   return (
-    <div className="h-16 md:h-12 flex items-center justify-center overflow-hidden">
+    <div className="h-20 md:h-14 flex items-center justify-center overflow-hidden">
       <AnimatePresence mode="wait">
         {visible && (
           <motion.p
@@ -54,9 +54,9 @@ export default function RotatingLine({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-2 text-ink/60 font-medium text-base md:text-lg text-center px-6"
+            className="flex items-center gap-2.5 text-ink/75 font-medium text-lg md:text-xl text-center px-6"
           >
-            <span className="h-1 w-1 rounded-full bg-tiger shrink-0" />
+            <span className="h-1.5 w-1.5 rounded-full bg-tiger shrink-0" />
             <span>{lines[i]}</span>
           </motion.p>
         )}

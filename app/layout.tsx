@@ -154,24 +154,17 @@ export default function RootLayout({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Tiger-marble background: one continuous image fixed to the
-            viewport, so it never restarts or reflows per section as the
-            page scrolls, kept at full strength here. Legibility for the
-            actual copy is handled locally, per section, by the
-            `.quiet-zone` / `.quiet-zone-word` clusters each component
-            renders behind its own text — see globals.css. That's what
-            keeps the pattern rich at the edges, in the corners, and in
-            the empty space between sections, while still calm directly
-            behind type. This layer only carries a bare-minimum wash so
-            nothing between sections goes fully unprotected. Both sit
-            behind everything (z-index -20/-10), well under the paw
-            prints (z-index 1) and the grain overlay (z-index 60). */}
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 -z-20 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/tiger-marble-bg.jpg')" }}
-        />
-        <div aria-hidden="true" className="fixed inset-0 -z-10 bg-paper/[0.06]" />
+        {/* The tiger-marble no longer sits fixed behind the whole page.
+            It was full-strength under every section, which is why each
+            block needed its own blurred cream blob to stay readable —
+            the pattern and the copy were fighting, and the glow was the
+            referee. Now the material appears deliberately: full strength
+            in the hero and the closing section, as thin wedges between
+            sections, and nowhere else. The page surface itself is cream
+            with a grain tile cut from the marble's own cream (globals.css),
+            so the connection survives even where the pattern doesn't.
+            Local layers sit at z-index -10/-9, under the paw prints
+            (z-index 1) and well under the copy (z-index 10). */}
         <div className="grain" aria-hidden="true" />
         {/* Shared filter used for the brief "hand-drawn" wobble on CREATE's
             hover state — kept out-of-band so any component can reference

@@ -23,22 +23,35 @@ export default function Nav() {
     };
   }, [open]);
 
+  // The bar always carries a cream surface. Previously it was transparent
+  // until scroll, which put small nav text straight over the marble's
+  // densest corner — the reason the links read as washed out. A
+  // backdrop-blurred cream plate guarantees contrast at every scroll
+  // position while still letting the pattern show through underneath.
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled || open ? "bg-paper/85 backdrop-blur-md border-b border-ink/10" : "bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled || open
+          ? "bg-paper/95 backdrop-blur-md border-b border-ink/10 shadow-[0_1px_20px_-12px_rgba(21,19,14,0.5)]"
+          : "bg-paper/80 backdrop-blur-md border-b border-transparent"
       }`}
     >
       <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 grid grid-cols-[1fr_auto_1fr] items-center">
-        <Link href="/" className="text-tiger justify-self-start" onClick={() => setOpen(false)}>
-          <TigerWordmark className="text-lg md:text-xl" />
+        <Link href="/" className="justify-self-start" onClick={() => setOpen(false)}>
+          <TigerWordmark className="text-base md:text-xl" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-9 text-sm justify-self-center">
-          <Link href="/events" className="organic-underline text-ink/80 hover:text-ink transition-colors">
+        <nav className="hidden md:flex items-center gap-9 text-[15px] justify-self-center">
+          <Link
+            href="/events"
+            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+          >
             Experiences
           </Link>
-          <Link href="/work-with-us" className="organic-underline text-ink/80 hover:text-ink transition-colors">
+          <Link
+            href="/work-with-us"
+            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+          >
             Work With Us
           </Link>
         </nav>
@@ -48,7 +61,7 @@ export default function Nav() {
             href="https://discord.gg/6u83g4P8Cb"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-ink border border-ink/20 px-4 py-2 rounded-full hover:border-tiger hover:text-tiger transition-colors duration-300 whitespace-nowrap"
+            className="text-[13px] md:text-[15px] font-semibold text-[#FFF7EF] bg-tiger-fill border-2 border-tiger-fill px-3.5 md:px-5 py-1.5 md:py-2 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
           >
             Join the Club
           </a>
@@ -84,10 +97,10 @@ export default function Nav() {
             className="md:hidden overflow-hidden border-t border-ink/10 bg-paper/95 backdrop-blur-md"
           >
             <div className="max-w-content mx-auto px-6 py-6 flex flex-col gap-5 text-lg">
-              <Link href="/events" className="font-display text-ink" onClick={() => setOpen(false)}>
+              <Link href="/events" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
                 Experiences
               </Link>
-              <Link href="/work-with-us" className="font-display text-ink" onClick={() => setOpen(false)}>
+              <Link href="/work-with-us" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
                 Work With Us
               </Link>
             </div>

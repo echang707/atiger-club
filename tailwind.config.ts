@@ -5,14 +5,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#F5F0E3",
-        "paper-dim": "#ECE4D0",
+        // Cream is the page. It is also, exactly, the cream inside the
+        // tiger-marble image — the marble's highlights were colour-matched
+        // to this value so the hero dissolves into the page instead of
+        // sitting on top of it as a pasted-in panel.
+        paper: "#F4E9D6",
+        "paper-dim": "#EADCC0",
         ink: "#15130E",
         "ink-soft": "#15130E99",
         tiger: {
-          DEFAULT: "#E2531C",
+          // THE Tiger Club orange. This exact value, everywhere the brand
+          // orange is meant: rules, marks, borders, fills behind large
+          // shapes, the wordmark artwork itself. Never substituted.
+          DEFAULT: "#e0521c",
+          // #e0521c is 3.24:1 on cream — fine for graphics (needs 3:1),
+          // below AA for small text (needs 4.5:1). These two steps are
+          // used ONLY where orange carries text or sits behind it, so the
+          // brand orange never has to be compromised to stay legible.
+          text: "#BE3F0E",
+          fill: "#CC4413",
           soft: "#F0A15F",
-          deep: "#B23E14",
+          deep: "#A9350C",
         },
         jungle: {
           DEFAULT: "#26331A",
