@@ -173,3 +173,26 @@ touching the letterforms. It slides in from the right once on scroll, then stops
 Replaced with the new hand-drawn two-line mark (with its own striped tail),
 using its existing alpha channel. Ratio 2.11:1 — `TigerWordmark.tsx` reads the
 ratio from a constant, so update it there if you swap the art again.
+
+---
+
+# Revision — logo, mediums row, past events, crop shift
+
+- **Wordmark** enlarged (`heightEm` 1.15 → 1.9). The new mark is two lines, so
+  `TigerWordmark.tsx` now carries its true 1286×609 ratio — the old constant was
+  still the one-line 1281×167 and was squashing it.
+- **Hero crop shifted right**: `background-position-x` 66% → 41% (122% size), so
+  the dense right-hand markings clear the centred tagline. Some pattern runs off
+  the edge, as agreed.
+- **Mediums**: all seven now sit on one row from `sm` up (`grid-cols-7`, 44px
+  icons, small labels). The per-tile expanding description is gone — it was what
+  made the block tall — replaced by a single shared line under the row that
+  shows the hovered or active medium.
+- **PLAY icon** added from the supplied artwork at `public/images/icons/play.png`.
+  The `Play` medium already existed in `lib/events.ts` pointing at a file that
+  wasn't there.
+- **Past events** now live in their own "Already happened" section below the
+  list, dimmed and marked not bookable. The main list shows only events dated
+  today or later. Dates in `lib/events.ts` have no year, so `EVENT_YEAR = 2026`
+  at the top of `EventsClient.tsx` supplies it — update that constant when the
+  data rolls over.

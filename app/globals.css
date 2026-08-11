@@ -241,16 +241,19 @@ body {
   background-color: #F4E9D6;
   background-image: url("/images/tiger-marble-bg.jpg");
   background-repeat: no-repeat;
-  background-size: 118% auto;
-  background-position: 66% 46%;
+  /* Shifted so the dense right-hand markings sit further right and clear
+     of the centred tagline. Some of the pattern runs off the edge, which
+     is fine — the composition reads better than the collision did. */
+  background-size: 122% auto;
+  background-position: 41% 46%;
 }
 
 /* Tall windows crop the sides too hard at 118% width, so size off the
    height instead and keep the clean diagonal in the middle of the frame. */
 @media (max-aspect-ratio: 16 / 10) {
   .marble-field {
-    background-size: auto 122%;
-    background-position: 62% 46%;
+    background-size: auto 126%;
+    background-position: 38% 46%;
   }
 }
 

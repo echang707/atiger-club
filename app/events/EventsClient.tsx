@@ -7,6 +7,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { events, mediums, cities, Medium } from "@/lib/events";
 import EventRow from "@/components/EventRow";
 
+// The event data carries "Sep 12"-style dates without a year.
+const EVENT_YEAR = 2026;
+
 export default function EventsClient() {
   const params = useSearchParams();
   const [active, setActive] = useState<Medium | "All">("All");
@@ -23,9 +26,18 @@ export default function EventsClient() {
     if (c && cities.includes(c)) setActiveCity(c);
   }, [params]);
 
-  const filtered = events.filter(
+  const matches = events.filter(
     (e) => (active === "All" || e.medium === active) && e.city === activeCity
   );
+
+  // Only what's still to come belongs in the main list. Anything whose date
+  // has passed moves to its own section further down, so the page opens on
+  // what you can actually still turn up to.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const whenOf = (e: (typeof events)[number]) => new Date(`${e.date}, ${EVENT_YEAR}`);
+  const filtered = matches.filter((e) => whenOf(e) >= startOfToday);
+  const past = matches.filter((e) => whenOf(e) < startOfToday).reverse();
 
   // Group in chronological order (the source data is already ordered)
   // under month headers, labeling whichever group matches the current
@@ -93,7 +105,11 @@ export default function EventsClient() {
             All
           </button>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 md:gap-3">
+          {/* All seven mediums on a single row from `sm` up. Compact by design:
+              small icon, small label, and the description lifted out to one
+              shared line beneath the row rather than expanding each tile and
+              pushing the list down the page. */}
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 md:gap-2">
             {mediums.map((m, i) => {
               const expanded = active === m.name || hoveredMedium === m.name;
               return (
@@ -108,14 +124,14 @@ export default function EventsClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  className={`group relative flex flex-col items-center text-center gap-2 rounded-2xl border px-3 py-4 md:py-5 transition-colors duration-300 ${
+                  className={`group relative flex flex-col items-center text-center gap-1 rounded-xl border px-1.5 py-2.5 transition-colors duration-300 ${
                     active === m.name
                       ? "border-tiger bg-tiger/[0.06]"
                       : "border-ink/10 bg-paper-dim/60 hover:border-ink/20 hover:bg-paper-dim"
                   }`}
                 >
                   <motion.span
-                    className="relative h-14 w-14 md:h-16 md:w-16 shrink-0"
+                    className="relative h-9 w-9 md:h-11 md:w-11 shrink-0"
                     animate={{ scale: expanded ? 1.1 : 1, rotate: expanded ? -4 : 0 }}
                     transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
                   >
@@ -123,34 +139,26 @@ export default function EventsClient() {
                       src={m.icon}
                       alt=""
                       fill
-                      sizes="64px"
+                      sizes="44px"
                       className="object-contain"
                     />
                   </motion.span>
                   <span
-                    className={`font-display text-base md:text-lg leading-none ${
+                    className={`font-display text-[12px] md:text-sm leading-none ${
                       active === m.name ? "text-tiger-text" : "text-ink"
                     }`}
                   >
                     {m.name}
                   </span>
-                  <AnimatePresence initial={false}>
-                    {expanded && (
-                      <motion.span
-                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                        animate={{ opacity: 1, height: "auto", marginTop: 2 }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden text-[11px] md:text-xs leading-snug text-ink/65"
-                      >
-                        {m.description}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
                 </motion.button>
               );
             })}
           </div>
+
+          {/* One shared line instead of seven expanding tiles. */}
+          <p className="mt-3 min-h-[1.5rem] text-xs md:text-sm text-ink/70">
+            {mediums.find((m) => m.name === (hoveredMedium ?? active))?.description ?? ""}
+          </p>
         </div>
 
         <div>
@@ -175,7 +183,25 @@ export default function EventsClient() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-ink/70 text-sm mt-10">Nothing in this category yet — check back soon.</p>
+          <p className="text-ink/70 text-sm mt-10">
+            Nothing coming up in this category — check back soon.
+          </p>
+        )}
+
+        {past.length > 0 && (
+          <section className="mt-20 md:mt-28 border-t border-ink/10 pt-10 md:pt-14">
+            <h2 className="font-mono text-xs tracking-wideish uppercase text-ink/55 mb-2">
+              Already happened
+            </h2>
+            <p className="text-sm text-ink/70 mb-6 max-w-md">
+              What the club got up to recently. Nothing here is bookable.
+            </p>
+            <div className="opacity-70">
+              {past.map((event, i) => (
+                <EventRow key={event.id} event={event} index={i} />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </main>

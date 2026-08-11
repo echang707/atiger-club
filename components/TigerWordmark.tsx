@@ -10,11 +10,11 @@ import Image from "next/image";
 // Nav and Footer still pass a text-size class and the mark scales off it
 // in `em`. Width comes from the artwork's own ratio (1281 x 167) so
 // nothing reflows while the image loads.
-const RATIO = 1281 / 167;
+const RATIO = 1286 / 609;
 
 export default function TigerWordmark({
   className = "",
-  heightEm = 1.15,
+  heightEm = 1.9,
 }: {
   className?: string;
   heightEm?: number;
@@ -29,8 +29,8 @@ export default function TigerWordmark({
       <Image
         src="/images/wordmark.webp"
         alt=""
-        width={1281}
-        height={167}
+        width={1286}
+        height={609}
         priority
         className="h-full w-full object-contain"
       />
