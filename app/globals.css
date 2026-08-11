@@ -226,7 +226,13 @@ body {
    used to do badly.
    --------------------------------------------------------------------- */
 
-/* Full-strength marble, cropped to put type on the image's own cream.
+/* Readability here comes from WHERE the type sits, not from fading the
+   painting. There is no cream veil over this layer: any wash greys the
+   near-black markings and turns the orange to pale peach. The source is
+   used at its native 1672x940 with no upsampling, which is what keeps
+   the brush edges crisp.
+
+   Full-strength marble, cropped to put type on the image's own cream.
    `--marble-size` / `--marble-pos` are overridden per breakpoint below. */
 .marble-field {
   position: absolute;
@@ -248,21 +254,6 @@ body {
   }
 }
 
-/* Barely-there directional wash over the type column only. Not a halo:
-   it has no centre and no falloff ring, it just lifts the far-left edge
-   where the pattern runs closest to the copy. */
-.marble-field::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    rgba(244, 233, 214, 0.46) 0%,
-    rgba(244, 233, 214, 0.26) 34%,
-    rgba(244, 233, 214, 0) 60%
-  );
-}
-
 /* The hand-off from a marble section into the cream page. Because the
    image's cream is colour-matched to #F4E9D6 exactly, this reads as the
    pattern thinning out rather than as one panel ending and another
@@ -276,35 +267,6 @@ body {
   z-index: -9;
   background: linear-gradient(to bottom, rgba(244, 233, 214, 0), #F4E9D6 88%);
   pointer-events: none;
-}
-
-/* Accent fragments: a wedge of pattern entering from one outer edge,
-   cut on the diagonal and masked so it dissolves before it reaches the
-   middle of the page. Decorative only — never behind copy. */
-.marble-wedge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: min(56%, 720px);
-  background-image: url("/images/tiger-marble-bg.jpg");
-  background-size: cover;
-  pointer-events: none;
-}
-
-.marble-wedge-left {
-  left: 0;
-  background-position: 6% 74%;
-  clip-path: polygon(0 0, 100% 34%, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(90deg, #000 42%, transparent 97%);
-  mask-image: linear-gradient(90deg, #000 42%, transparent 97%);
-}
-
-.marble-wedge-right {
-  right: 0;
-  background-position: 94% 30%;
-  clip-path: polygon(0 36%, 100% 0, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(270deg, #000 42%, transparent 97%);
-  mask-image: linear-gradient(270deg, #000 42%, transparent 97%);
 }
 
 /* Closing section: the same material returning, masked to the outer
@@ -332,19 +294,6 @@ body {
   }
 }
 
-/* A fragment cutting out from behind a photo — the pattern framing an
-   image rather than backing text. */
-.marble-behind-photo {
-  position: absolute;
-  z-index: -1;
-  background-image: url("/images/tiger-marble-bg.jpg");
-  background-size: cover;
-  background-position: 88% 62%;
-  -webkit-mask-image: linear-gradient(115deg, #000 30%, transparent 82%);
-  mask-image: linear-gradient(115deg, #000 30%, transparent 82%);
-  pointer-events: none;
-}
-
 /* Medium-word hover illumination.
    The old `.glyph-halo` was a three-layer cream text-shadow at 0.92/0.85/0.60
    alpha — it existed to punch type out of the marble that used to sit behind
@@ -368,4 +317,31 @@ body {
   .medium-illum {
     transition: none;
   }
+}
+
+
+/* Readability for the wordmark ONLY, where the artwork's densest corner
+   and the top-left logo unavoidably collide.
+
+   This is not a nav bar and not a global wash: it is an ellipse anchored
+   at the top-left corner that is gone well before the centre of the page,
+   and it has no bottom edge, so there is no horizontal seam between nav
+   and hero. Everything else — the tagline, the subline, the right edge —
+   sits on untouched artwork. The centred nav links need nothing; they
+   already fall on the image's own cream. */
+.hero-nav-readability {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 210px;
+  z-index: -9;
+  pointer-events: none;
+  background: radial-gradient(
+    115% 165% at 4% 0%,
+    rgba(244, 233, 214, 0.97) 0 16%,
+    rgba(244, 233, 214, 0.78) 33%,
+    rgba(244, 233, 214, 0.28) 50%,
+    rgba(244, 233, 214, 0) 66%
+  );
 }

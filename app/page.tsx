@@ -4,7 +4,6 @@ import MediumsSpread from "@/components/MediumsSpread";
 import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
-import MarbleWedge from "@/components/MarbleWedge";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -25,23 +24,20 @@ export default function Home() {
   return (
     // The page's rhythm, and the reason the pattern lands at all:
     //
-    //   Hero .............. tiger-marble, full strength
+    //   Hero .............. tiger-marble, full strength, behind the nav
     //   MediumsSpread ..... quiet cream
-    //   ScrollStory ....... quiet cream (one fragment behind a photo)
-    //   MarbleWedge ....... accent, entering from the left edge
+    //   ScrollStory ....... quiet cream
     //   UpcomingRows ...... quiet cream
-    //   MarbleWedge ....... accent, entering from the right edge
-    //   Ending ............ tiger-marble returning, full strength
+    //   Ending ............ editorial: one tail, off-screen right
     //
-    // The material gets two long stretches of absence in the middle. That
-    // absence is what makes it read as a brand device instead of wallpaper.
+    // The mid-page marble fragments are gone. They read as grey rectangles
+    // pasted over the page rather than as the artwork, so the pattern now
+    // lives only where it can be shown at full strength.
     <main>
       <Hero />
       <MediumsSpread />
       <ScrollStory />
-      <MarbleWedge side="left" />
       <UpcomingRows />
-      <MarbleWedge side="right" />
       <Ending />
     </main>
   );

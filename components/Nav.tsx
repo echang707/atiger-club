@@ -23,22 +23,27 @@ export default function Nav() {
     };
   }, [open]);
 
-  // The bar always carries a cream surface. Previously it was transparent
-  // until scroll, which put small nav text straight over the marble's
-  // densest corner — the reason the links read as washed out. A
-  // backdrop-blurred cream plate guarantees contrast at every scroll
-  // position while still letting the pattern show through underneath.
+  // Nav and hero are one canvas. At the top of the page the bar is fully
+  // transparent and the tiger artwork runs behind it, so there is no
+  // horizontal seam between "navigation" and "hero" — you see a single
+  // composition. Readability is bought by the hero crop: the artwork's
+  // own cream negative space is positioned to fall across the nav band,
+  // not by laying a cream plate over the painting.
+  //
+  // Once you scroll off the hero the bar earns a frosted warm-cream
+  // surface, because past that point it sits over ordinary content.
+  // Understated on purpose: no shadow, hairline rule only.
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
         scrolled || open
-          ? "bg-paper/95 backdrop-blur-md border-b border-ink/10 shadow-[0_1px_20px_-12px_rgba(21,19,14,0.5)]"
-          : "bg-paper/80 backdrop-blur-md border-b border-transparent"
+          ? "bg-paper/85 backdrop-blur-md border-b border-ink/10"
+          : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 grid grid-cols-[1fr_auto_1fr] items-center">
         <Link href="/" className="justify-self-start" onClick={() => setOpen(false)}>
-          <TigerWordmark className="text-base md:text-xl" />
+          <TigerWordmark className="text-[13px] sm:text-base md:text-xl" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-9 text-[15px] justify-self-center">

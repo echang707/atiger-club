@@ -54,10 +54,10 @@ export default function RotatingLine({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-2.5 text-ink/75 font-medium text-lg md:text-xl text-center px-6"
+            className="flex items-start gap-2.5 text-ink/75 font-medium text-lg md:text-xl px-6"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-tiger shrink-0" />
-            <span>{lines[i]}</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-tiger shrink-0 mt-[0.62em]" aria-hidden="true" />
+            <span className="text-left">{lines[i]}</span>
           </motion.p>
         )}
       </AnimatePresence>
