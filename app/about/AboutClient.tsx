@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PrincipleMark from "./PrincipleMark";
+import PrincipleLine from "./PrincipleLine";
 
 /* ---------------------------------------------------------------------
    /about — typography only, and deliberately few sizes.
@@ -64,11 +64,15 @@ export default function AboutClient() {
     <main className="overflow-x-hidden">
       {/* ============ OPENING ============ */}
       <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-14 md:pb-20">
-        <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
-          <Rise className="md:col-span-6">
+        {/* The paragraph is an annotation, not a second column: it starts
+            further right and hangs below the headline's baseline rather
+            than aligning to it, so it reads as a response to the question
+            instead of a parallel block that has to line up. */}
+        <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-start">
+          <Rise className="md:col-span-7">
             <h1 className={TITLE}>Why Tiger&nbsp;Club?</h1>
           </Rise>
-          <Rise delay={0.1} className="md:col-span-6 md:pb-1">
+          <Rise delay={0.1} className="md:col-span-4 md:col-start-9 md:mt-[9.5vw] lg:mt-[8vw]">
             <p className={BODY}>
               Getting out, trying things and meeting people doesn&rsquo;t happen
               by accident once you&rsquo;re an adult. So we make experiences that
@@ -97,7 +101,7 @@ export default function AboutClient() {
             transition={{ duration: 0.7, ease: EASE }}
             className="relative overflow-hidden border-b border-ink/12"
           >
-            <PrincipleMark kind={n as "01" | "02" | "03" | "04"} />
+            <PrincipleLine kind={n as "01" | "02" | "03" | "04"} />
             {/* Label sits above the claim and both start at the page
                 gutter, so every line on the page shares one left edge —
                 the previous version indented the claims into a grid

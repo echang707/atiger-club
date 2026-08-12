@@ -97,49 +97,77 @@ export default function ScrollStory() {
                     {line.text}
                     {/* one restrained hand-drawn mark, drawn after the
                         last line lands */}
-                    {/* A small tiger tail instead of a plain rule: an
-                        orange body with black bands laid over it and a
-                        black rounded tip at the left end. Same one-stroke
-                        reveal as before — it draws itself in once. */}
-                    <motion.svg
+                    {/* A small hand-drawn tiger tail.
+                        Sits well below the baseline so it clears the
+                        descender of the g in "good" — the previous version
+                        cut straight through it. One organic curve, mostly
+                        even thickness, a few restrained stripes, and a
+                        slight upward flick at the tip. It draws itself
+                        left to right when the section arrives, then the
+                        tip gives one small flick. Once only. */}
+                    <svg
                       aria-hidden="true"
-                      viewBox="0 0 300 16"
+                      viewBox="0 0 300 26"
                       preserveAspectRatio="none"
-                      className="absolute -bottom-[0.09em] left-0 h-[0.17em] w-full overflow-visible"
+                      className="absolute -bottom-[0.30em] left-0 h-[0.24em] w-full overflow-visible"
                     >
                       <motion.g
-                        initial={{ pathLength: 0 }}
-                        whileInView={{ pathLength: 1 }}
+                        initial={{ rotate: 0 }}
+                        whileInView={{ rotate: [0, 0, -3.2, 1.1, 0] }}
                         viewport={{ once: true, margin: "-90px" }}
-                        transition={{ duration: 0.95, delay: 0.75, ease: "easeOut" }}
+                        transition={{
+                          duration: 1.9,
+                          times: [0, 0.68, 0.79, 0.9, 1],
+                          ease: "easeOut",
+                          delay: 0.55,
+                        }}
+                        style={{ transformOrigin: "20px 16px" }}
                       >
-                        {/* body */}
+                        {/* body — one gentle curve, flicking up at the tip */}
                         <motion.path
-                          d="M8 10.5C66 4.6 146 3.4 206 5.2c30 .9 62 2.6 88 4.6"
+                          d="M6 15C64 21 140 20 204 15c30-2.4 58-6 84-11.5"
                           fill="none"
                           stroke="#D84A18"
-                          strokeWidth={7}
+                          strokeWidth={4.5}
                           strokeLinecap="round"
+                          initial={{ pathLength: 0 }}
+                          whileInView={{ pathLength: 1 }}
+                          viewport={{ once: true, margin: "-90px" }}
+                          transition={{ duration: 1.1, delay: 0.5, ease: "easeOut" }}
                         />
-                        {/* bands */}
+                        {/* a few restrained stripes */}
                         <motion.path
-                          d="M8 10.5C66 4.6 146 3.4 206 5.2c30 .9 62 2.6 88 4.6"
+                          d="M6 15C64 21 140 20 204 15c30-2.4 58-6 84-11.5"
                           fill="none"
                           stroke="#15130E"
-                          strokeWidth={7}
+                          strokeWidth={4.5}
                           strokeLinecap="butt"
-                          strokeDasharray="7 26"
+                          strokeDasharray="5 46"
+                          strokeDashoffset={-70}
+                          // NOT animated with pathLength: framer drives that
+                          // by writing its own stroke-dasharray, which would
+                          // overwrite this pattern and paint the whole tail
+                          // black. The stripes simply fade in once the body
+                          // has finished drawing.
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          viewport={{ once: true, margin: "-90px" }}
+                          transition={{ duration: 0.45, delay: 1.25, ease: "easeOut" }}
                         />
-                        {/* tip */}
+                        {/* dark tip at the flick end */}
                         <motion.path
-                          d="M8 10.5C18 9.4 28 8.6 38 8"
+                          d="M272 6.5c6-1.2 11-2.6 16-4.2"
                           fill="none"
                           stroke="#15130E"
-                          strokeWidth={8}
+                          strokeWidth={4.5}
                           strokeLinecap="round"
+                          initial={{ pathLength: 0 }}
+                          whileInView={{ pathLength: 1 }}
+                          viewport={{ once: true, margin: "-90px" }}
+                          transition={{ duration: 0.3, delay: 1.5, ease: "easeOut" }}
                         />
                       </motion.g>
-                    </motion.svg>
+                    </svg>
                   </span>
                 ) : (
                   line.text
