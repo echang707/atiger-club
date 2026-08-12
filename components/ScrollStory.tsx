@@ -2,10 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { memories } from "@/lib/events";
-
-// The hero postcard is Bite Club #01 — the event that started it all.
-const hero = memories[0];
 
 // The scatter of postcards pulls real Tiger Club gatherings — each caption
 // stays true to that specific photo's own note, so the words and the
@@ -26,9 +22,12 @@ const scatter = [
   },
   {
     rotate: -4, x: 66, y: 6, w: 26,
-    image: memories[3].image,
-    alt: `${memories[3].title} — ${memories[3].location}`,
-    caption: "somehow we became a running club",
+    // Was memories[3], whose image is a remote Unsplash URL that returns
+    // 403 — it rendered as an empty frame. This is the Bite Club photo,
+    // local and reliable, freed up when the hero postcard was removed.
+    image: "/images/bite-club-01.jpeg",
+    alt: "Tiger Club members around a long dinner table",
+    caption: "one table was never going to be enough",
   },
   {
     rotate: 6, x: 14, y: 44, w: 24,
@@ -47,49 +46,104 @@ const scatter = [
 export default function ScrollStory() {
   return (
     <section className="relative">
-      <div className="max-w-3xl mx-auto px-6 md:px-10 py-40 md:py-56 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="relative inline-block"
-        >
-          <div className="photo-frame -rotate-2 inline-block relative">
-            <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
-              <Image
-                src={hero.image}
-                alt={`${hero.title} — ${hero.location}`}
-                fill
-                sizes="80vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </motion.div>
+      {/* ---------------------------------------------------------------
+          The quiet beat.
 
-        <div className="relative">
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="annotation relative z-10 text-3xl md:text-4xl mt-16 md:mt-20"
+          This used to be a photograph with a line underneath it, which
+          put two photo-heavy sections back to back. It is now a pure
+          typographic spread: no images, a lot of cream, and the quote
+          carrying the whole viewport.
+
+          Deliberately not a centred inspirational card — the lines are
+          left-hung and stepped, the quote mark hangs out into the margin,
+          and the attribution sits far right on its own rule. The page
+          rhythm this creates is: what we do → why it matters → what it
+          feels like.
+          --------------------------------------------------------------- */}
+      <div className="max-w-content mx-auto px-6 md:px-10 pt-32 md:pt-48 pb-28 md:pb-40">
+        <figure className="relative">
+          {/* the mark hangs into the left margin, cropped by the gutter */}
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 1.1 }}
+            className="pointer-events-none absolute -left-2 md:-left-10 -top-10 md:-top-20 select-none font-display leading-none text-tiger/20 text-[26vw] md:text-[13vw]"
           >
-            {/* "connected" is a stripe anchor: the line aims for that
-                word specifically, then breaks cleanly behind it and picks
-                up on the far side as a new mark. It never paints over the
-                word — the word is the reason the line is there. */}
-            <span>&ldquo;A meaningful life is a life</span>{" "}
-            <span className="relative">
-              connected
-            </span>{" "}
-            <span>to others.&rdquo;</span>
-          </motion.p>
-        </div>
+            &ldquo;
+          </motion.span>
+
+          <blockquote className="relative">
+            {[
+              { text: "The good life", indent: "md:ml-0" },
+              { text: "is built with", indent: "md:ml-[12%]" },
+              { text: "good relationships.", indent: "md:ml-[6%]", mark: true },
+            ].map((line, i) => (
+              <motion.p
+                key={line.text}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-90px" }}
+                transition={{
+                  duration: 0.85,
+                  delay: i * 0.13,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className={`font-display text-ink tracking-tight leading-[0.98] text-[11vw] md:text-[6.4vw] lg:text-[5.6vw] ${line.indent}`}
+              >
+                {line.mark ? (
+                  <span className="relative inline-block">
+                    {line.text}
+                    {/* one restrained hand-drawn mark, drawn after the
+                        last line lands */}
+                    <motion.svg
+                      aria-hidden="true"
+                      viewBox="0 0 300 12"
+                      preserveAspectRatio="none"
+                      className="absolute -bottom-[0.06em] left-0 h-[0.13em] w-full overflow-visible text-tiger"
+                    >
+                      <motion.path
+                        d="M3 8.5C62 3.6 140 2.4 200 4.2c30 .9 62 2.6 97 4.4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={4}
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0 }}
+                        whileInView={{ pathLength: 1 }}
+                        viewport={{ once: true, margin: "-90px" }}
+                        transition={{ duration: 0.9, delay: 0.75, ease: "easeOut" }}
+                      />
+                    </motion.svg>
+                  </span>
+                ) : (
+                  line.text
+                )}
+              </motion.p>
+            ))}
+          </blockquote>
+
+          {/* attribution: small, far right, on its own hairline */}
+          <motion.figcaption
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="mt-14 md:mt-20 flex justify-end"
+          >
+            <span className="border-t border-ink/25 pt-3 text-right">
+              <span className="block font-mono text-[11px] tracking-wideish uppercase text-ink">
+                Robert Waldinger
+              </span>
+              <span className="mt-1 block font-mono text-[10px] tracking-wideish uppercase text-ink/55">
+                Harvard Study of Adult Development
+              </span>
+            </span>
+          </motion.figcaption>
+        </figure>
       </div>
 
-      <div className="h-[28vh] md:h-[36vh]" />
+      <div className="h-[10vh] md:h-[16vh]" />
 
       <div className="max-w-2xl mx-auto px-6 text-center relative">
         <motion.p

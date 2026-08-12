@@ -742,3 +742,42 @@ Alignment fixed too: each principle's label now sits **above** its claim with
 both flush to the page gutter. Previously the claims were indented into a grid
 column beside the labels, so nothing lined up with the headline. Every line on
 the page now starts at the same left edge.
+
+---
+
+# The quiet beat between the two photo sections
+
+The homepage had a photograph immediately below the seven mediums, then the
+five-photo scatter — two photo-heavy sections back to back. The first one is
+replaced with a purely typographic quote spread, so the rhythm reads:
+
+    seven mediums  →  quiet philosophy  →  made for something more
+    what we do     →  why it matters    →  what it feels like
+
+## The quote section
+
+Robert Waldinger, Harvard Study of Adult Development: the good life is built
+with good relationships.
+
+Deliberately **not** a centred inspirational card. The three lines are stepped
+at different indents, the opening quote mark is oversized and hangs out into the
+left gutter at 20% tint, and the attribution sits far right on its own hairline
+rule in two sizes of mono. The only motion is a staggered line reveal and one
+restrained hand-drawn stroke under "good relationships", drawn after the last
+line lands.
+
+No images in the section — verified programmatically at both 1440 and 390.
+
+The five-photo scatter below is untouched and stays as rich as it was.
+
+## Bug found while verifying
+
+One of the five scatter photos pointed at `memories[3].image`, a remote
+Unsplash URL that returns **403** — it was rendering as an empty postcard frame.
+It now uses `/images/bite-club-01.jpeg`, which is local and reliable and was
+freed up when the hero postcard was removed, with a caption that matches what is
+actually in the picture.
+
+Worth knowing: several entries in `lib/events.ts` still point at Unsplash URLs.
+They are fine where they are only used as event thumbnails, but any of them can
+fail the same way.
