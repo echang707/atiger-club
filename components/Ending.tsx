@@ -283,8 +283,12 @@ export default function Ending() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden flex items-center min-h-[70vh] md:min-h-[82vh] pt-10 md:pt-12 pb-20 md:pb-24"
+      className="relative overflow-hidden flex items-center min-h-[70vh] md:min-h-[82vh] pt-6 md:pt-8 pb-20 md:pb-24"
     >
+      {/* Tiger texture across the whole closing section rather than a strip
+          sitting above it. Masked to the outer edges so the headline still
+          sits on clean cream. */}
+      <div aria-hidden="true" className="ending-wash" />
       <div className="relative z-10 w-full max-w-content mx-auto px-6 md:px-10">
         <motion.h2
           initial={{ opacity: 0, y: 16 }}

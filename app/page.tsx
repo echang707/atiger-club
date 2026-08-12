@@ -5,6 +5,7 @@ import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
 import JungleWash from "@/components/JungleWash";
+import BallJourney from "@/components/BallJourney";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -38,11 +39,17 @@ export default function Home() {
       <Hero />
       {/* Softens the step down from full-strength marble into cream. */}
       <JungleWash />
-      <MediumsSpread />
-      <ScrollStory />
+      {/* The period from the mediums headline travels through all seven
+          words and lands in the photograph, so these two sections share
+          one wrapper for measurement. */}
+      <BallJourney>
+        <MediumsSpread />
+        <ScrollStory />
+      </BallJourney>
       <UpcomingRows />
-      {/* And warms the page back up on the approach to the finale. */}
-      <JungleWash late />
+      {/* The wash that used to float above the finale as its own strip is
+          now the finale's own backdrop (see Ending.tsx), so there is no
+          orphan band of texture and no gap in front of it. */}
       <Ending />
     </main>
   );

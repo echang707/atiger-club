@@ -567,3 +567,57 @@ the site, and the close is a single line.
 photography, the medium-tiger row and the mission language. What's left says
 only that Tiger Club makes experiences that give people a reason to get out,
 try something, and meet the people around them.
+
+---
+
+# The traveling period, animation fixes, About + finale
+
+## The period becomes the ball
+
+`components/BallJourney.tsx` wraps the mediums and the photo. The full stop at
+the end of "seven ways to dive in." drops out of the headline, becomes a ball,
+hops through all seven mediums setting each one off on contact, then drops into
+the photograph and settles on the table.
+
+It is **entirely scroll-driven** — position is a pure function of progress
+through the section, not a timeline. So scrolling back up runs it in reverse and
+returns the period to the headline with no reset logic at all.
+
+Waypoints are measured from the live DOM (`[data-ball-start]`, `[data-medium]`,
+`[data-ball-end]`), so the path follows whatever layout the words land in at any
+breakpoint. Each leg is linear across with a parabolic hop over the top, and the
+ball squashes slightly at each landing; the final leg drops rather than hops.
+
+Contact fires a `medium:hit` event on the word, which runs **exactly the hover
+animation** and releases after 900ms — one code path for ball and mouse, so
+hover keeps working independently.
+
+Words reordered (EAT · CREATE · MOVE · SERVE · EXPLORE · LEARN · PLAY) so the
+path zig-zags cleanly instead of doubling back.
+
+Verified in Chromium: ball travels x 300 → 1186, y −38 → 2040, **6 hops**, all
+**7 mediums triggered in order**, period opacity back to 1 at the top.
+
+## Animation fixes
+
+- **EXPLORE** — languages now rotate at 1500ms (was 620ms), readable.
+- **CREATE** — the hand-drawn orange outline is restored, drawing itself over
+  the type while the solid letters colour in underneath. Keyed on the hover
+  cycle so it replays every time, not just the first.
+- **PLAY** — the rally now replays on **every** hover and cancels cleanly on
+  mouse leave, with the ball removed and the paddles reset. It no longer
+  self-fires on entering the viewport; the traveling period sets it off.
+
+## /about
+
+Headline is now **Why Tiger Club?**, answered in a column beside it rather than
+stacked underneath, which removes most of the dead space and the left-weighting.
+The closing pair sits on the same baseline for the same reason.
+
+## Finale
+
+The floating strip of texture above the closing section is gone. The same
+material is now the **backdrop for the entire section** (`.ending-wash`), masked
+away from the middle so the headline and tail stay on clean cream and faded in
+at the top so it emerges from the page rather than starting on a hard edge.
+Removing the orphan band also closed the gap in front of it.

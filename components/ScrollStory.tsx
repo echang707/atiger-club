@@ -55,6 +55,13 @@ export default function ScrollStory() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative inline-block"
         >
+          {/* Where the ball comes to rest — low and left of centre, on the
+              table in the photograph. */}
+          <span
+            data-ball-end
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[38%] top-[68%] h-px w-px"
+          />
           <div className="photo-frame -rotate-2 inline-block relative">
             <div className="relative w-[78vw] max-w-md aspect-[4/5] overflow-hidden">
               <Image

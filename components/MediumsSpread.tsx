@@ -18,12 +18,14 @@ const words: {
   num: string;
   weave: "left" | "right";
 }[] = [
+  // Ordered so the traveling period zig-zags cleanly left → right → left
+  // down the page rather than doubling back on itself.
   { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01", weave: "right" },
   { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02", weave: "left" },
-  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03", weave: "right" },
-  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
-  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
-  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
+  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "start", offset: "md:ml-16 lg:ml-28", rotate: -2, num: "03", weave: "right" },
+  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "04", weave: "left" },
+  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-10 lg:ml-20", rotate: 3, num: "05", weave: "right" },
+  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "end", offset: "md:mr-12 lg:mr-24", rotate: 2, num: "06", weave: "left" },
   // PLAY closes the list. It returns to the left edge, where EAT opened —
   // so seven items still read as a deliberate loop rather than six plus a
   // spare, and the column of numbers ends flush with where it began.
@@ -42,6 +44,10 @@ export default function MediumsSpread() {
           className="relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
         >
           seven ways to dive in
+          {/* This full stop leaves the headline and becomes the ball. */}
+          <span data-ball-start className="text-tiger transition-opacity duration-200">
+            .
+          </span>
         </motion.p>
         <motion.span
           initial={{ scaleX: 0, opacity: 0 }}

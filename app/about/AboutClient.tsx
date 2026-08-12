@@ -51,24 +51,25 @@ export default function AboutClient() {
   return (
     <main className="overflow-x-hidden">
       {/* ============ OPENING ============ */}
-      <section className="max-w-content mx-auto px-6 md:px-10 pt-32 md:pt-44 pb-16 md:pb-24">
-        <Rise>
-          <h1 className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.86] text-[17vw] md:text-[12vw] lg:text-[10.5vw]">
-            Life is better
-            <br />
-            together.
-          </h1>
-        </Rise>
-
-        <div className="mt-10 md:mt-14 grid md:grid-cols-12 gap-6">
-          <Rise delay={0.1} className="md:col-span-7 md:col-start-6">
-            <p className="font-display text-ink text-xl md:text-3xl leading-snug">
-              A Tiger Cub started with a simple goal: bring people together.
-              Tiger Club is how we do it in real life.
+      <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-12 md:pb-16">
+        {/* Headline and answer sit side by side rather than stacked with the
+            copy pushed into a lonely right-hand column — it fills the width
+            and kills most of the dead space under the title. */}
+        <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-end">
+          <Rise className="md:col-span-6">
+            <h1 className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.84] text-[17vw] md:text-[9vw] lg:text-[7.6vw]">
+              Why
+              <br />
+              Tiger Club?
+            </h1>
+          </Rise>
+          <Rise delay={0.1} className="md:col-span-6 md:pb-2">
+            <p className="font-display text-ink text-xl md:text-[1.75rem] leading-snug">
+              Because getting out, trying things and meeting people
+              doesn&rsquo;t happen by accident once you&rsquo;re an adult.
             </p>
-            <p className="mt-5 text-base md:text-lg text-ink/70 leading-relaxed max-w-[44ch]">
-              We make experiences that give people a reason to get out, try
-              something, and meet the people around them.
+            <p className="mt-4 text-base md:text-lg text-ink/70 leading-relaxed max-w-[46ch]">
+              So we make experiences that give people a reason to.
             </p>
           </Rise>
         </div>
@@ -117,15 +118,15 @@ export default function AboutClient() {
       </section>
 
       {/* ============ CLOSE ============ */}
-      <section className="max-w-content mx-auto px-6 md:px-10 py-24 md:py-36">
-        <div className="grid md:grid-cols-12 gap-8">
-          <Rise className="md:col-span-9">
+      <section className="max-w-content mx-auto px-6 md:px-10 py-16 md:py-24">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-end">
+          <Rise className="md:col-span-7">
             <p className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.9] text-[13vw] md:text-[7.4vw] lg:text-[6.4vw]">
               Events are just the start.
             </p>
           </Rise>
-          <Rise delay={0.1} className="md:col-span-7 md:col-start-6">
-            <p className="mt-4 md:mt-6 text-base md:text-lg text-ink/70 leading-relaxed max-w-[44ch]">
+          <Rise delay={0.1} className="md:col-span-5">
+            <p className="text-base md:text-lg text-ink/70 leading-relaxed max-w-[44ch]">
               We&rsquo;re building the social infrastructure for a more
               connected city.
             </p>

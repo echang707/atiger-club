@@ -68,7 +68,6 @@ export default function MediumWord({
   const [playBall, setPlayBall] = useState<{ x: number; y: number } | null>(null);
   const [playHit, setPlayHit] = useState<number | null>(null);
   const playRaf = useRef<number | null>(null);
-  const playedOnce = useRef(false);
 
   // CREATE state — a brief rough/construction-line pass plays over the
   // clean type on the way in, and again (reversed) on the way out.
@@ -83,11 +82,12 @@ export default function MediumWord({
   // exactly as it started. Positions come from the rendered letter boxes,
   // so it stays aligned at every breakpoint.
   const runPlay = useCallback(() => {
-    if (variant !== "play" || playedOnce.current) return;
+    if (variant !== "play") return;
+    // cancel any rally already in flight so a re-hover restarts cleanly
+    if (playRaf.current) cancelAnimationFrame(playRaf.current);
     const first = letterRefs.current[0];
     const last = letterRefs.current[letters.length - 1];
     if (!first || !last) return;
-    playedOnce.current = true;
 
     const leftX = first.offsetLeft + first.offsetWidth * 0.92;
     const rightX = last.offsetLeft + last.offsetWidth * 0.08;
@@ -129,27 +129,13 @@ export default function MediumWord({
     playRaf.current = requestAnimationFrame(frame);
   }, [variant, letters.length]);
 
-  // Fires once, when the word enters the viewport.
+  // PLAY no longer self-triggers on entering the viewport — the traveling
+  // period sets it off when it reaches the word, and hover replays it.
   useEffect(() => {
-    if (variant !== "play") return;
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          io.disconnect();
-          window.setTimeout(runPlay, 220);
-        }
-      },
-      { threshold: 0.6 }
-    );
-    io.observe(el);
     return () => {
-      io.disconnect();
       if (playRaf.current) cancelAnimationFrame(playRaf.current);
     };
-  }, [variant, runPlay]);
+  }, []);
 
   const runEnter = useCallback(() => {
     setHovered(true);
@@ -217,7 +203,7 @@ export default function MediumWord({
       if (langTimer.current) clearInterval(langTimer.current);
       langTimer.current = setInterval(() => {
         setLangIndex((i) => (i + 1) % EXPLORE_WORDS.length);
-      }, 620);
+      }, 1500);
     }
 
     if (variant === "create") {
@@ -253,13 +239,41 @@ export default function MediumWord({
     }
   }, [variant, letters]);
 
+  // The traveling period dispatches "medium:hit" on this element as it
+  // rolls past. It runs exactly the hover animation, then releases — so
+  // the ball and the mouse share one code path and hover keeps working
+  // independently.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let release: NodeJS.Timeout;
+    const onHit = () => {
+      runEnter();
+      if (variant === "play") runPlay();
+      clearTimeout(release);
+      release = setTimeout(() => runLeave(), 900);
+    };
+    el.addEventListener("medium:hit", onHit as EventListener);
+    return () => {
+      el.removeEventListener("medium:hit", onHit as EventListener);
+      clearTimeout(release);
+    };
+  });
+
   const onEnter = useCallback(() => {
     runEnter();
-  }, [runEnter]);
+    if (variant === "play") runPlay();
+  }, [runEnter, runPlay, variant]);
 
   const onLeave = useCallback(() => {
     runLeave();
-  }, [runLeave]);
+    if (variant === "play") {
+      // stop the rally and put the word back exactly as it was
+      if (playRaf.current) cancelAnimationFrame(playRaf.current);
+      setPlayBall(null);
+      setPlayHit(null);
+    }
+  }, [runLeave, variant]);
 
   const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -296,6 +310,7 @@ export default function MediumWord({
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
+      data-medium={variant}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
       {variant === "explore" ? (
@@ -313,6 +328,7 @@ export default function MediumWord({
             if (variant === "create") {
               style.display = "inline-block";
               if (hovered) {
+                // keyed by `cycle` on the span below, so this re-runs each hover
                 style.animation = `create-draw 0.55s ${i * 0.06}s cubic-bezier(0.22,1,0.36,1) 1`;
               } else if (roughPhase === "leave") {
                 style.animation = `create-erase 0.42s ${(letters.length - 1 - i) * 0.045}s cubic-bezier(0.22,1,0.36,1) 1`;
@@ -355,7 +371,7 @@ export default function MediumWord({
 
             return (
               <span
-                key={variant === "eat" ? `${cycle}-${i}` : i}
+                key={variant === "eat" || variant === "create" ? `${cycle}-${leaveCycle}-${i}` : i}
                 ref={(el) => {
                   letterRefs.current[i] = el;
                 }}
@@ -412,10 +428,30 @@ export default function MediumWord({
             />
           )}
 
-          {/* The rough "construction line" overlay that used to print on top
-              of CREATE has been removed — it was decoration layered over the
-              type rather than a real interaction. The draw-in animation on
-              the letters themselves carries the idea. */}
+          {/* CREATE's hand-drawn pass: an orange outline of the word draws
+              itself over the type on the way in, then the solid letters
+              "colour in" underneath it. Keyed on the cycle so it replays on
+              every hover rather than only the first. */}
+          {variant === "create" && roughPhase !== "none" && (
+            <span
+              key={roughPhase === "enter" ? `rough-in-${cycle}` : `rough-out-${leaveCycle}`}
+              aria-hidden="true"
+              className={
+                baseCls +
+                " absolute inset-0 pointer-events-none select-none whitespace-nowrap"
+              }
+              style={{
+                color: "transparent",
+                WebkitTextStroke: "1.5px #D84A18",
+                animation:
+                  roughPhase === "enter"
+                    ? "construction-in 0.5s cubic-bezier(0.22,1,0.36,1) 1"
+                    : "construction-out 0.44s cubic-bezier(0.22,1,0.36,1) 1",
+              }}
+            >
+              {word}
+            </span>
+          )}
 
           {variant === "serve" && (
             <span

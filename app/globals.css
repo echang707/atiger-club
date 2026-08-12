@@ -427,3 +427,34 @@ body {
     padding: 10px 10px 34px 10px;
   }
 }
+
+/* Backdrop for the whole closing section. Same material as the hero,
+   masked away from the middle so the headline and the tail stay on clean
+   cream, and topped with a fade so it emerges out of the page above
+   rather than starting on a hard edge. */
+.ending-wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("/images/jungle-wash.webp");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 100%),
+    radial-gradient(80% 62% at 42% 52%, transparent 0 44%, #000 88%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 100%),
+    radial-gradient(80% 62% at 42% 52%, transparent 0 44%, #000 88%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+@media (max-width: 767px) {
+  .ending-wash {
+    opacity: 0.38;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%),
+      radial-gradient(96% 46% at 50% 46%, transparent 0 42%, #000 92%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%),
+      radial-gradient(96% 46% at 50% 46%, transparent 0 42%, #000 92%);
+  }
+}
