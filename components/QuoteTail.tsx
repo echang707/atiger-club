@@ -1,116 +1,118 @@
 "use client";
 
+import { useId } from "react";
 import { motion } from "framer-motion";
 
 /* ---------------------------------------------------------------------
    The tail under "good relationships."
 
-   The previous version revealed a fixed path, which is why it still read
-   as a striped underline. Three things change that here:
+   Built as ONE continuous stroke. The earlier version animated the body,
+   the stripes and the tip as three separate elements, which is why they
+   came apart mid-animation: the stripes rendered at full length while
+   the body was still drawing, so they read as loose black squares
+   floating past the end of the orange, with a detached tip beyond them.
 
-   1. The path `d` itself is animated through four shapes while it draws,
-      so the curve keeps shifting as it grows instead of a static shape
-      being uncovered. The last two shapes lift the far end, so the
-      upward curl only appears near the end of the draw.
-   2. The tip is a separate, thinner stroke that continues past the body
-      and ends with a round cap — a stepped taper, since SVG strokes
-      cannot taper on their own.
-   3. Once fully extended the tip group makes one small flick: up,
-      slight overshoot, then settles. It pivots from where the tip meets
-      the body, so the body stays put and only the end moves.
+   How this one stays whole:
 
-   After that it is completely still. Nothing loops.
+   • There is a single path shape, `D`. The orange body and the black
+     stripes are the same geometry — the stripes are that identical path
+     stroked in black with a dash pattern, so they sit ON the tail rather
+     than being their own objects.
+
+   • Both are wrapped in one clip path, and the *clip* is what animates:
+     a rectangle whose right edge sweeps left → right. Nothing can ever
+     appear beyond the drawn tip, because nothing outside the clip is
+     rendered. Body and stripes are revealed by the same single
+     animation, so they cannot drift apart.
+
+   • The growth, the upward curl at the end and the flick are all done by
+     morphing `d` itself through keyframes that share a command
+     structure. The stroke is never split, so it stays one shape the
+     whole way through.
+
+   It settles to the last keyframe and stops. No loop.
    --------------------------------------------------------------------- */
 
-// four states of the same curve — identical command structure so they can
-// be interpolated. The end lifts progressively in the last two.
-const BODY = [
-  "M6 17C70 23 142 22 206 17c28-2.2 54-4.6 78-7.4",
-  "M6 17C70 23 142 22 206 16c28-2.6 54-5.6 78-9.6",
-  "M6 17C70 23 142 22 206 15c28-3.4 54-8 78-15",
-  "M6 17C70 23 142 22 206 14.6c28-3.8 54-9.6 78-18.5",
+// One shape, six states. Only the tail-end control points move: the body
+// through the first three lifts the last ~18% upward as it finishes, then
+// the flick raises the tip, overshoots slightly and settles.
+const D = [
+  "M6 18C70 24 142 23 206 19C234 17 262 15 292 13",
+  "M6 18C70 24 142 23 206 18C234 16 262 12 292 8",
+  "M6 18C70 24 142 23 206 17C234 14 262 8 292 0",
+  "M6 18C70 24 142 23 206 16C234 12 262 2 292 -9",
+  "M6 18C70 24 142 23 206 17C234 14 262 7 292 -1",
+  "M6 18C70 24 142 23 206 17C234 13 262 3 292 -8",
 ];
 
-const TIP = [
-  "M278 10.4c6-1 11-2.2 16-3.6",
-  "M278 8.6c6-1.4 11-3 16-5.2",
-  "M278 4.2c6-2.2 11-4.8 16-8.2",
-  "M278 2.4c6-2.6 11-6 16-10.4",
-];
-
-const DRAW = 1.25;
-const START = 0.45;
+const DELAY = 0.45;
+const TOTAL = 2.05;
+const REVEAL = 1.2;
 
 export default function QuoteTail() {
-  const inView = { once: true, margin: "-90px" } as const;
+  const id = useId().replace(/:/g, "");
+  const clipId = `qt-${id}`;
+  const view = { once: true, margin: "-90px" } as const;
+
+  // the whole shape morphs on one clock — draw, curl, flick, settle
+  const morph = {
+    initial: { d: D[0] },
+    whileInView: { d: D },
+    viewport: view,
+    transition: {
+      duration: TOTAL,
+      delay: DELAY,
+      ease: "easeInOut" as const,
+      times: [0, 0.34, 0.55, 0.72, 0.87, 1],
+    },
+  };
 
   return (
     <svg
       aria-hidden="true"
-      viewBox="0 0 300 30"
+      viewBox="0 0 300 34"
       preserveAspectRatio="none"
-      className="absolute -bottom-[0.34em] left-0 h-[0.26em] w-full overflow-visible"
+      className="absolute -bottom-[0.36em] left-0 h-[0.28em] w-full overflow-visible"
       fill="none"
     >
-      {/* body — draws left to right, curve shifting as it goes */}
-      <motion.path
-        stroke="#D84A18"
-        strokeWidth={4.2}
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-        initial={{ pathLength: 0, d: BODY[0] }}
-        whileInView={{ pathLength: 1, d: BODY }}
-        viewport={inView}
-        transition={{
-          pathLength: { duration: DRAW, delay: START, ease: "easeOut" },
-          d: { duration: DRAW, delay: START, ease: "easeInOut", times: [0, 0.5, 0.82, 1] },
-        }}
-      />
+      <defs>
+        {/* the single reveal: one rectangle whose edge sweeps rightward.
+            Everything inside is clipped to it, so the stripes can never
+            outrun the body. */}
+        <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
+          <motion.rect
+            x={-8}
+            y={-40}
+            height={120}
+            initial={{ width: 0 }}
+            whileInView={{ width: 320 }}
+            viewport={view}
+            transition={{ duration: REVEAL, delay: DELAY, ease: "easeOut" }}
+          />
+        </clipPath>
+      </defs>
 
-      {/* sparse stripes — faded in after the body lands, never animated with
-          pathLength (framer writes its own dasharray for that and would
-          overwrite the pattern) */}
-      <motion.path
-        d={BODY[3]}
-        stroke="#15130E"
-        strokeWidth={4.2}
-        strokeLinecap="butt"
-        strokeDasharray="4 52"
-        strokeDashoffset={-64}
-        vectorEffect="non-scaling-stroke"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={inView}
-        transition={{ duration: 0.4, delay: START + DRAW * 0.8, ease: "easeOut" }}
-      />
-
-      {/* tip — thinner, so the silhouette tapers, and it flicks once */}
-      <motion.g
-        style={{ transformOrigin: "278px 6px" }}
-        initial={{ rotate: 0 }}
-        whileInView={{ rotate: [0, 0, -13, 4.5, -1.4, 0] }}
-        viewport={inView}
-        transition={{
-          duration: 1.5,
-          delay: START + DRAW - 0.1,
-          times: [0, 0.18, 0.42, 0.66, 0.85, 1],
-          ease: "easeOut",
-        }}
-      >
+      <g clipPath={`url(#${clipId})`}>
+        {/* body */}
         <motion.path
-          stroke="#15130E"
-          strokeWidth={2.5}
+          {...morph}
+          stroke="#D84A18"
+          strokeWidth={4.2}
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
-          initial={{ pathLength: 0, d: TIP[0] }}
-          whileInView={{ pathLength: 1, d: TIP }}
-          viewport={inView}
-          transition={{
-            pathLength: { duration: DRAW * 0.34, delay: START + DRAW * 0.7, ease: "easeOut" },
-            d: { duration: DRAW, delay: START, ease: "easeInOut", times: [0, 0.5, 0.82, 1] },
-          }}
         />
-      </motion.g>
+        {/* stripes — same path, same morph, dashed so they read as bands
+            painted onto the tail rather than separate marks */}
+        <motion.path
+          {...morph}
+          stroke="#15130E"
+          strokeWidth={4.2}
+          strokeLinecap="butt"
+          strokeDasharray="4 54"
+          strokeDashoffset={-58}
+          vectorEffect="non-scaling-stroke"
+        />
+      </g>
     </svg>
   );
 }

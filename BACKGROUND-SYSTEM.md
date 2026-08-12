@@ -906,3 +906,32 @@ tied to scroll position — no loop, no wag.
 ## Legal name
 
 Footer now reads **Tiger Club LLC, Atlanta**.
+
+---
+
+# The quote tail is one continuous shape
+
+## What was broken
+
+The tail was three separate animated elements — body, stripes, tip. The stripes
+path rendered at full length while the body was still drawing, so they appeared
+as loose black squares floating past the end of the orange, with a detached tip
+beyond them. Nothing kept the pieces in step.
+
+## How it stays whole now
+
+- **One shape.** The orange body and the black stripes are the *same* path
+  geometry; the stripes are that identical path stroked in black with a dash
+  pattern, so they are bands painted onto the tail rather than their own
+  objects. The separate tip element is gone.
+- **One reveal.** Both strokes sit inside a single `clipPath` whose rectangle
+  sweeps left → right. Nothing can render beyond the drawn tip, because
+  nothing outside the clip exists. Body and stripes are revealed by the same
+  animation, so they cannot drift apart.
+- **One morph.** Growth, the upward curl over the last ~18%, the flick and the
+  settle are all done by morphing `d` through six keyframes that share a command
+  structure. The stroke is never split at any point.
+
+Verified frame by frame at 700 / 1150 / 1600 / 2000 / 3200 ms: continuous at
+every step, stripes attached throughout, no floating marks, tip resting with a
+gentle upward curve. Runs once and stops.
