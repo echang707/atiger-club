@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import PawPrints from "@/components/PawPrints";
 import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import PawPrints from "@/components/PawPrints";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -176,10 +176,13 @@ export default function RootLayout({
           </filter>
         </svg>
         <div className="relative">
+          {/* Click-anywhere paw prints, on every page. Sits above the
+              background layers (z-index -10/-9) and below the copy, so a
+              stamp never lands on top of anything readable. */}
+          <PawPrints />
           <Nav />
           {children}
           <Footer />
-          <PawPrints />
         </div>
       </body>
     </html>

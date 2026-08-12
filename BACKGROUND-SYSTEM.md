@@ -781,3 +781,48 @@ actually in the picture.
 Worth knowing: several entries in `lib/events.ts` still point at Unsplash URLs.
 They are fine where they are only used as event thumbnails, but any of them can
 fail the same way.
+
+---
+
+# Tail underline, principle marks, paw prints removed
+
+## The quote underline is a tail
+
+The plain orange stroke under "good relationships" is now a small tiger tail:
+an orange body, black bands laid over it with a dashed stroke, and a black
+rounded tip at the left end. Same single draw-in reveal as before — three paths,
+no new assets.
+
+## Principle marks
+
+`app/about/PrincipleMark.tsx`. One oversized graphic per row, filling the right
+third so that side reads as composed rather than empty:
+
+- **01** an arrow pointing back inward, toward the claim
+- **02** two large outlined circles, overlapping
+- **03** the numeral itself, oversized and rotated out of the grid
+- **04** a four-point spark
+
+Built entirely from divs, borders and two `clip-path` polygons — no icons, no
+illustrations, no cards, no gradients, no labels. Near-black at low opacity with
+one restrained orange accent each. They are `aria-hidden`, sit behind the type
+(`z-10` on the label and claim), and are hidden below `md`, where there is no
+empty right side to fill. Row typography and horizontal structure are untouched.
+
+*Sized to the row on purpose:* a first pass drew circles taller than the row and
+`overflow-hidden` clipped them into arcs. Everything now fits inside the row's
+content box.
+
+## Paw prints — removed, then restored
+
+Briefly removed, then put back on every page at the client's request.
+`components/PawPrints.tsx` was recovered from the original v32 package rather
+than rewritten, so the interaction is byte-identical to what it always was, and
+the `.paw-print-mark` rule, `paw-stamp-in` keyframes and reduced-motion override
+were restored alongside it. Mounted once in `layout.tsx`, so it applies to every
+route.
+
+Verified by clicking empty space on `/`, `/about`, `/events` and
+`/work-with-us`: a mark stamps on each. Clicks that land on a button, link or
+other interactive element correctly do not stamp — that exclusion is the
+component's own behaviour and is unchanged.

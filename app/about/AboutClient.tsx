@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import PrincipleMark from "./PrincipleMark";
 
 /* ---------------------------------------------------------------------
    /about — typography only, and deliberately few sizes.
@@ -94,18 +95,19 @@ export default function AboutClient() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-90px" }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="border-b border-ink/12"
+            className="relative overflow-hidden border-b border-ink/12"
           >
+            <PrincipleMark kind={n as "01" | "02" | "03" | "04"} />
             {/* Label sits above the claim and both start at the page
                 gutter, so every line on the page shares one left edge —
                 the previous version indented the claims into a grid
                 column and nothing lined up. */}
             <div className="max-w-content mx-auto px-6 md:px-10 py-8 md:py-12">
-              <p className={`${MARK} text-ink/45 mb-2 md:mb-3`}>
+              <p className={`${MARK} relative z-10 text-ink/45 mb-2 md:mb-3`}>
                 <span className="text-tiger-text">{n}</span>
                 <span className="ml-3">{name}</span>
               </p>
-              <p className={SUB}>{claim}</p>
+              <p className={`${SUB} relative z-10`}>{claim}</p>
             </div>
           </motion.article>
         ))}

@@ -97,23 +97,48 @@ export default function ScrollStory() {
                     {line.text}
                     {/* one restrained hand-drawn mark, drawn after the
                         last line lands */}
+                    {/* A small tiger tail instead of a plain rule: an
+                        orange body with black bands laid over it and a
+                        black rounded tip at the left end. Same one-stroke
+                        reveal as before — it draws itself in once. */}
                     <motion.svg
                       aria-hidden="true"
-                      viewBox="0 0 300 12"
+                      viewBox="0 0 300 16"
                       preserveAspectRatio="none"
-                      className="absolute -bottom-[0.06em] left-0 h-[0.13em] w-full overflow-visible text-tiger"
+                      className="absolute -bottom-[0.09em] left-0 h-[0.17em] w-full overflow-visible"
                     >
-                      <motion.path
-                        d="M3 8.5C62 3.6 140 2.4 200 4.2c30 .9 62 2.6 97 4.4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={4}
-                        strokeLinecap="round"
+                      <motion.g
                         initial={{ pathLength: 0 }}
                         whileInView={{ pathLength: 1 }}
                         viewport={{ once: true, margin: "-90px" }}
-                        transition={{ duration: 0.9, delay: 0.75, ease: "easeOut" }}
-                      />
+                        transition={{ duration: 0.95, delay: 0.75, ease: "easeOut" }}
+                      >
+                        {/* body */}
+                        <motion.path
+                          d="M8 10.5C66 4.6 146 3.4 206 5.2c30 .9 62 2.6 88 4.6"
+                          fill="none"
+                          stroke="#D84A18"
+                          strokeWidth={7}
+                          strokeLinecap="round"
+                        />
+                        {/* bands */}
+                        <motion.path
+                          d="M8 10.5C66 4.6 146 3.4 206 5.2c30 .9 62 2.6 88 4.6"
+                          fill="none"
+                          stroke="#15130E"
+                          strokeWidth={7}
+                          strokeLinecap="butt"
+                          strokeDasharray="7 26"
+                        />
+                        {/* tip */}
+                        <motion.path
+                          d="M8 10.5C18 9.4 28 8.6 38 8"
+                          fill="none"
+                          stroke="#15130E"
+                          strokeWidth={8}
+                          strokeLinecap="round"
+                        />
+                      </motion.g>
                     </motion.svg>
                   </span>
                 ) : (
