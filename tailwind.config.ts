@@ -23,7 +23,9 @@ const config: Config = {
           // used ONLY where orange carries text or sits behind it, so the
           // brand orange never has to be compromised to stay legible.
           text: "#BE3F0E",
-          fill: "#CC4413",
+          // Lightened from #CC4413. With pure white button text this still
+          // clears AA (4.5:1); near-white #FFF7EF would have dropped under.
+          fill: "#D2470F",
           soft: "#F0A15F",
           deep: "#A9350C",
         },

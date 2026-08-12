@@ -621,3 +621,85 @@ material is now the **backdrop for the entire section** (`.ending-wash`), masked
 away from the middle so the headline and tail stay on clean cream and faded in
 at the top so it emerges from the page rather than starting on a hard edge.
 Removing the orphan band also closed the gap in front of it.
+
+---
+
+# Rebuilt: the ball rolls, and /about simplified
+
+## Roll, don't bounce
+
+The previous version hopped from word to word in parabolic arcs, which was
+wrong. The path is now two kinds of segment:
+
+- **ROLL** — along the cap-height line of a word, entering at whichever end is
+  nearer where the last drop left it, ball spinning at the rate it actually
+  travels (there's a small off-centre fleck on it so the spin reads).
+- **DROP** — a short accelerating fall from one word's trailing edge onto the
+  next word's leading edge.
+
+The words were re-laid-out as a **staircase** so there is always somewhere to
+roll to: each starts near where the previous ended and sits lower, with the
+per-word rotations giving each one a real slope. Row padding tightened so the
+drops are short and the run reads quickly.
+
+**Speed / visibility.** The journey now completes over a shorter scroll window
+(start at 0.72vh, finish at 0.62vh above the photo), so the ball moves briskly
+and stays ahead of the reading position instead of lagging above the fold.
+Measured: the ball is **inside the viewport in 56 of 56 samples** across the
+whole run.
+
+**Triggering is now miss-proof.** Asking "is the ball at the moment of contact"
+loses hits whenever a scroll step jumps past that instant — which is most
+trackpad flicks, and it was dropping 2 of 7 words. Instead, every drop at or
+behind the ball that hasn't fired yet fires now, and anything ahead is re-armed
+so scrolling back replays the run. Verified: all **7 mediums fire, in path
+order**.
+
+## /about
+
+Back to the plain typographic version, with **Why Tiger Club?** as the opening
+and the sentimental copy gone. Cleaned up as asked: the whole page now uses
+**three** type tokens — one display size, one body size, one mono label — reused
+everywhere, instead of the eight or nine different sizes it had. No italic
+serif, no oversized headline. 1.7 screens.
+
+---
+
+# Ball direction, button colour, cohesive tail
+
+## The ball only goes forward
+
+It was a pure function of scroll, so scrolling up dragged it back up the page.
+It now tracks the furthest point reached and never gives that back. Scrolling up
+to re-read something leaves the ball where it is.
+
+**Reset happens in exactly one place:** when the headline is fully back below the
+fold — i.e. you have scrolled completely above "seven ways to dive in." At that
+point the period returns to the headline, the fired list clears, and the whole
+run can happen again.
+
+Each word fires once and settles back to normal on its own; nothing re-arms mid-
+run, so once the ball has passed, the words stay clean until a full reset.
+
+Verified: forward run monotonic; scrolling up 400px mid-section holds the ball
+at y 1759 → 1759; all 7 words fire; period returns at the top; and the full run
+replays after reset.
+
+## The tail is one image again
+
+The seams in your screenshot were mine: the whip sliced the tail into 26
+vertical strips and translated each on a delay, so adjacent strips stepped past
+one another and the joins showed as hard pixel edges. No amount of overlap fixes
+that — offset strips of a raster cannot stay continuous.
+
+It is now **nested rigid rotations** instead. Four layers, each pivoting from a
+point further along the tail and starting fractionally later, so the transforms
+compose into a travelling bend: base barely turns, tip swings hard and arrives
+last. Every layer transforms the whole subtree, so the artwork is never cut and
+stays continuous at any zoom. Checked at 2× device scale mid-whip — clean.
+
+## Join the Club
+
+Fill lightened `#CC4413` → `#D2470F`. The button text moved to pure white to
+carry the contrast, which keeps it at AA (4.52:1); it would have fallen under
+4.5 on the old near-white.

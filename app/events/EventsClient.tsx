@@ -85,7 +85,7 @@ export default function EventsClient() {
               key={c}
               onClick={() => setActiveCity(c)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
-                activeCity === c ? "bg-tiger-fill text-[#FFF7EF]" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
+                activeCity === c ? "bg-tiger-fill text-[#FFFFFF]" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
               }`}
             >
               {c}

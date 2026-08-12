@@ -4,19 +4,25 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 /* ---------------------------------------------------------------------
-   /about — typography only.
+   /about — typography only, and deliberately few sizes.
 
-   No photography, no decoration. The page is four statements at four
-   different scales, and the composition does the work: the opening runs
-   nearly full-bleed, the four principles are a numbered column set in the
-   largest type on the site, and the close is a single line.
+   The whole page uses three type scales and nothing else:
 
-   Copy is cut to what actually matters — Tiger Club makes experiences that
-   give people reasons to get out, try things and meet each other. No
-   mission language, no "it should mean something".
+     display  — the three section headlines and the four claims
+     body     — the short supporting lines
+     mark     — the mono labels
+
+   Everything is Bricolage for display and the body face for prose; no
+   italic serif, no fourth or fifth size. Restraint is the design here.
    --------------------------------------------------------------------- */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+// one display size, one body size, one label size — reused everywhere
+const DISPLAY =
+  "font-wordmark font-extrabold text-ink tracking-tight leading-[0.92] text-[11vw] md:text-[5.4vw] lg:text-[4.6vw]";
+const BODY = "text-base md:text-lg text-ink/70 leading-relaxed";
+const MARK = "font-mono text-[11px] tracking-wideish uppercase";
 
 function Rise({
   children,
@@ -51,66 +57,47 @@ export default function AboutClient() {
   return (
     <main className="overflow-x-hidden">
       {/* ============ OPENING ============ */}
-      <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-12 md:pb-16">
-        {/* Headline and answer sit side by side rather than stacked with the
-            copy pushed into a lonely right-hand column — it fills the width
-            and kills most of the dead space under the title. */}
-        <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-end">
+      <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-14 md:pb-20">
+        <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
           <Rise className="md:col-span-6">
-            <h1 className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.84] text-[17vw] md:text-[9vw] lg:text-[7.6vw]">
-              Why
-              <br />
-              Tiger Club?
-            </h1>
+            <h1 className={DISPLAY}>Why Tiger&nbsp;Club?</h1>
           </Rise>
-          <Rise delay={0.1} className="md:col-span-6 md:pb-2">
-            <p className="font-display text-ink text-xl md:text-[1.75rem] leading-snug">
-              Because getting out, trying things and meeting people
-              doesn&rsquo;t happen by accident once you&rsquo;re an adult.
-            </p>
-            <p className="mt-4 text-base md:text-lg text-ink/70 leading-relaxed max-w-[46ch]">
-              So we make experiences that give people a reason to.
+          <Rise delay={0.1} className="md:col-span-6 md:pb-1">
+            <p className={BODY}>
+              Getting out, trying things and meeting people doesn&rsquo;t happen
+              by accident once you&rsquo;re an adult. So we make experiences that
+              give people a reason to.
             </p>
           </Rise>
         </div>
       </section>
 
-      {/* ============ FOUR PRINCIPLES — the largest type on the site ============ */}
+      {/* ============ FOUR PRINCIPLES ============ */}
       <section className="border-t border-ink/12">
-        <div className="max-w-content mx-auto px-6 md:px-10 pt-10 md:pt-14 pb-2">
+        <div className="max-w-content mx-auto px-6 md:px-10 pt-8 md:pt-12 pb-2">
           <Rise>
-            <p className="font-mono text-[11px] tracking-wideish uppercase text-tiger-text">
+            <p className={`${MARK} text-tiger-text`}>
               We don&rsquo;t just put people in the same room
             </p>
           </Rise>
         </div>
 
-        {PRINCIPLES.map(([n, name, claim], i) => (
+        {PRINCIPLES.map(([n, name, claim]) => (
           <motion.article
             key={n}
-            initial={{ opacity: 0, y: 22 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-90px" }}
-            transition={{ duration: 0.75, ease: EASE }}
-            className="group border-b border-ink/12"
+            transition={{ duration: 0.7, ease: EASE }}
+            className="border-b border-ink/12"
           >
-            <div className="max-w-content mx-auto px-6 md:px-10 py-10 md:py-16">
-              <div className="flex items-baseline gap-4 md:gap-8">
-                <span
-                  aria-hidden="true"
-                  className="font-wordmark font-extrabold leading-none text-tiger/35 select-none shrink-0
-                             text-[7vw] md:text-[3vw] transition-colors duration-500 group-hover:text-tiger/70"
-                >
-                  {n}
-                </span>
-                <div className="min-w-0">
-                  <p className="font-mono text-[10px] md:text-[11px] tracking-wideish uppercase text-ink/55 mb-2 md:mb-4">
-                    {name}
-                  </p>
-                  <p className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.92] text-[11vw] md:text-[6.4vw] lg:text-[5.6vw]">
-                    {claim}
-                  </p>
-                </div>
+            <div className="max-w-content mx-auto px-6 md:px-10 py-9 md:py-14">
+              <div className="grid md:grid-cols-12 gap-2 md:gap-8 md:items-baseline">
+                <p className={`${MARK} text-ink/45 md:col-span-3`}>
+                  <span className="text-tiger-text">{n}</span>
+                  <span className="ml-3">{name}</span>
+                </p>
+                <p className={`${DISPLAY} md:col-span-9`}>{claim}</p>
               </div>
             </div>
           </motion.article>
@@ -119,20 +106,18 @@ export default function AboutClient() {
 
       {/* ============ CLOSE ============ */}
       <section className="max-w-content mx-auto px-6 md:px-10 py-16 md:py-24">
-        <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-end">
+        <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
           <Rise className="md:col-span-7">
-            <p className="font-wordmark font-extrabold text-ink tracking-tight leading-[0.9] text-[13vw] md:text-[7.4vw] lg:text-[6.4vw]">
-              Events are just the start.
-            </p>
+            <p className={DISPLAY}>Events are just the start.</p>
           </Rise>
-          <Rise delay={0.1} className="md:col-span-5">
-            <p className="text-base md:text-lg text-ink/70 leading-relaxed max-w-[44ch]">
-              We&rsquo;re building the social infrastructure for a more
-              connected city.
+          <Rise delay={0.1} className="md:col-span-5 md:pb-1">
+            <p className={BODY}>
+              We&rsquo;re building the social infrastructure for a more connected
+              city.
             </p>
             <Link
               href="/events"
-              className="organic-underline mt-10 md:mt-12 inline-block font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink hover:text-tiger-text transition-colors"
+              className={`organic-underline mt-8 inline-block ${MARK} text-ink hover:text-tiger-text transition-colors`}
             >
               see what&rsquo;s happening →
             </Link>

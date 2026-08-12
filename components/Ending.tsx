@@ -38,61 +38,64 @@ const TAIL_H = 363;
 const SLICES = 26;
 
 function TailWhip({ play }: { play: boolean }) {
-  // index 0 = left tip (moves most, moves last), index N-1 = base at the
-  // right (moves least, moves first).
-  return (
-    <div
-      className="relative"
-      style={{ width: "100%", aspectRatio: `${TAIL_W} / ${TAIL_H}` }}
-    >
-      {Array.from({ length: SLICES }).map((_, i) => {
-        const tipness = 1 - i / (SLICES - 1); // 1 at the tip, 0 at the base
-        const amp = 150 * Math.pow(tipness, 1.7);
-        // Delay grows toward the tip so the bend travels outward.
-        const delay = T.whip + tipness * 0.16;
-        return (
-          <motion.div
-            key={i}
-            className="absolute top-0 h-full overflow-hidden will-change-transform"
-            style={{
-              // +0.6% overlap keeps the strips from showing hairline gaps
-              // once they start moving relative to one another.
-              left: `${(i / SLICES) * 100}%`,
-              width: `${(1 / SLICES) * 100 + 0.6}%`,
-            }}
-            initial={{ y: 0 }}
-            animate={
-              play
-                ? {
-                    // A single powerful arc — load, swing up, come down, one small
-                    // elastic settle. Not an oscillation: the earlier version
-                    // read as a jerk back and forth rather than a whip.
-                    y: [0, -0.30 * amp, -amp, -0.34 * amp, 0.06 * amp, 0],
-                  }
-                : { y: 0 }
-            }
-            transition={{
-              duration: 0.5,
-              delay,
-              ease: "easeOut",
-              times: [0, 0.2, 0.45, 0.68, 0.86, 1],
-            }}
-          >
-            <div
-              className="absolute top-0 h-full"
-              style={{
-                width: `${SLICES * 100}%`,
-                left: `${-i * 100}%`,
-                backgroundImage: "url(/images/tiger-tail.webp)",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-              }}
-            />
-          </motion.div>
-        );
-      })}
-    </div>
+  // The tail is ONE image, never cut up.
+  //
+  // The previous version sliced it into 26 vertical strips and translated
+  // each on a delay. That produced the whip shape, but adjacent strips
+  // stepped past one another and the seams showed as hard pixel edges
+  // down the tail. There is no amount of overlap that fixes it — offset
+  // strips of a raster simply cannot stay continuous.
+  //
+  // Instead the motion is built from nested rigid rotations. Each layer
+  // pivots from a point further along the tail and starts fractionally
+  // later, so the transforms compose into a travelling bend: the base
+  // barely turns, the tip swings hard and arrives last. Because every
+  // layer transforms the whole subtree, the artwork is never broken —
+  // it stays perfectly continuous at any zoom.
+  const layers = [
+    { origin: "100% 50%", deg: 5, delay: 0 },
+    { origin: "88% 50%", deg: 8, delay: 0.05 },
+    { origin: "70% 52%", deg: 11, delay: 0.1 },
+    { origin: "48% 54%", deg: 14, delay: 0.15 },
+  ];
+
+  // one arc: load, swing, return, small settle
+  const curve = (d: number) => [0, -0.3 * d, -d, -0.34 * d, 0.06 * d, 0];
+  const times = [0, 0.2, 0.45, 0.68, 0.86, 1];
+
+  let node = (
+    <img
+      src="/images/tiger-tail.webp"
+      alt=""
+      width={1200}
+      height={363}
+      className="block h-auto w-full"
+    />
   );
+
+  // wrap from the tip layer outwards
+  for (let i = layers.length - 1; i >= 0; i -= 1) {
+    const l = layers[i];
+    const inner = node;
+    node = (
+      <motion.div
+        key={i}
+        style={{ transformOrigin: l.origin, willChange: "transform" }}
+        initial={{ rotate: 0 }}
+        animate={play ? { rotate: curve(l.deg) } : { rotate: 0 }}
+        transition={{
+          duration: 0.5,
+          delay: T.whip + l.delay,
+          ease: "easeOut",
+          times,
+        }}
+      >
+        {inner}
+      </motion.div>
+    );
+  }
+
+  return <div className="relative w-full">{node}</div>;
 }
 
 /* Two or three thin, imperfect streaks leaving the tip and running left.
