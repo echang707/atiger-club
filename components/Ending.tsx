@@ -59,8 +59,13 @@ function TailWhip({ play }: { play: boolean }) {
     { origin: "48% 54%", deg: 14, delay: 0.15 },
   ];
 
-  // one arc: load, swing, return, small settle
-  const curve = (d: number) => [0, -0.3 * d, -d, -0.34 * d, 0.06 * d, 0];
+  // One arc, and it goes UP first.
+  //
+  // The pivots sit at the right (the base), so a POSITIVE rotation lifts
+  // the tip. The previous keyframes were negative-first, which swung the
+  // tip down before it came up — backwards. Now: a small load downward,
+  // a hard swing up, then it falls back through and settles.
+  const curve = (d: number) => [0, -0.18 * d, d, 0.3 * d, -0.07 * d, 0];
   const times = [0, 0.2, 0.45, 0.68, 0.86, 1];
 
   let node = (

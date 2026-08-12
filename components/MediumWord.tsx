@@ -129,13 +129,27 @@ export default function MediumWord({
     playRaf.current = requestAnimationFrame(frame);
   }, [variant, letters.length]);
 
-  // PLAY no longer self-triggers on entering the viewport — the traveling
-  // period sets it off when it reaches the word, and hover replays it.
+  // PLAY rallies once when it first enters the viewport; hovering replays it.
   useEffect(() => {
+    if (variant !== "play") return;
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          window.setTimeout(runPlay, 220);
+        }
+      },
+      { threshold: 0.6 }
+    );
+    io.observe(el);
     return () => {
+      io.disconnect();
       if (playRaf.current) cancelAnimationFrame(playRaf.current);
     };
-  }, []);
+  }, [variant, runPlay]);
 
   const runEnter = useCallback(() => {
     setHovered(true);
@@ -239,27 +253,6 @@ export default function MediumWord({
     }
   }, [variant, letters]);
 
-  // The traveling period dispatches "medium:hit" on this element as it
-  // rolls past. It runs exactly the hover animation, then releases — so
-  // the ball and the mouse share one code path and hover keeps working
-  // independently.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let release: NodeJS.Timeout;
-    const onHit = () => {
-      runEnter();
-      if (variant === "play") runPlay();
-      clearTimeout(release);
-      release = setTimeout(() => runLeave(), 900);
-    };
-    el.addEventListener("medium:hit", onHit as EventListener);
-    return () => {
-      el.removeEventListener("medium:hit", onHit as EventListener);
-      clearTimeout(release);
-    };
-  });
-
   const onEnter = useCallback(() => {
     runEnter();
     if (variant === "play") runPlay();
@@ -310,7 +303,6 @@ export default function MediumWord({
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
-      data-medium={variant}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
       {variant === "explore" ? (

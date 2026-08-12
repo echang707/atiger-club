@@ -18,9 +18,14 @@ import { motion } from "framer-motion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// one display size, one body size, one label size — reused everywhere
-const DISPLAY =
-  "font-wordmark font-extrabold text-ink tracking-tight leading-[0.92] text-[11vw] md:text-[5.4vw] lg:text-[4.6vw]";
+// A real hierarchy, three steps and no more:
+//   TITLE   — "Why Tiger Club?" only. The largest thing on the page.
+//   SUB     — the four claims and the closing line. Clearly secondary.
+//   BODY / MARK — prose and the mono labels.
+const TITLE =
+  "font-wordmark font-extrabold text-ink tracking-tight leading-[0.9] text-[14vw] md:text-[7.4vw] lg:text-[6.4vw]";
+const SUB =
+  "font-wordmark font-extrabold text-ink tracking-tight leading-[1.0] text-[7.5vw] md:text-[3.4vw] lg:text-[2.9vw]";
 const BODY = "text-base md:text-lg text-ink/70 leading-relaxed";
 const MARK = "font-mono text-[11px] tracking-wideish uppercase";
 
@@ -60,7 +65,7 @@ export default function AboutClient() {
       <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-14 md:pb-20">
         <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
           <Rise className="md:col-span-6">
-            <h1 className={DISPLAY}>Why Tiger&nbsp;Club?</h1>
+            <h1 className={TITLE}>Why Tiger&nbsp;Club?</h1>
           </Rise>
           <Rise delay={0.1} className="md:col-span-6 md:pb-1">
             <p className={BODY}>
@@ -91,14 +96,16 @@ export default function AboutClient() {
             transition={{ duration: 0.7, ease: EASE }}
             className="border-b border-ink/12"
           >
-            <div className="max-w-content mx-auto px-6 md:px-10 py-9 md:py-14">
-              <div className="grid md:grid-cols-12 gap-2 md:gap-8 md:items-baseline">
-                <p className={`${MARK} text-ink/45 md:col-span-3`}>
-                  <span className="text-tiger-text">{n}</span>
-                  <span className="ml-3">{name}</span>
-                </p>
-                <p className={`${DISPLAY} md:col-span-9`}>{claim}</p>
-              </div>
+            {/* Label sits above the claim and both start at the page
+                gutter, so every line on the page shares one left edge —
+                the previous version indented the claims into a grid
+                column and nothing lined up. */}
+            <div className="max-w-content mx-auto px-6 md:px-10 py-8 md:py-12">
+              <p className={`${MARK} text-ink/45 mb-2 md:mb-3`}>
+                <span className="text-tiger-text">{n}</span>
+                <span className="ml-3">{name}</span>
+              </p>
+              <p className={SUB}>{claim}</p>
             </div>
           </motion.article>
         ))}
@@ -108,7 +115,7 @@ export default function AboutClient() {
       <section className="max-w-content mx-auto px-6 md:px-10 py-16 md:py-24">
         <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
           <Rise className="md:col-span-7">
-            <p className={DISPLAY}>Events are just the start.</p>
+            <p className={SUB}>Events are just the start.</p>
           </Rise>
           <Rise delay={0.1} className="md:col-span-5 md:pb-1">
             <p className={BODY}>

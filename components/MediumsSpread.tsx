@@ -18,20 +18,14 @@ const words: {
   num: string;
   weave: "left" | "right";
 }[] = [
-  // Ordered so the traveling period zig-zags cleanly left → right → left
-  // down the page rather than doubling back on itself.
-  // Laid out as a staircase so the ball always has somewhere to roll: each
-  // word starts near where the previous one ended and sits lower, so the
-  // ball rolls the length of the type, runs off the edge, and drops onto
-  // the next word's leading edge. The small rotations give each word a
-  // real slope to roll down.
-  { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "ml-0 md:ml-2 lg:ml-4", rotate: 2.5, num: "01", weave: "right" },
-  { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "start", offset: "ml-6 md:ml-24 lg:ml-40", rotate: 2, num: "02", weave: "right" },
-  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "end", offset: "mr-0 md:mr-6 lg:mr-10", rotate: 2.5, num: "03", weave: "left" },
-  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "mr-4 md:mr-24 lg:mr-40", rotate: -2.5, num: "04", weave: "left" },
-  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "start", offset: "ml-4 md:ml-16 lg:ml-28", rotate: -2, num: "05", weave: "right" },
-  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "ml-0 md:ml-2 lg:ml-6", rotate: 2, num: "06", weave: "right" },
-  { word: "PLAY", variant: "play", href: "/events?medium=Play", align: "end", offset: "mr-2 md:mr-16 lg:mr-28", rotate: 2.5, num: "07", weave: "left" },
+  { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01", weave: "right" },
+  { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02", weave: "left" },
+  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03", weave: "right" },
+  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
+  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
+  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
+  // PLAY closes the list back at the left edge, where EAT opened.
+  { word: "PLAY", variant: "play", href: "/events?medium=Play", align: "start", offset: "md:ml-6 lg:ml-16", rotate: -3, num: "07", weave: "right" },
 ];
 
 export default function MediumsSpread() {
@@ -46,10 +40,6 @@ export default function MediumsSpread() {
           className="relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
         >
           seven ways to dive in
-          {/* This full stop leaves the headline and becomes the ball. */}
-          <span data-ball-start className="text-tiger transition-opacity duration-200">
-            .
-          </span>
         </motion.p>
         <motion.span
           initial={{ scaleX: 0, opacity: 0 }}
@@ -67,7 +57,7 @@ export default function MediumsSpread() {
           whileInView={{ opacity: 1, y: 0, rotate: w.rotate }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className={`relative flex items-center gap-4 md:gap-6 py-4 md:py-7 ${
+          className={`relative flex items-center gap-4 md:gap-6 py-7 md:py-12 ${
             w.align === "start" ? "justify-start" : w.align === "end" ? "justify-end" : "justify-center"
           } ${w.offset} ${i % 2 === 1 ? "md:mt-2" : "md:-mt-2"}`}
           style={{ transformOrigin: w.align === "end" ? "right center" : "left center" }}

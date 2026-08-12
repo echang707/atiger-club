@@ -703,3 +703,42 @@ stays continuous at any zoom. Checked at 2× device scale mid-whip — clean.
 Fill lightened `#CC4413` → `#D2470F`. The button text moved to pure white to
 carry the contrast, which keeps it at AA (4.52:1); it would have fallen under
 4.5 on the old near-white.
+
+---
+
+# Pinball removed, whip direction, About hierarchy
+
+## Pinball reverted
+
+`BallJourney.tsx` deleted and every trace with it: the wrapper in `page.tsx`,
+the `data-ball-start` period in the headline, the `data-ball-end` marker on the
+photo, the `data-medium` attributes and the `medium:hit` listener in
+`MediumWord`.
+
+The mediums are back to the original alternating layout (EAT · CREATE · MOVE ·
+EXPLORE · SERVE · LEARN · PLAY, start/end/center with the original offsets and
+rotations) and the original row padding. PLAY rallies once when it enters the
+viewport again, and still replays on hover.
+
+## Whip direction
+
+The pivots sit at the base on the right, so a **positive** rotation lifts the
+tip. The keyframes were negative-first, which swung the tip down before it came
+up — backwards. Now a small load, a hard swing **up**, then it falls back
+through and settles.
+
+Measured on the tail's own bounding box: the tip peaks **452px above rest at
+731ms**, then returns. It never travels below its resting line.
+
+## /about hierarchy and alignment
+
+Three steps now, not one size for everything:
+
+- **Title** — "Why Tiger Club?" alone, 92px at 1440.
+- **Sub** — the four claims and "Events are just the start", 42px.
+- **Body / mark** — 18px prose and the mono labels.
+
+Alignment fixed too: each principle's label now sits **above** its claim with
+both flush to the page gutter. Previously the claims were indented into a grid
+column beside the labels, so nothing lined up with the headline. Every line on
+the page now starts at the same left edge.
