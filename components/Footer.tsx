@@ -27,7 +27,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="max-w-content mx-auto px-6 md:px-10 pb-8 text-xs text-ink/60">
-        © {new Date().getFullYear()} Tiger Club, Atlanta.
+        © {new Date().getFullYear()} Tiger Club LLC, Atlanta.
       </div>
     </footer>
   );

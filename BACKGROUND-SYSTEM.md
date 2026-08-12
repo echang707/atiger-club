@@ -867,3 +867,42 @@ small flick, once.
 framer drives that by writing its own `stroke-dasharray` — which overwrote the
 stripe pattern and painted the whole tail solid black. The stripes now fade in
 after the body finishes drawing instead.
+
+---
+
+# One tail per section, a livelier quote tail, LLC
+
+## The quote tail comes alive
+
+`components/QuoteTail.tsx`. It no longer reveals a fixed path — three changes:
+
+1. The path `d` is animated through **four shapes while it draws**, so the curve
+   keeps shifting as it grows. The last two lift the far end, so the upward curl
+   only appears near the end of the draw rather than being there all along.
+2. The tip is a **separate, thinner stroke** continuing past the body with a
+   round cap — a stepped taper, since SVG strokes cannot taper on their own.
+3. Once extended, the tip group makes **one flick**: up, slight overshoot, then
+   settles. It pivots from where the tip meets the body, so only the end moves.
+
+Then it is completely still. Sat lower again so it clears the g's descender.
+
+## One tail for the whole principles section
+
+The four per-row hairlines are deleted (`PrincipleLine.tsx` gone). In their place
+`SectionTail.tsx` draws a single continuous line wandering down the right ~30%
+of the section, across all four rows — orange, thin, with a few sparse black
+stripes.
+
+Deliberately **not** aligned to the rows: the swings differ in width and length
+so it reads as something that drifted in from off-screen, not a wave, a
+timeline or a connector. Verified programmatically that no text reaches its
+column.
+
+`vector-effect="non-scaling-stroke"` keeps the line the same weight however the
+viewBox stretches to the section height, so it stays thin on short and tall
+viewports alike. Motion is a few px of parallax drift and about a degree of sway
+tied to scroll position — no loop, no wag.
+
+## Legal name
+
+Footer now reads **Tiger Club LLC, Atlanta**.

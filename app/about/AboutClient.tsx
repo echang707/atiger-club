@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PrincipleLine from "./PrincipleLine";
+import SectionTail from "./SectionTail";
 
 /* ---------------------------------------------------------------------
    /about — typography only, and deliberately few sizes.
@@ -83,7 +83,9 @@ export default function AboutClient() {
       </section>
 
       {/* ============ FOUR PRINCIPLES ============ */}
-      <section className="border-t border-ink/12">
+      <section className="relative border-t border-ink/12">
+        {/* one tail for the whole section, wandering down the right side */}
+        <SectionTail />
         <div className="max-w-content mx-auto px-6 md:px-10 pt-8 md:pt-12 pb-2">
           <Rise>
             <p className={`${MARK} text-tiger-text`}>
@@ -99,9 +101,8 @@ export default function AboutClient() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-90px" }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="relative overflow-hidden border-b border-ink/12"
+className="relative border-b border-ink/12"
           >
-            <PrincipleLine kind={n as "01" | "02" | "03" | "04"} />
             {/* Label sits above the claim and both start at the page
                 gutter, so every line on the page shares one left edge —
                 the previous version indented the claims into a grid
