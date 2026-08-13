@@ -1245,3 +1245,53 @@ on leave. The artwork itself is never touched.
 Reduced motion: the artwork alone, no walkers.
 
 Hero only — nothing else on the site changed.
+
+---
+
+# Hero v4 — static artwork, one hover interaction
+
+## Background
+
+The new crowd image is the hero, loaded complete. **No load animation at all** —
+no assembling, no walk-in, no fades, no moving crowd.
+
+Processed for crispness: cream colour-matched to `#F4E9D6`
+(`250,227,196` → `244,232,213`), then **supersampled 2× to 3344×1882** with an
+unsharp pass and saved at WebP q92, so large viewports downsample rather than
+upscale a 1672px source.
+
+Crop solved by measurement: at `130%` / `50% 52%` the headline and subline zone
+is **0.22% inked** while the left and right bands hold **35%** and **37%**. A
+short cream gradient across the top keeps the nav legible where the crowd runs
+under it.
+
+## The one interaction
+
+Hovering "Join the Club" walks a single figure in from the right edge to a gap
+at the outer end of the lower-right stripe, where they stop. Hover-out turns
+them around and walks them back off-frame.
+
+**Scale was derived, not guessed.** Isolated figures in the artwork have a
+median height of 39.5px in a 1672px-wide source; at a 130% background that is
+
+    39.5 / 1672 × 1.30 × 100vw = 3.07vw
+
+which is exactly what the sprite is sized to. The cutout comes from the same
+family of aerial figures, so angle, lighting and shadow direction already match.
+
+**No opacity is ever animated.** The figure is parked off-frame when idle and
+only its position transitions, so nothing fades and it is never unmounted
+mid-walk. Same sprite, path, size and destination on every hover. Disabled on
+touch and under reduced motion.
+
+Verified: idle at x=1594 (off-screen), joined at x=1198 / y=527, height 44px
+both times, opacity 1 throughout, and fully off-screen again after hover-out.
+
+## Portrait
+
+Two different slices — upper-left crowd across the top, lower-right mirrored
+across the bottom, each masked toward the middle, with the copy on clean cream
+between them.
+
+Unused walker sprites were deleted; only the one used by the hover remains.
+Hero only — nothing else on the site changed.

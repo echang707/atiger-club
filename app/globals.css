@@ -437,9 +437,7 @@ body {
 }
 
 /* ---------------------------------------------------------------------
-   Hero crowd.
-   The assembled state is the crowd artwork. Only the arriving walkers
-   are animated, and they are real cutouts, not drawn shapes.
+   Hero crowd. The artwork loads complete; only the join-hover figure moves.
    --------------------------------------------------------------------- */
 .hero-crowd {
   position: absolute;
@@ -449,42 +447,52 @@ body {
   overflow: hidden;
 }
 
-/* Scaled up and pushed wide so both crowd bands sit out at the edges and
-   the artwork's own cream negative space falls across the middle, where
-   the headline lives. */
+/* Solved against the artwork: at 130% / 52% the copy zone is 0.22% inked
+   while the left and right crowd bands hold 35% and 37%. The artwork's
+   own cream centre lands under the headline. */
 .hero-crowd-art {
   position: absolute;
   inset: 0;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  /* Measured, not eyeballed: at this crop the copy zone is 0.6% inked
-     while both bands hold ~28% — the crowd stays at the edges and the
-     artwork's own negative space lands under the headline. */
-  background-size: 128% auto;
-  background-position: 50% 55%;
+  background-size: 130% auto;
+  background-position: 50% 52%;
 }
 
 @media (max-aspect-ratio: 16 / 10) {
   .hero-crowd-art {
-    background-size: auto 118%;
+    background-size: auto 122%;
   }
 }
 
-/* Portrait needs two crops, not one.
-   The artwork is landscape, so a single crop on a tall screen either
-   shows the cream middle and no crowd, or one corner. Instead the top
-   band takes a full-width slice of the artwork's upper-left crowd and
-   the bottom band takes a different slice, mirrored, of the lower-right.
-   Different regions and opposite handedness, so it never reads as the
-   same picture twice. The middle of the screen is left empty. */
+/* The crowd runs under the nav, so the top of the frame is lifted back to
+   cream — short, and only across the nav band. */
+.hero-crowd-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 132px;
+  background: linear-gradient(
+    to bottom,
+    #F4E9D6 0%,
+    rgba(244, 233, 214, 0.92) 42%,
+    rgba(244, 233, 214, 0) 100%
+  );
+}
+
+/* Portrait needs two crops: the artwork is landscape, so one crop on a
+   tall screen shows either the empty centre or a single corner. The top
+   band takes the upper-left crowd, the bottom band takes the lower-right
+   mirrored — different regions, opposite handedness. */
 .hero-crowd-art.is-mobile {
   inset: auto 0 auto 0;
   top: 0;
   height: 34%;
-  background-size: 118% auto;
-  background-position: 6% 6%;
-  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
+  background-size: 300% auto;
+  background-position: 12% 6%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
 }
 
 .hero-crowd-art-b {
@@ -495,28 +503,26 @@ body {
   height: 34%;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  background-size: 118% auto;
-  background-position: 94% 96%;
+  background-size: 300% auto;
+  background-position: 88% 96%;
   transform: scaleX(-1);
-  -webkit-mask-image: linear-gradient(to top, #000 62%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 62%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 60%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 60%, transparent 100%);
 }
 
-.hero-walker {
+/* The only animation in the hero. Position only — never opacity, so the
+   figure never fades; it is simply parked off-frame when idle. */
+.hero-joiner {
   position: absolute;
   width: auto;
-  will-change: left, top, opacity;
   user-select: none;
-}
-
-/* The joiner walks rather than snaps, and leaves at the same pace. */
-.hero-joiner {
-  transition: left 1.7s cubic-bezier(0.4, 0, 0.3, 1),
-    top 1.7s cubic-bezier(0.4, 0, 0.3, 1), opacity 0.55s ease-out;
+  will-change: left, top;
+  transition: left 2.4s cubic-bezier(0.42, 0, 0.32, 1),
+    top 2.4s cubic-bezier(0.42, 0, 0.32, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-walker {
+  .hero-joiner {
     transition: none;
   }
 }

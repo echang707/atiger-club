@@ -5,89 +5,48 @@ import { useEffect, useState } from "react";
 /* ---------------------------------------------------------------------
    Hero crowd.
 
-   The assembled state is the crowd photograph itself
-   (`/images/crowd-stripes.webp`) — dense, overlapping, real bodies with
-   real shadows. Nothing about it is procedurally drawn. Its cream was
-   colour-matched to #F4E9D6 so it sits on the page rather than on top of
-   it, and it is positioned so both bands stay out at the edges with the
-   centre left clear.
+   The artwork is the hero. It loads complete — there is no assembly, no
+   walk-in, no fade, nothing animated on load at all.
 
-   Only the ARRIVAL is animated, and only with real people: fourteen
-   transparent cutouts lifted from the close-up reference, each with its
-   own shadow. They start scattered off the outer edges, walk toward the
-   bands over ~2–3s, and fade out as they reach them — so the crowd looks
-   like it assembled, without redrawing a single figure.
+   The only motion on this screen is one person, and only on hover of
+   "Join the Club": they walk in from the nearest outer edge, join a gap
+   at the outer end of a stripe, and stop. On hover-out the same person
+   turns around and walks back off the edge. No opacity is ever animated —
+   the figure is simply parked off-frame when idle, so nothing fades in or
+   out, and it is never unmounted mid-walk.
 
-   Every walker's whole travel line is kept outside a protected centre
-   box, so nothing crosses the headline, subline, nav or CTA at any point
-   in the animation.
+   Matching the crowd was the hard part and it is done by measurement, not
+   by eye: isolated figures in the artwork have a median height of 39.5px
+   in a 1672px-wide source. With the background rendered at 130% of the
+   viewport width, a person is therefore
+
+       39.5 / 1672 * 1.30 * 100vw  =  3.07vw
+
+   which is what the joiner is sized to. The sprite is cut from the same
+   family of aerial figures — same angle, same lighting, same soft
+   shadow — so at rest it should be impossible to pick out.
+
+   The same sprite, path, size and destination are used on every hover, so
+   the interaction reads as deliberate rather than random. Disabled on
+   touch.
    --------------------------------------------------------------------- */
 
-const SPRITES = Array.from({ length: 14 }, (_, i) => `/images/walkers/w${String(i).padStart(2, "0")}.webp`);
+/* One figure in the artwork, expressed in vw. See derivation above. */
+const PERSON_VW = 3.07;
 
-type Walker = {
-  src: string;
-  x: number;   // destination, % of hero box
-  y: number;
-  sx: number;  // start, % of hero box
-  sy: number;
-  h: number;   // height in vh-ish units
-  delay: number;
-  dur: number;
-  flip: boolean;
-};
-
-/* Destinations sit ON the printed bands, so a walker dissolves into a
-   crowd that is already there. Left column x<26, right column x>74 —
-   the centre is never entered. */
-const DEST_DESKTOP: [number, number][] = [
-  [8, 26], [15, 34], [21, 44], [6, 52], [13, 62], [19, 72], [10, 80],
-  [92, 24], [85, 33], [79, 43], [94, 55], [87, 64], [81, 74], [90, 84],
-];
-
-const DEST_MOBILE: [number, number][] = [
-  [14, 12], [30, 17], [52, 12], [70, 19], [86, 14], [22, 24], [64, 25],
-  [16, 78], [34, 84], [55, 79], [74, 86], [88, 80], [26, 90], [66, 92],
-];
-
-function buildWalkers(mobile: boolean): Walker[] {
-  const dest = mobile ? DEST_MOBILE : DEST_DESKTOP;
-  let seed = 11;
-  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648), seed / 2147483648);
-
-  return dest.map(([x, y], i) => {
-    const fromLeft = x < 50;
-    // start well outside the frame on the nearer side, so the walk-in
-    // line never crosses the middle of the hero
-    const sx = fromLeft ? -14 - rnd() * 16 : 114 + rnd() * 16;
-    const sy = y + (rnd() - 0.5) * 14;
-    return {
-      src: SPRITES[i % SPRITES.length],
-      x, y, sx, sy,
-      h: (mobile ? 5.4 : 7.2) * (0.82 + rnd() * 0.4),
-      delay: 0.25 + rnd() * 1.5,
-      dur: 2.3 + rnd() * 1.1,
-      flip: !fromLeft,
-    };
-  });
-}
+/* Destination: the outer end of the lower-right stripe, far from the copy. */
+const DEST = { x: 87.5, y: 69 };
+const EXIT = { x: 112, y: 66 };
 
 export default function HumanStripes() {
-  const [walkers, setWalkers] = useState<Walker[]>([]);
-  const [go, setGo] = useState(false);
-  const [reduced, setReduced] = useState(false);
-  const [joining, setJoining] = useState(false);
   const [mob, setMob] = useState(false);
+  const [joining, setJoining] = useState(false);
 
   useEffect(() => {
-    const r = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(max-width: 767px)").matches;
-    setReduced(r);
-    setMob(mobile);
-    setWalkers(buildWalkers(mobile));
-    if (!r) requestAnimationFrame(() => requestAnimationFrame(() => setGo(true)));
-
     const coarse = window.matchMedia("(pointer: coarse)").matches;
+    setMob(mobile);
+
     const onJoin = (e: Event) => {
       if (coarse || mobile) return;
       setJoining((e as CustomEvent<boolean>).detail === true);
@@ -96,48 +55,27 @@ export default function HumanStripes() {
     return () => window.removeEventListener("tigerclub:join-hover", onJoin as EventListener);
   }, []);
 
-  const joinDest = mob ? { x: 78, y: 20 } : { x: 88, y: 40 };
-
   return (
     <div aria-hidden="true" className="hero-crowd">
-      {/* the assembled crowd — the artwork itself, never redrawn */}
       <div className={`hero-crowd-art ${mob ? "is-mobile" : ""}`} />
       {mob && <div className="hero-crowd-art-b" />}
+      {/* keeps the nav legible where the artwork runs under it */}
+      <div className="hero-crowd-top" />
 
-      {/* real people walking in, then dissolving into it */}
-      {!reduced &&
-        walkers.map((w, i) => (
-          <img
-            key={i}
-            src={w.src}
-            alt=""
-            className="hero-walker"
-            style={{
-              height: `${w.h}vh`,
-              left: `${go ? w.x : w.sx}%`,
-              top: `${go ? w.y : w.sy}%`,
-              opacity: go ? 0 : 0.96,
-              transform: `translate(-50%, -100%) scaleX(${w.flip ? -1 : 1})`,
-              transition: `left ${w.dur}s cubic-bezier(0.4,0,0.3,1) ${w.delay}s,
-                           top ${w.dur}s cubic-bezier(0.4,0,0.3,1) ${w.delay}s,
-                           opacity 0.8s ease-in ${w.delay + w.dur - 0.5}s`,
-            }}
-          />
-        ))}
-
-      {/* the one who joins on hover */}
-      <img
-        src={SPRITES[5]}
-        alt=""
-        className="hero-walker hero-joiner"
-        style={{
-          height: `${mob ? 5.6 : 7.6}vh`,
-          left: `${joining ? joinDest.x : 116}%`,
-          top: `${joining ? joinDest.y : joinDest.y + 4}%`,
-          opacity: joining ? 1 : 0,
-          transform: "translate(-50%, -100%) scaleX(-1)",
-        }}
-      />
+      {!mob && (
+        <img
+          src="/images/walkers/w05.webp"
+          alt=""
+          className="hero-joiner"
+          style={{
+            height: `${PERSON_VW}vw`,
+            left: `${joining ? DEST.x : EXIT.x}%`,
+            top: `${joining ? DEST.y : EXIT.y}%`,
+            // facing left on the way in, right on the way back out
+            transform: `translate(-50%, -100%) scaleX(${joining ? -1 : 1})`,
+          }}
+        />
+      )}
     </div>
   );
 }
