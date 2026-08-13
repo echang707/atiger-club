@@ -4,7 +4,6 @@ import MediumsSpread from "@/components/MediumsSpread";
 import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
-import JungleWash from "@/components/JungleWash";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -25,6 +24,11 @@ export default function Home() {
   return (
     // The page's rhythm, and the reason the pattern lands at all:
     //
+    // The transitional wash band that used to sit between the hero and the
+    // mediums is gone. It was a crop of the SAME marble, so directly under
+    // the hero it read as a washed-out second copy of the artwork with a
+    // visible seam between the two. The hero now fades straight into cream.
+    //
     //   Hero .............. tiger-marble, full strength, behind the nav
     //   MediumsSpread ..... quiet cream
     //   ScrollStory ....... quiet cream
@@ -36,8 +40,6 @@ export default function Home() {
     // lives only where it can be shown at full strength.
     <main>
       <Hero />
-      {/* Softens the step down from full-strength marble into cream. */}
-      <JungleWash />
       <MediumsSpread />
       <ScrollStory />
       <UpcomingRows />

@@ -1068,3 +1068,33 @@ Reduced motion gets the settled composition with no whip and no shake.
 
 Verified at 375, 390 and 430: `scrollWidth` equals the viewport, the CTA sits
 clear of the tail, and the headline is never crossed.
+
+---
+
+# The duplicated artwork band is gone (desktop and mobile)
+
+## Cause
+
+`JungleWash` sat directly under the hero, and `jungle-wash.webp` is a crop of
+**the same marble** used in the hero. Underneath the real thing it read as a
+washed-out second copy of the artwork with a visible seam where one ended and
+the other began — the "glitch" in the screenshot. Raising its opacity to 34% in
+an earlier pass made it far more obvious.
+
+Mobile had been patched with `display: none`, which fixed the symptom on phones
+and left desktop showing it.
+
+## Fix
+
+The band is removed everywhere: the `<JungleWash />` mount, the component file,
+the `.jungle-wash` / `.jungle-wash-late` rules and the mobile override are all
+deleted. The hero now fades straight into cream through its own
+`.marble-fade-bottom`, which is the only hand-off.
+
+The closing section keeps `.ending-wash`. That one is safe: it is masked to the
+outer edges, sits at the far end of the page, and is never adjacent to the hero,
+so it cannot read as a duplicate. It still uses `jungle-wash.webp`, so the asset
+is retained.
+
+Verified on desktop (1440) and mobile (390): `.jungle-wash` count is **0**, one
+`.marble-field`, one `.ending-wash`, and no seam below the hero.
