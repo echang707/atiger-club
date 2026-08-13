@@ -1412,3 +1412,74 @@ re-derived from the new image rather than carried over.
 
 Walk cycles, bezier paths, easing, settling steps, the rAF loop and the hover
 joiner are unchanged from v6.
+
+---
+
+# Fixing the mismatch: walkers cut from the artwork itself
+
+## The background
+
+The supplied file was byte-identical to what already shipped — the difference
+you were seeing was **my processing**. The cream colour-match plus an unsharp
+pass had pushed the shipped version 4.22 mean pixel units away from the
+original.
+
+It is now shipped with minimal handling: a gentle cream lift applied only to the
+brightest tones, a straight 2× LANCZOS upscale, no sharpening, q95. Mean
+difference from the supplied file is down to **2.63**, and that residual is
+almost entirely the cream shift needed to sit on `#F4E9D6`.
+
+## The glitchy figures
+
+Root cause: the walkers came from a **different source image** — the
+photographic close-up — so they were a different renderer, palette and lighting
+model from the backdrop and could never match. The heavy leg/arm shear then
+smeared soft edges, which is what turned the long-haired figure into a blur.
+
+All eight are now cut **from this artwork**, using the isolated individuals
+already walking in its cream space. Found by scanning for components that are
+person-sized *and* have a nearly empty ring around them — 31 candidates, best 12
+kept, 8 used. Same renderer, same lighting, same palette, same proportions,
+by construction.
+
+Two knock-on fixes:
+
+- **Scale is now exact, not approximated.** Each sprite carries its real pixel
+  height in the source (42–49px), so its rendered size is
+  `srcH / 1672 × 1.34 × 100vw` — no per-figure fudge factor.
+- **Shear amplitude cut from 3.4px to 1.4px** and arm counter-swing dropped.
+  The source figures are ~45px tall, so the old amplitude was far too violent
+  and was what produced the smearing.
+
+Alpha threshold tightened (`diff−30 / 34`) to remove the pale fringe around the
+cutouts.
+
+---
+
+# Routes are solved, not placed
+
+You were right that the walkers were pathing through the crowd. The
+destinations had been chosen for being open ground, but nothing checked the
+journey to them.
+
+The eight routes are now **solved against the artwork**. For every candidate
+spot the whole bezier is sampled at 50 points and only accepted if:
+
+- every point on the path is open ground (worst ink < 0.012), and
+- the path never enters the copy keep-out box, and
+- the destination itself is clear but has a crowd nearby, so the figure
+  arrives *at* a group rather than in empty space.
+
+Entry points are searched across all four edges rather than assumed to be left
+or right. That turned out to matter: the crowd bands run right to the left and
+right edges, so most side entries would have to walk through people. Several
+walkers now come in from the **top or bottom**, along the cream corridors —
+which is exactly the kind of route your circled figures take.
+
+Search results: worst ink on path 0.0000–0.0099 across the eight, with the
+destination's local crowd density 0.07–0.27.
+
+Everything else is unchanged: sprites cut from this artwork, per-figure exact
+scale (`srcH / 1672 × 1.34 × 100vw`), four-frame walk cycles, shadows drawn
+separately and revealed only on arrival, and the hover joiner using the eighth
+solved route.
