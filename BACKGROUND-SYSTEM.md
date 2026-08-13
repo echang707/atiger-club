@@ -1146,3 +1146,52 @@ Reduced motion renders the crowd already assembled, with no walk-in and no idle.
 This is the hero only, as asked. The marble treatment is untouched everywhere
 else, so the two visual languages currently coexist — worth a look before
 propagating.
+
+---
+
+# Human stripes v2 — actual people
+
+The first attempt used one pawn-shaped symbol, which read as pins. Rebuilt.
+
+## Sprite library
+
+`components/PersonSprites.tsx` — six top-down poses (walking away, walking
+toward, long stride, standing, carrying a bag, long hair) × three colourways =
+**18 distinct sprites**. Each figure has a head with hair, shoulders, two arms,
+two legs mid-stride, shoes and a soft shadow thrown down-right. Drawn at the
+same high oblique angle as the reference.
+
+Still one `<symbol>` per sprite stamped with `<use>`, so 450+ figures cost 18
+definitions. Per-figure variation comes from scale (0.82–1.24), rotation (±8°)
+and which sprite is picked.
+
+## Composition
+
+Bands are now **dense clumps, not threaded lines** — people scatter across the
+full width of each band with a centre-weighted distribution, plus positional
+jitter. 459 figures on desktop, 169 on mobile.
+
+**Protected zone:** any figure whose final *or* starting position lands inside
+the centre rectangle is discarded outright, so nothing can touch the headline,
+subline or nav — at rest or mid-walk.
+
+*Mobile needed its own coordinate space.* A landscape viewBox rendered with
+`slice` into a portrait phone crops the left and right edges away — exactly
+where the bands were — so mobile rendered empty. It now has a portrait viewBox
+(620×1100) with bands running across the top and bottom instead of the sides.
+
+## Animation
+
+About a quarter of the crowd are "walkers" who travel 300–760 units in from
+off-frame over 3s on a human-feeling ease; the rest are effectively in place and
+settle 26–80 units. That gives the gathering read without hundreds of long
+transitions. Idle motion afterwards is sub-pixel.
+
+## Join hover
+
+Unchanged in behaviour: one extra figure walks into a reserved gap and back out
+again, with its own slot per layout. Nothing else in the crowd reacts.
+
+Reduced motion renders the crowd assembled.
+
+Hero only — the rest of the site is untouched.

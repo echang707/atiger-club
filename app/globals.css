@@ -463,8 +463,15 @@ body {
   50% { translate: 0.9px -0.7px; }
 }
 
+/* Only the settled crowd idles, and barely. */
 .tc-figure {
-  animation: tc-idle 7s ease-in-out infinite;
+  animation: tc-idle 9s ease-in-out infinite;
+}
+
+/* The long walkers travel further, so they take longer and ease like a
+   person covering ground rather than an object being tweened. */
+.tc-walker {
+  transition: transform 3s cubic-bezier(0.4, 0, 0.25, 1), opacity 1.1s ease-out;
 }
 
 /* The hover joiner walks rather than snaps, and takes its time leaving. */

@@ -1,231 +1,184 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { SpriteDefs, SPRITE_IDS } from "./PersonSprites";
 
 /* ---------------------------------------------------------------------
    Human tiger stripes.
 
-   The hero's stripes are not artwork — they are a few hundred tiny people
-   who walk in from the outer edges and assemble into sweeping bands. From
-   across the room it reads as a tiger pattern; up close every mark is a
-   figure with a head, shoulders and a shadow.
+   The stripes are a crowd. From across the room the bands read as tiger
+   markings; up close every mark is a person with shoulders, arms, legs,
+   shoes and a shadow (see PersonSprites.tsx).
 
-   How it is built, and why:
+   Composition follows the reference: dense, clumpy bands sweeping in from
+   the outer left and right, with a wide calm middle. People are scattered
+   across the *width* of each band rather than threaded along a line — the
+   earlier version placed them on thin curves, which is why it read as
+   dotted paths instead of crowds.
 
-   • One `<symbol>` is defined once and stamped with `<use>`, so a few
-     hundred figures cost one drawing definition rather than a few hundred
-     independent shapes.
-   • Positions are sampled off real bezier paths with `getPointAtLength`,
-     then pushed sideways along the path normal by a random amount. That
-     gives bands with organic thickness instead of beads on a wire.
-   • The walk-in is a single CSS transform transition per figure with its
-     own delay — no rAF loop, no per-frame JS, and the browser can hand
-     the whole thing to the compositor.
-   • A handful of figures are deliberately late: their slots sit empty for
-     the first couple of seconds and they walk in afterwards to close the
-     gap. That is the whole idea of the piece, so it is explicit in the
-     data rather than emergent.
+   A protected rectangle is carved out of the centre. Any figure whose
+   final OR starting position falls inside it is discarded, so nothing
+   ever touches the headline, the subline or the nav, at rest or mid-walk.
 
-   The stripes enter from the left and right edges only. The centre column
-   is left deliberately empty so the typography always sits on clean cream
-   — the animation frames the copy and never runs behind it.
+   Animation: the bulk of the crowd is already in place and only settles
+   a few pixels, while a minority walk the full distance in from off-frame
+   over 2–3s. That keeps the "people gathering" read without asking the
+   browser to animate hundreds of long transitions.
    --------------------------------------------------------------------- */
 
-const VB_W = 1600;
-const VB_H = 900;
+/* Two coordinate spaces, not one.
+   A landscape viewBox rendered with `slice` into a portrait phone crops
+   the left and right edges away — which is exactly where the bands live,
+   so mobile came out empty. Mobile therefore gets its own portrait
+   viewBox and its own paths, with the bands running across the top and
+   bottom instead of the sides. */
+const VB = { w: 1600, h: 900 };
+const VB_M = { w: 620, h: 1100 };
 
-/* Bands sweep in from the outer edges and stop short of the middle. */
-const STRIPES_DESKTOP = [
-  { d: "M-60 150 C 220 120, 430 210, 610 300", n: 46, band: 34 },
-  { d: "M-60 300 C 200 285, 400 360, 560 430", n: 40, band: 30 },
-  { d: "M-70 470 C 180 470, 360 540, 520 620", n: 38, band: 30 },
-  { d: "M-60 660 C 160 690, 330 730, 470 790", n: 30, band: 26 },
-  { d: "M1660 190 C 1420 170, 1230 250, 1080 330", n: 42, band: 32 },
-  { d: "M1670 380 C 1440 380, 1250 450, 1110 540", n: 40, band: 30 },
-  { d: "M1660 600 C 1430 610, 1240 690, 1090 780", n: 34, band: 28 },
+const SAFE = { x0: 470, x1: 1130, y0: 300, y1: 640 };
+const SAFE_M = { x0: -40, x1: 660, y0: 330, y1: 720 };
+
+type Band = { d: string; n: number; band: number; w: number };
+
+const BANDS_DESKTOP: Band[] = [
+  { d: "M-80 120 C 170 95, 340 175, 470 265", n: 78, band: 44, w: 1 },
+  { d: "M-90 265 C 150 250, 320 330, 440 420", n: 70, band: 40, w: 1 },
+  { d: "M-90 430 C 140 435, 300 515, 420 600", n: 64, band: 38, w: 1 },
+  { d: "M-80 620 C 120 650, 280 705, 400 780", n: 54, band: 34, w: 1 },
+  { d: "M1680 150 C 1440 130, 1270 210, 1150 300", n: 74, band: 42, w: 1 },
+  { d: "M1690 340 C 1450 340, 1290 420, 1170 510", n: 66, band: 38, w: 1 },
+  { d: "M1680 560 C 1440 575, 1280 655, 1160 745", n: 58, band: 36, w: 1 },
 ];
 
-/* Mobile: fewer people, fewer bands, and they hug the very top and bottom
-   so the middle of a narrow screen stays clear for the copy. */
-const STRIPES_MOBILE = [
-  { d: "M-40 90 C 170 70, 330 140, 470 210", n: 30, band: 30 },
-  { d: "M-40 230 C 150 230, 300 290, 430 350", n: 26, band: 26 },
-  { d: "M-30 380 C 130 400, 250 450, 360 500", n: 18, band: 22 },
-  { d: "M1640 560 C 1440 570, 1290 630, 1160 700", n: 28, band: 28 },
-  { d: "M1640 730 C 1450 745, 1310 800, 1190 860", n: 24, band: 26 },
+/* Portrait: bands sweep across the top and the bottom, leaving the
+   middle of the screen clear for the copy. */
+const BANDS_MOBILE: Band[] = [
+  { d: "M-70 90 C 130 60, 340 120, 690 80", n: 40, band: 34, w: 1 },
+  { d: "M-70 200 C 150 175, 360 235, 690 195", n: 34, band: 30, w: 1 },
+  { d: "M-70 295 C 140 280, 330 330, 690 300", n: 26, band: 26, w: 1 },
+  { d: "M-70 830 C 150 800, 360 865, 690 830", n: 34, band: 30, w: 1 },
+  { d: "M-70 940 C 140 915, 350 975, 690 945", n: 32, band: 30, w: 1 },
+  { d: "M-70 1050 C 150 1030, 350 1080, 690 1055", n: 24, band: 26, w: 1 },
 ];
 
 type Person = {
-  x: number;
-  y: number;
-  sx: number;
-  sy: number;
-  s: number;
-  c: string;
-  delay: number;
-  idle: number;
+  x: number; y: number; sx: number; sy: number;
+  s: number; rot: number; id: string; delay: number; walker: boolean;
 };
 
-const ORANGE = "#E0521C";
-const CHAR = "#2B2723";
-const WARM = "#C9793F";
-const SAND = "#E8DCC6";
-
-/* Weighted so a band reads mostly orange-and-charcoal, with a few paler
-   figures breaking up the mass the way a crowd actually looks. */
-function pickColour(r: number) {
-  if (r < 0.44) return ORANGE;
-  if (r < 0.84) return CHAR;
-  if (r < 0.93) return WARM;
-  return SAND;
-}
-
-function buildPeople(stripes: typeof STRIPES_DESKTOP): Person[] {
+function build(bands: Band[], scale: number, vb: { w: number; h: number }, safe: typeof SAFE): Person[] {
   if (typeof document === "undefined") return [];
-  const svgNS = "http://www.w3.org/2000/svg";
-  const scratch = document.createElementNS(svgNS, "svg");
-  scratch.setAttribute("width", "0");
-  scratch.setAttribute("height", "0");
-  scratch.style.position = "absolute";
-  scratch.style.opacity = "0";
-  scratch.style.pointerEvents = "none";
-  document.body.appendChild(scratch);
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("width", "0");
+  svg.style.cssText = "position:absolute;opacity:0;pointer-events:none";
+  document.body.appendChild(svg);
+
+  let seed = 21;
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648), seed / 2147483648);
+  const inSafe = (x: number, y: number) =>
+    x > safe.x0 - 40 && x < safe.x1 + 40 && y > safe.y0 - 40 && y < safe.y1 + 40;
 
   const out: Person[] = [];
-  let seed = 7;
-  const rnd = () => {
-    seed = (seed * 1103515245 + 12345) % 2147483648;
-    return seed / 2147483648;
-  };
 
-  stripes.forEach((st) => {
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", st.d);
-    scratch.appendChild(path);
+  bands.forEach((b) => {
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", b.d);
+    svg.appendChild(path);
     const len = path.getTotalLength();
 
-    for (let i = 0; i < st.n; i += 1) {
-      const t = ((i + rnd() * 0.85) / st.n) * len;
-      const p = path.getPointAtLength(Math.min(t, len));
-      const a = path.getPointAtLength(Math.max(t - 6, 0));
-      const b = path.getPointAtLength(Math.min(t + 6, len));
-      // unit normal, so people spread across the band rather than along a line
-      const dx = b.x - a.x;
-      const dy = b.y - a.y;
+    for (let i = 0; i < b.n; i += 1) {
+      const t = rnd() * len;
+      const p = path.getPointAtLength(t);
+      const a = path.getPointAtLength(Math.max(t - 8, 0));
+      const c = path.getPointAtLength(Math.min(t + 8, len));
+      const dx = c.x - a.x, dy = c.y - a.y;
       const m = Math.hypot(dx, dy) || 1;
-      const nx = -dy / m;
-      const ny = dx / m;
-      const off = (rnd() - 0.5) * 2 * st.band;
+      // spread across the band, biased toward the middle so it clumps
+      const u = (rnd() + rnd() + rnd()) / 3 - 0.5;
+      const off = u * 2 * b.band;
+      const x = p.x + (-dy / m) * off + (rnd() - 0.5) * 26;
+      const y = p.y + (dx / m) * off + (rnd() - 0.5) * 22;
+      if (inSafe(x, y)) continue;
 
-      const x = p.x + nx * off + (rnd() - 0.5) * 10;
-      const y = p.y + ny * off + (rnd() - 0.5) * 10;
-
-      // walk in from further out, in the direction of the nearer edge
-      const fromLeft = p.x < VB_W / 2;
-      const push = 160 + rnd() * 320;
+      // a quarter of the crowd walks the full distance in from off-frame
+      const walker = rnd() < 0.26;
+      const fromLeft = x < vb.w / 2;
+      const push = walker ? 300 + rnd() * 460 : 26 + rnd() * 54;
       const sx = x + (fromLeft ? -push : push);
-      const sy = y + (rnd() - 0.5) * 120;
-
-      // a few arrive late, closing a visible gap in the band
-      const late = rnd() < 0.06;
-      const delay = late ? 2.1 + rnd() * 1.1 : 0.1 + rnd() * 1.5;
+      const sy = y + (rnd() - 0.5) * (walker ? 140 : 40);
+      if (walker && inSafe(sx, sy)) continue;
 
       out.push({
-        x,
-        y,
-        sx,
-        sy,
-        s: 0.86 + rnd() * 0.4,
-        c: pickColour(rnd()),
-        delay,
-        idle: rnd() * 9,
+        x, y, sx, sy,
+        s: (0.82 + rnd() * 0.42) * scale,
+        rot: (rnd() - 0.5) * 16,
+        id: SPRITE_IDS[Math.floor(rnd() * SPRITE_IDS.length)],
+        delay: walker ? 0.15 + rnd() * 1.9 : rnd() * 0.6,
+        walker,
       });
     }
     path.remove();
   });
 
-  scratch.remove();
+  svg.remove();
   return out;
 }
 
 export default function HumanStripes() {
   const [people, setPeople] = useState<Person[]>([]);
   const [assembled, setAssembled] = useState(false);
-  // One extra figure, reserved for the Join hover. It has a slot kept
-  // empty for it in a band; on hover it walks in and fills the gap, and
-  // when the hover ends it turns around and walks back out. Nobody else
-  // in the crowd reacts.
   const [joining, setJoining] = useState(false);
-  const reduced = useRef(false);
+  const [mob, setMob] = useState(false);
 
   useEffect(() => {
-    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.matchMedia("(max-width: 767px)").matches;
-    setPeople(buildPeople(mobile ? STRIPES_MOBILE : STRIPES_DESKTOP));
+    setMob(mobile);
+    setPeople(
+      mobile
+        ? build(BANDS_MOBILE, 0.92, VB_M, SAFE_M)
+        : build(BANDS_DESKTOP, 1, VB, SAFE)
+    );
 
-    if (reduced.current) {
+    if (reduced) {
       setAssembled(true);
-      return;
+    } else {
+      requestAnimationFrame(() => requestAnimationFrame(() => setAssembled(true)));
     }
-    // one frame at the scattered positions, then release them
-    const id = window.setTimeout(() => setAssembled(true), 60);
 
-    // Skip the hover behaviour on touch. Testing for a COARSE pointer is
-    // the right check: requiring `pointer: fine` also excludes browsers
-    // that simply don't report one, which silently disabled this.
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     const onJoin = (e: Event) => {
       if (coarse || mobile) return;
       setJoining((e as CustomEvent<boolean>).detail === true);
     };
     window.addEventListener("tigerclub:join-hover", onJoin as EventListener);
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener("tigerclub:join-hover", onJoin as EventListener);
-    };
+    return () => window.removeEventListener("tigerclub:join-hover", onJoin as EventListener);
   }, []);
 
-  // The gap this person completes: a real hole left in the upper-right band.
-  const JOINER = { x: 1196, y: 388, sx: 1760, sy: 300 };
-
-  const symbol = useMemo(
-    () => (
-      <symbol id="tc-person" viewBox="0 0 12 18">
-        {/* shadow on the ground, sold from above */}
-        <ellipse cx="6" cy="15.6" rx="4.1" ry="1.5" fill="#15130E" opacity="0.12" />
-        {/* shoulders / torso */}
-        <path
-          d="M6 6.4c2.5 0 4 1.8 4.2 4.2.15 1.9-.4 3.3-1.1 3.9-.9.8-5.3.8-6.2 0-.7-.6-1.25-2-1.1-3.9C2 8.2 3.5 6.4 6 6.4Z"
-          fill="currentColor"
-        />
-        {/* head */}
-        <circle cx="6" cy="3.9" r="2.9" fill="currentColor" />
-        {/* a lighter crown, so the head reads separately from the body */}
-        <circle cx="6" cy="3.5" r="1.5" fill="#F4E9D6" opacity="0.16" />
-      </symbol>
-    ),
-    []
-  );
+  const W = 30, H = 44;
+  const vb = mob ? VB_M : VB;
+  const JOIN = mob
+    ? { x: 470, y: 250, sx: 780, sy: 250 }
+    : { x: 1232, y: 372, sx: 1780, sy: 320 };
 
   return (
     <div aria-hidden="true" className="human-stripes">
-      <svg
-        viewBox={`0 0 ${VB_W} ${VB_H}`}
-        preserveAspectRatio="xMidYMid slice"
-        className="h-full w-full"
-      >
-        <defs>{symbol}</defs>
+      <svg viewBox={`0 0 ${vb.w} ${vb.h}`} preserveAspectRatio="xMidYMid slice" className="h-full w-full">
+        <defs>
+          <SpriteDefs />
+        </defs>
+
         {/* the one who joins on hover */}
         <use
-          href="#tc-person"
-          width={13.4}
-          height={20}
+          href="#tc-p2-0"
+          width={W * 1.15}
+          height={H * 1.15}
           className="tc-figure tc-joiner"
           style={{
-            color: ORANGE,
             transform: joining
-              ? `translate(${JOINER.x}px, ${JOINER.y}px)`
-              : `translate(${JOINER.sx}px, ${JOINER.sy}px)`,
+              ? `translate(${JOIN.x}px, ${JOIN.y}px)`
+              : `translate(${JOIN.sx}px, ${JOIN.sy}px)`,
             opacity: joining ? 1 : 0,
           }}
         />
@@ -233,18 +186,16 @@ export default function HumanStripes() {
         {people.map((p, i) => (
           <use
             key={i}
-            href="#tc-person"
-            width={13 * p.s}
-            height={19.5 * p.s}
-            className="tc-figure"
+            href={`#${p.id}`}
+            width={W * p.s}
+            height={H * p.s}
+            className={p.walker ? "tc-figure tc-walker" : "tc-figure"}
             style={{
-              color: p.c,
               transform: assembled
-                ? `translate(${p.x}px, ${p.y}px)`
-                : `translate(${p.sx}px, ${p.sy}px)`,
+                ? `translate(${p.x}px, ${p.y}px) rotate(${p.rot}deg)`
+                : `translate(${p.sx}px, ${p.sy}px) rotate(${p.rot}deg)`,
               opacity: assembled ? 1 : 0,
               transitionDelay: `${p.delay}s, ${p.delay}s`,
-              animationDelay: `${p.delay + 1.6 + p.idle}s`,
             }}
           />
         ))}
