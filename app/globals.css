@@ -455,7 +455,7 @@ body {
   inset: 0;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  background-size: 130% auto;
+  background-size: 132% auto;
   background-position: 50% 52%;
 }
 
@@ -510,19 +510,35 @@ body {
   mask-image: linear-gradient(to top, #000 60%, transparent 100%);
 }
 
-/* The only animation in the hero. Position only — never opacity, so the
-   figure never fades; it is simply parked off-frame when idle. */
-.hero-joiner {
+/* The eight arriving figures.
+
+   Position is animated, never opacity — nothing in this hero fades. Each
+   element is a four-frame walk sheet; `steps(4)` swaps frames so the legs
+   swing while the element translates, which is what makes it read as
+   walking rather than sliding. The cycle only runs while a figure is
+   actually in motion. */
+.hero-walker {
   position: absolute;
-  width: auto;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: 0% 0%;
   user-select: none;
-  will-change: left, top;
-  transition: left 2.4s cubic-bezier(0.42, 0, 0.32, 1),
-    top 2.4s cubic-bezier(0.42, 0, 0.32, 1);
+  pointer-events: none;
+  will-change: left, top, background-position;
+}
+
+.hero-walker.is-walking {
+  animation: tc-walk 0.62s steps(4) infinite;
+}
+
+@keyframes tc-walk {
+  from { background-position: 0% 0%; }
+  to   { background-position: 133.334% 0%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-joiner {
+  .hero-walker {
     transition: none;
+    animation: none;
   }
 }
