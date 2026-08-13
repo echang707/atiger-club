@@ -1195,3 +1195,53 @@ again, with its own slot per layout. Nothing else in the crowd reacts.
 Reduced motion renders the crowd assembled.
 
 Hero only — the rest of the site is untouched.
+
+---
+
+# Hero crowd v3 — the artwork IS the assembled state
+
+Both previous attempts drew the crowd in code and both read as clip art. That
+approach is abandoned: no SVG people, no procedural crowd.
+
+## Assembled state
+
+`/images/crowd-stripes.webp` is the supplied crowd artwork itself — dense,
+overlapping, real bodies, real shadows. Its cream was colour-matched to
+`#F4E9D6` (measured `252,234,207` → `243,233,214`) so it sits on the page
+rather than on top of it.
+
+The crop is solved, not eyeballed: at `128%` / `50% 55%` the headline and
+subline zone measures **0.6% inked** while both bands hold **~28%**. The
+artwork's own negative space lands under the copy.
+
+## Arrival animation
+
+14 transparent human cutouts were extracted from the close-up reference by
+keying the flat background, taking connected components over 900px, and
+dilating each to keep its shadow. Alpha ramps across the soft shadow and the
+colour is un-premultiplied against the cream, so there is no halo.
+
+They start off the outer edges, walk to positions **on** the bands over
+2.3–3.4s with staggered delays, and fade out as they arrive — so the crowd
+appears to have assembled without a single figure being redrawn.
+
+Every walker's travel line stays on its own side of the hero: destinations are
+x<26 or x>74, starts are off-frame at −14 or +114, so no walker ever crosses
+the protected centre.
+
+## Portrait
+
+The artwork is landscape, so one crop on a tall screen shows either the empty
+cream middle or a single corner. Mobile therefore uses **two different slices** —
+the upper-left crowd across the top, and the lower-right crowd mirrored across
+the bottom, each masked off toward the middle. Different regions and opposite
+handedness, so it never reads as the same picture twice.
+
+## Join hover
+
+One real cutout walks in from off-frame to a gap beside the crowd and back out
+on leave. The artwork itself is never touched.
+
+Reduced motion: the artwork alone, no walkers.
+
+Hero only — nothing else on the site changed.
