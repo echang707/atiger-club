@@ -277,6 +277,18 @@ function MildToWild({ play, reduced }: { play: boolean; reduced: boolean }) {
 
 export default function Ending() {
   const reduced = !!useReducedMotion();
+  // The mobile tail has its own entrance (it whips in from off the right
+  // edge rather than easing up from below), so the values are chosen in
+  // JS rather than trying to express two different animations in one set
+  // of props.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const on = () => setIsMobile(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
   const ref = useRef<HTMLElement>(null);
   // once:false — the whole moment replays every time you scroll back to it.
   const inView = useInView(ref, { once: false, amount: 0.35 });
@@ -313,8 +325,21 @@ export default function Ending() {
           <span aria-hidden="true">
             Life&rsquo;s happening.
             <br />
-            Go <MildToWild key={`m${runs}`} play={play} reduced={reduced} />
-            ild.
+            Go{" "}
+            <motion.span
+              className="inline-block"
+              initial={{ x: 0, y: 0, rotate: 0 }}
+              whileInView={
+                reduced || !isMobile
+                  ? { x: 0, y: 0, rotate: 0 }
+                  : { x: [0, -5, 2.5, -1, 0], y: [0, 1.5, -0.5, 0, 0], rotate: [0, -1.4, 0.6, -0.2, 0] }
+              }
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.42, delay: 0.6, ease: "easeOut" }}
+            >
+              <MildToWild key={`m${runs}`} play={play} reduced={reduced} />
+              ild.
+            </motion.span>
           </span>
         </motion.h2>
 
@@ -332,21 +357,42 @@ export default function Ending() {
         </motion.a>
       </div>
 
-      {/* Tail sits where it always has. It no longer travels to reach the
-          text — the wind does that job. */}
+      {/* Mobile composition is its own thing.
+          Centred low across the section, the tail read as a smile sitting
+          under everything and had nothing to do with the word. Below `sm`
+          it is anchored to the right edge and lifted up beside the
+          headline: the thick base runs off the right of the screen, the
+          curve sweeps down and left, and the tapered tip finishes just
+          under and right of "wild." The rotation keeps it directional
+          rather than symmetrical.
+
+          From `sm` up every value is exactly what it was — desktop is
+          untouched. */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute right-0 z-0
-                   bottom-[6%] w-[104%] max-w-none
-                   sm:bottom-[5%] sm:w-[96%]
+                   top-[54%] w-[108%] -rotate-[38deg] origin-right max-w-none
+                   sm:top-auto sm:bottom-[5%] sm:w-[96%] sm:rotate-0
                    md:bottom-[8%] md:w-[66%]
                    lg:bottom-[8%] lg:w-[59%]"
-        initial={reduced ? { opacity: 1, x: 0 } : { opacity: 0, x: "10%" }}
+        initial={
+          reduced
+            ? { opacity: 1, x: 0 }
+            : isMobile
+            ? { opacity: 0, x: "88%" }
+            : { opacity: 0, x: "10%" }
+        }
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        transition={
+          reduced
+            ? { duration: 0 }
+            : isMobile
+            ? { duration: 0.62, ease: [0.16, 0.9, 0.24, 1] }
+            : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+        }
       >
-        <div className="relative translate-x-[3%] sm:translate-x-[12%] md:translate-x-[9%]">
+        <div className="relative translate-x-[12%] sm:translate-x-[12%] md:translate-x-[9%]">
           <TailWhip key={`t${runs}`} play={play} />
           <Gust key={`g${runs}`} play={play} />
         </div>

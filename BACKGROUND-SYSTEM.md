@@ -1034,3 +1034,37 @@ fresh load with no clicks). The one in the screenshot came from a click landing
 in that area. The interaction is still on every page, as requested earlier — if
 you'd rather it were excluded from the hero specifically, that is a small
 addition to the exclusion list in `PawPrints.tsx`.
+
+---
+
+# Mobile finale: the tail belongs to "wild."
+
+Desktop untouched — every value below is `sm:` reset to exactly what it was.
+
+## Composition
+
+Centred low across the section, the tail read as a smile under everything with
+no relationship to the word. Below `sm` it is now anchored to the right edge,
+rotated `-38°` about that edge and lifted to `top: 54%`, so:
+
+- the tapered tip finishes just below and right of **wild.**
+- the curve sweeps down and to the left of it
+- the thick base runs off the right edge of the screen on purpose
+- nothing is centred, and the silhouette stays asymmetric and directional
+
+The geometry was solved by probing candidate width/rotation pairs in the browser
+and measuring the tip against the headline box, not by eye. Two intermediate
+values were rejected on inspection: at `-54°` the tail swung up across the
+headline, and at `46%` it crowded the CTA.
+
+## Animation
+
+On mobile the tail starts at `x: 88%` — mostly off the right edge — and whips
+in over 0.62s on a fast-out curve, rather than easing up from below as it does
+on desktop. As it lands, **wild.** takes a small hit: a 5px shake with a slight
+rotation, damping out over 0.42s. Once, on entering view, then still.
+
+Reduced motion gets the settled composition with no whip and no shake.
+
+Verified at 375, 390 and 430: `scrollWidth` equals the viewport, the CTA sits
+clear of the tail, and the headline is never crossed.
