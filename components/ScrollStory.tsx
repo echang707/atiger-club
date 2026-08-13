@@ -61,7 +61,7 @@ export default function ScrollStory() {
           rhythm this creates is: what we do → why it matters → what it
           feels like.
           --------------------------------------------------------------- */}
-      <div className="max-w-content mx-auto px-6 md:px-10 pt-32 md:pt-48 pb-28 md:pb-40">
+      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 pt-20 md:pt-48 pb-20 md:pb-40">
         <figure className="relative">
           {/* the mark hangs into the left margin, cropped by the gutter */}
           <motion.span
@@ -91,7 +91,7 @@ export default function ScrollStory() {
                   delay: i * 0.13,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`font-display text-ink tracking-tight leading-[0.98] text-[11vw] md:text-[6.4vw] lg:text-[5.6vw] ${line.indent}`}
+                className={`font-display text-ink tracking-tight leading-[1.06] md:leading-[0.98] text-[13vw] md:text-[6.4vw] lg:text-[5.6vw] ${line.indent}`}
               >
                 {line.mark ? (
                   <span className="relative inline-block">
@@ -113,13 +113,13 @@ export default function ScrollStory() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-14 md:mt-20 flex justify-end"
+            className="mt-10 md:mt-20 flex justify-start md:justify-end"
           >
-            <span className="border-t border-ink/25 pt-3 text-right">
-              <span className="block font-mono text-[11px] tracking-wideish uppercase text-ink">
+            <span className="max-w-full border-t border-ink/25 pt-3 text-left md:text-right">
+              <span className="block font-mono text-[10px] sm:text-[11px] tracking-wide sm:tracking-wideish uppercase text-ink">
                 Robert Waldinger
               </span>
-              <span className="mt-1 block font-mono text-[10px] tracking-wideish uppercase text-ink/55">
+              <span className="mt-1 block font-mono text-[9px] sm:text-[10px] tracking-wide sm:tracking-wideish uppercase text-ink/55">
                 Harvard Study of Adult Development
               </span>
             </span>

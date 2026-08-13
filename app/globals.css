@@ -266,11 +266,26 @@ body {
    tagline still sits on clean cream above them. */
 @media (max-width: 767px) {
   .marble-field {
-    /* Phones see only a narrow slice of the artwork. This frames the
-       slice on the clean part of the diagonal so the tagline sits on
-       cream, with the markings gathering toward the lower edge. */
-    background-size: auto 122%;
-    background-position: 42% 100%;
+    /* Phones see only a narrow slice of the artwork, so the crop has to
+       choose what is in that slice: the markings gather along the lower
+       edge and the tagline sits on clean cream above them. One crop, one
+       appearance of the artwork — the transitional wash band below is
+       hidden on mobile so the same graphic never reads twice. */
+    background-size: auto 116%;
+    background-position: 44% 100%;
+  }
+
+  /* The hand-off is longer on mobile so the artwork dissolves into the
+     page instead of ending on a visible seam. */
+  .marble-fade-bottom {
+    height: 240px;
+  }
+
+  /* The transitional band repeats the same marble directly under the
+     hero on a narrow screen, which read as a duplicate graphic with a
+     seam between the two. Desktop keeps it; mobile does not need it. */
+  .jungle-wash {
+    display: none;
   }
 }
 

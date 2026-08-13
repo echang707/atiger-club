@@ -41,9 +41,9 @@ export default function Nav() {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="max-w-content mx-auto px-6 md:px-10 h-16 md:h-20 grid grid-cols-[1fr_auto_1fr] items-center">
+      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-14 md:h-20 grid grid-cols-[auto_1fr_auto] items-center gap-3">
         <Link href="/" className="justify-self-start" onClick={() => setOpen(false)}>
-          <TigerWordmark className="text-[13px] sm:text-base md:text-xl" />
+          <TigerWordmark className="text-[12px] sm:text-base md:text-xl" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
@@ -67,12 +67,12 @@ export default function Nav() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3 justify-self-end">
+        <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
           <a
             href="https://discord.gg/6u83g4P8Cb"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] md:text-[15px] font-semibold text-[#FFFFFF] bg-tiger-fill border-2 border-tiger-fill px-3.5 md:px-5 py-1.5 md:py-2 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
+            className="text-[13px] md:text-[15px] font-semibold leading-none text-[#FFFFFF] bg-tiger-fill border-2 border-tiger-fill px-3.5 md:px-5 py-2 md:py-2.5 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
           >
             Join the Club
           </a>
@@ -82,7 +82,7 @@ export default function Nav() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
-            className="md:hidden relative h-9 w-9 flex items-center justify-center text-ink"
+            className="md:hidden relative -mr-1 h-9 w-9 flex items-center justify-center text-ink"
           >
             <span className="relative block h-3.5 w-5">
               <span

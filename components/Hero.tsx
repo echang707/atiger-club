@@ -20,7 +20,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100svh] w-full flex flex-col items-center justify-center px-6 md:px-10 pt-28 pb-20 md:pt-32 md:pb-24 overflow-hidden"
+      className="relative min-h-[82svh] md:min-h-[100svh] w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-14 md:pt-32 md:pb-24 overflow-hidden"
     >
       {/* The marble at full strength, and only here (plus the closing
           section). The crop is measured, not eyeballed: the artwork was

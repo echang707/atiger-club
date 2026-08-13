@@ -935,3 +935,63 @@ beyond them. Nothing kept the pieces in step.
 Verified frame by frame at 700 / 1150 / 1600 / 2000 / 3200 ms: continuous at
 every step, stripes attached throughout, no floating marks, tip resting with a
 gentle upward curve. Runs once and stops.
+
+---
+
+# Mobile responsiveness pass
+
+Desktop is unchanged throughout — every fix below is behind a mobile
+breakpoint. Checked at 375, 390 and 430px on `/`, `/about`, `/events` and
+`/work-with-us`.
+
+## Result
+
+`document.scrollWidth` equals the viewport at all three widths on all four
+pages, and no text, link or caption extends past the edge. **Zero horizontal
+scrolling anywhere.**
+
+## Header
+
+Grid changed from `[1fr_auto_1fr]` to `[auto_1fr_auto]` so the logo and the
+right-hand cluster define their own columns instead of being centred against an
+empty nav cell. Height 64 → 56 on mobile, gutters evened to 20px, button given
+symmetrical padding and `leading-none` so its text is optically centred, and the
+hamburger nudged to sit on the same right margin. Logo, button and hamburger now
+share one centre line.
+
+## Hero and the duplicated graphic
+
+The artwork appeared twice on mobile — once in the hero, then again immediately
+below in the transitional wash band, with a visible seam between two copies of
+the same graphic. `.jungle-wash` is now hidden below `md`; desktop keeps it. The
+hero crop was retuned (`auto 116%` at `44% 100%`) so the markings gather along
+the lower edge, and the fade-out is 240px so the artwork dissolves rather than
+ending on an edge. Hero height 100svh → 82svh with tighter padding, which
+removes most of the dead space above the tagline.
+
+## Quote
+
+Type scale is mobile-specific (13vw with looser leading). The attribution was
+right-aligned in a block with no room for it, so it ran off the edge; it now
+aligns left below `md` and keeps the far-right editorial placement above.
+
+**The tail is restored on mobile, and the reason it was missing is worth
+recording:** the reveal rectangle lives inside `<defs>`, which has no layout
+box, so the `whileInView` observer attached to it never fired — the clip stayed
+at `width: 0` and the entire tail rendered invisible. The trigger now comes from
+the `<svg>` element, which does have a box, and every child animates off that
+one flag. Confirmed drawing at 375, 390 and 430, fully on screen, with the draw
+and flick intact.
+
+## Finale
+
+The tail was pushed so far right it read as accidentally cropped. Narrowed to
+104% with a 3% offset on mobile so the whole sweep is visible and only the thick
+base bleeds off the edge, with extra bottom padding keeping it clear of the CTA.
+
+## Footer
+
+Rebuilt for mobile: logo, then a two-column grid of links, then the sign-off and
+copyright. Every link carries `white-space: nowrap`, so "Work With Us" stays on
+one line (verified: 1 line at all three widths) and Discord no longer runs past
+the edge. From `md` up it is the original single row, unchanged.

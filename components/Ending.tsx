@@ -291,7 +291,7 @@ export default function Ending() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden flex items-center min-h-[70vh] md:min-h-[82vh] pt-6 md:pt-8 pb-20 md:pb-24"
+      className="relative overflow-hidden flex items-center min-h-[72vh] md:min-h-[82vh] pt-6 md:pt-8 pb-32 sm:pb-24"
     >
       {/* Tiger texture across the whole closing section rather than a strip
           sitting above it. Masked to the outer edges so the headline still
@@ -337,7 +337,7 @@ export default function Ending() {
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute right-0 z-0
-                   bottom-[3%] w-[124%] max-w-none
+                   bottom-[6%] w-[104%] max-w-none
                    sm:bottom-[5%] sm:w-[96%]
                    md:bottom-[8%] md:w-[66%]
                    lg:bottom-[8%] lg:w-[59%]"
@@ -346,7 +346,7 @@ export default function Ending() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="relative translate-x-[12%] md:translate-x-[9%]">
+        <div className="relative translate-x-[3%] sm:translate-x-[12%] md:translate-x-[9%]">
           <TailWhip key={`t${runs}`} play={play} />
           <Gust key={`g${runs}`} play={play} />
         </div>

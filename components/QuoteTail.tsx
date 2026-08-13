@@ -1,7 +1,7 @@
 "use client";
 
-import { useId } from "react";
-import { motion } from "framer-motion";
+import { useId, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 /* ---------------------------------------------------------------------
    The tail under "good relationships."
@@ -52,13 +52,19 @@ const REVEAL = 1.2;
 export default function QuoteTail() {
   const id = useId().replace(/:/g, "");
   const clipId = `qt-${id}`;
-  const view = { once: true, margin: "-90px" } as const;
+  const ref = useRef<SVGSVGElement>(null);
+
+  // The reveal rectangle lives inside <defs>, so it has no layout box and
+  // an IntersectionObserver attached to it never fires — on mobile the
+  // clip stayed at width 0 and the whole tail was invisible. The trigger
+  // is therefore taken from the <svg> itself, which does have a box, and
+  // every child animates from that one flag.
+  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   // the whole shape morphs on one clock — draw, curl, flick, settle
   const morph = {
     initial: { d: D[0] },
-    whileInView: { d: D },
-    viewport: view,
+    animate: inView ? { d: D } : { d: D[0] },
     transition: {
       duration: TOTAL,
       delay: DELAY,
@@ -72,7 +78,8 @@ export default function QuoteTail() {
       aria-hidden="true"
       viewBox="0 0 300 34"
       preserveAspectRatio="none"
-      className="absolute -bottom-[0.36em] left-0 h-[0.28em] w-full overflow-visible"
+      ref={ref}
+      className="absolute -bottom-[0.30em] sm:-bottom-[0.36em] left-0 h-[0.34em] sm:h-[0.28em] w-full overflow-visible"
       fill="none"
     >
       <defs>
@@ -85,8 +92,7 @@ export default function QuoteTail() {
             y={-40}
             height={120}
             initial={{ width: 0 }}
-            whileInView={{ width: 320 }}
-            viewport={view}
+            animate={{ width: inView ? 320 : 0 }}
             transition={{ duration: REVEAL, delay: DELAY, ease: "easeOut" }}
           />
         </clipPath>
