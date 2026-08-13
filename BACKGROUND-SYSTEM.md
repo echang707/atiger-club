@@ -1343,3 +1343,72 @@ of the hero, so nothing crosses the headline, subline, logo, nav or CTA.
 
 Disabled on mobile and under reduced motion (static artwork only). Unused walk
 sheets pruned; only the eight in use ship.
+
+---
+
+# Hero v6 — real walk cycles, shadows only after landing
+
+## Shadows
+
+The sprites are now cut **body-only**. Separating body from cast shadow needed a
+colour test, not a threshold: the connected component bridges the two, so any
+brightness cut either kept the shadow or ate the figure. Pixels that are pale
+*and* desaturated (`lum > 150 && sat < 60`) are classified as shadow and dropped;
+bodies are either dark or strongly coloured, so they survive. Bottom-band opaque
+pixels fell from 36% to 9%.
+
+Each figure's shadow is drawn separately as a soft radial ellipse and revealed
+only once it has stopped. So a walking figure never drags a shadow across the
+artwork, and no two shadows overlap.
+
+## The walk is no longer a slide
+
+Everything is written per frame from one `requestAnimationFrame` loop — a CSS
+transition can only interpolate between two states, which is exactly why the
+previous version read as a sprite being translated.
+
+Per figure, per frame:
+
+- position advances along a **quadratic bezier**, so the path curves
+- easing is slow-in, steady, slow-out, with **one small settling oscillation**
+  in the last 14%
+- a **six-frame** sheet steps at a cadence tied to distance covered, so the
+  stride matches the speed
+- a small vertical **bob** and body **sway** come off the same phase
+- the figure **leans** slightly toward its direction of travel
+
+The sheets themselves now swing legs *and* counter-swing arms, ramped from zero
+at the hip and shoulder so no seam appears across the body.
+
+Verified in Chromium: **all 6 frames used across 151 distinct positions** during
+one arrival, and 7 shadows present only after the walkers stopped.
+
+## Join hover
+
+Same path, driven by a normalised 0→1 that hover pushes toward 1 and hover-out
+back toward 0 from wherever it currently is — so an interrupted walk turns
+around cleanly rather than snapping. No fading; disabled on touch and mobile.
+
+---
+
+# Adapted to the new backdrop
+
+Same system, re-fitted to the latest crowd artwork. Everything below was
+re-derived from the new image rather than carried over.
+
+- **Artwork**: cream matched (`250,234,215` → `244,232,213`), supersampled 2× to
+  3344×1882, unsharp, q93.
+- **Crop**: solved at `134%` / `50% 58%` — copy zone **0.4% inked**, left and
+  right crowds **~37% each**.
+- **Scale**: isolated figures measure a median **47px in a 1672px source**, so a
+  person is `47 / 1672 × 1.34 × 100vw = 3.77vw`. Per-figure factors 0.80–1.20
+  track the artwork's perspective.
+- **Destinations**: found by scanning the artwork itself rather than guessing.
+  Each of the eight spots has almost no ink in a tight radius (open ground you
+  could stand in) but plenty within a wider one (right beside a crowd). Verified
+  clear ≤0.008, near ≥0.29.
+- **Shadows**: elongated and thrown to the lower right to match the artwork's
+  own cast direction, instead of round pools under the feet.
+
+Walk cycles, bezier paths, easing, settling steps, the rAF loop and the hover
+joiner are unchanged from v6.

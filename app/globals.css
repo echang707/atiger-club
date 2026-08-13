@@ -455,8 +455,10 @@ body {
   inset: 0;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  background-size: 132% auto;
-  background-position: 50% 52%;
+  /* Solved against this artwork: at 134% / 58% the copy zone is 0.4%
+     inked while the left and right crowds hold ~37% each. */
+  background-size: 134% auto;
+  background-position: 50% 58%;
 }
 
 @media (max-aspect-ratio: 16 / 10) {
@@ -512,33 +514,36 @@ body {
 
 /* The eight arriving figures.
 
-   Position is animated, never opacity — nothing in this hero fades. Each
-   element is a four-frame walk sheet; `steps(4)` swaps frames so the legs
-   swing while the element translates, which is what makes it read as
-   walking rather than sliding. The cycle only runs while a figure is
-   actually in motion. */
+   Position, frame, bob, sway and lean are all written per frame from one
+   rAF loop — CSS transitions cannot express a walk. No transition is
+   declared here on purpose. */
 .hero-walker {
   position: absolute;
   display: block;
   background-repeat: no-repeat;
-  background-position: 0% 0%;
   user-select: none;
   pointer-events: none;
-  will-change: left, top, background-position;
+  will-change: left, top, background-position, transform;
 }
 
-.hero-walker.is-walking {
-  animation: tc-walk 0.62s steps(4) infinite;
-}
-
-@keyframes tc-walk {
-  from { background-position: 0% 0%; }
-  to   { background-position: 133.334% 0%; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-walker {
-    transition: none;
-    animation: none;
-  }
+/* Drawn separately from the sprite and only revealed once its owner has
+   stopped, so a walking figure never drags a shadow across the artwork
+   and no two shadows overlap. */
+.hero-shadow {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  /* The artwork's shadows are long and thrown to the lower right, not
+     round pools under the feet — the ellipse is elongated and offset to
+     trail the same way. */
+  transform: translate(-16%, -52%) rotate(13deg);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(120, 96, 62, 0.34),
+    rgba(120, 96, 62, 0.16) 62%,
+    rgba(120, 96, 62, 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.7s ease-out;
 }
