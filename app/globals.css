@@ -435,3 +435,49 @@ body {
       radial-gradient(96% 46% at 50% 46%, transparent 0 42%, #000 92%);
   }
 }
+
+/* ---------------------------------------------------------------------
+   Human tiger stripes (hero).
+   The walk-in is one transform transition per figure with its own delay,
+   so there is no per-frame JS at all and the compositor does the work.
+   --------------------------------------------------------------------- */
+.human-stripes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tc-figure {
+  transition: transform 2.6s cubic-bezier(0.33, 0, 0.2, 1),
+    opacity 0.9s ease-out;
+  will-change: transform;
+}
+
+/* Once settled, a barely-there idle. Amplitude is ~1px in a 1600-unit
+   viewBox, which is well under a pixel on screen — enough to keep the
+   crowd from looking frozen, not enough to notice while reading. */
+@keyframes tc-idle {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0.9px -0.7px; }
+}
+
+.tc-figure {
+  animation: tc-idle 7s ease-in-out infinite;
+}
+
+/* The hover joiner walks rather than snaps, and takes its time leaving. */
+.tc-joiner {
+  transition: transform 1.5s cubic-bezier(0.34, 0, 0.24, 1),
+    opacity 0.5s ease-out;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-figure,
+  .tc-joiner {
+    transition: none;
+    animation: none;
+  }
+}

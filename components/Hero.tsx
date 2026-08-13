@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useScroll, useTransform } from "framer-motion";
+import HumanStripes from "./HumanStripes";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
 
@@ -22,25 +23,10 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-[82svh] md:min-h-[100svh] w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-14 md:pt-32 md:pb-24 overflow-hidden"
     >
-      {/* The marble at full strength, and only here (plus the closing
-          section). The crop is measured, not eyeballed: the artwork was
-          gridded for ink coverage, and at this size/position the tagline
-          sits on the image's own cream negative space — under 1% ink —
-          while the heavy markings stay parked in the top-left corner,
-          down the right edge and along the bottom. That is why there is
-          no cream blob behind the type any more. It was never needed;
-          the image just wasn't positioned. */}
-      <div aria-hidden="true" className="marble-field" />
+      {/* The stripes are people now. They walk in from the outer edges and
+          assemble; the centre stays clear so the copy always sits on cream. */}
+      <HumanStripes />
 
-      {/* Pattern thins into the cream page below. The image's cream is
-          colour-matched to #F4E9D6, so this reads as the material running
-          out rather than as a seam between two panels. */}
-      {/* Keeps the black wordmark legible where it overlaps the artwork's
-          densest corner. Anchored to that corner and dissolved before the
-          centre, so the nav still reads as part of the hero. */}
-      <div aria-hidden="true" className="hero-nav-readability" />
-
-      <div aria-hidden="true" className="marble-fade-bottom" />
 
       <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10">
         <WordsFindEachOther closeness={closeness} />

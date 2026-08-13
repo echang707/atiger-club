@@ -1098,3 +1098,51 @@ is retained.
 
 Verified on desktop (1440) and mobile (390): `.jungle-wash` count is **0**, one
 `.marble-field`, one `.ending-wash`, and no seam below the hero.
+
+---
+
+# Human tiger stripes (hero)
+
+The hero's stripes are no longer artwork — they are people. `HumanStripes.tsx`
+replaces `.marble-field` in the hero only; nothing else in the design system
+changed.
+
+## How it's built
+
+- **One `<symbol>`, stamped with `<use>`.** ~270 figures on desktop, ~127 on
+  mobile, from a single drawing definition. Each figure has a shadow, shoulders,
+  a head and a lighter crown so it reads as a person at close range rather than
+  a dot.
+- **Positions sampled off real bezier paths** with `getPointAtLength`, then
+  pushed along the path normal by a random amount, so bands have organic
+  thickness instead of beads on a wire. Colours are weighted toward orange
+  `#E0521C` and charcoal, with a few paler figures breaking up the mass.
+- **The walk-in is one CSS transform transition per figure** with its own delay
+  — no rAF loop and no per-frame JS, so the compositor does the work. Measured
+  travel: 313px for a sampled figure.
+- **~6% arrive late** (2.1–3.2s), so gaps sit visibly open and are then filled.
+  That metaphor is explicit in the data rather than left to chance.
+- Idle motion is ~1 unit in a 1600-unit viewBox — under a pixel on screen.
+
+Bands enter from the left and right edges only; the centre column is empty by
+construction, so the copy always sits on clean cream.
+
+## Join hover
+
+Hovering **Join the Club** dispatches a window event; one reserved figure walks
+into an open slot in the upper-right band and stays while the hover holds. On
+leave it walks back out. Nobody else moves. Verified: opacity 1 at x=1196 on
+hover, back to opacity 0 at x=1760 after leave.
+
+*Bug caught in review:* the guard originally required
+`(hover: hover) and (pointer: fine)`, which also excludes browsers that don't
+report a pointer type — it silently disabled the whole interaction. It now skips
+only on a genuinely coarse pointer or mobile widths.
+
+Reduced motion renders the crowd already assembled, with no walk-in and no idle.
+
+## Still to do
+
+This is the hero only, as asked. The marble treatment is untouched everywhere
+else, so the two visual languages currently coexist — worth a look before
+propagating.

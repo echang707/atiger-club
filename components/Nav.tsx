@@ -72,6 +72,16 @@ export default function Nav() {
             href="https://discord.gg/6u83g4P8Cb"
             target="_blank"
             rel="noopener noreferrer"
+            onMouseEnter={() =>
+              window.dispatchEvent(
+                new CustomEvent("tigerclub:join-hover", { detail: true })
+              )
+            }
+            onMouseLeave={() =>
+              window.dispatchEvent(
+                new CustomEvent("tigerclub:join-hover", { detail: false })
+              )
+            }
             className="text-[13px] md:text-[15px] font-semibold leading-none text-[#FFFFFF] bg-tiger-fill border-2 border-tiger-fill px-3.5 md:px-5 py-2 md:py-2.5 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
           >
             Join the Club
