@@ -271,14 +271,29 @@ body {
        edge and the tagline sits on clean cream above them. One crop, one
        appearance of the artwork — the transitional wash band below is
        hidden on mobile so the same graphic never reads twice. */
-    background-size: auto 116%;
-    background-position: 44% 100%;
+    /* Solved against the artwork rather than eyeballed: at this crop the
+       ink behind the tagline measures 0% and behind the subline 0.2%,
+       while the lower-right of the viewport is 64% painted. The copy sits
+       on clean cream and the artwork stays strong where it belongs. */
+    background-size: auto 134%;
+    background-position: 40% 100%;
   }
 
-  /* The hand-off is longer on mobile so the artwork dissolves into the
-     page instead of ending on a visible seam. */
+  /* The fade is a hairline, not a wash.
+     At 240px it covered most of the artwork actually visible on a phone,
+     so the whole lower half went semi-transparent and the orange/black
+     read as washed out. It is now a short band hugging the very bottom
+     edge, and it stays fully opaque cream for the last few pixels so the
+     join to the section below is still clean. The artwork above it is
+     untouched at full contrast. */
   .marble-fade-bottom {
-    height: 240px;
+    height: 72px;
+    background: linear-gradient(
+      to bottom,
+      rgba(244, 233, 214, 0) 0%,
+      rgba(244, 233, 214, 0.55) 55%,
+      #F4E9D6 100%
+    );
   }
 
   /* The transitional band repeats the same marble directly under the

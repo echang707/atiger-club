@@ -995,3 +995,42 @@ Rebuilt for mobile: logo, then a two-column grid of links, then the sign-off and
 copyright. Every link carries `white-space: nowrap`, so "Work With Us" stays on
 one line (verified: 1 line at all three widths) and Discord no longer runs past
 the edge. From `md` up it is the original single row, unchanged.
+
+---
+
+# Mobile hero: artwork at full strength
+
+Desktop untouched — both changes are inside the `max-width: 767px` block.
+
+## The fade was the problem
+
+`.marble-fade-bottom` was 240px tall on mobile. On a phone that covered most of
+the artwork actually on screen, so the whole lower half sat under a cream
+gradient and the orange and black read as washed out and unfinished.
+
+It is now a **72px band hugging the very bottom edge**, reaching solid cream
+only in the last few pixels so the join to the section below is still clean.
+Everything above it is the artwork at full opacity and full contrast — no mask,
+no large gradient, no duplicated copy faking continuity.
+
+## The crop was solved, not guessed
+
+With the veil gone the artwork rose into the copy, so the crop was measured
+against the asset rather than eyeballed. At `auto 134%` / `40% 100%`:
+
+- ink behind the tagline: **0%**
+- ink behind the subline: **0.2%**
+- lower-right of the viewport: **64% painted**
+
+So the copy sits on genuinely clean cream while the painting stays strong
+through the lower right, then meets the cream section below over the short band.
+Checked at 375, 390 and 430.
+
+## On the paw print
+
+Not removed, because there is nothing static to remove: paw prints are only ever
+created by clicking, and the page loads with **zero** of them (verified on a
+fresh load with no clicks). The one in the screenshot came from a click landing
+in that area. The interaction is still on every page, as requested earlier — if
+you'd rather it were excluded from the hero specifically, that is a small
+addition to the exclusion list in `PawPrints.tsx`.
