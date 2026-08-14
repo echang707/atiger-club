@@ -1821,3 +1821,43 @@ The portrait asset is rebuilt from the artwork's **densest** vertical slices
 the bands read as orange-and-black stripes instead of scattered figures. Ink is
 26% at the top and 22% at the bottom, with the bands retreating to **6%** across
 the copy rows so no one crosses the type.
+
+---
+
+# 100svh hero, contained artwork, locked type
+
+## Architecture
+
+`100svh hero -> artwork scaled to fit -> text positioned against the viewport`.
+No sticky, no recentring, no scrolling to finish the hero.
+
+- **Hero**: `height: 100svh`. Measured at 1440×900, 1920×1080, 390×844 and
+  375×812 — hero height equals viewport height exactly at every one.
+- **Artwork**: `background-size: contain`, centred. The whole composition scales
+  down until it fits; aspect ratio preserved, nothing cropped, and the leftover
+  space is page cream so the join is invisible.
+- **Text**: absolutely positioned at `top: calc(50% - 2.5vh)` with a
+  `translateY(-50%)` — about 2.5vh above centre, as asked. Verified locked:
+  its document position is 345px before scrolling and 345px after, **drift 0**.
+
+## Safe zone, done in the artwork
+
+No overlay, gradient, blur or mask. The 16 stray figures standing inside the
+headline zone were painted out of the source image itself, each with its cast
+shadow, using the surrounding cream's own tone and grain. Ink inside the safe
+rectangle drops to 5.3%, and what remains is at its outer margins, not beside
+the letters.
+
+## Mobile: its own composition
+
+A separate portrait asset at phone aspect (1000×2170) so `contain` fills the
+screen without cropping. **Three** formations only — a long sweep upper-left, a
+short accent upper-right, a long sweep lower-left — curved, tapered, and
+deliberately asymmetric, so there is no corridor or parallel-wall effect. 22%
+ink overall against desktop's density, with **0.26%** through the copy rows.
+
+Three things went wrong on the way and are worth recording: rotating an RGB crop
+filled the corners with black (alpha is now baked in before rotation); tapering
+to zero made the stripes vanish (they now taper to a floor of 0.5); and source
+crops at native scale produced ~20px specks (they are upscaled ~1.8× so figures
+read at ~40px after `contain`).

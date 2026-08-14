@@ -556,35 +556,44 @@ body {
 /* Hero height IS the artwork height at full width — 3072x2048 is 66.67%
    of its width — so the whole composition is visible with nothing cropped.
    `min-height` keeps it at least a screen tall on very wide windows. */
+/* ARCHITECTURE
+   100svh hero -> artwork scaled to FIT inside it -> text positioned
+   against the viewport, fixed. Nothing sticky, nothing recentring, and
+   the hero never exceeds one screen. */
 .hero-shell {
-  height: 66.67vw;
+  height: 100svh;
   min-height: 100svh;
 }
 
-/* The overlay is exactly one viewport tall and sticks to the top of the
-   hero, so the copy stays centred on the visible screen while the
-   artwork continues past it. */
+/* `contain` scales the whole composition down until it fits the hero box,
+   preserving aspect ratio. Any leftover space is the page cream, so the
+   join is invisible. */
+.hero-crowd-art {
+  background-size: contain !important;
+  background-position: center !important;
+}
+
+/* Absolutely positioned against the hero box, nudged ~2.5vh above centre
+   so it reads as optically centred with the nav in view. It does not move
+   on scroll. */
 .hero-content {
-  height: 100svh;
-  padding-top: 5rem;
+  position: absolute;
+  inset: 0;
+  height: auto;
+  padding-top: 0;
+  top: calc(50% - 2.5vh);
+  bottom: auto;
+  transform: translateY(-50%);
 }
 
 @media (max-width: 767px) {
-  /* the portrait asset is 900x1900, i.e. 211.11% of its width */
-  .hero-shell {
-    height: 211.11vw;
-    min-height: 88svh;
-  }
-  .hero-content {
-    height: 88svh;
-    padding-top: 76px;
-  }
+  .hero-shell { height: 100svh; min-height: 100svh; }
+  .hero-content { top: calc(50% - 2vh); }
 
   .hero-crowd-art.is-mobile {
-    /* one continuous portrait image, shown whole */
     background-image: url("/images/crowd-mobile.webp");
-    background-size: 100% auto;
-    background-position: 50% 0;
+    background-size: contain !important;
+    background-position: center !important;
     -webkit-mask-image: none;
     mask-image: none;
   }
