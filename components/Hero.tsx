@@ -24,8 +24,12 @@ export default function Hero() {
       // Height comes from the artwork's own 3:2 aspect ratio (66.67vw) so the
       // full picture fits with nothing cropped, plus a cream band underneath
       // as breathing room before the next section.
-      className="relative w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-20 md:pt-28 md:pb-28 overflow-hidden"
-      style={{ minHeight: "calc(66.67vw + 7rem)" }}
+      // The hero box is EXACTLY the artwork's 3:2 aspect and its padding is
+      // symmetrical, so the copy centres on the artwork's own centre. The
+      // previous version added 7rem of height but only at the bottom, which
+      // pushed the headline 3.5rem below centre.
+      className="relative w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 py-24 md:py-28 mb-14 md:mb-20 overflow-hidden"
+      style={{ minHeight: "66.67vw" }}
     >
       {/* The stripes are people now. They walk in from the outer edges and
           assemble; the centre stays clear so the copy always sits on cream. */}

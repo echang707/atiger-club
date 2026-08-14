@@ -1672,3 +1672,34 @@ the stride.
 Its destination is deliberately the solved route **furthest from the artwork's
 own balloon figure** (71 units away), so the two are never close enough to read
 as one person duplicated — an earlier placement put them side by side.
+
+---
+
+# Centring, pace, and making the balloon hover visible
+
+## Headline centring
+
+The hero was `min-height: calc(66.67vw + 7rem)` with the extra 7rem added to
+height but padding applied only to the bottom — so the copy sat exactly 3.5rem
+below the artwork's centre. The box is now **exactly** the artwork's 3:2 aspect
+(`66.67vw`) with symmetrical `py`, and the breathing space before the next
+section moved to a `margin-bottom`.
+
+Measured in the browser: artwork centre 480px, copy centre 480px — **offset 0**.
+
+## Pace
+
+Walk durations were 5.2–7.3s, which is what made them feel slow. They are now
+**3.0–3.9s**, and the gap between arrivals is **1.5s** (was 1.7s). All seven are
+settled **14.4s** after load, down from ~26s.
+
+## The balloon hover
+
+It was working — a real hover on the button moved it 963px → 771px — but its
+destination was the far bottom-right corner at 94%/88%, partly below the fold
+and buried in dense crowd, so nothing appeared to happen.
+
+It now walks to **80.8%/80.5%**: on the right-hand side, well inside the
+viewport, against the open cream where it is unmissable. That spot is still 55
+units from the artwork's own balloon figure, so the two never read as a
+duplicate. The arrival that previously held it took the corner instead.
