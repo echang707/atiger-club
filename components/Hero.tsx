@@ -24,12 +24,11 @@ export default function Hero() {
           100% width, so nothing is cropped on any side. */}
       <HumanStripes />
 
-      {/* Viewport-centred overlay. Sticky at the top of the hero with a
-          height of exactly one screen, so the copy sits in the middle of
-          whatever the viewer can currently see while the artwork carries
-          on above and below it. Its position is never derived from the
-          image's dimensions. */}
-      <div className="hero-content sticky top-0 z-10 flex w-full flex-col items-center justify-center px-5 sm:px-6 md:px-10">
+      {/* Viewport-sized overlay, exactly one screen tall, in normal flow
+          (not sticky) — it scrolls away with the hero instead of staying
+          pinned/recentring. Its position is derived from the viewport,
+          never from the image's own dimensions. */}
+      <div className="hero-content relative z-10 flex w-full flex-col items-center justify-center px-5 sm:px-6 md:px-10">
         <div className="hero-tagline-wrap mx-auto w-full max-w-4xl flex flex-col items-center">
           <WordsFindEachOther closeness={closeness} />
           <div className="mt-9 md:mt-8 w-full max-w-2xl">
