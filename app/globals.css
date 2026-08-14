@@ -559,14 +559,17 @@ body {
 .hero-shell {
   height: 66.67vw;
   min-height: 100svh;
+  --hero-content-top: 43%;
 }
 
-/* The overlay is exactly one viewport tall and sticks to the top of the
-   hero, so the copy stays centred on the visible screen while the
-   artwork continues past it. */
+/* Positioned ONCE, at a fixed point within the hero — a plain absolute
+   box, not sticky and not sized to the viewport. It scrolls away with
+   the artwork behind it like any other content, instead of staying
+   pinned to the screen. --hero-content-top is a percentage of the
+   hero's own height (not the viewport), landing in the artwork's clean
+   cream gap, cleared of the stray walkers that used to crowd it. */
 .hero-content {
-  height: 100svh;
-  padding-top: 5rem;
+  width: 100%;
 }
 
 @media (max-width: 767px) {
@@ -574,10 +577,7 @@ body {
   .hero-shell {
     height: 211.11vw;
     min-height: 88svh;
-  }
-  .hero-content {
-    height: 88svh;
-    padding-top: 76px;
+    --hero-content-top: 49%;
   }
 
   .hero-crowd-art.is-mobile {
