@@ -465,13 +465,8 @@ body {
   height: 100%;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  /* Whole artwork, scaled to fit entirely inside the one-viewport hero
-     (never cropped top/bottom). A touch smaller than a strict "contain"
-     fit so the crowd sits back from the headline with real breathing
-     room; any resulting margin is the site's own cream showing through,
-     not a patch. */
-  background-size: auto 92%;
-  background-position: 50% 8%;
+  background-size: 100% auto;
+  background-position: 50% 0;
 }
 
 
@@ -562,40 +557,33 @@ body {
    of its width — so the whole composition is visible with nothing cropped.
    `min-height` keeps it at least a screen tall on very wide windows. */
 .hero-shell {
-  height: 100svh;
+  height: 66.67vw;
   min-height: 100svh;
-  overflow: hidden;
 }
 
-/* The overlay is exactly one viewport tall, in normal (non-sticky) flow,
-   so it scrolls away with the hero instead of staying pinned/recentring
-   as the page moves. Copy is nudged up slightly from dead-centre. */
+/* The overlay is exactly one viewport tall and sticks to the top of the
+   hero, so the copy stays centred on the visible screen while the
+   artwork continues past it. */
 .hero-content {
   height: 100svh;
   padding-top: 5rem;
-  transform: translateY(-2.75vh);
 }
 
 @media (max-width: 767px) {
-  /* Mobile hero also fits inside a single 100svh viewport — the crowd
-     composition is scaled to fit its full height (never cropped), with
-     any leftover margin showing the site's cream, same approach as
-     desktop. */
+  /* the portrait asset is 900x1900, i.e. 211.11% of its width */
   .hero-shell {
-    height: 100svh;
-    min-height: 100svh;
-    overflow: hidden;
+    height: 211.11vw;
+    min-height: 88svh;
   }
   .hero-content {
-    height: 100svh;
+    height: 88svh;
     padding-top: 76px;
   }
 
   .hero-crowd-art.is-mobile {
-    /* one continuous portrait image, shown whole, fit to the viewport
-       height so nothing is cropped top or bottom */
+    /* one continuous portrait image, shown whole */
     background-image: url("/images/crowd-mobile.webp");
-    background-size: auto 100%;
+    background-size: 100% auto;
     background-position: 50% 0;
     -webkit-mask-image: none;
     mask-image: none;
