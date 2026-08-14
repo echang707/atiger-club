@@ -21,7 +21,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100svh] md:min-h-[100svh] w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-14 md:pt-32 md:pb-24 overflow-hidden"
+      className="relative min-h-[100svh] md:min-h-[100svh] w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-20 md:pt-32 md:pb-24 overflow-hidden"
     >
       {/* The stripes are people now. They walk in from the outer edges and
           assemble; the centre stays clear so the copy always sits on cream. */}

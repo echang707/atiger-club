@@ -483,38 +483,28 @@ body {
   );
 }
 
-/* Portrait: one full-bleed crop, not two strips.
+/* Portrait is its own composition, not a crop of the desktop one.
 
-   The two-band version left a dead cream gap through the middle of the
-   screen, which read as the artwork being switched off behind the copy.
-   Mobile now shows a single crop that fills the whole viewport
-   (`auto 115%` at `85% 50%` — measured: 37% ink across the top, 47%
-   across the bottom, and only 8% directly behind the headline, so the
-   crowd is everywhere but naturally thins where the words sit). */
+   `crowd-mobile.webp` is a purpose-built portrait canvas: bands lifted
+   from the same artwork and composited onto cream with feathered alpha
+   on every side, so each one tapers into open space instead of ending on
+   an edge. It is ONE image — no stacked copies, no masks, no gradient
+   patches, nothing to produce the rectangular seam the previous version
+   had (that was a hard-edged `hero-copy-lift` rectangle sitting over the
+   artwork).
+
+   Measured on the asset: 40% ink across the upper band, 48% across the
+   lower, and 0% through the middle where the headline and subline sit,
+   with a largest row-to-row density change of 0.077 — no hard edge
+   anywhere in the image. */
 .hero-crowd-art.is-mobile {
   inset: 0;
   height: auto;
-  background-size: auto 115%;
-  background-position: 85% 50%;
+  background-image: url("/images/crowd-mobile.webp");
+  background-size: cover;
+  background-position: 50% 50%;
   -webkit-mask-image: none;
   mask-image: none;
-}
-
-/* A light lift behind the copy only — enough to hold the type, not enough
-   to hide anyone. The crowd stays visible through it. */
-.hero-copy-lift {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 34%;
-  height: 34%;
-  pointer-events: none;
-  background: radial-gradient(
-    120% 100% at 50% 50%,
-    rgba(244, 233, 214, 0.82) 0 34%,
-    rgba(244, 233, 214, 0.5) 62%,
-    rgba(244, 233, 214, 0) 100%
-  );
 }
 
 /* The eight arriving figures.

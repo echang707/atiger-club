@@ -237,8 +237,7 @@ export default function HumanStripes() {
   return (
     <div aria-hidden="true" className="hero-crowd" ref={wrap}>
       <div className={`hero-crowd-art ${mob ? "is-mobile" : ""}`} />
-      {mob && <div className="hero-copy-lift" />}
-      <div className="hero-crowd-top" />
+      {!mob && <div className="hero-crowd-top" />}
     </div>
   );
 }

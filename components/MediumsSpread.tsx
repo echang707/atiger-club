@@ -30,7 +30,7 @@ const words: {
 
 export default function MediumsSpread() {
   return (
-    <section className="relative max-w-content mx-auto px-6 md:px-10">
+    <section className="relative max-w-content mx-auto px-6 md:px-10 pt-10 md:pt-0">
       <div className="relative flex flex-col items-center pb-8 md:pb-12">
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}

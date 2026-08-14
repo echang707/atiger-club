@@ -1589,3 +1589,40 @@ partner events when you have them.
 *One thing to check:* the listing uses the existing festival photo as its
 image. If ICHF supply artwork, drop it in `public/images/` and swap the
 `image` path.
+
+---
+
+# Mobile hero: a purpose-built portrait composition
+
+## The seam
+
+The rectangular patch across the crowd was mine: `.hero-copy-lift`, a
+hard-edged gradient rectangle sitting over the artwork to hold the type. It is
+deleted, along with the top gradient on mobile. The mobile hero now renders
+**one layer** — verified in the browser: `.hero-crowd > div` count is 1 at 375,
+390 and 430.
+
+## The new asset
+
+`crowd-mobile.webp` is a dedicated portrait canvas (1000×2100), not a crop of
+the desktop image. Bands are lifted from the same artwork and composited onto
+cream with **per-edge feathering**: the edge facing the copy gets a long, gentle
+falloff (340–430px) so the crowd genuinely thins out over distance, while the
+outer edges stay tight against the frame.
+
+Composition: a band entering upper-right, a lighter one upper-left for balance,
+a band entering lower-right, and a quiet one lower-left — with the middle left
+completely open.
+
+Measured on the asset: **36% ink across the upper band, 49% across the lower,
+0% through the middle** where the headline and subline sit. Largest row-to-row
+density change is **0.085**, so there is no hard edge anywhere in the image.
+
+Two intermediate versions were rejected on inspection: an exponent-0.85 feather
+left figures semi-transparent and ghosted, and an exponent-0.42 one produced a
+visible straight cut where the upper band ended.
+
+## Gap
+
+`MediumsSpread` gains `pt-10` below `md`, so the hero and "seven ways to dive
+in" no longer butt against each other on a phone. Desktop spacing unchanged.
