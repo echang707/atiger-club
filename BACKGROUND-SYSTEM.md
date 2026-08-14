@@ -1626,3 +1626,49 @@ visible straight cut where the upper band ended.
 
 `MediumsSpread` gains `pt-10` below `md`, so the hero and "seven ways to dive
 in" no longer butt against each other on a phone. Desktop spacing unchanged.
+
+---
+
+# New artwork, full bleed bottom, real walk cycles, balloon hover
+
+## Background
+
+The new crowd artwork, shipped with minimal handling: cream lifted only in the
+brightest tones, 2× LANCZOS upscale, no sharpening, q95.
+
+**Nothing is cropped.** It renders at `100%` of the hero width anchored to the
+top, and the hero's own height is set from the artwork's 3:2 aspect
+(`calc(66.67vw + 7rem)`), so the full composition including its bottom edge is
+visible, with a band of cream underneath before "seven ways to dive in". A short
+taper over the final 7% lets the picture resolve into the cream instead of
+stopping on a hard line.
+
+## The seven, and the walk
+
+All eight figures are cut from **this** artwork's isolated individuals, so
+scale, perspective, lighting and shadow direction match by construction.
+Rendered heights measured 49–52px against the artwork's own ~52px people.
+
+Walk cycles are now **five frames**, with the leg band sheared progressively per
+frame. Verified in Chromium: all 5 frames used across 296 distinct positions
+during one arrival.
+
+**No rotation and no flipping.** Both were removed — the figures already face
+the direction they travel, and turning them broke the illusion. Routes are
+solved so the destination lies in the direction the figure already faces: every
+one enters from the bottom edge and walks up-screen, which is what a back-view
+figure is doing.
+
+Routes are rejected unless the whole bezier stays clear of the crowd, the
+headline/subline, and the nav band.
+
+## Balloon person
+
+The figure holding the orange balloon in the artwork is cut as its own sprite —
+balloon, string and all — and is the Join hover. The leg shear is confined below
+the hip so the balloon never distorts, and the balloon drifts a little against
+the stride.
+
+Its destination is deliberately the solved route **furthest from the artwork's
+own balloon figure** (71 units away), so the two are never close enough to read
+as one person duplicated — an earlier placement put them side by side.

@@ -450,16 +450,27 @@ body {
 /* Solved against the artwork: at 130% / 52% the copy zone is 0.22% inked
    while the left and right crowd bands hold 35% and 37%. The artwork's
    own cream centre lands under the headline. */
+/* The whole artwork, uncropped.
+
+   Sized to 100% of the hero width and anchored to the top, so the full
+   composition — including its bottom edge — is visible. The hero's own
+   height is set from the artwork's aspect ratio, then a band of cream is
+   left underneath before the next section, so the picture finishes and
+   the page breathes rather than the image being cut off. */
 .hero-crowd-art {
   position: absolute;
   inset: 0;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  /* Solved against this artwork: at 134% / 58% the copy zone is 0.4%
-     inked while the left and right crowds hold ~37% each. */
-  background-size: 134% auto;
-  background-position: 50% 58%;
+  background-size: 100% auto;
+  background-position: 50% 0;
+  /* A short taper on the very last rows only, so the composition resolves
+     into the cream instead of stopping on a hard horizontal edge. The
+     whole picture is still visible — this touches roughly its final 7%. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
 }
+
 
 @media (max-aspect-ratio: 16 / 10) {
   .hero-crowd-art {

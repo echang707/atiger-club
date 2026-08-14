@@ -21,7 +21,11 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100svh] md:min-h-[100svh] w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-20 md:pt-32 md:pb-24 overflow-hidden"
+      // Height comes from the artwork's own 3:2 aspect ratio (66.67vw) so the
+      // full picture fits with nothing cropped, plus a cream band underneath
+      // as breathing room before the next section.
+      className="relative w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 pt-24 pb-20 md:pt-28 md:pb-28 overflow-hidden"
+      style={{ minHeight: "calc(66.67vw + 7rem)" }}
     >
       {/* The stripes are people now. They walk in from the outer edges and
           assemble; the centre stays clear so the copy always sits on cream. */}

@@ -30,9 +30,9 @@ import { useEffect, useRef, useState } from "react";
    --------------------------------------------------------------------- */
 
 /* art width fraction -> vw, at the 134% background */
-const ART_W = 1672;
-const BG = 1.34;
-const FRAMES = 4;
+const ART_W = 1536;
+const BG = 1.0;   // the artwork is rendered at 100% of the hero width
+const FRAMES = 5;
 
 type Spec = {
   sprite: string;
@@ -41,7 +41,6 @@ type Spec = {
   sx: number; sy: number;      // entry point, % of hero (may be any edge)
   cx: number; cy: number;      // bezier control point
   x: number; y: number;        // destination
-  flip: boolean;
   ms: number;
 };
 
@@ -74,20 +73,22 @@ type Spec = {
    rendered size is exact: srcH / 1672 * 1.34 * 100vw.
 */
 const ARRIVALS: Spec[] = [
-  { sprite: "n01", fw: 77, srcH: 47, sx: 8.4, sy: 108.0, cx: 9.8, cy: 93.4, x: 11.400000000000002, y: 75.5, flip: false, ms: 5200 },
-  { sprite: "n03", fw: 84, srcH: 45, sx: 6.6, sy: 108.0, cx: 6.6, cy: 98.1, x: 6.6000000000000005, y: 86.0, flip: false, ms: 5600 },
-  { sprite: "n07", fw: 76, srcH: 45, sx: 41.4, sy: 108.0, cx: 54.9, cy: 89.2, x: 59.400000000000006, y: 83.0, flip: false, ms: 6000 },
-  { sprite: "n02", fw: 82, srcH: 46, sx: 10.8, sy: 108.0, cx: 14.9, cy: 95.4, x: 19.800000000000004, y: 80.0, flip: false, ms: 6400 },
+  { sprite: "p00", fw: 95, srcH: 55, sx: 20.7, sy: 108.0, cx: 19.1, cy: 90.9, x: 17.200000000000003, y: 70.0, ms: 5200 },
+  { sprite: "p01", fw: 109, srcH: 55, sx: 70.9, sy: 108.0, cx: 71.6, cy: 98.3, x: 72.4, y: 86.5, ms: 5550 },
+  { sprite: "p02", fw: 109, srcH: 53, sx: -2.6, sy: 108.0, cx: 1.5, cy: 97.7, x: 6.4, y: 85.0, ms: 5900 },
+  { sprite: "p03", fw: 100, srcH: 54, sx: 79.3, sy: 108.0, cx: 80.0, cy: 95.6, x: 80.80000000000001, y: 80.5, ms: 6250 },
+  { sprite: "p04", fw: 100, srcH: 52, sx: 25.3, sy: 108.0, cx: 26.0, cy: 88.2, x: 26.800000000000004, y: 64.0, ms: 6600 },
+  { sprite: "p05", fw: 87, srcH: 55, sx: 68.0, sy: 108.0, cx: 74.3, cy: 100.3, x: 82.00000000000001, y: 91.0, ms: 6950 },
+  { sprite: "p06", fw: 91, srcH: 53, sx: 15.2, sy: 108.0, cx: 21.5, cy: 92.9, x: 29.200000000000003, y: 74.5, ms: 7300 },
 ];
 
-/* The joiner is held to exactly the same rules as the seven — same sprite
-   family cut from this artwork, same exact-scale formula, same upward
-   walk, same four-frame cycle, same separately-drawn shadow revealed on
-   arrival. It is given the STRONGEST solved route of the set (crowd
-   adjacency 0.26) so that it lands beside a group; on the previous pass
-   it had the weakest (0.03) and stopped alone in open cream, which is why
-   it read as a different kind of thing. */
-const JOINER: Spec = { sprite: "n06", fw: 84, srcH: 45, sx: 7.8, sy: 108.0, cx: 11.4, cy: 82.2, x: 13.8, y: 65.0, flip: false, ms: 3800 };
+/* The balloon person from the artwork is the Join hover — "you", joining.
+   Their destination is deliberately the solved route FURTHEST from the
+   artwork's own balloon figure at (31%, 55%), so the two are never close
+   enough to read as the same person duplicated. */
+const JOINER: Spec = { sprite: "balloon", fw: 76, srcH: 79, sx: 100.0, sy: 108.0, cx: 97.3, cy: 99.0, x: 94.00000000000001, y: 88.0, ms: 4200 };
+
+
 
 
 
@@ -155,15 +156,17 @@ export default function HumanStripes() {
       const phase = e * 34;
       const frame = Math.floor(phase) % FRAMES;
       const bob = t > 0 && t < 1 ? Math.sin(phase * Math.PI) * 0.22 : 0;
-      const sway = t > 0 && t < 1 ? Math.sin(phase * Math.PI) * 1.1 : 0;
+      // bob only — no sway, since sway would read as rotation
+      const sway = 0;
 
-      // lean very slightly into the direction of travel
-      const lean = t > 0 && t < 1 ? (spec.sx < spec.x ? 1.6 : -1.6) : 0;
+      // No rotation and no flipping — the figures already face the way
+      // they are going, and turning them would break the illusion.
+      const lean = 0;
 
       el.style.left = `${x}%`;
       el.style.top = `calc(${y}% + ${bob}px)`;
       el.style.backgroundPosition = `${(frame / (FRAMES - 1)) * 100}% 0%`;
-      el.style.transform = `translate(-50%, -100%) scaleX(${spec.flip ? -1 : 1}) rotate(${sway + lean}deg)`;
+      el.style.transform = "translate(-50%, -100%)";
 
       sh.style.left = `${x}%`;
       sh.style.top = `${y}%`;
