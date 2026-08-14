@@ -1483,3 +1483,109 @@ Everything else is unchanged: sprites cut from this artwork, per-figure exact
 scale (`srcH / 1672 × 1.34 × 100vw`), four-frame walk cycles, shadows drawn
 separately and revealed only on arrival, and the hover joiner using the eighth
 solved route.
+
+---
+
+# Routes: strict constraints, fewer walkers
+
+Two things were still wrong: a route clipped the nav, and figures were moving in
+directions they weren't facing.
+
+**Direction.** These sprites are back views. In this artwork a figure whose back
+you can see is walking *away* from the camera, which on screen means moving **up**
+the frame. Every route therefore enters from the **bottom edge** and heads
+upward, and the solver rejects any path that ever moves back down.
+
+**Obstacles.** A route is only accepted if, over 60 samples along the whole
+bezier, it:
+
+- never touches a crowd pixel (worst ink < 0.014),
+- never enters the headline / subline box, and
+- never enters the top band holding the logo, nav and CTA.
+
+Only **five** spots in the entire composition satisfy all of that — so there are
+now four arrivals and one hover joiner rather than seven and one. You said you
+didn't mind a few, and this is the honest number: every remaining walker has a
+genuinely clean route.
+
+Verified in Chromium by tracking each walker's `y` across 14s: **zero downward
+steps** for all four, across 198–249 distinct positions each.
+
+Solver output: worst ink on path 0.0000–0.0099, destination crowd density
+0.027–0.264, travel distance 22–43% of the frame height.
+
+---
+
+# The hover joiner now follows the same rules
+
+It always shared the arrivals' machinery — same sprite family cut from this
+artwork, same exact-scale formula, same four-frame cycle, same upward walk, same
+separately-drawn shadow revealed on arrival.
+
+What made it look different was its **destination**. Routes are ranked by how
+much crowd sits near the end point, and the joiner had been handed the weakest
+of the five (adjacency 0.027): it walked out and stopped alone in open cream,
+so it read as a lone figure rather than someone joining.
+
+It now gets the **strongest** solved route in the set (adjacency 0.264), landing
+right beside a group, and the four arrivals take the next four. Nothing else
+changed.
+
+Verified: all five figures render at 52–54px — the same size as the artwork's
+own people — the joiner records **zero downward steps** across 194 positions on
+its walk in, and its shadow appears only once it stops.
+
+---
+
+# Mobile hero: full bleed, no dead middle
+
+Two fixes, both mobile-only — desktop is untouched.
+
+## The crowd now fills the viewport
+
+The old portrait treatment was two 34%-tall strips with a blank cream gap
+between them, which read as the artwork being switched off behind the copy.
+It is now **one full-bleed crop** covering the whole hero, and the hero itself
+is `100svh` rather than `82svh`, so the artwork reaches every edge.
+
+The crop was measured rather than picked: at `auto 115%` / `85% 50%` the frame
+carries **37% ink across the top and 47% across the bottom, but only 8%
+directly behind the headline** — the crowd is everywhere, and it naturally
+thins exactly where the words sit.
+
+## The middle is lifted, not cleared
+
+Instead of a cream block, there is a soft radial lift behind the copy only:
+82% cream at its centre, falling to nothing by its edge. The type stays fully
+legible and the people remain visible through it, rather than being covered.
+
+Verified at 375, 390 and 430: hero height equals viewport height exactly
+(812/844/932), and `scrollWidth` equals the viewport at all three.
+
+---
+
+# Event added: 81st Indonesia Independence Day Celebration
+
+Listed as a **Tiger Pick** — the "found by us" category from the About page —
+because Tiger Club is promoting it, not hosting or collaborating on it.
+
+To make that distinction real rather than implied, `TigerEvent` gained two
+optional fields:
+
+    origin?: "with" | "found"     // undefined = produced by Tiger Club
+    presentedBy?: string
+
+`EventRow` surfaces them: a small orange **TIGER PICK** mark under the location
+in the collapsed row, and in the expanded panel a line reading *"Tiger Pick ·
+presented by Indonesian Community Heritage Foundation — not hosted or organised
+by Tiger Club."* Nobody can mistake it for one of ours.
+
+Filed under **Explore**, Atlanta, Aug 30. Free, 4–8pm, Korean Community Culture
+Center, Norcross. Sits in the upcoming list, not the past archive.
+
+The two fields are there for future use too — `"with"` is ready for Tiger Club ×
+partner events when you have them.
+
+*One thing to check:* the listing uses the existing festival photo as its
+image. If ICHF supply artwork, drop it in `public/images/` and swap the
+`image` path.

@@ -483,33 +483,38 @@ body {
   );
 }
 
-/* Portrait needs two crops: the artwork is landscape, so one crop on a
-   tall screen shows either the empty centre or a single corner. The top
-   band takes the upper-left crowd, the bottom band takes the lower-right
-   mirrored — different regions, opposite handedness. */
+/* Portrait: one full-bleed crop, not two strips.
+
+   The two-band version left a dead cream gap through the middle of the
+   screen, which read as the artwork being switched off behind the copy.
+   Mobile now shows a single crop that fills the whole viewport
+   (`auto 115%` at `85% 50%` — measured: 37% ink across the top, 47%
+   across the bottom, and only 8% directly behind the headline, so the
+   crowd is everywhere but naturally thins where the words sit). */
 .hero-crowd-art.is-mobile {
-  inset: auto 0 auto 0;
-  top: 0;
-  height: 34%;
-  background-size: 300% auto;
-  background-position: 12% 6%;
-  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  inset: 0;
+  height: auto;
+  background-size: auto 115%;
+  background-position: 85% 50%;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
-.hero-crowd-art-b {
+/* A light lift behind the copy only — enough to hold the type, not enough
+   to hide anyone. The crowd stays visible through it. */
+.hero-copy-lift {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 34%;
   height: 34%;
-  background-image: url("/images/crowd-stripes.webp");
-  background-repeat: no-repeat;
-  background-size: 300% auto;
-  background-position: 88% 96%;
-  transform: scaleX(-1);
-  -webkit-mask-image: linear-gradient(to top, #000 60%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 60%, transparent 100%);
+  pointer-events: none;
+  background: radial-gradient(
+    120% 100% at 50% 50%,
+    rgba(244, 233, 214, 0.82) 0 34%,
+    rgba(244, 233, 214, 0.5) 62%,
+    rgba(244, 233, 214, 0) 100%
+  );
 }
 
 /* The eight arriving figures.

@@ -57,10 +57,31 @@ export type TigerEvent = {
   image: string;
   link?: string;
   linkLabel?: string;
+  /* Who actually made it — the same distinction the About page draws.
+     Undefined means Tiger Club produced it. "found" is a Tiger Pick: a
+     good thing already happening that we're pointing people toward but
+     did not host, co-host or organise. */
+  origin?: "with" | "found";
+  presentedBy?: string;
 };
 
 // Pulled from atigercub.com/events — swap in real photography when available.
 export const events: TigerEvent[] = [
+  {
+    id: "indonesia-independence-81",
+    title: "81st Indonesia Independence Day Celebration",
+    medium: "Explore",
+    city: "Atlanta",
+    date: "Aug 30",
+    month: "AUG",
+    day: "30",
+    location: "Korean Community Culture Center, Norcross, GA",
+    description:
+      "The Indonesian Community Heritage Foundation invites APAC communities, families and friends to an afternoon and evening of authentic Indonesian food, traditional and pop dance, music and karaoke, a fashion show, games and prizes, a flag ceremony and consular services. Free to attend, 4–8pm. Bring people.",
+    image: "/images/explore-festival.jpg",
+    origin: "found",
+    presentedBy: "Indonesian Community Heritage Foundation",
+  },
   {
     id: "world-cup-watch-party",
     title: "World Cup Semifinal Watch Party",

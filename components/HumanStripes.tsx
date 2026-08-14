@@ -53,28 +53,43 @@ type Spec = {
    already walking in its cream space — so renderer, lighting, palette and
    proportions match by construction.
 
-   ROUTES ARE SOLVED, NOT PLACED. For each candidate spot the artwork is
-   sampled along the whole bezier: a route is only accepted if every point
-   on it is open ground (worst ink < 0.012) AND never enters the copy
-   keep-out box. That is why some walkers now enter from the top or the
-   bottom — the crowd bands run right to the left and right edges, so a
-   side entry would have to walk through people to reach its place. These
-   eight come in along the cream corridors instead.
+   ROUTES ARE SOLVED, AND THE CONSTRAINTS ARE STRICT.
+
+   These sprites are back views: in this artwork a figure whose back you
+   can see is walking AWAY from the camera, which on screen means moving
+   UP the frame. So every route enters from the BOTTOM edge and heads
+   upward, and each path is rejected outright unless it
+
+     • never moves back down the frame (they face where they are going),
+     • never touches a single crowd pixel (worst ink < 0.014 over 60
+       samples along the whole bezier),
+     • never enters the headline / subline box, and
+     • never enters the top band that holds the logo, nav and CTA.
+
+   Only five spots in the whole composition satisfy all of that, so there
+   are four arrivals and one hover joiner rather than seven and one.
+   Fewer, but every one of them is honest.
 
    `srcH` is each figure's real pixel height in the 1672px source, so its
    rendered size is exact: srcH / 1672 * 1.34 * 100vw.
 */
 const ARRIVALS: Spec[] = [
-  { sprite: "n01", fw: 77, srcH: 47, sx: 84.0, sy: -8.0, cx: 56.0, cy: 4.7, x: 33.0, y: 15.0, flip: true, ms: 5600 },
-  { sprite: "n03", fw: 84, srcH: 45, sx: 108.0, sy: 30.0, cx: 102.8, cy: 32.0, x: 95.0, y: 35.0, flip: true, ms: 6100 },
-  { sprite: "n07", fw: 76, srcH: 45, sx: 6.0, sy: 108.0, cx: 10.4, cy: 87.8, x: 17.0, y: 57.5, flip: false, ms: 6600 },
-  { sprite: "n09", fw: 78, srcH: 44, sx: 12.0, sy: 108.0, cx: 11.6, cy: 94.8, x: 11.0, y: 75.0, flip: false, ms: 5600 },
-  { sprite: "n02", fw: 82, srcH: 46, sx: 72.0, sy: -8.0, cx: 72.4, cy: -0.8, x: 73.0, y: 10.0, flip: true, ms: 6100 },
-  { sprite: "n00", fw: 84, srcH: 49, sx: 108.0, sy: 15.0, cx: 100.4, cy: 31.0, x: 89.0, y: 55.0, flip: true, ms: 6600 },
-  { sprite: "n05", fw: 97, srcH: 46, sx: 12.0, sy: 108.0, cx: 9.2, cy: 100.8, x: 5.0, y: 90.0, flip: false, ms: 5600 },
+  { sprite: "n01", fw: 77, srcH: 47, sx: 8.4, sy: 108.0, cx: 9.8, cy: 93.4, x: 11.400000000000002, y: 75.5, flip: false, ms: 5200 },
+  { sprite: "n03", fw: 84, srcH: 45, sx: 6.6, sy: 108.0, cx: 6.6, cy: 98.1, x: 6.6000000000000005, y: 86.0, flip: false, ms: 5600 },
+  { sprite: "n07", fw: 76, srcH: 45, sx: 41.4, sy: 108.0, cx: 54.9, cy: 89.2, x: 59.400000000000006, y: 83.0, flip: false, ms: 6000 },
+  { sprite: "n02", fw: 82, srcH: 46, sx: 10.8, sy: 108.0, cx: 14.9, cy: 95.4, x: 19.800000000000004, y: 80.0, flip: false, ms: 6400 },
 ];
 
-const JOINER: Spec = { sprite: "n06", fw: 84, srcH: 45, sx: 75.0, sy: -8.0, cx: 72.8, cy: 10.2, x: 71.0, y: 25.0, flip: true, ms: 6100 };
+/* The joiner is held to exactly the same rules as the seven — same sprite
+   family cut from this artwork, same exact-scale formula, same upward
+   walk, same four-frame cycle, same separately-drawn shadow revealed on
+   arrival. It is given the STRONGEST solved route of the set (crowd
+   adjacency 0.26) so that it lands beside a group; on the previous pass
+   it had the weakest (0.03) and stopped alone in open cream, which is why
+   it read as a different kind of thing. */
+const JOINER: Spec = { sprite: "n06", fw: 84, srcH: 45, sx: 7.8, sy: 108.0, cx: 11.4, cy: 82.2, x: 13.8, y: 65.0, flip: false, ms: 3800 };
+
+
 
 
 
@@ -222,7 +237,7 @@ export default function HumanStripes() {
   return (
     <div aria-hidden="true" className="hero-crowd" ref={wrap}>
       <div className={`hero-crowd-art ${mob ? "is-mobile" : ""}`} />
-      {mob && <div className="hero-crowd-art-b" />}
+      {mob && <div className="hero-copy-lift" />}
       <div className="hero-crowd-top" />
     </div>
   );
