@@ -1777,3 +1777,47 @@ Two things had to be got right, and neither worked first time:
   right-hand crowd. Each band now retreats toward its outer edge across the copy
   rows, so the edges stay framed while the middle band of the image is clear.
   Ink in the text rows: **4.8%**, against 21% top and 20% bottom.
+
+---
+
+# Full uncropped artwork + viewport-centred copy
+
+## Artwork is never cropped
+
+The hero's height IS the artwork's height at full width — 66.67vw on desktop
+(3072×2048), 211.11vw on mobile (900×1900) — with
+`background-size: 100% auto` anchored to the top. Nothing is cut on any side,
+and the hero is free to be taller than the viewport.
+
+*Two crop rules were still active and had to go:* a `max-aspect-ratio: 16/10`
+override that switched the hero to `auto 122%`, and an older `cover` on the
+background layer. Both were trimming the sides on common window shapes.
+
+## Copy is centred on the viewport, not the image
+
+The content layer is `position: sticky; top: 0; height: 100svh` (88svh mobile)
+with flex centring. It sticks to the top of the hero for exactly one screen, so
+"life is better together." sits in the middle of whatever you can currently see
+while the artwork continues above and below. It reads no dimension from the
+image.
+
+Measured at 1440×900: tagline centre 446px against a viewport midpoint of 450.
+
+## Transition
+
+| | desktop | mobile |
+|---|---|---|
+| hero height | 960px (full art) | 823px (full art) |
+| cream before "seven ways" | 81px | 76px |
+| heading → EAT | 174px | 109px |
+
+Both gaps sit inside the ranges you asked for, and the heading only begins after
+the artwork has finished — nothing overlaps the bottom of the crowd.
+
+## Mobile density
+
+The portrait asset is rebuilt from the artwork's **densest** vertical slices
+(42% and 37% ink, found by scanning every slice) rather than arbitrary edges, so
+the bands read as orange-and-black stripes instead of scattered figures. Ink is
+26% at the top and 22% at the bottom, with the bands retreating to **6%** across
+the copy rows so no one crosses the type.

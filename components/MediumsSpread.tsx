@@ -30,8 +30,8 @@ const words: {
 
 export default function MediumsSpread() {
   return (
-    <section className="relative max-w-content mx-auto px-5 md:px-10 pt-[72px] md:pt-0">
-      <div className="relative flex flex-col items-center pb-8 md:pb-12">
+    <section className="relative max-w-content mx-auto px-5 md:px-10 pt-[76px] md:pt-[112px]">
+      <div className="relative flex flex-col items-center pb-14 md:pb-20">
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}
           whileInView={{ opacity: 1, y: 0, rotate: 0 }}
