@@ -30,7 +30,7 @@ const words: {
 
 export default function MediumsSpread() {
   return (
-    <section className="relative max-w-content mx-auto px-6 md:px-10 pt-10 md:pt-0">
+    <section className="relative max-w-content mx-auto px-5 md:px-10 pt-[72px] md:pt-0">
       <div className="relative flex flex-col items-center pb-8 md:pb-12">
         <motion.p
           initial={{ opacity: 0, y: -26, rotate: -3 }}
@@ -57,7 +57,7 @@ export default function MediumsSpread() {
           whileInView={{ opacity: 1, y: 0, rotate: w.rotate }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className={`relative flex items-center gap-4 md:gap-6 py-7 md:py-12 ${
+          className={`relative flex items-center gap-4 md:gap-6 py-5 md:py-12 ${
             w.align === "start" ? "justify-start" : w.align === "end" ? "justify-end" : "justify-center"
           } ${w.offset} ${i % 2 === 1 ? "md:mt-2" : "md:-mt-2"}`}
           style={{ transformOrigin: w.align === "end" ? "right center" : "left center" }}

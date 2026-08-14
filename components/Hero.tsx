@@ -20,28 +20,36 @@ export default function Hero() {
 
   return (
     <section
-      ref={sectionRef}
-      // Height comes from the artwork's own 3:2 aspect ratio (66.67vw) so the
-      // full picture fits with nothing cropped, plus a cream band underneath
-      // as breathing room before the next section.
-      // The hero box is EXACTLY the artwork's 3:2 aspect and its padding is
-      // symmetrical, so the copy centres on the artwork's own centre. The
-      // previous version added 7rem of height but only at the bottom, which
-      // pushed the headline 3.5rem below centre.
-      className="relative w-full flex flex-col items-center justify-center px-5 sm:px-6 md:px-10 py-24 md:py-28 mb-14 md:mb-20 overflow-hidden"
-      style={{ minHeight: "66.67vw" }}
+      // ARCHITECTURE: two independent layers.
+      //
+      // The section is sized by the VIEWPORT (100svh), never by the
+      // artwork. The background sits behind it, absolutely positioned and
+      // free to crop however it likes at any aspect ratio. The content
+      // layer centres itself in the viewport, so the headline stays
+      // visually centred no matter how the picture crops.
+      //
+      // The previous version derived the hero's height from the artwork's
+      // aspect ratio, which meant every change of window shape moved the
+      // copy. Nothing here reads a dimension off the image.
+      className="relative w-full overflow-hidden hero-shell"
     >
       {/* The stripes are people now. They walk in from the outer edges and
           assemble; the centre stays clear so the copy always sits on cream. */}
       <HumanStripes />
 
 
+      <div
+        // Sized by the viewport, never by the artwork. Height and the nav
+        // offset are mobile-specific (see .hero-content in globals.css).
+        className="hero-content relative z-10 flex w-full flex-col items-center justify-center px-5 sm:px-6 md:px-10"
+      >
       <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10">
         <WordsFindEachOther closeness={closeness} />
 
-        <div className="mt-6 md:mt-8 w-full max-w-2xl">
+        <div className="mt-9 md:mt-8 w-full max-w-2xl">
           <RotatingLine startDelayMs={2300} />
         </div>
+      </div>
       </div>
     </section>
   );

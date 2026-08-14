@@ -1703,3 +1703,77 @@ It now walks to **80.8%/80.5%**: on the right-hand side, well inside the
 viewport, against the open cream where it is unmissable. That spot is still 55
 units from the artwork's own balloon figure, so the two never read as a
 duplicate. The arrival that previously held it took the corner instead.
+
+---
+
+# Hero layout architecture: viewport-driven, not image-driven
+
+You diagnosed it correctly. The hero's height was `calc(66.67vw + …)` — derived
+from the artwork's aspect ratio — so the copy's position was a function of the
+picture, and every change of window shape moved it.
+
+The two layers are now fully independent:
+
+**Background** — `position: absolute; inset: 0; width/height: 100%;
+background-size: cover; background-position: center`. Free to crop differently
+at any aspect ratio. It contributes nothing to layout.
+
+**Content** — `position: relative; z-index: 10; min-height: 100svh`, flex-centred
+on both axes, sized purely by the viewport. It reads no dimension, percentage or
+transform from the image. Nav height is added as top padding so the block
+centres on the usable area *below* the nav rather than the whole screen.
+
+Measured across four viewports — 1440×900, 1920×1080, 1280×720 and 390×844 —
+the copy's offset from the usable centre is **identical at every one** (−57px,
+which is simply the subline sitting below the tagline inside the centred block).
+Hero height equals viewport height exactly in all four. The artwork crops
+differently in each and the typography does not move.
+
+# The original balloon person is erased
+
+Since the hover brings a balloon person in, the one already in the artwork was a
+duplicate. It is painted out of the source image — figure and cast shadow — by
+sampling the surrounding cream for its local tone and grain and refilling the
+region with feathered edges. Ink in that region drops from 9.3% to **0.26%**,
+with no visible patch.
+
+The hover sprite was cut before the erase, so the character itself is unchanged.
+
+---
+
+# Mobile re-art-directed (desktop untouched)
+
+Everything below lives under `max-width: 767px`. Desktop measured before and
+after: hero 900px, nav 81px, tagline 73px — unchanged.
+
+| | 375 | 390 | 430 |
+|---|---|---|---|
+| nav height | 77px | 77px | 77px |
+| hero height | 715 (88svh) | 743 | 820 |
+| gap to "seven ways" | 72px | 72px | 72px |
+| headline | 38px, 1 line | 38px | 39px |
+| subline | 19px, 79% wide | 19px, 79% | 19px, 80% |
+| horizontal scroll | none | none | none |
+
+## Nav
+Logo down to 10.5px, the Join button roughly halved (11px text, tighter padding,
+1px border), hamburger 32px. Bar is a fixed 76px.
+
+## Hero
+88svh, so the next section follows naturally instead of after a screenful of
+dead space. Content layer still sized purely by the viewport.
+
+## Background
+`crowd-mobile.webp` is a portrait asset built for this breakpoint: **one
+continuous image**, no stacking, no patches. A 3:2 landscape cannot frame both
+edges of a portrait screen at any crop, which is why mobile has its own art.
+
+Two things had to be got right, and neither worked first time:
+
+- **Aspect.** My first attempt squashed a narrow slice into a tall box and
+  smeared every figure vertically. Each band is now cropped at the aspect it
+  will be drawn at, so the resize is uniform.
+- **The text rows.** With bands at both edges the headline still ran into the
+  right-hand crowd. Each band now retreats toward its outer edge across the copy
+  rows, so the edges stay framed while the middle band of the image is clear.
+  Ink in the text rows: **4.8%**, against 21% top and 20% bottom.

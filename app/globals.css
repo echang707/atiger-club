@@ -457,19 +457,20 @@ body {
    height is set from the artwork's aspect ratio, then a band of cream is
    left underneath before the next section, so the picture finishes and
    the page breathes rather than the image being cut off. */
+/* Background layer. Absolutely positioned, sized to the hero box and
+   cropped with `cover` — it is free to crop differently at every aspect
+   ratio, and it never influences where the copy sits. */
 .hero-crowd-art {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
-  background-size: 100% auto;
-  background-position: 50% 0;
-  /* A short taper on the very last rows only, so the composition resolves
-     into the cream instead of stopping on a hard horizontal edge. The
-     whole picture is still visible — this touches roughly its final 7%. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
+  background-size: cover;
+  background-position: center;
 }
+
 
 
 @media (max-aspect-ratio: 16 / 10) {
@@ -552,4 +553,43 @@ body {
   );
   opacity: 0;
   transition: opacity 0.7s ease-out;
+}
+
+/* ---------------------------------------------------------------------
+   MOBILE HERO — its own art direction.
+   Every value below is authored for small screens rather than inherited
+   from a desktop percentage.
+   --------------------------------------------------------------------- */
+.hero-shell { min-height: 100svh; }
+.hero-content { min-height: 100svh; padding-top: 5rem; }
+
+@media (max-width: 767px) {
+  /* the hero owns ~88svh, so the next section starts naturally instead of
+     after a screenful of dead space */
+  .hero-shell { min-height: 88svh; }
+  .hero-content { min-height: 88svh; padding-top: 76px; }
+
+  /* One continuous image layer, cropped so the crowd frames the left and
+     right edges and the centre column stays clean. Sized off the height
+     so the stripes stay at the sides at any phone width. */
+  .hero-crowd-art.is-mobile {
+    /* A portrait asset built for this breakpoint: one continuous image
+       with the crowd framing the left and right edges and a clean centre
+       column. A 3:2 landscape source cannot frame both edges of a
+       portrait screen at any crop, which is why mobile has its own art
+       rather than a re-crop of the desktop file. */
+    background-image: url("/images/crowd-mobile.webp");
+    background-size: cover;
+    background-position: 50% 50%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* headline: ~38–54px, one or two lines */
+  .hero-tagline { font-size: clamp(38px, 9vw, 54px) !important; }
+
+  /* subline: much smaller, and narrow enough to wrap cleanly */
+  /* width is of the padded parent, so 88% here lands at ~78% of the
+     viewport — the range that wraps cleanly on a phone */
+  .hero-subline { font-size: 19px !important; line-height: 1.45; width: 88%; max-width: 88%; }
 }
