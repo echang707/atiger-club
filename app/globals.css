@@ -466,7 +466,11 @@ body {
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
   background-size: 100% auto;
-  background-position: 50% 100%;
+  /* The artwork carries ~4.6% of empty cream along its own bottom edge.
+     Anchoring to 100% left that band visible as a gap, so the image is
+     pushed a further 4.6% of its height down and the crowd now runs to
+     the fold. */
+  background-position: 50% calc(100% + 4.6vw);
 }
 
 
@@ -562,7 +566,8 @@ body {
      the top — where the nav gradient already sits. Nothing hangs below
      the fold to scroll past. */
   height: 100svh;
-  --hero-content-top: 43%;
+  /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
+  --hero-content-top: 50.8%;
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -580,7 +585,8 @@ body {
   .hero-shell {
     height: 211.11vw;
     min-height: 88svh;
-    --hero-content-top: 49%;
+    /* measured: 12px high on a 844px screen */
+    --hero-content-top: 51.4%;
   }
 
   .hero-crowd-art.is-mobile {

@@ -1838,3 +1838,31 @@ Measured: hero height equals viewport height exactly at 1440×900 and 1920×1080
 (**overflow 0**), and mobile is 823px inside an 844px screen, so it does not
 overflow either. Cream spacing before "seven ways to dive in" is unchanged at
 81px desktop / 76px mobile.
+
+---
+
+# Bottom gap and centring (v80)
+
+## The extra space
+
+The artwork carries about **4.6% of empty cream along its own bottom edge**, so
+anchoring it to `100%` still left that band showing as a gap. The background is
+now pushed a further `4.6vw` down (`background-position: 50% calc(100% + 4.6vw)`),
+which puts the artwork's blank strip below the fold and runs the crowd right to
+the bottom of the hero.
+
+## Centring
+
+`--hero-content-top` was 43% desktop / 49% mobile, which sat the copy visibly
+high. Set to 50% first and measured: the block still landed **7px high on
+desktop and 12px on mobile**, because the value positions the block's top edge
+rather than its centre.
+
+Corrected to **50.8%** desktop and **51.4%** mobile. Measured block centre
+against viewport centre:
+
+| | block centre | viewport centre | offset |
+|---|---|---|---|
+| 1440×900 | 450 | 450 | **0** |
+| 1920×1080 | 542 | 540 | **+2** |
+| 390×844 | 421 | 422 | **−1** |
