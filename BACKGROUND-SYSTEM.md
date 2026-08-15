@@ -1866,3 +1866,31 @@ against viewport centre:
 | 1440×900 | 450 | 450 | **0** |
 | 1920×1080 | 542 | 540 | **+2** |
 | 390×844 | 421 | 422 | **−1** |
+
+---
+
+# No clipped figures at the fold (v81)
+
+The 4.6vw downward shift was too far and was cutting legs off the bottom row of
+people.
+
+Measured against the artwork's **body** pixels (cast shadows excluded, so this
+finds real feet rather than shadow tips): the lowest body pixel is at row
+**1930 of 2048**, leaving 118px of empty cream beneath it. At the rendered scale
+that is **3.84vw** — the hard maximum before feet start being clipped.
+
+The shift is now **3.6vw**, which closes the gap and keeps a margin under the
+lowest feet.
+
+Verified with the walkers hidden, so the artwork alone is measured:
+
+| viewport | lowest body row | clearance below feet | pixels touching bottom |
+|---|---|---|---|
+| 1440×900 | 1793 / 1800 | 6px | **0** |
+| 1920×1080 | 2151 / 2160 | 8px | **0** |
+| 1280×720 | 1434 / 1440 | 5px | **0** |
+| 1600×1000 | 1993 / 2000 | 6px | **0** |
+
+Because both the shift and the artwork's empty band scale with viewport width,
+the 3.6 < 3.84 relationship holds at every window shape — no aspect ratio can
+reintroduce clipping.

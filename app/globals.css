@@ -466,11 +466,13 @@ body {
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
   background-size: 100% auto;
-  /* The artwork carries ~4.6% of empty cream along its own bottom edge.
-     Anchoring to 100% left that band visible as a gap, so the image is
-     pushed a further 4.6% of its height down and the crowd now runs to
-     the fold. */
-  background-position: 50% calc(100% + 4.6vw);
+  /* Measured against the artwork: the lowest BODY pixel (feet, not shadow)
+     is at row 1930 of 2048, leaving 118px of empty cream below it. At the
+     rendered scale that is 3.84vw, so 3.84 is the MAXIMUM downward shift
+     before feet start being clipped. 3.6vw is used, which closes the gap
+     and still leaves a small margin under the lowest feet — 4.6vw was
+     cutting legs off. */
+  background-position: 50% calc(100% + 3.6vw);
 }
 
 
