@@ -466,7 +466,7 @@ body {
   background-image: url("/images/crowd-stripes.webp");
   background-repeat: no-repeat;
   background-size: 100% auto;
-  background-position: 50% 0;
+  background-position: 50% 100%;
 }
 
 
@@ -557,8 +557,11 @@ body {
    of its width — so the whole composition is visible with nothing cropped.
    `min-height` keeps it at least a screen tall on very wide windows. */
 .hero-shell {
-  height: 66.67vw;
-  min-height: 100svh;
+  /* Exactly one screen. The artwork is taller than this at most window
+     shapes, so it is anchored to the BOTTOM and the overflow is taken off
+     the top — where the nav gradient already sits. Nothing hangs below
+     the fold to scroll past. */
+  height: 100svh;
   --hero-content-top: 43%;
 }
 

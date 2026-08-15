@@ -1821,3 +1821,20 @@ The portrait asset is rebuilt from the artwork's **densest** vertical slices
 the bands read as orange-and-black stripes instead of scattered figures. Ink is
 26% at the top and 22% at the bottom, with the bands retreating to **6%** across
 the copy rows so no one crosses the type.
+
+---
+
+# Hero shifted up to end at the fold (v79)
+
+The hero was `66.67vw` — the artwork's full height — which came to 960px on a
+1440×900 screen, so 60px hung below the fold and you had to scroll to finish it.
+
+It is now `height: 100svh` with the artwork **anchored to the bottom**
+(`background-position: 50% 100%`). The overflow is taken off the top, where the
+nav gradient already sits, so nothing visible is lost and nothing hangs past the
+first screen.
+
+Measured: hero height equals viewport height exactly at 1440×900 and 1920×1080
+(**overflow 0**), and mobile is 823px inside an 844px screen, so it does not
+overflow either. Cream spacing before "seven ways to dive in" is unchanged at
+81px desktop / 76px mobile.
