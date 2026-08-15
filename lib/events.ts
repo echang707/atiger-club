@@ -57,11 +57,16 @@ export type TigerEvent = {
   image: string;
   link?: string;
   linkLabel?: string;
-  /* Who actually made it — the same distinction the About page draws.
-     Undefined means Tiger Club produced it. "found" is a Tiger Pick: a
-     good thing already happening that we're pointing people toward but
-     did not host, co-host or organise. */
-  origin?: "with" | "found";
+/* Every event is one of three kinds:
+
+       original — Tiger Club creates and hosts it from scratch
+       pick     — an existing Atlanta experience we curate and bring
+                  people to; we don't host it
+       collab   — co-created with another organisation, venue or community
+
+     Defaults to "original" when omitted, since most events are ours. */
+  kind?: "original" | "pick" | "collab";
+  /* Who runs it (picks) or who we made it with (collabs). */
   presentedBy?: string;
 };
 
@@ -79,7 +84,7 @@ export const events: TigerEvent[] = [
     description:
       "The Indonesian Community Heritage Foundation invites APAC communities, families and friends to an afternoon and evening of authentic Indonesian food, traditional and pop dance, music and karaoke, a fashion show, games and prizes, a flag ceremony and consular services. Free to attend, 4–8pm. Bring people.",
     image: "/images/explore-festival.jpg",
-    origin: "found",
+    kind: "pick",
     presentedBy: "Indonesian Community Heritage Foundation",
   },
   {

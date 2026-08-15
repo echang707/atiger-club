@@ -5,7 +5,30 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { TigerEvent } from "@/lib/events";
 
+/* The three kinds of Tiger Club event, and how each is labelled. */
+const KIND = {
+  original: {
+    label: "Tiger Original",
+    tone: "text-tiger-text",
+    by: "with",
+    blurb: "Created and hosted by Tiger Club.",
+  },
+  pick: {
+    label: "Tiger Pick",
+    tone: "text-tiger-text",
+    by: "presented by",
+    blurb: "Not hosted or organised by Tiger Club — we just think it\u2019s worth showing up for.",
+  },
+  collab: {
+    label: "Tiger Collab",
+    tone: "text-tiger-text",
+    by: "with",
+    blurb: "Co-created by Tiger Club and a partner.",
+  },
+} as const;
+
 export default function EventRow({ event, index }: { event: TigerEvent; index: number }) {
+  const kind = event.kind ?? "original";
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,13 +54,11 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
           <span className="text-xs md:text-sm text-ink/65">
             {event.location} · {event.medium}
           </span>
-          {/* Tiger Picks are things we're pointing people toward, not
-              things we made — the label keeps that honest at a glance. */}
-          {event.origin === "found" && (
-            <span className="mt-1 block font-mono text-[10px] tracking-wideish uppercase text-tiger-text">
-              Tiger Pick
-            </span>
-          )}
+          {/* Every event carries its kind, so it is always clear whether
+              Tiger Club made it, curated it, or built it with someone. */}
+          <span className={`mt-1 block font-mono text-[10px] tracking-wideish uppercase ${KIND[kind].tone}`}>
+            {KIND[kind].label}
+          </span>
           {/* Full description stays in the DOM (visually hidden, not
               display:none) so it's readable by search engines and screen
               readers without needing the accordion to be opened. */}
@@ -69,14 +90,13 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
                 <Image src={event.image} alt={event.title} fill sizes="(max-width: 768px) 90vw, 256px" className="object-cover" />
               </div>
               <div className="flex-1">
-                {event.origin === "found" && (
-                  <p className="mb-3 font-mono text-[10px] tracking-wideish uppercase text-ink/55">
-                    Tiger Pick · presented by {event.presentedBy}
-                    <span className="block mt-1 normal-case tracking-normal text-[11px] text-ink/50">
-                      Not hosted or organised by Tiger Club — we just think it&rsquo;s worth showing up for.
-                    </span>
-                  </p>
-                )}
+                <p className="mb-3 font-mono text-[10px] tracking-wideish uppercase text-ink/55">
+                  <span className={KIND[kind].tone}>{KIND[kind].label}</span>
+                  {event.presentedBy && ` · ${KIND[kind].by} ${event.presentedBy}`}
+                  <span className="block mt-1 normal-case tracking-normal text-[11px] text-ink/50">
+                    {KIND[kind].blurb}
+                  </span>
+                </p>
                 <p className="text-ink/70 leading-relaxed max-w-md">{event.description}</p>
                 {event.link ? (
                   <a

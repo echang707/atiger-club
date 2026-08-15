@@ -371,7 +371,9 @@ export default function Ending() {
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute right-0 z-0
-                   top-[54%] w-[108%] -rotate-[38deg] origin-right max-w-none
+                   // pushed further down and narrowed so the tail clears the
+                   // CTA line instead of crowding it
+                   top-[64%] w-[102%] -rotate-[36deg] origin-right max-w-none
                    sm:top-auto sm:bottom-[5%] sm:w-[96%] sm:rotate-0
                    md:bottom-[8%] md:w-[66%]
                    lg:bottom-[8%] lg:w-[59%]"

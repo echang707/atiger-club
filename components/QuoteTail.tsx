@@ -118,6 +118,20 @@ export default function QuoteTail() {
           strokeDashoffset={-58}
           vectorEffect="non-scaling-stroke"
         />
+        {/* A real tiger tail ends in a solid black tip. The dash pattern
+            here is one long "on" run right at the far end, so the last
+            stretch beside "relationships." is solid black and the stripes
+            read as leading up to it. Same path and same morph, so it
+            stays part of the one continuous stroke. */}
+        <motion.path
+          {...morph}
+          stroke="#15130E"
+          strokeWidth={4.2}
+          strokeLinecap="round"
+          strokeDasharray="52 400"
+          strokeDashoffset={-500}
+          vectorEffect="non-scaling-stroke"
+        />
       </g>
     </svg>
   );

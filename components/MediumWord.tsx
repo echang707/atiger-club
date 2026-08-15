@@ -55,8 +55,7 @@ export default function MediumWord({
   const timers = useRef<NodeJS.Timeout[]>([]);
 
   // SERVE state — dot rests beside the S (index 0) until hovered
-  const [passIndex, setPassIndex] = useState(0);
-  const [following, setFollowing] = useState(false);
+  const [serveRun, setServeRun] = useState(0);
 
   // EXPLORE state — rotating "connection" translation shown in the door gap
   const [langIndex, setLangIndex] = useState(0);
@@ -196,20 +195,10 @@ export default function MediumWord({
     }
 
     if (variant === "serve") {
-      timers.current.forEach(clearTimeout);
-      timers.current = [];
-      setFollowing(false);
-      letters.forEach((_, i) => {
-        if (i === 0) return; // already resting at S
-        const t = setTimeout(() => {
-          setPassIndex(i);
-          if (i === letters.length - 1) {
-            const t2 = setTimeout(() => setFollowing(true), 180);
-            timers.current.push(t2);
-          }
-        }, i * 150 + 60);
-        timers.current.push(t);
-      });
+      // S-E-R-V-E: the V loses its footing, the R and the final E lean in
+      // toward it, and it comes back up to the baseline. Bumping the run
+      // counter restarts the CSS animations cleanly on every hover.
+      setServeRun((r) => r + 1);
     }
 
     if (variant === "explore") {
@@ -234,12 +223,8 @@ export default function MediumWord({
       setShowCheck(false);
       setDisplay(letters);
     }
-    if (variant === "serve") {
-      timers.current.forEach(clearTimeout);
-      setFollowing(false);
-      const t = setTimeout(() => setPassIndex(0), 350);
-      timers.current.push(t);
-    }
+    // SERVE needs nothing on leave: the sequence always finishes with
+    // every letter back on the baseline, so there is no state to unwind.
     if (variant === "explore" && langTimer.current) {
       clearInterval(langTimer.current);
       langTimer.current = null;
@@ -252,6 +237,32 @@ export default function MediumWord({
       roughTimer.current = setTimeout(() => setRoughPhase("none"), 460);
     }
   }, [variant, letters]);
+
+  // On touch there is no hover, so each word plays its animation once the
+  // first time it scrolls into view. Desktop is unaffected.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const small = window.matchMedia("(max-width: 767px)").matches;
+    if (!coarse && !small) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let done = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting || done) return;
+          done = true;
+          io.disconnect();
+          runEnter();
+          window.setTimeout(() => runLeave(), 1600);
+        });
+      },
+      { threshold: 0.55 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [runEnter, runLeave]);
 
   const onEnter = useCallback(() => {
     runEnter();
@@ -274,19 +285,8 @@ export default function MediumWord({
     setMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }, []);
 
-  // dot x-position for SERVE: center of the letter at passIndex, or following the cursor
-  let dotLeft = 0;
-  let dotTop = 12;
-  if (ref.current && variant === "serve") {
-    if (following) {
-      dotLeft = mouse.x;
-      dotTop = mouse.y;
-    } else if (letterRefs.current[passIndex]) {
-      const el = letterRefs.current[passIndex]!;
-      dotLeft = passIndex === 0 ? el.offsetLeft - 7 : el.offsetLeft + el.offsetWidth / 2;
-      dotTop = el.offsetTop - 6;
-    }
-  }
+  // (the SERVE dot and its cursor-following logic are gone; the word now
+  // animates its own letters instead)
 
   // All seven category words are set in Bricolage Grotesque — the wordmark
   // face — at heavy weight. Flat ink, no decorative treatment: the
@@ -329,6 +329,24 @@ export default function MediumWord({
               }
             }
 
+            if (variant === "serve") {
+              // Only R (2), V (3) and the final E (4) move. S and the
+              // first E are untouched. All three animate in place with
+              // transforms, so nothing reflows.
+              if (i === 3) {
+                style.display = "inline-block";
+                style.animation = `serve-fall 1.05s cubic-bezier(0.3,0,0.2,1) both`;
+              } else if (i === 2) {
+                style.display = "inline-block";
+                style.transformOrigin = "bottom right";
+                style.animation = `serve-lean-r 1.05s cubic-bezier(0.3,0,0.2,1) both`;
+              } else if (i === 4) {
+                style.display = "inline-block";
+                style.transformOrigin = "bottom left";
+                style.animation = `serve-lean-e 1.05s cubic-bezier(0.3,0,0.2,1) both`;
+              }
+            }
+
             if (variant === "play") {
               // The outer letters are the paddles, so only they react — and
               // only on the frame the ball actually reaches them.
@@ -363,7 +381,13 @@ export default function MediumWord({
 
             return (
               <span
-                key={variant === "eat" || variant === "create" ? `${cycle}-${leaveCycle}-${i}` : i}
+                key={
+                  variant === "eat" || variant === "create"
+                    ? `${cycle}-${leaveCycle}-${i}`
+                    : variant === "serve"
+                    ? `s${serveRun}-${i}`
+                    : i
+                }
                 ref={(el) => {
                   letterRefs.current[i] = el;
                 }}
@@ -445,20 +469,6 @@ export default function MediumWord({
             </span>
           )}
 
-          {variant === "serve" && (
-            <span
-              className="pointer-events-none absolute h-2 w-2 rounded-full bg-tiger"
-              style={{
-                left: dotLeft,
-                top: dotTop,
-                opacity: hovered || following ? 1 : 0.55,
-                transform: "translate(-50%,-50%)",
-                transition: following
-                  ? "left 0.08s linear, top 0.08s linear, opacity 0.2s"
-                  : "left 0.14s cubic-bezier(0.22,1,0.36,1), top 0.14s cubic-bezier(0.22,1,0.36,1), opacity 0.2s",
-              }}
-            />
-          )}
 
           {variant === "learn" && showCheck && (
             <span className="absolute -top-3 -right-5 text-tiger text-sm">✓</span>

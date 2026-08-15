@@ -1894,3 +1894,92 @@ Verified with the walkers hidden, so the artwork alone is measured:
 Because both the shift and the artwork's empty band scale with viewport width,
 the 3.6 < 3.84 relationship holds at every window shape — no aspect ratio can
 reintroduce clipping.
+
+---
+
+# Three event kinds + the SERVE animation (v82)
+
+## Event kinds
+
+`TigerEvent` now carries a `kind`, replacing the old two-value `origin`:
+
+    original — Tiger Club creates and hosts it from scratch
+    pick     — an existing Atlanta experience we curate and bring people to
+    collab   — co-created with another organisation, venue or community
+
+It defaults to `"original"` when omitted, so every existing event is labelled
+correctly without touching its data. `EventRow` prints the label under the
+location on every row, and in the expanded panel adds who it is with or
+presented by, plus a one-line explanation of what that kind means.
+
+Verified on the live page: **8 of 8 rows carry a kind label** — the Indonesia
+listing as a Tiger Pick, everything else as a Tiger Original.
+
+Bite Club is a Tiger Original, not a collab. I had tagged it as one purely to
+demonstrate the third state; that was wrong and has been reverted. No event is
+currently marked  — set  plus  on one when
+you have a genuine partner event.
+
+## SERVE
+
+The old cursor-following dot is gone, along with its `passIndex` / `following`
+state. The word now animates its own letters: the **V** drops, the **R** and the
+**final E** lean in toward it, and it rises back to the baseline as they
+straighten.
+
+Pure transforms on the letters, so there is no layout shift, and every keyframe
+resolves to the identity transform so the word ends exactly as it started. The
+letters are keyed on a run counter, so it replays on every hover.
+
+Measured over one hover:
+
+| letter | translateY | rotation |
+|---|---|---|
+| S | 0 | 0 |
+| E (first) | 0 | 0 |
+| R | 0 | −1° … **+8.5°** |
+| V | −1.1 … **+13.7px** | 0 |
+| E (final) | 0 | **−8.5°** … +1° |
+
+S and the first E never move, exactly as specified, and all five letters end at
+zero.
+
+---
+
+# Mobile fixes (v84)
+
+## Hero fits one screen, copy centred on the viewport
+
+The mobile hero was `211.11vw` — the portrait asset's own aspect — which is
+taller than a phone viewport once the browser chrome is showing, so the bottom
+two stripes needed a scroll. It is now **`100svh`** with the artwork on
+`background-size: contain`, which scales the whole composition down until all
+four stripes fit; the leftover is page cream.
+
+Verified at 390×750, 390×844 and 375×700: hero height equals viewport height
+exactly at all three, and the copy wrapper centres on the viewport (375 of 750,
+422 of 844).
+
+## The quote tail ends black
+
+A real tail has a solid dark tip. A third stroke is layered on the same path
+with a single long dash positioned at the far end, so the stretch beside
+"relationships." is solid black and the stripes read as leading up to it. Same
+path, same morph — still one continuous stroke.
+
+## Mediums auto-play on mobile
+
+There is no hover on touch, so each word now plays its animation once, the first
+time it scrolls into view, then settles. Gated on `pointer: coarse` or a small
+viewport, and skipped under reduced motion; desktop hover behaviour is
+unchanged.
+
+*Detail worth recording:* the effect has to be declared **after** `runEnter` and
+`runLeave`, since it lists them as dependencies — placed above, it throws a
+temporal-dead-zone error at render.
+
+## Finale tail clearance
+
+The tail was crowding "SEE WHAT'S HAPPENING". Dropped from `top: 54%` to `64%`
+and narrowed slightly. Measured gap from the CTA's bottom edge to the top of the
+tail: **55px**.

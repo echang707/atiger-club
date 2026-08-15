@@ -583,23 +583,62 @@ body {
 }
 
 @media (max-width: 767px) {
-  /* the portrait asset is 900x1900, i.e. 211.11% of its width */
+  /* One screen exactly. The old 211.11vw came from the portrait asset's
+     own aspect, which is taller than a phone viewport once the browser
+     chrome is showing — that is why the bottom two stripes needed a
+     scroll. */
   .hero-shell {
-    height: 211.11vw;
-    min-height: 88svh;
-    /* measured: 12px high on a 844px screen */
-    --hero-content-top: 51.4%;
+    height: 100svh;
+    min-height: 100svh;
+    --hero-content-top: 50%;
   }
 
   .hero-crowd-art.is-mobile {
-    /* one continuous portrait image, shown whole */
+    /* `contain` scales the whole portrait composition down until all four
+       stripes fit inside the screen; the leftover is page cream. */
     background-image: url("/images/crowd-mobile.webp");
-    background-size: 100% auto;
-    background-position: 50% 0;
+    background-size: contain;
+    background-position: center;
     -webkit-mask-image: none;
     mask-image: none;
   }
 
   .hero-tagline { font-size: clamp(38px, 9vw, 54px) !important; }
   .hero-subline { font-size: 19px !important; line-height: 1.45; width: 88%; max-width: 88%; }
+}
+
+/* ---------------------------------------------------------------------
+   SERVE — the V loses its footing and its neighbours help it up.
+   Transforms only, so there is no layout shift, and every keyframe ends
+   at the identity transform so the word finishes exactly as it started.
+   --------------------------------------------------------------------- */
+@keyframes serve-fall {
+  0%   { transform: translateY(0); }
+  14%  { transform: translateY(0.16em); }
+  30%  { transform: translateY(0.19em); }
+  70%  { transform: translateY(0.05em); }
+  86%  { transform: translateY(-0.015em); }
+  100% { transform: translateY(0); }
+}
+
+/* R leans right, toward the V */
+@keyframes serve-lean-r {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(7deg); }
+  58%  { transform: rotate(8.5deg); }
+  86%  { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* the final E leans left, toward the V */
+@keyframes serve-lean-e {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(-7deg); }
+  58%  { transform: rotate(-8.5deg); }
+  86%  { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medium-letter-serve { animation: none !important; }
 }
