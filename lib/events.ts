@@ -140,6 +140,7 @@ export const events: TigerEvent[] = [
     image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1400&auto=format&fit=crop",
   },
   {
+    kind: "collab",
     id: "dragon-boat-festival",
     title: "Atlanta Hong Kong Dragon Boat Festival",
     medium: "Explore",
@@ -154,6 +155,7 @@ export const events: TigerEvent[] = [
     linkLabel: "Learn More",
   },
   {
+    kind: "pick",
     id: "mini-kennycon",
     title: "Mini-KennyCon 2026",
     medium: "Learn",
@@ -180,6 +182,7 @@ export const events: TigerEvent[] = [
     image: "https://images.unsplash.com/photo-1648437595587-e6a8b0cdf1f9?q=80&w=1400&auto=format&fit=crop",
   },
   {
+    kind: "collab",
     id: "refuge-coffee-run",
     title: "The Refuge Coffee Run: Welcome Home",
     medium: "Move",
@@ -194,6 +197,7 @@ export const events: TigerEvent[] = [
     linkLabel: "Learn More",
   },
   {
+    kind: "pick",
     id: "japanfest",
     title: "JapanFest 2026",
     medium: "Explore",
@@ -208,6 +212,7 @@ export const events: TigerEvent[] = [
     linkLabel: "Learn More",
   },
   {
+    kind: "collab",
     id: "compassioncon",
     title: "CompassionCon",
     medium: "Serve",
@@ -304,3 +309,21 @@ export const memories: Memory[] = [
     y: 22,
   },
 ];
+
+/* The single source of truth for "is this event still ahead of us?".
+   The events page had this logic inline; the homepage had none at all and
+   was slicing the first five entries regardless of date, which is why
+   July listings were still showing under "what are you doing this week?". */
+export const EVENT_YEAR = 2026;
+
+export function eventDate(e: TigerEvent) {
+  return new Date(`${e.date}, ${EVENT_YEAR}`);
+}
+
+export function upcomingEvents(list: TigerEvent[] = events) {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return list
+    .filter((e) => eventDate(e) >= startOfToday)
+    .sort((a, b) => eventDate(a).getTime() - eventDate(b).getTime());
+}

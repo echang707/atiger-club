@@ -2,11 +2,13 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { events } from "@/lib/events";
+import { upcomingEvents } from "@/lib/events";
 import EventRow from "./EventRow";
 
 export default function UpcomingRows() {
-  const preview = events.slice(0, 5);
+  // Only events still ahead of today, soonest first. This block used to
+  // slice the first five entries in the file regardless of date.
+  const preview = upcomingEvents().slice(0, 5);
 
   return (
     <section className="relative max-w-content mx-auto px-6 md:px-10 pt-24 md:pt-32 pb-10 md:pb-12">

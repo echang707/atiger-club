@@ -1983,3 +1983,44 @@ temporal-dead-zone error at render.
 The tail was crowding "SEE WHAT'S HAPPENING". Dropped from `top: 54%` to `64%`
 and narrowed slightly. Measured gap from the CTA's bottom edge to the top of the
 tail: **55px**.
+
+---
+
+# v85 — tail tip, mobile edges, event kinds, stale listings
+
+## One black section, at the tip
+
+The dashed stripes are gone. The tail is orange for its whole length with a
+single solid black tip at the far end, beside "relationships."
+
+Two bugs had to be found to get it there:
+
+1. A dash pattern whose gap is shorter than the path **repeats**, which is why
+   two black sections kept appearing. The gap is now longer than the whole path.
+2. `vector-effect: non-scaling-stroke` makes dash lengths **screen units, not
+   viewBox units**. The path is 290 user units but the svg draws ~1.92× wider,
+   so it measures ~557px on screen — an offset computed from 290 put the black
+   halfway along. Recomputed against the screen length, it lands on the tip.
+
+## Mobile is edge-to-edge
+
+`contain` was leaving cream bars down both sides. The asset is rebuilt at a
+phone-like 1:2 aspect with **every stripe running well off its own edge**, and
+the hero uses `cover`, so whatever the crop trims, all four still bleed.
+
+Measured left vs right edge ink: 17.5/17.4 at 390×750, 23.7/25.1 at 390×844,
+17.1/16.3 at 430×800 — consistent on both sides at every size, which is what
+was wrong before (orange bled, black was clipped).
+
+## Event kinds
+
+Dragon Boat, Refuge Coffee Run and CompassionCon are **Tiger Collabs**.
+JapanFest and Mini-KennyCon are **Tiger Picks**. Verified on the page.
+
+## Stale listings on the homepage
+
+"What are you doing this week?" was `events.slice(0, 5)` — the first five
+entries in the file, with **no date filter at all**, which is why July events
+were still showing. The date logic now lives in one place
+(`upcomingEvents()` in `lib/events.ts`) and both the homepage and the events
+page use it. The homepage list now starts at the next future event.

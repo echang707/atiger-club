@@ -107,29 +107,29 @@ export default function QuoteTail() {
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
         />
-        {/* stripes — same path, same morph, dashed so they read as bands
-            painted onto the tail rather than separate marks */}
-        <motion.path
-          {...morph}
-          stroke="#15130E"
-          strokeWidth={4.2}
-          strokeLinecap="butt"
-          strokeDasharray="4 54"
-          strokeDashoffset={-58}
-          vectorEffect="non-scaling-stroke"
-        />
-        {/* A real tiger tail ends in a solid black tip. The dash pattern
-            here is one long "on" run right at the far end, so the last
-            stretch beside "relationships." is solid black and the stripes
-            read as leading up to it. Same path and same morph, so it
-            stays part of the one continuous stroke. */}
+        {/* ONE black section, at the very end. A tiger tail's tip is the
+            only solid black on it — the earlier dashed stripes read as
+            several black sections, which is not what a tail looks like at
+            this size. A single long dash sits at the far end of the same
+            path, so the last stretch beside "relationships." is solid
+            black and everything before it is clean orange. */}
         <motion.path
           {...morph}
           stroke="#15130E"
           strokeWidth={4.2}
           strokeLinecap="round"
-          strokeDasharray="52 400"
-          strokeDashoffset={-500}
+          /* The gap must be LONGER than the whole path, or the pattern
+             repeats and a second black section appears further back. The
+             path is ~292 units, so a 40-unit dash placed at offset -252
+             lands once, right at the tip. */
+          /* NOTE: `vectorEffect: non-scaling-stroke` makes dash lengths
+             SCREEN units, not viewBox units. The path is 290 user units
+             but the svg is drawn ~1.92x wider, so it measures ~557px on
+             screen — which is why an offset computed from 290 landed the
+             black mid-tail. Gap is longer than the path so it cannot
+             repeat. */
+          strokeDasharray="44 2400"
+          strokeDashoffset={-515}
           vectorEffect="non-scaling-stroke"
         />
       </g>

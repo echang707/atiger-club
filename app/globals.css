@@ -594,10 +594,12 @@ body {
   }
 
   .hero-crowd-art.is-mobile {
-    /* `contain` scales the whole portrait composition down until all four
-       stripes fit inside the screen; the leftover is page cream. */
+    /* `cover` so the artwork always reaches every edge — `contain` left
+       cream bars down the sides. The asset is drawn at a phone-like 1:2
+       aspect with every stripe running well off its own edge, so whatever
+       cover trims, the bleed still reads as intentional on all four. */
     background-image: url("/images/crowd-mobile.webp");
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     -webkit-mask-image: none;
     mask-image: none;
