@@ -4,88 +4,65 @@ import { useId, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ---------------------------------------------------------------------
-   The tail under "good relationships."
+   The tiger tail under "good relationships."
 
-   Built as ONE continuous stroke. The earlier version animated the body,
-   the stripes and the tip as three separate elements, which is why they
-   came apart mid-animation: the stripes rendered at full length while
-   the body was still drawing, so they read as loose black squares
-   floating past the end of the orange, with a detached tip beyond them.
+   This is a FILLED shape, not a stroked path. A stroke can only ever be a
+   line of constant width with dashes laid on top, which is why the
+   previous version read as an orange rule with a stray black mark. The
+   tail is now:
 
-   How this one stays whole:
+     • one outline with a real taper — thick at the base, thin at the tip
+     • six black stripes that are SLICES OF THE TAIL ITSELF, generated
+       between two points along both edges, so each one wraps across the
+       full width rather than sitting on top of a line
+     • a black tip built the same way, so it is part of the shape rather
+       than a separate stroke
 
-   • There is a single path shape, `D`. The orange body and the black
-     stripes are the same geometry — the stripes are that identical path
-     stroked in black with a dash pattern, so they sit ON the tail rather
-     than being their own objects.
+   The geometry is sampled off a curved centreline with slightly varying
+   thickness, so it bends organically instead of looking like a perfect
+   SVG stroke. Stripe spacing, width and skew are all irregular.
 
-   • Both are wrapped in one clip path, and the *clip* is what animates:
-     a rectangle whose right edge sweeps left → right. Nothing can ever
-     appear beyond the drawn tip, because nothing outside the clip is
-     rendered. Body and stripes are revealed by the same single
-     animation, so they cannot drift apart.
-
-   • The growth, the upward curl at the end and the flick are all done by
-     morphing `d` itself through keyframes that share a command
-     structure. The stroke is never split, so it stays one shape the
-     whole way through.
-
-   It settles to the last keyframe and stops. No loop.
+   Reveal is unchanged: a clip rectangle sweeps left to right once, when
+   the section comes into view.
    --------------------------------------------------------------------- */
 
-// One shape, six states. Only the tail-end control points move: the body
-// through the first three lifts the last ~18% upward as it finishes, then
-// the flick raises the tip, overshoots slightly and settles.
-const D = [
-  "M6 18C70 24 142 23 206 19C234 17 262 15 292 13",
-  "M6 18C70 24 142 23 206 18C234 16 262 12 292 8",
-  "M6 18C70 24 142 23 206 17C234 14 262 8 292 0",
-  "M6 18C70 24 142 23 206 16C234 12 262 2 292 -9",
-  "M6 18C70 24 142 23 206 17C234 14 262 7 292 -1",
-  "M6 18C70 24 142 23 206 17C234 13 262 3 292 -8",
+const OUTLINE =
+  "M 5.52,27.29 6.96,27.36 8.40,27.43 9.84,27.50 11.28,27.57 12.73,27.63 14.17,27.70 15.61,27.76 17.06,27.83 18.50,27.89 19.95,27.95 21.39,28.01 22.83,28.07 24.28,28.13 25.72,28.18 27.17,28.24 28.61,28.29 30.06,28.34 31.50,28.39 32.95,28.44 34.39,28.48 35.84,28.53 37.29,28.57 38.73,28.61 40.18,28.65 41.62,28.68 43.07,28.72 44.52,28.75 45.96,28.78 47.41,28.81 48.86,28.84 50.30,28.86 51.75,28.89 53.20,28.91 54.64,28.93 56.09,28.94 57.54,28.96 58.99,28.97 60.43,28.98 61.88,28.99 63.33,28.99 64.78,28.99 66.22,29.00 67.67,28.99 69.12,28.99 70.57,28.98 72.02,28.98 73.46,28.97 74.91,28.95 76.36,28.94 77.81,28.92 79.26,28.90 80.70,28.88 82.15,28.85 83.60,28.83 85.05,28.80 86.50,28.76 87.94,28.73 89.39,28.69 90.84,28.66 92.29,28.61 93.74,28.57 95.18,28.52 96.63,28.48 98.08,28.42 99.53,28.37 100.98,28.31 102.42,28.26 103.87,28.20 105.32,28.13 106.77,28.07 108.21,28.00 109.66,27.93 111.11,27.86 112.56,27.78 114.00,27.71 115.45,27.63 116.90,27.55 118.35,27.46 119.79,27.38 121.24,27.29 122.69,27.20 124.13,27.10 125.58,27.01 127.03,26.91 128.47,26.81 129.92,26.71 131.37,26.61 132.81,26.50 134.26,26.39 135.71,26.28 137.15,26.17 138.60,26.05 140.04,25.93 141.49,25.82 142.93,25.69 144.38,25.57 145.83,25.44 147.27,25.32 148.72,25.19 150.16,25.06 151.61,24.92 153.05,24.79 154.50,24.65 155.94,24.51 157.38,24.36 158.83,24.22 160.27,24.07 161.72,23.93 163.16,23.78 164.61,23.62 166.05,23.47 167.49,23.31 168.94,23.15 170.38,22.99 171.83,22.83 173.27,22.67 174.71,22.50 176.16,22.33 177.60,22.16 179.04,21.99 180.48,21.82 181.93,21.64 183.37,21.46 184.81,21.28 186.26,21.10 187.70,20.92 189.14,20.73 190.58,20.54 192.03,20.35 193.47,20.16 194.91,19.97 196.35,19.77 197.79,19.58 199.24,19.38 200.68,19.17 202.12,18.97 203.56,18.77 205.00,18.56 206.44,18.35 207.88,18.14 209.32,17.92 210.77,17.71 212.21,17.49 213.65,17.27 215.09,17.05 216.53,16.82 217.97,16.60 219.41,16.37 220.85,16.14 222.29,15.91 223.73,15.67 225.17,15.43 226.61,15.19 228.05,14.95 229.49,14.71 230.92,14.46 232.36,14.22 233.80,13.97 235.24,13.71 236.68,13.46 238.12,13.20 239.55,12.94 240.99,12.68 242.43,12.42 243.87,12.15 245.30,11.88 246.74,11.61 248.18,11.34 249.61,11.06 251.05,10.78 252.48,10.50 253.92,10.21 255.35,9.93 256.79,9.64 258.22,9.34 259.66,9.05 261.09,8.75 262.52,8.45 263.96,8.15 265.39,7.84 266.82,7.53 268.25,7.21 269.68,6.90 271.12,6.57 272.55,6.25 273.97,5.92 275.40,5.59 276.83,5.25 278.26,4.91 279.68,4.56 281.11,4.21 282.53,3.84 283.96,3.48 285.38,3.10 286.80,2.71 288.21,2.30 289.62,1.88 291.02,1.41 292.38,0.71 291.62,-3.15 290.10,-3.27 288.63,-3.18 287.17,-3.04 285.71,-2.89 284.25,-2.72 282.80,-2.54 281.35,-2.36 279.90,-2.17 278.45,-1.98 277.00,-1.78 275.55,-1.58 274.10,-1.38 272.66,-1.18 271.21,-0.98 269.77,-0.78 268.33,-0.57 266.88,-0.37 265.44,-0.16 264.00,0.04 262.56,0.24 261.11,0.45 259.67,0.65 258.23,0.86 256.79,1.06 255.35,1.26 253.91,1.46 252.47,1.67 251.03,1.87 249.59,2.07 248.16,2.26 246.72,2.46 245.28,2.66 243.84,2.85 242.41,3.05 240.97,3.24 239.53,3.43 238.09,3.62 236.66,3.81 235.22,4.00 233.79,4.18 232.35,4.37 230.91,4.55 229.48,4.73 228.04,4.91 226.61,5.09 225.17,5.27 223.74,5.44 222.30,5.61 220.87,5.78 219.43,5.95 218.00,6.12 216.56,6.29 215.13,6.45 213.70,6.61 212.26,6.77 210.83,6.93 209.40,7.08 207.96,7.23 206.53,7.38 205.10,7.53 203.66,7.68 202.23,7.82 200.80,7.97 199.36,8.11 197.93,8.24 196.50,8.38 195.07,8.51 193.63,8.64 192.20,8.77 190.77,8.90 189.34,9.02 187.90,9.14 186.47,9.26 185.04,9.37 183.61,9.49 182.18,9.60 180.75,9.71 179.31,9.82 177.88,9.92 176.45,10.02 175.02,10.12 173.59,10.22 172.16,10.31 170.73,10.40 169.30,10.49 167.87,10.58 166.44,10.67 165.01,10.75 163.57,10.83 162.14,10.90 160.71,10.98 159.28,11.05 157.85,11.12 156.42,11.19 154.99,11.25 153.56,11.32 152.14,11.38 150.71,11.43 149.28,11.49 147.85,11.54 146.42,11.59 144.99,11.64 143.56,11.69 142.13,11.73 140.70,11.77 139.27,11.81 137.85,11.85 136.42,11.89 134.99,11.92 133.56,11.95 132.13,11.98 130.70,12.00 129.28,12.03 127.85,12.05 126.42,12.07 124.99,12.09 123.56,12.10 122.14,12.12 120.71,12.13 119.28,12.14 117.86,12.15 116.43,12.15 115.00,12.16 113.57,12.16 112.15,12.16 110.72,12.16 109.29,12.16 107.87,12.15 106.44,12.15 105.01,12.14 103.59,12.13 102.16,12.12 100.73,12.10 99.31,12.09 97.88,12.07 96.45,12.06 95.03,12.04 93.60,12.02 92.17,11.99 90.75,11.97 89.32,11.94 87.90,11.92 86.47,11.89 85.04,11.86 83.62,11.83 82.19,11.80 80.76,11.77 79.34,11.73 77.91,11.70 76.49,11.66 75.06,11.62 73.63,11.58 72.21,11.54 70.78,11.50 69.35,11.46 67.93,11.41 66.50,11.37 65.07,11.32 63.65,11.28 62.22,11.23 60.79,11.18 59.37,11.13 57.94,11.08 56.51,11.03 55.08,10.98 53.66,10.92 52.23,10.87 50.80,10.81 49.37,10.76 47.95,10.70 46.52,10.64 45.09,10.58 43.66,10.53 42.24,10.46 40.81,10.40 39.38,10.34 37.95,10.28 36.52,10.22 35.09,10.15 33.66,10.09 32.24,10.02 30.81,9.95 29.38,9.89 27.95,9.82 26.52,9.75 25.09,9.68 23.66,9.61 22.23,9.54 20.80,9.47 19.37,9.40 17.94,9.32 16.51,9.25 15.08,9.17 13.64,9.10 12.21,9.02 10.78,8.95 9.35,8.87 7.92,8.79 6.48,8.71 Z";
+
+const STRIPES = [
+  "M 42.31,28.70 43.02,28.72 43.73,28.73 44.44,28.75 45.15,28.77 45.86,28.78 46.57,28.80 47.28,28.81 47.99,28.82 48.70,28.84 49.41,28.85 50.12,28.86 50.83,28.87 51.54,28.88 52.25,28.89 52.96,28.90 45.47,10.60 44.77,10.57 44.07,10.54 43.36,10.51 42.66,10.48 41.96,10.45 41.26,10.42 40.56,10.39 39.86,10.36 39.16,10.33 38.46,10.30 37.76,10.27 37.05,10.24 36.35,10.21 35.65,10.18 34.95,10.15 Z",
+  "M 72.83,28.97 73.62,28.96 74.41,28.96 75.20,28.95 75.99,28.94 76.77,28.93 77.56,28.92 78.35,28.91 79.14,28.90 79.92,28.89 80.71,28.88 81.50,28.86 82.29,28.85 83.07,28.84 83.86,28.82 84.65,28.81 91.75,11.99 90.97,11.97 90.19,11.96 89.42,11.95 88.64,11.93 87.87,11.92 87.09,11.90 86.32,11.89 85.54,11.87 84.76,11.86 83.99,11.84 83.21,11.82 82.44,11.80 81.66,11.79 80.89,11.77 80.11,11.75 Z",
+  "M 116.92,27.54 117.59,27.51 118.26,27.47 118.93,27.43 119.61,27.39 120.28,27.35 120.95,27.31 121.62,27.26 122.29,27.22 122.96,27.18 123.64,27.14 124.31,27.09 124.98,27.05 125.65,27.00 126.32,26.96 127.00,26.91 120.14,12.13 119.48,12.14 118.81,12.14 118.15,12.15 117.49,12.15 116.83,12.15 116.16,12.16 115.50,12.16 114.84,12.16 114.17,12.16 113.51,12.16 112.85,12.16 112.19,12.16 111.52,12.16 110.86,12.16 110.20,12.16 Z",
+  "M 147.14,25.33 147.89,25.26 148.63,25.19 149.38,25.13 150.13,25.06 150.88,24.99 151.62,24.92 152.37,24.85 153.12,24.78 153.87,24.71 154.61,24.64 155.36,24.56 156.11,24.49 156.86,24.42 157.60,24.34 158.35,24.27 164.21,10.79 163.47,10.83 162.73,10.87 161.99,10.91 161.25,10.95 160.51,10.99 159.77,11.03 159.03,11.06 158.29,11.10 157.55,11.14 156.81,11.17 156.07,11.21 155.33,11.24 154.59,11.27 153.85,11.30 153.11,11.34 Z",
+  "M 187.36,20.96 187.98,20.88 188.59,20.80 189.20,20.72 189.81,20.64 190.43,20.56 191.04,20.48 191.65,20.40 192.26,20.32 192.87,20.24 193.49,20.16 194.10,20.08 194.71,20.00 195.32,19.91 195.94,19.83 196.55,19.75 188.99,9.05 188.38,9.10 187.77,9.15 187.17,9.20 186.56,9.25 185.95,9.30 185.34,9.35 184.73,9.40 184.13,9.45 183.52,9.50 182.91,9.54 182.30,9.59 181.70,9.64 181.09,9.68 180.48,9.73 179.87,9.77 Z",
+  "M 208.88,17.99 209.46,17.90 210.03,17.82 210.60,17.73 211.18,17.64 211.75,17.56 212.32,17.47 212.90,17.38 213.47,17.30 214.04,17.21 214.62,17.12 215.19,17.03 215.76,16.94 216.34,16.85 216.91,16.76 217.48,16.67 221.50,5.71 220.93,5.78 220.36,5.84 219.79,5.91 219.22,5.98 218.65,6.04 218.08,6.11 217.51,6.18 216.94,6.24 216.37,6.31 215.80,6.37 215.22,6.44 214.65,6.50 214.08,6.57 213.51,6.63 212.94,6.69 Z",
 ];
 
+const TIP =
+  "M 232.67,14.16 235.83,13.61 238.99,13.04 242.15,12.47 245.31,11.88 248.47,11.28 251.63,10.67 254.79,10.04 257.94,9.40 261.10,8.75 264.25,8.08 267.40,7.40 270.55,6.70 273.69,5.99 276.84,5.25 279.97,4.49 283.11,3.70 286.23,2.87 289.34,1.96 292.38,0.71 291.62,-3.15 288.34,-3.15 285.13,-2.82 281.93,-2.43 278.74,-2.01 275.55,-1.58 272.37,-1.14 269.20,-0.70 266.02,-0.25 262.85,0.20 259.68,0.65 256.51,1.10 253.35,1.54 250.18,1.98 247.02,2.42 243.85,2.85 240.69,3.28 237.53,3.70 234.37,4.11 231.21,4.51 Z";
+
+const ORANGE = "#D84A18";
+const BLACK = "#15130E";
 const DELAY = 0.45;
-const TOTAL = 2.05;
-const REVEAL = 1.2;
+const REVEAL = 1.25;
 
 export default function QuoteTail() {
   const id = useId().replace(/:/g, "");
   const clipId = `qt-${id}`;
+  const bodyId = `qtb-${id}`;
   const ref = useRef<SVGSVGElement>(null);
-
-  // The reveal rectangle lives inside <defs>, so it has no layout box and
-  // an IntersectionObserver attached to it never fires — on mobile the
-  // clip stayed at width 0 and the whole tail was invisible. The trigger
-  // is therefore taken from the <svg> itself, which does have a box, and
-  // every child animates from that one flag.
   const inView = useInView(ref, { once: true, margin: "-60px" });
-
-  // the whole shape morphs on one clock — draw, curl, flick, settle
-  const morph = {
-    initial: { d: D[0] },
-    animate: inView ? { d: D } : { d: D[0] },
-    transition: {
-      duration: TOTAL,
-      delay: DELAY,
-      ease: "easeInOut" as const,
-      times: [0, 0.34, 0.55, 0.72, 0.87, 1],
-    },
-  };
 
   return (
     <svg
+      ref={ref}
       aria-hidden="true"
       viewBox="0 0 300 34"
       preserveAspectRatio="none"
-      ref={ref}
-      className="absolute -bottom-[0.30em] sm:-bottom-[0.36em] left-0 h-[0.34em] sm:h-[0.28em] w-full overflow-visible"
-      fill="none"
+      className="absolute -bottom-[0.40em] left-0 h-[0.46em] w-full overflow-visible"
     >
       <defs>
-        {/* the single reveal: one rectangle whose edge sweeps rightward.
-            Everything inside is clipped to it, so the stripes can never
-            outrun the body. */}
+        {/* the sweep that draws the tail in */}
         <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
           <motion.rect
             x={-8}
@@ -96,42 +73,21 @@ export default function QuoteTail() {
             transition={{ duration: REVEAL, delay: DELAY, ease: "easeOut" }}
           />
         </clipPath>
+        {/* stripes and tip are clipped to the tail body, so they can never
+            spill past its edge */}
+        <clipPath id={bodyId} clipPathUnits="userSpaceOnUse">
+          <path d={OUTLINE} />
+        </clipPath>
       </defs>
 
       <g clipPath={`url(#${clipId})`}>
-        {/* body */}
-        <motion.path
-          {...morph}
-          stroke="#D84A18"
-          strokeWidth={4.2}
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-        />
-        {/* ONE black section, at the very end. A tiger tail's tip is the
-            only solid black on it — the earlier dashed stripes read as
-            several black sections, which is not what a tail looks like at
-            this size. A single long dash sits at the far end of the same
-            path, so the last stretch beside "relationships." is solid
-            black and everything before it is clean orange. */}
-        <motion.path
-          {...morph}
-          stroke="#15130E"
-          strokeWidth={4.2}
-          strokeLinecap="round"
-          /* The gap must be LONGER than the whole path, or the pattern
-             repeats and a second black section appears further back. The
-             path is ~292 units, so a 40-unit dash placed at offset -252
-             lands once, right at the tip. */
-          /* NOTE: `vectorEffect: non-scaling-stroke` makes dash lengths
-             SCREEN units, not viewBox units. The path is 290 user units
-             but the svg is drawn ~1.92x wider, so it measures ~557px on
-             screen — which is why an offset computed from 290 landed the
-             black mid-tail. Gap is longer than the path so it cannot
-             repeat. */
-          strokeDasharray="44 2400"
-          strokeDashoffset={-515}
-          vectorEffect="non-scaling-stroke"
-        />
+        <path d={OUTLINE} fill={ORANGE} />
+        <g clipPath={`url(#${bodyId})`}>
+          {STRIPES.map((d, i) => (
+            <path key={i} d={d} fill={BLACK} />
+          ))}
+          <path d={TIP} fill={BLACK} />
+        </g>
       </g>
     </svg>
   );

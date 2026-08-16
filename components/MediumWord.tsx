@@ -238,31 +238,7 @@ export default function MediumWord({
     }
   }, [variant, letters]);
 
-  // On touch there is no hover, so each word plays its animation once the
-  // first time it scrolls into view. Desktop is unaffected.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    const small = window.matchMedia("(max-width: 767px)").matches;
-    if (!coarse && !small) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let done = false;
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting || done) return;
-          done = true;
-          io.disconnect();
-          runEnter();
-          window.setTimeout(() => runLeave(), 1600);
-        });
-      },
-      { threshold: 0.55 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [runEnter, runLeave]);
+  // No autoplay on mobile: the mediums animate on hover/tap only.
 
   const onEnter = useCallback(() => {
     runEnter();

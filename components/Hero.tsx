@@ -1,21 +1,18 @@
 "use client";
 
-import HumanStripes from "./HumanStripes";
+import HeroBackdrop from "./HeroBackdrop";
 import RotatingLine from "./RotatingLine";
 import WordsFindEachOther from "./WordsFindEachOther";
 
 export default function Hero() {
   return (
     <section className="hero-shell relative w-full">
-      {/* FULL artwork. The hero's height is the artwork's own height at
-          100% width, so nothing is cropped on any side. */}
-      <HumanStripes />
+      {/* One static illustration, sized to cover the hero. */}
+      <HeroBackdrop />
 
-      {/* Positioned ONCE within the hero, at a fixed spot chosen to sit in
-          the artwork's own clean cream gap. Not sticky, not tied to the
-          viewport, no scroll listener of any kind — it scrolls with the
-          page exactly like the artwork behind it, at a fixed distance
-          from the top of the hero. */}
+      {/* Centred in the viewport AND in the artwork's clear middle — the
+          hero is exactly one screen and both illustrations leave their
+          open cream in the centre, so one position satisfies both. */}
       <div className="hero-content absolute left-1/2 top-[var(--hero-content-top)] z-10 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-5 sm:px-6 md:px-10">
         <div className="hero-tagline-wrap mx-auto w-full max-w-4xl flex flex-col items-center">
           <WordsFindEachOther />

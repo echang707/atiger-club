@@ -434,16 +434,7 @@ body {
   }
 }
 
-/* ---------------------------------------------------------------------
-   Hero crowd. The artwork loads complete; only the join-hover figure moves.
-   --------------------------------------------------------------------- */
-.hero-crowd {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
+
 
 /* Solved against the artwork: at 130% / 52% the copy zone is 0.22% inked
    while the left and right crowd bands hold 35% and 37%. The artwork's
@@ -455,104 +446,18 @@ body {
    height is set from the artwork's aspect ratio, then a band of cream is
    left underneath before the next section, so the picture finishes and
    the page breathes rather than the image being cut off. */
-/* Background layer. Absolutely positioned, sized to the hero box and
-   cropped with `cover` — it is free to crop differently at every aspect
-   ratio, and it never influences where the copy sits. */
-.hero-crowd-art {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("/images/crowd-stripes.webp");
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-  /* Measured against the artwork: the lowest BODY pixel (feet, not shadow)
-     is at row 1930 of 2048, leaving 118px of empty cream below it. At the
-     rendered scale that is 3.84vw, so 3.84 is the MAXIMUM downward shift
-     before feet start being clipped. 3.6vw is used, which closes the gap
-     and still leaves a small margin under the lowest feet — 4.6vw was
-     cutting legs off. */
-  background-position: 50% calc(100% + 3.6vw);
-}
 
 
 
 
-/* The crowd runs under the nav, so the top of the frame is lifted back to
-   cream — short, and only across the nav band. */
-.hero-crowd-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 132px;
-  background: linear-gradient(
-    to bottom,
-    #F4E9D6 0%,
-    rgba(244, 233, 214, 0.92) 42%,
-    rgba(244, 233, 214, 0) 100%
-  );
-}
 
-/* Portrait is its own composition, not a crop of the desktop one.
 
-   `crowd-mobile.webp` is a purpose-built portrait canvas: bands lifted
-   from the same artwork and composited onto cream with feathered alpha
-   on every side, so each one tapers into open space instead of ending on
-   an edge. It is ONE image — no stacked copies, no masks, no gradient
-   patches, nothing to produce the rectangular seam the previous version
-   had (that was a hard-edged `hero-copy-lift` rectangle sitting over the
-   artwork).
 
-   Measured on the asset: 40% ink across the upper band, 48% across the
-   lower, and 0% through the middle where the headline and subline sit,
-   with a largest row-to-row density change of 0.077 — no hard edge
-   anywhere in the image. */
-.hero-crowd-art.is-mobile {
-  inset: 0;
-  height: auto;
-  background-image: url("/images/crowd-mobile.webp");
-  background-size: cover;
-  background-position: 50% 50%;
-  -webkit-mask-image: none;
-  mask-image: none;
-}
 
-/* The eight arriving figures.
 
-   Position, frame, bob, sway and lean are all written per frame from one
-   rAF loop — CSS transitions cannot express a walk. No transition is
-   declared here on purpose. */
-.hero-walker {
-  position: absolute;
-  display: block;
-  background-repeat: no-repeat;
-  user-select: none;
-  pointer-events: none;
-  will-change: left, top, background-position, transform;
-}
 
-/* Drawn separately from the sprite and only revealed once its owner has
-   stopped, so a walking figure never drags a shadow across the artwork
-   and no two shadows overlap. */
-.hero-shadow {
-  position: absolute;
-  display: block;
-  pointer-events: none;
-  /* The artwork's shadows are long and thrown to the lower right, not
-     round pools under the feet — the ellipse is elongated and offset to
-     trail the same way. */
-  transform: translate(-16%, -52%) rotate(13deg);
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    rgba(120, 96, 62, 0.34),
-    rgba(120, 96, 62, 0.16) 62%,
-    rgba(120, 96, 62, 0) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.7s ease-out;
-}
+
+
 
 /* ---------------------------------------------------------------------
    MOBILE HERO — its own art direction.
@@ -569,6 +474,8 @@ body {
      the fold to scroll past. */
   height: 100svh;
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
+  /* measured: the visual block (tagline + subline box) sat 7px high at
+     50%, because the rotating-line container is taller than its text */
   --hero-content-top: 50.8%;
 }
 
@@ -590,20 +497,11 @@ body {
   .hero-shell {
     height: 100svh;
     min-height: 100svh;
-    --hero-content-top: 50%;
+    /* measured: 49px high on a 750px screen */
+    --hero-content-top: 56.5%;
   }
 
-  .hero-crowd-art.is-mobile {
-    /* `cover` so the artwork always reaches every edge — `contain` left
-       cream bars down the sides. The asset is drawn at a phone-like 1:2
-       aspect with every stripe running well off its own edge, so whatever
-       cover trims, the bleed still reads as intentional on all four. */
-    background-image: url("/images/crowd-mobile.webp");
-    background-size: cover;
-    background-position: center;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
+  
 
   .hero-tagline { font-size: clamp(38px, 9vw, 54px) !important; }
   .hero-subline { font-size: 19px !important; line-height: 1.45; width: 88%; max-width: 88%; }
@@ -643,4 +541,33 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .medium-letter-serve { animation: none !important; }
+}
+
+/* ---------------------------------------------------------------------
+   Hero backdrop — one static illustration per breakpoint.
+   `cover` so it always reaches every edge; both artworks carry their own
+   clear centre, so the copy sits on open cream without any overlay.
+   --------------------------------------------------------------------- */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("/images/hero-desktop.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 767px) {
+  .hero-backdrop,
+  .hero-backdrop.is-mobile {
+    /* Portrait artwork, its own composition rather than a re-crop of the
+       desktop one. There is only ~32px of horizontal slack under `cover`
+       at 390px, and anchoring right measures cleanest behind the copy
+       (1.43% ink vs 1.75% centred). */
+    background-image: url("/images/hero-mobile.webp");
+    background-size: cover;
+    background-position: 100% center;
+  }
 }

@@ -2024,3 +2024,107 @@ entries in the file, with **no date filter at all**, which is why July events
 were still showing. The date logic now lives in one place
 (`upcomingEvents()` in `lib/events.ts`) and both the homepage and the events
 page use it. The homepage list now starts at the next future event.
+
+---
+
+# v86 — the tail is a real shape, and mobile autoplay is off
+
+## The tail
+
+Rebuilt as a **filled shape**, not a stroked path. A stroke can only ever be a
+line of constant width with dashes laid on top, which is exactly why the old
+version read as an orange rule with a stray black mark.
+
+The geometry is generated off a curved centreline with varying thickness:
+
+- **Taper** — half-width runs 9.3 units at the base to 2.0 at the tip, with a
+  small sinusoidal variation so it does not look like a perfect SVG stroke.
+- **Six black stripes**, each generated as a *slice of the tail itself* between
+  two points along both edges — so every stripe wraps across the full width
+  rather than sitting on top of a line. Spacing, width and skew are all
+  irregular.
+- **A black tip** built the same way, from 79% to the end, so it is part of the
+  shape rather than a separate stroke.
+
+Stripes and tip are clipped to the tail body, so nothing can spill past its
+edge. The draw-in reveal is unchanged. Rendered height raised 0.30em → 0.46em so
+the thickness actually reads.
+
+## Mediums
+
+The mobile autoplay added in v84 is removed — the seven words animate on
+hover/tap only, on every device. Verified: LEARN holds a single static state
+while idle on a touch viewport.
+
+*Note:* removing it duplicated the surrounding block on the first attempt and
+broke the build with a duplicate `runEnter`; the duplicate was cut and the file
+compiles clean.
+
+---
+
+# v87 — mobile hero recomposed
+
+The portrait asset is rebuilt as **four separate corner formations** rather than
+bands that met in the middle.
+
+Each one is placed toward its own corner and tapers only on the end that faces
+the centre; the outer end runs well past the canvas edge, so no viewport crop
+can ever reveal where a crowd stops. That is what makes the bleed read as
+intentional on both sides instead of one edge looking clipped.
+
+Measured on the shipped asset:
+
+- vertical centre column (40–60% of width): **1.5% ink** — the pairs no longer
+  meet
+- nav band (top 9%): **0%** — logo and button sit on clean cream
+- copy band (40–62% of height): **0%**
+- edge ink left 15.9% / right 23.5% — both sides bleed
+
+Rendered at 390×750, 390×844 and 430×800: `scrollWidth` equals the viewport at
+all three, all four formations are visible in the first screen, and the copy sits
+on cream.
+
+Two intermediate versions were rejected on inspection: the first put crowd
+across the nav and buried the logo, the second still had the top pair merging
+into a single chevron across the middle.
+
+---
+
+# v88 — the hero is a picture again
+
+The whole crowd-animation system is removed: `HumanStripes.tsx`, the eight
+walking figures and their sprite sheets, the separate shadow layer, the rAF
+loop, the solved bezier routes, the Join-hover joiner, and every `.hero-crowd*`
+/ `.hero-walker` / `.hero-shadow` rule. The `public/images/walkers/` folder is
+deleted. Grep confirms no references remain.
+
+In its place, `HeroBackdrop.tsx` renders **one static illustration**, with
+desktop and mobile getting their own artwork rather than one image re-cropped —
+the two compositions leave their clear space in different places.
+
+Both were colour-matched to `#F4E9D6` and supersampled 2×:
+
+- `hero-desktop.webp` — 3072×2048
+- `hero-mobile.webp` — 1882×3344
+
+## Copy centring
+
+Hero is `100svh` and the copy is centred in it. Both illustrations carry an open
+cream middle, so one position satisfies "centred in the viewport" and "centred
+in the artwork" at once — measured centre-box ink is 0.02% desktop, 0.42%
+mobile.
+
+The percentage positions the block's top edge, so it was measured rather than
+assumed: at 50% the visual block sat 7px high on desktop and 49px high on
+mobile, because the rotating-line container is taller than its text. Corrected
+to 50.8% and 56.5%.
+
+| viewport | hero | block centre | viewport centre | offset | artwork |
+|---|---|---|---|---|---|
+| 1440×900 | 900 | 450 | 450 | **0** | desktop |
+| 1920×1080 | 1080 | 542 | 540 | **+2** | desktop |
+| 390×750 | 750 | 375 | 375 | **0** | mobile |
+| 390×844 | 844 | 428 | 422 | **+6** | mobile |
+
+One `.hero-backdrop` layer at every size, and `scrollWidth` equals the viewport
+throughout.
