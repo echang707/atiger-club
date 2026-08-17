@@ -2149,3 +2149,40 @@ line so the quote mark and attribution rule could not contaminate the result:
 - text pixels: 37,303
 - **overlapping pixels: 0**
 - gap between the lowest glyph pixel and the highest tail pixel: **20px**
+
+---
+
+# v91 — the correct artwork pair
+
+You were right to check. The desktop file shipped in v89/v90 was the **earlier**
+upload, not the one you meant — mean pixel difference 3.93 against the version
+you re-sent. Both are now the files from this round:
+
+- `hero-desktop.webp` — from the 1344×896 upload, supersampled to 2688×1792
+- `hero-mobile.webp` — from the 819×1456 portrait upload, supersampled to
+  1638×2912
+
+Both cream-matched to `#F4E9D6`.
+
+## Mobile copy zone cleared
+
+A centred copy block measured **1.69% ink** on the new portrait artwork, so 21
+marks (connector lines and small figures) falling inside that band were painted
+out using the surrounding cream's own tone and grain. The band now measures
+**0.0003%**, so the copy stays centred rather than being pushed off-centre to
+dodge the illustration.
+
+## Verified with the text hidden
+
+Ink inside the exact rendered copy box, artwork only:
+
+| viewport | ink behind copy |
+|---|---|
+| 1440×900 | 0.57% |
+| 1920×1080 | **0.000%** |
+| 390×750 | **0.000%** |
+| 390×844 | **0.000%** |
+
+The 0.57% on 1440×900 is two connector lines clipping the extreme corners of
+the bounding box — inspected, nothing sits behind the words. `scrollWidth`
+equals the viewport at all sizes.

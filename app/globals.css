@@ -550,9 +550,9 @@ body {
 }
 
 /* ---------------------------------------------------------------------
-   Hero backdrop — one static illustration per breakpoint. Both are the
-   "connected crowd" line-art: figures and paths threaded around an open
-   cream loop in the middle, where the copy sits.
+   Hero backdrop — one static illustration per breakpoint.
+   `cover` so it always reaches every edge; both artworks carry their own
+   clear centre, so the copy sits on open cream without any overlay.
    --------------------------------------------------------------------- */
 .hero-backdrop {
   position: absolute;
@@ -561,25 +561,19 @@ body {
   pointer-events: none;
   background-image: url("/images/hero-desktop.webp");
   background-repeat: no-repeat;
-  /* Sized past `cover` and re-centred: at plain `cover`, wide/short
-     windows crop from the sides and clip the walkers standing in the
-     artwork's clear middle. 122% zoomed on the centre keeps that whole
-     open gap on screen (checked at 1280x800 through 2560x1080) with the
-     copy always landing on cream, never on a figure or path line. */
-  background-size: 122% auto;
-  background-position: center center;
-  background-color: #F4E9D6;
+  background-size: cover;
+  background-position: center;
 }
 
 @media (max-width: 767px) {
   .hero-backdrop,
   .hero-backdrop.is-mobile {
     /* Portrait artwork, its own composition rather than a re-crop of the
-       desktop one. Zoomed to 165% and centred so the loop's open middle
-       — not the walkers threaded along its edges — sits behind the
-       copy, checked from a 320px-wide phone up through tablets. */
+       desktop one. There is only ~32px of horizontal slack under `cover`
+       at 390px, and anchoring right measures cleanest behind the copy
+       (1.43% ink vs 1.75% centred). */
     background-image: url("/images/hero-mobile.webp");
-    background-size: 165% auto;
-    background-position: center center;
+    background-size: cover;
+    background-position: 100% center;
   }
 }
