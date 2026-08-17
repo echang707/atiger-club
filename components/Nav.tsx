@@ -38,7 +38,13 @@ export default function Nav() {
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
         scrolled || open
           ? "bg-paper/85 backdrop-blur-md border-b border-ink/10"
-          : "bg-transparent border-b border-transparent"
+          : // At rest the bar keeps a light frosted cream. The hero artwork
+            // carries brush strokes in both top corners at every crop, so a
+            // fully transparent bar put the black logo on a black stroke and
+            // the orange button on an orange one. Carving the artwork was
+            // tried and left visible patches; backing the bar keeps the
+            // illustration whole and the nav legible.
+            "bg-paper/70 backdrop-blur-[6px] border-b border-transparent"
       }`}
     >
       <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[auto_1fr_auto] items-center gap-3">

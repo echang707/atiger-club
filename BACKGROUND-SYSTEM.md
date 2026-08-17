@@ -2186,3 +2186,40 @@ Ink inside the exact rendered copy box, artwork only:
 The 0.57% on 1440×900 is two connector lines clipping the extreme corners of
 the bounding box — inspected, nothing sits behind the words. `scrollWidth`
 equals the viewport at all sizes.
+
+---
+
+# v92 — new artwork pair, nav and copy verified legible
+
+`hero-desktop.webp` is the higher-quality 1536×1024 upload; `hero-mobile.webp`
+is the 941×1672 portrait. Both cream-matched and supersampled 2×.
+
+## Copy
+
+Centred and clear on both. Measured with the type hidden, inside the exact
+rendered copy box: **0.000%** ink at 1440×900, 1920×1080, 390×750 and 390×844.
+
+On mobile the marks that fell inside the centred copy band were painted out of
+the artwork (48 of them) so the type stays centred rather than dodging the
+illustration.
+
+## Nav
+
+The nav was sitting on figures and brush strokes — the black logo on a black
+stroke, the orange button on an orange one.
+
+I tried two fixes before the one that shipped:
+
+1. **Carving the artwork** under each nav element. It measured clean (0% ink)
+   but left visible rectangular cream patches cut into the brush strokes.
+2. **Re-cropping.** I searched 25 scale/position combinations; the best still
+   left **7.4%** ink under a nav element, because the illustration carries brush
+   strokes in both top corners at every crop. There is no crop that clears them.
+
+Shipped instead: the header keeps a light frosted cream at rest
+(`bg-paper/70 backdrop-blur-[6px]`, no border) rather than being fully
+transparent. The illustration stays whole and every nav element reads at any
+crop. It deepens to the existing `bg-paper/85` state on scroll as before.
+
+Mobile crop is anchored left: the artwork's top-right brush otherwise sits under
+the hamburger (30.5% ink anchored right vs 0.8% anchored left).

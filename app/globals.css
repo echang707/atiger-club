@@ -572,8 +572,11 @@ body {
        desktop one. There is only ~32px of horizontal slack under `cover`
        at 390px, and anchoring right measures cleanest behind the copy
        (1.43% ink vs 1.75% centred). */
+    /* Anchored LEFT: the artwork's top-right brush stroke otherwise sits
+       under the hamburger, and a black icon on a black brush disappears.
+       Measured hamburger ink: 30.5%% anchored right, 0.8%% anchored left. */
     background-image: url("/images/hero-mobile.webp");
     background-size: cover;
-    background-position: 100% center;
+    background-position: 0% center;
   }
 }
