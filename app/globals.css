@@ -476,7 +476,11 @@ body {
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
   /* measured: the visual block (tagline + subline box) sat 7px high at
      50%, because the rotating-line container is taller than its text */
-  --hero-content-top: 50.8%;
+  /* measured against the artwork: the cleanest 150px band sits at 48.8%
+     of the viewport on 1440x900 and 47.7% on 1920x1080, and the value
+     positions the block's TOP edge (the rotating-line box is taller than
+     its text), so this lands the visual block there. */
+  --hero-content-top: 49.6%;
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -498,7 +502,9 @@ body {
     height: 100svh;
     min-height: 100svh;
     /* measured: 49px high on a 750px screen */
-    --hero-content-top: 56.5%;
+    /* mobile copy is dead-centre; the artwork's own marks were cleared
+       out of that band instead of moving the type */
+    --hero-content-top: 50.1%;
   }
 
   

@@ -2128,3 +2128,24 @@ to 50.8% and 56.5%.
 
 One `.hero-backdrop` layer at every size, and `scrollWidth` equals the viewport
 throughout.
+
+---
+
+# v90 — the tail clears the type
+
+The tail's rising tip was crossing the descender of the "p" in
+"relationships" and clipping letters.
+
+Two changes: the centreline's upward lift at the tip is flattened (−20 → −11
+units), and the whole shape sits lower (`-bottom-0.40em` → `-bottom-0.56em`).
+It still curves up at the end, just under the type rather than into it.
+
+**Verified by pixel comparison, not by eye.** The line was captured twice —
+once with the type set to `transparent` (tail only) and once with the svg
+hidden (text only) — then the two masks were intersected, scoped to the final
+line so the quote mark and attribution rule could not contaminate the result:
+
+- tail pixels: 30,408
+- text pixels: 37,303
+- **overlapping pixels: 0**
+- gap between the lowest glyph pixel and the highest tail pixel: **20px**
