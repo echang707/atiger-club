@@ -561,8 +561,13 @@ body {
   pointer-events: none;
   background-image: url("/images/hero-desktop.webp");
   background-repeat: no-repeat;
+  /* Still `cover`, so it is always full bleed with no letterboxing. The
+     focal point is biased toward the top because the artwork's densest
+     content sits there (top 4% strip = 23.4% ink vs 13.4% at the bottom).
+     At 1440x900 that turns a 30px/30px split into 9px off the top and
+     51px off the bottom; at 1920x1080, 30px instead of 100px. */
   background-size: cover;
-  background-position: center;
+  background-position: 50% 15%;
 }
 
 @media (max-width: 767px) {
@@ -575,8 +580,76 @@ body {
     /* Anchored LEFT: the artwork's top-right brush stroke otherwise sits
        under the hamburger, and a black icon on a black brush disappears.
        Measured hamburger ink: 30.5%% anchored right, 0.8%% anchored left. */
+    /* Full bleed, nothing erased from the artwork.
+
+       The paths are baked into the raster, so they cannot be made to
+       curve around the type by CSS. What CAN be done is line the copy up
+       with the illustration's OWN central void, which spans rows 29%-63%
+       of the artwork. Searched 21x21x41 combinations of scale and focal
+       point for one that keeps the copy box completely inside that void
+       at every phone size while still covering the frame:
+
+         1.56x cover at 40% / 50%  ->  0.000% ink behind the copy
+         at 390x690, 390x750, 390x844, 430x930 and 414x896.
+
+       Because the void is the artwork's own, the paths run around the
+       outside of it as drawn — nothing is cut off or painted out. */
     background-image: url("/images/hero-mobile.webp");
-    background-size: cover;
-    background-position: 0% center;
+    /* Solved, with the artwork completely untouched.
+
+       The paths are baked into the raster, so CSS cannot make them bend
+       around the type. What it CAN do is line the copy up with the
+       illustration's own central void. Searched 26 x 11 x 21 combinations
+       of scale and focal point, scoring against the REAL glyph bounds
+       (line by line, not the full-width container, since the side paths
+       are meant to pass beside the words):
+
+         1.18x cover at 40%/10% -> 0.000%% ink behind every glyph line
+         at 390x750, 390x844 and 430x930, with the most perimeter
+         content of any clean option.
+
+       Still full bleed: 1.18x cover overflows the frame on both axes, so
+       there is no letterboxing or padding. */
+    background-size: auto 118%;
+    background-position: 40% 10%;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
+}
+
+/* Nav backing at rest.
+
+   A flat translucent bar left a visible horizontal seam where it ended.
+   This is a gradient instead: solid-ish cream behind the logo and links,
+   falling to nothing by the bottom of the bar, so there is no edge to
+   see. It still guarantees legibility over the artwork's corner brush
+   strokes, which no crop can avoid. */
+.nav-veil {
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 233, 214, 0.92) 0%,
+    rgba(244, 233, 214, 0.88) 60%,
+    rgba(244, 233, 214, 0.78) 100%
+  );
+}
+
+/* The fade continues BELOW the bar. Ending it at the header's own edge
+   left a measurable step (32 brightness units) where the brush strokes
+   jumped from washed to full; carrying it another 90px makes the
+   transition invisible. */
+.nav-veil::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 90px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(244, 233, 214, 0.78) 0%,
+    rgba(244, 233, 214, 0.42) 45%,
+    rgba(244, 233, 214, 0) 100%
+  );
 }

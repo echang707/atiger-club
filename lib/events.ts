@@ -183,6 +183,21 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "collab",
+    presentedBy: "Community Bucket",
+    id: "beltline-lantern-parade",
+    title: "BeltLine Lantern Parade Volunteer Group",
+    medium: "Serve",
+    city: "Atlanta",
+    date: "Sep 19",
+    month: "SEP",
+    day: "19",
+    location: "Adair Park II \u2014 BeltLine tent near the Tift Avenue parking lot",
+    description:
+      "Volunteer with Tiger Club and Community Bucket at the Atlanta BeltLine Lantern Parade. Help guide the parade, support the bands, and experience one of Atlanta\u2019s most iconic community traditions from inside the action. 6:45pm.",
+    image: "/images/explore-festival.jpg",
+  },
+  {
+    kind: "collab",
     id: "refuge-coffee-run",
     title: "The Refuge Coffee Run: Welcome Home",
     medium: "Move",

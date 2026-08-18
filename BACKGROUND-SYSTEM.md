@@ -2223,3 +2223,85 @@ crop. It deepens to the existing `bg-paper/85` state on scroll as before.
 
 Mobile crop is anchored left: the artwork's top-right brush otherwise sits under
 the hamburger (30.5% ink anchored right vs 0.8% anchored left).
+
+---
+
+# v93 — crop solved by position, artwork untouched
+
+## The mobile artwork is no longer edited
+
+The "path enters and disappears" effect was **my doing**: in earlier rounds I
+painted marks out of the centre band to clear space for the copy, which is
+exactly what makes a path look severed. All of that is undone — the mobile
+artwork now ships byte-for-byte from your upload, cream-match and 2x upscale
+only.
+
+**The paths are baked into the raster.** CSS cannot bend them around the type.
+What it can do is line the copy up with the illustration's own central void.
+
+Solved by search: 26 x 11 x 21 combinations of scale and focal point, scored
+against the **real glyph bounds line by line** rather than the full-width
+container — the side paths are meant to pass beside the words, so measuring a
+full-width box would have rejected exactly the composition you asked for.
+
+Result: **`auto 118%` at `40% 10%`** gives **0.000% ink behind every glyph
+line** at 390x750, 390x844 and 430x930, with more perimeter content than any
+other clean option. Still full bleed — 1.18x cover overflows both axes, so no
+letterboxing.
+
+Two rejected alternatives, for the record: plain `cover` left up to **4.3%** ink
+behind a subline, and a 1.56x zoom cleared the type but emptied the perimeter to
+0.3% — the artwork read as almost blank.
+
+## Desktop focal point
+
+Still `cover`, so still full bleed and undistorted. The focal point moved from
+`center` to **`50% 15%`**, because the artwork's densest content is at the top
+(top 4% strip = 23.4% ink vs 13.4% at the bottom).
+
+At 1440x900 that turns a 30px/30px split into **9px off the top, 51px off the
+bottom**; at 1920x1080, **30px instead of 100px**. Hero height, typography and
+copy position are unchanged.
+
+---
+
+# v94 — desktop crop confirmed, nav seam removed
+
+## Desktop crop
+
+Confirmed live: `cover @ 50% 15%` at 1440x900, 1920x1080 and 1280x720, and
+**zero dark pixels touch the top edge** at any of them — no figure is clipped by
+the frame, which was the original complaint.
+
+## Nav seam
+
+Checking that top band showed a problem I had introduced: the flat translucent
+nav bar ended in a hard horizontal edge, with the brush strokes jumping from
+washed to full strength — a measured **32.6** brightness step.
+
+The backing is now a gradient that continues **90px below the header** via a
+pseudo-element, so it resolves into the artwork instead of stopping. The step is
+down to **10.4** on desktop and **8.3** at 1920, which reads as a soft
+transition rather than a band.
+
+The bar still guarantees the logo and button are legible over the artwork's
+corner brush strokes, which no crop can avoid.
+
+---
+
+# v95 — BeltLine Lantern Parade added
+
+Added as a **Tiger Collab** in the **Serve** category, presented with Community
+Bucket:
+
+    BeltLine Lantern Parade Volunteer Group
+    Sat Sep 19, 6:45pm
+    Adair Park II — BeltLine tent near the Tift Avenue parking lot
+
+Verified on the events page: it slots into the date order between Bite Club
+(Sep 16) and the Refuge Coffee Run (Sep 19), carries the **TIGER COLLAB** mark
+on the row, and the expanded panel reads *"Tiger Collab · with Community
+Bucket — co-created by Tiger Club and a partner."*
+
+Rain date deliberately omitted, as instructed. The listing borrows the existing
+festival photo; swap the `image` path if you have artwork from the parade.

@@ -44,7 +44,7 @@ export default function Nav() {
             // the orange button on an orange one. Carving the artwork was
             // tried and left visible patches; backing the bar keeps the
             // illustration whole and the nav legible.
-            "bg-paper/70 backdrop-blur-[6px] border-b border-transparent"
+            "nav-veil border-b border-transparent"
       }`}
     >
       <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[auto_1fr_auto] items-center gap-3">
