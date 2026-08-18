@@ -2342,3 +2342,36 @@ is what let the full artwork height fit.
 
 Verified: **0.000% ink behind every glyph line** at all four viewports, and
 `scrollWidth` equals the viewport at each.
+
+---
+
+# v97 — About page tightened, mobile hero shows the whole artwork
+
+## About
+
+The opening section was mostly air. Padding cut from `pt-28 md:pt-36 pb-14
+md:pb-20` to `pt-20 md:pt-24 pb-8 md:pb-10` (~30% shorter), and the annotation
+paragraph moved up and left — `col-start-9` to `col-start-8`, top margin
+`9.5vw` to `4.6vw` — so it reads beside the headline rather than floating below
+it.
+
+"We don't just put people in the same room" now starts sooner (`pt-8 md:pt-12`
+to `pt-6 md:pt-8`), and each principle's own padding is down from `py-8 md:py-12`
+to `py-5 md:py-8`, which was the dead air above "Take part."
+
+Measured at 1440x900: the headline still owns rows 177-260 with room around it,
+and three principles now fit on the first screen instead of one.
+
+## Mobile hero
+
+Two things were fighting: the hero was `max(100svh, 177.6vw)`, which made it
+taller than the picture, and `cover` then had to crop the sides to fill it.
+
+The hero is now **exactly** the artwork's height at full width (`177.6vw`, no
+`max()`), with `background-size: 100% auto`. Nothing is cropped on any edge —
+the entire illustration is on screen, sides and bottom included.
+
+Verified at 390x750, 390x844, 430x930 and 375x700: **0.000% ink behind every
+glyph line**, artwork reaching both side edges (13-16% ink at each), and the
+copy block centred on the usable area below the nav (0px off at three of the
+four; the fourth varies with how the rotating subline wraps).

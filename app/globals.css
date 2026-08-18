@@ -330,7 +330,9 @@ body {
 
 @media (max-width: 767px) {
   .marble-frame {
-    background-size: auto 100%;
+    /* width-fitted, so nothing is cropped on ANY edge — the whole
+       illustration is on screen */
+    background-size: 100% auto;
     -webkit-mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
     mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
   }
@@ -505,8 +507,11 @@ body {
     /* Never shorter than the portrait artwork at full width (0.563 aspect
        -> 177.6vw), so the bottom of the scene finishes instead of being
        sliced off at the fold. */
-    height: max(100svh, 177.6vw);
-    min-height: 100svh;
+    /* EXACTLY the artwork's height at full width (0.563 aspect ->
+       177.6vw). Not max() with 100svh: that made the hero taller than the
+       picture, which forced `cover` to crop the sides. */
+    height: 177.6vw;
+    min-height: 0;
     --nav-h: 76px;
     /* minus 27px, measured the same at 390x750 and 390x844 */
     --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 27px);

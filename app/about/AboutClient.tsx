@@ -63,7 +63,7 @@ export default function AboutClient() {
   return (
     <main className="overflow-x-hidden">
       {/* ============ OPENING ============ */}
-      <section className="max-w-content mx-auto px-6 md:px-10 pt-28 md:pt-36 pb-14 md:pb-20">
+      <section className="max-w-content mx-auto px-6 md:px-10 pt-20 md:pt-24 pb-8 md:pb-10">
         {/* The paragraph is an annotation, not a second column: it starts
             further right and hangs below the headline's baseline rather
             than aligning to it, so it reads as a response to the question
@@ -72,7 +72,7 @@ export default function AboutClient() {
           <Rise className="md:col-span-7">
             <h1 className={TITLE}>Why Tiger&nbsp;Club?</h1>
           </Rise>
-          <Rise delay={0.1} className="md:col-span-4 md:col-start-9 md:mt-[9.5vw] lg:mt-[8vw]">
+          <Rise delay={0.1} className="md:col-span-4 md:col-start-8 md:mt-[4.6vw] lg:mt-[3.8vw]">
             <p className={BODY}>
               Getting out, trying things and meeting people doesn&rsquo;t happen
               by accident once you&rsquo;re an adult. So we make experiences that
@@ -86,7 +86,7 @@ export default function AboutClient() {
       <section className="relative border-t border-ink/12">
         {/* one tail for the whole section, wandering down the right side */}
         <SectionTail />
-        <div className="max-w-content mx-auto px-6 md:px-10 pt-8 md:pt-12 pb-2">
+        <div className="max-w-content mx-auto px-6 md:px-10 pt-6 md:pt-8 pb-2">
           <Rise>
             <p className={`${MARK} text-tiger-text`}>
               We don&rsquo;t just put people in the same room
@@ -107,7 +107,7 @@ className="relative border-b border-ink/12"
                 gutter, so every line on the page shares one left edge —
                 the previous version indented the claims into a grid
                 column and nothing lined up. */}
-            <div className="max-w-content mx-auto px-6 md:px-10 py-8 md:py-12">
+            <div className="max-w-content mx-auto px-6 md:px-10 py-5 md:py-8">
               <p className={`${MARK} relative z-10 text-ink/45 mb-2 md:mb-3`}>
                 <span className="text-tiger-text">{n}</span>
                 <span className="ml-3">{name}</span>
