@@ -330,7 +330,7 @@ body {
 
 @media (max-width: 767px) {
   .marble-frame {
-    background-size: auto 118%;
+    background-size: auto 100%;
     -webkit-mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
     mask-image: radial-gradient(140% 78% at 50% 50%, transparent 0 40%, #000 88%);
   }
@@ -468,19 +468,22 @@ body {
    of its width — so the whole composition is visible with nothing cropped.
    `min-height` keeps it at least a screen tall on very wide windows. */
 .hero-shell {
-  /* Exactly one screen. The artwork is taller than this at most window
-     shapes, so it is anchored to the BOTTOM and the overflow is taken off
-     the top — where the nav gradient already sits. Nothing hangs below
-     the fold to scroll past. */
-  height: 100svh;
+  /* At least a screen, but never shorter than the artwork's own height at
+     full width (3:2 -> 66.67vw). On a 16:9 window that adds ~7% so the
+     composition finishes instead of being cut off at the fold. */
+  height: max(100svh, 66.67vw);
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
   /* measured: the visual block (tagline + subline box) sat 7px high at
      50%, because the rotating-line container is taller than its text */
-  /* measured against the artwork: the cleanest 150px band sits at 48.8%
-     of the viewport on 1440x900 and 47.7% on 1920x1080, and the value
-     positions the block's TOP edge (the rotating-line box is taller than
-     its text), so this lands the visual block there. */
-  --hero-content-top: 49.6%;
+  /* The hero is now TALLER than the viewport (it runs to the artwork's
+     full height), so a percentage of the hero no longer means "centred on
+     screen". This is an absolute offset instead: the middle of the usable
+     area below the nav, which is what you actually see on entering. */
+  --nav-h: 80px;
+  /* minus 73px: the value positions the block's top edge and the
+     rotating-line container is taller than its text, so the visual centre
+     sat 73px low. Measured identical at 1440x900 and 1920x1080. */
+  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 73px);
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -499,18 +502,20 @@ body {
      chrome is showing — that is why the bottom two stripes needed a
      scroll. */
   .hero-shell {
-    height: 100svh;
+    /* Never shorter than the portrait artwork at full width (0.563 aspect
+       -> 177.6vw), so the bottom of the scene finishes instead of being
+       sliced off at the fold. */
+    height: max(100svh, 177.6vw);
     min-height: 100svh;
-    /* measured: 49px high on a 750px screen */
-    /* mobile copy is dead-centre; the artwork's own marks were cleared
-       out of that band instead of moving the type */
-    --hero-content-top: 50.1%;
+    --nav-h: 76px;
+    /* minus 27px, measured the same at 390x750 and 390x844 */
+    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 27px);
   }
 
   
 
-  .hero-tagline { font-size: clamp(38px, 9vw, 54px) !important; }
-  .hero-subline { font-size: 19px !important; line-height: 1.45; width: 88%; max-width: 88%; }
+  .hero-tagline { font-size: clamp(30px, 7.4vw, 42px) !important; }
+  .hero-subline { font-size: 17px !important; line-height: 1.45; width: 88%; max-width: 88%; }
 }
 
 /* ---------------------------------------------------------------------

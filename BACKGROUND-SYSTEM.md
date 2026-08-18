@@ -2305,3 +2305,40 @@ Bucket — co-created by Tiger Club and a partner."*
 
 Rain date deliberately omitted, as instructed. The listing borrows the existing
 festival photo; swap the `image` path if you have artwork from the parade.
+
+---
+
+# v96 — centred below the nav, artwork extended, smaller mobile type
+
+## Centring now counts the nav
+
+The copy was positioned as a percentage of the hero. Once the hero grew taller
+than the viewport that stopped meaning "centred on screen", so it is now an
+absolute offset:
+
+    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 73px)
+
+i.e. the middle of the usable area **below the nav**. The subtraction is the
+block's own geometry — the value positions its top edge while the rotating-line
+container is taller than its text — measured at 73px desktop, 27px mobile and
+identical across viewport sizes.
+
+Result: block centre vs usable centre = **0px** at 1440x900, 1920x1080, 390x750
+and 390x844.
+
+## Bottom no longer cut
+
+- **Desktop**: hero is `max(100svh, 66.67vw)` — never shorter than the artwork
+  at full width, so the composition finishes rather than being sliced at the
+  fold. 960px on a 1440x900 screen.
+- **Mobile**: background moved from `auto 118%` to **`auto 100%`**, so the
+  artwork's full height is visible with nothing cropped vertically.
+
+## Smaller mobile type
+
+Headline `clamp(38px, 9vw, 54px)` -> **`clamp(30px, 7.4vw, 42px)`**; subline
+19px -> **17px**. That freed enough room to drop the mobile zoom entirely, which
+is what let the full artwork height fit.
+
+Verified: **0.000% ink behind every glyph line** at all four viewports, and
+`scrollWidth` equals the viewport at each.
