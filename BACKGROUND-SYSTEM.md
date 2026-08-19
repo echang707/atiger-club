@@ -2375,3 +2375,83 @@ Verified at 390x750, 390x844, 430x930 and 375x700: **0.000% ink behind every
 glyph line**, artwork reaching both side edges (13-16% ink at each), and the
 copy block centred on the usable area below the nav (0px off at three of the
 four; the fourth varies with how the rotating subline wraps).
+
+---
+
+# v98 — the mobile change actually applied this time
+
+You were right to ask. In v97 the "show the whole artwork" edit was written to
+**`.marble-frame`** — a dead legacy selector left over from the old background
+system. The live rule is `.hero-backdrop.is-mobile`, which was still on
+`auto 118%`, so mobile was unchanged and still cropped on all four edges.
+
+Fixed on the real selector: **`background-size: 100% auto` at `50% 0`**, with the
+hero at exactly the artwork's height (`177.6vw`). Confirmed from computed style
+in the browser, not from the source file:
+
+| viewport | computed size | position | hero height |
+|---|---|---|---|
+| 390x750 | `100%` | `50% 0px` | 693 |
+| 390x844 | `100%` | `50% 0px` | 693 |
+| 430x930 | `100%` | `50% 0px` | 764 |
+
+693px = 177.6% of 390, i.e. the artwork's full height at full width. Nothing is
+cropped on any edge. Glyph ink stays **0.000%** at every size.
+
+*Lesson recorded:* `globals.css` still carries rules from three superseded
+background systems (`.marble-field`, `.marble-frame`, `.hero-crowd-*`). An edit
+can land on one of them and appear to work. Verify against computed style in the
+browser, not the stylesheet.
+
+---
+
+# v99 — the About tail no longer glitches
+
+Two faults, both made worse by the v97 padding cut:
+
+1. **Detached dashes.** The body drew over 2.1s while the black stripes faded in
+   at 1.5s on a separate path — so for ~0.6s the stripes floated as loose marks
+   ahead of the line they belong to. Both layers now sit inside **one clipPath**
+   that sweeps down, so a stripe cannot appear before the body it sits on.
+
+2. **The line bunched and stopped mid-page.** The old path packed five swings
+   into the viewBox. Once the principles section got shorter (599px), the
+   `preserveAspectRatio="none"` squeeze compressed them into a scribble that
+   read as ending early. The path is redrawn with three even swings spanning the
+   full viewBox height, so it stays legible whatever the section height.
+
+The `pathLength` draw animation is gone with it — that was also what let the two
+layers get out of step. The reveal is now a single geometric sweep, which cannot
+desynchronise.
+
+---
+
+# v100 — mobile copy centred below the header
+
+## It was 49px low, consistently
+
+Measured at 390x750, 390x844, 430x930 and 375x700 — the wrapper sat **49px
+below** the centre of the usable area at every one. The old `-27px` correction
+had been tuned against a run where the rotating subline had not yet rendered, so
+the block was measured shorter than it really is. Corrected to **-76px**.
+
+Now **0px off at all four sizes**.
+
+## The artwork had to move with it
+
+Centring the copy pushed it onto the illustration — overlap jumped to 26%. The
+artwork's clear void sits at ~29-63% of its own height (centred around 46%),
+which is higher than the viewport's usable centre.
+
+So the artwork is offset downward by exactly that difference:
+
+    --art-offset: calc(nav + (100svh - nav)/2 - 0.46 * 177.6vw)
+
+and the hero grows by the same amount, so the bottom of the illustration is
+still fully visible and nothing is cropped. Overlap drops from 26% to **~4%**,
+and inspecting that 4% shows it is only the flanking figures at the far left and
+right of the text box — the words themselves sit on clean cream.
+
+The short cream band this opens at the top is covered by extending the nav veil
+to 150px on mobile, so the illustration fades in under the header instead of
+starting on a hard edge.

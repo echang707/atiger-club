@@ -26,8 +26,12 @@ import { motion, useScroll, useTransform } from "framer-motion";
 // enters top-right off-screen, wanders down, leaves bottom-right
 // Uneven on purpose — the swings differ in width and length so it reads
 // as something that wandered in, not a repeating wave or a chart axis.
+/* Spans the full viewBox height with an even rhythm. The old path packed
+   five swings into the same space; once the section got shorter the
+   `preserveAspectRatio="none"` squeeze bunched them together and the line
+   read as a scribble that stopped mid-page. */
 const PATH =
-  "M192 -30C168 54 104 96 92 190c-12 94 78 128 84 226 6 98-72 118-78 206-6 88 46 128 58 210 12 82-40 118-52 198";
+  "M186 -40C150 90 96 150 96 280c0 130 84 170 84 300 0 130-84 170-84 300 0 120 60 170 84 200";
 
 export default function SectionTail() {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,32 +57,45 @@ export default function SectionTail() {
           className="h-full w-full overflow-visible"
           fill="none"
         >
-          {/* body */}
-          <motion.path
-            d={PATH}
-            stroke="#D84A18"
-            strokeWidth={3.4}
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 0.8 }}
-            viewport={{ once: true, margin: "-120px" }}
-            transition={{ duration: 2.1, ease: [0.22, 1, 0.36, 1] }}
-          />
-          {/* a few sparse stripes, faded in once the body has drawn */}
-          <motion.path
-            d={PATH}
-            stroke="#15130E"
-            strokeWidth={3.4}
-            strokeLinecap="butt"
-            strokeDasharray="7 104"
-            strokeDashoffset={-40}
-            vectorEffect="non-scaling-stroke"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.8 }}
-            viewport={{ once: true, margin: "-120px" }}
-            transition={{ duration: 0.7, delay: 1.5, ease: "easeOut" }}
-          />
+          <defs>
+            {/* one sweep for both layers: the stripes are revealed by the
+                same rectangle that reveals the body, so they can never
+                float ahead of it as detached dashes */}
+            <clipPath id="tc-tail-sweep" clipPathUnits="objectBoundingBox">
+              <motion.rect
+                x={-0.5}
+                y={-0.2}
+                width={2}
+                initial={{ height: 0 }}
+                whileInView={{ height: 1.6 }}
+                viewport={{ once: true, margin: "-120px" }}
+                transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </clipPath>
+          </defs>
+
+          <g clipPath="url(#tc-tail-sweep)">
+            {/* body */}
+            <path
+              d={PATH}
+              stroke="#D84A18"
+              strokeWidth={3.4}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              opacity={0.8}
+            />
+            {/* sparse stripes, painted onto the same line */}
+            <path
+              d={PATH}
+              stroke="#15130E"
+              strokeWidth={3.4}
+              strokeLinecap="butt"
+              strokeDasharray="7 104"
+              strokeDashoffset={-40}
+              vectorEffect="non-scaling-stroke"
+              opacity={0.8}
+            />
+          </g>
         </svg>
       </motion.div>
     </div>

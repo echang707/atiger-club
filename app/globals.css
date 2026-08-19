@@ -510,11 +510,19 @@ body {
     /* EXACTLY the artwork's height at full width (0.563 aspect ->
        177.6vw). Not max() with 100svh: that made the hero taller than the
        picture, which forced `cover` to crop the sides. */
-    height: 177.6vw;
+    --art-offset: calc(
+      var(--nav-h) + (100svh - var(--nav-h)) / 2 - 0.46 * 177.6vw
+    );
+    height: calc(177.6vw + var(--art-offset));
     min-height: 0;
     --nav-h: 76px;
     /* minus 27px, measured the same at 390x750 and 390x844 */
-    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 27px);
+    /* -76px, not -27px. The wrapper sat 49px BELOW the centre of the
+       usable area at every phone size (measured 390x750, 390x844,
+       430x930, 375x700 — all off by exactly 49). The old -27px was tuned
+       against a run where the rotating subline had not yet rendered, so
+       the block was shorter than it really is. */
+    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 76px);
   }
 
   
@@ -620,8 +628,21 @@ body {
 
        Still full bleed: 1.18x cover overflows the frame on both axes, so
        there is no letterboxing or padding. */
-    background-size: auto 118%;
-    background-position: 40% 10%;
+    /* Width-fitted and top-anchored: with the hero set to exactly the
+       artwork's height at full width (177.6vw), this puts the WHOLE
+       illustration on screen — nothing cropped on any edge, sides or
+       bottom. The previous `auto 118%` zoomed in and clipped both. */
+    /* The illustration's clear void sits at ~29-63% of its own height,
+       i.e. centred around 46%. The copy is centred on the usable area
+       below the nav, which is lower than that — so showing the artwork
+       flush to the top put figures behind the words.
+
+       The artwork is therefore pushed DOWN by the difference, so its void
+       lands on the copy. The gap this opens at the very top sits under
+       the nav veil, and the hero is grown by the same amount so the
+       bottom of the illustration is still fully visible. */
+    background-size: 100% auto;
+    background-position: 50% var(--art-offset);
     -webkit-mask-image: none;
     mask-image: none;
   }
@@ -662,4 +683,14 @@ body {
     rgba(244, 233, 214, 0.42) 45%,
     rgba(244, 233, 214, 0) 100%
   );
+}
+
+/* On mobile the artwork is pushed down so its void meets the copy, which
+   leaves a short cream band at the very top. The nav veil is extended to
+   cover it, so the illustration appears to fade in under the header
+   rather than starting on a hard edge. */
+@media (max-width: 767px) {
+  .nav-veil::after {
+    height: 150px;
+  }
 }
