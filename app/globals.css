@@ -510,9 +510,11 @@ body {
     /* EXACTLY the artwork's height at full width (0.563 aspect ->
        177.6vw). Not max() with 100svh: that made the hero taller than the
        picture, which forced `cover` to crop the sides. */
-    --art-offset: calc(
-      var(--nav-h) + (100svh - var(--nav-h)) / 2 - 0.46 * 177.6vw
-    );
+    /* Only as much offset as the copy actually needs. The full
+       difference between the artwork's void centre and the viewport's
+       usable centre left a screenful of cream above the illustration;
+       with a shorter subline the block fits with a fraction of it. */
+    --art-offset: 62px;
     height: calc(177.6vw + var(--art-offset));
     min-height: 0;
     --nav-h: 76px;
@@ -527,8 +529,12 @@ body {
 
   
 
-  .hero-tagline { font-size: clamp(30px, 7.4vw, 42px) !important; }
-  .hero-subline { font-size: 17px !important; line-height: 1.45; width: 88%; max-width: 88%; }
+  /* The illustration's clear channel through the copy rows measures
+     59-63% of the viewport width (78-308px at 390, 66-339px at 430), so
+     both lines are sized and constrained to sit inside it rather than
+     running out to the figures on either side. */
+  .hero-tagline { font-size: clamp(25px, 6.1vw, 34px) !important; }
+  .hero-subline { font-size: 14px !important; line-height: 1.4; width: 56%; max-width: 56%; }
 }
 
 /* ---------------------------------------------------------------------

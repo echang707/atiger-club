@@ -4,34 +4,70 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 /* ---------------------------------------------------------------------
-   One tail for the whole principles section.
+   Tiger DNA.
 
-   The four per-row hairlines are gone. This is a single continuous line
-   that wanders down the right-hand side across all four rows — as if a
-   tail had drifted into the layout from off-screen rather than a graphic
-   being assigned to each principle.
+   The single wandering line is replaced by a double helix: two strands
+   180 degrees out of phase down the right-hand column, with rungs
+   between them where they are far enough apart to read as bonds. The
+   rungs are skipped near each crossover, which is what makes it read as
+   a helix rather than a ladder.
 
-   Deliberately NOT aligned to the rows: the curve changes direction on
-   its own rhythm and crosses the gaps between rows wherever it happens
-   to. It lives inside the right ~30% of the section and never reaches
-   the text column.
+   Same orange as the brand, same black stripe marks along the strands —
+   so it still belongs to the tail language rather than looking like a
+   science diagram.
 
-   `vector-effect="non-scaling-stroke"` keeps the line the same weight
-   however the viewBox is stretched to the section's height, so it stays
-   thin and elegant on a short viewport and a tall one alike.
-
-   Motion is a slight parallax drift as you scroll past — no loop, no wag.
+   Both strands and every rung sit inside ONE sweeping clip, so nothing
+   can appear before the part of the helix it belongs to.
    --------------------------------------------------------------------- */
 
-// enters top-right off-screen, wanders down, leaves bottom-right
-// Uneven on purpose — the swings differ in width and length so it reads
-// as something that wandered in, not a repeating wave or a chart axis.
-/* Spans the full viewBox height with an even rhythm. The old path packed
-   five swings into the same space; once the section got shorter the
-   `preserveAspectRatio="none"` squeeze bunched them together and the line
-   read as a scribble that stopped mid-page. */
-const PATH =
-  "M186 -40C150 90 96 150 96 280c0 130 84 170 84 300 0 130-84 170-84 300 0 120 60 170 84 200";
+const STRAND_A =
+  "M 110.0 -40.0 L 114.6 -35.8 L 119.3 -31.7 L 123.8 -27.5 L 128.3 -23.4 L 132.7 -19.2 L 136.9 -15.1 L 141.0 -10.9 L 145.0 -6.8 L 148.7 -2.6 L 152.2 1.5 L 155.5 5.7 L 158.5 9.8 L 161.3 14.0 L 163.7 18.2 L 165.9 22.3 L 167.8 26.5 L 169.3 30.6 L 170.5 34.8 L 171.3 38.9 L 171.8 43.1 L 172.0 47.2 L 171.8 51.4 L 171.3 55.5 L 170.4 59.7 L 169.2 63.8 L 167.6 68.0 L 165.8 72.2 L 163.6 76.3 L 161.1 80.5 L 158.3 84.6 L 155.3 88.8 L 152.0 92.9 L 148.5 97.1 L 144.7 101.2 L 140.8 105.4 L 136.7 109.5 L 132.4 113.7 L 128.0 117.8 L 123.5 122.0 L 119.0 126.2 L 114.3 130.3 L 109.7 134.5 L 105.1 138.6 L 100.4 142.8 L 95.9 146.9 L 91.4 151.1 L 87.0 155.2 L 82.8 159.4 L 78.7 163.5 L 74.8 167.7 L 71.1 171.8 L 67.6 176.0 L 64.3 180.2 L 61.3 184.3 L 58.6 188.5 L 56.1 192.6 L 54.0 196.8 L 52.1 200.9 L 50.6 205.1 L 49.5 209.2 L 48.6 213.4 L 48.1 217.5 L 48.0 221.7 L 48.2 225.8 L 48.8 230.0 L 49.7 234.2 L 50.9 238.3 L 52.5 242.5 L 54.4 246.6 L 56.6 250.8 L 59.1 254.9 L 61.8 259.1 L 64.9 263.2 L 68.2 267.4 L 71.8 271.5 L 75.5 275.7 L 79.5 279.8 L 83.6 284.0 L 87.9 288.2 L 92.3 292.3 L 96.8 296.5 L 101.3 300.6 L 106.0 304.8 L 110.6 308.9 L 115.2 313.1 L 119.8 317.2 L 124.4 321.4 L 128.9 325.5 L 133.2 329.7 L 137.5 333.8 L 141.6 338.0 L 145.5 342.2 L 149.2 346.3 L 152.7 350.5 L 155.9 354.6 L 158.9 358.8 L 161.6 362.9 L 164.0 367.1 L 166.2 371.2 L 168.0 375.4 L 169.5 379.5 L 170.6 383.7 L 171.4 387.8 L 171.9 392.0 L 172.0 396.2 L 171.8 400.3 L 171.2 404.5 L 170.3 408.6 L 169.0 412.8 L 167.4 416.9 L 165.5 421.1 L 163.3 425.2 L 160.8 429.4 L 158.0 433.5 L 154.9 437.7 L 151.6 441.8 L 148.0 446.0 L 144.2 450.2 L 140.3 454.3 L 136.1 458.5 L 131.8 462.6 L 127.4 466.8 L 122.9 470.9 L 118.4 475.1 L 113.7 479.2 L 109.1 483.4 L 104.5 487.5 L 99.9 491.7 L 95.3 495.8 L 90.8 500.0 L 86.5 504.2 L 82.3 508.3 L 78.2 512.5 L 74.3 516.6 L 70.6 520.8 L 67.1 524.9 L 63.9 529.1 L 60.9 533.2 L 58.2 537.4 L 55.8 541.5 L 53.7 545.7 L 51.9 549.8 L 50.5 554.0 L 49.3 558.2 L 48.5 562.3 L 48.1 566.5 L 48.0 570.6 L 48.3 574.8 L 48.9 578.9 L 49.8 583.1 L 51.1 587.2 L 52.7 591.4 L 54.6 595.5 L 56.9 599.7 L 59.4 603.8 L 62.2 608.0 L 65.3 612.2 L 68.7 616.3 L 72.2 620.5 L 76.0 624.6 L 80.0 628.8 L 84.1 632.9 L 88.4 637.1 L 92.8 641.2 L 97.4 645.4 L 101.9 649.5 L 106.6 653.7 L 111.2 657.8 L 115.8 662.0 L 120.4 666.2 L 125.0 670.3 L 129.4 674.5 L 133.8 678.6 L 138.0 682.8 L 142.1 686.9 L 146.0 691.1 L 149.6 695.2 L 153.1 699.4 L 156.3 703.5 L 159.3 707.7 L 161.9 711.8 L 164.3 716.0 L 166.4 720.2 L 168.2 724.3 L 169.6 728.5 L 170.7 732.6 L 171.5 736.8 L 171.9 740.9 L 172.0 745.1 L 171.7 749.2 L 171.1 753.4 L 170.1 757.5 L 168.8 761.7 L 167.2 765.8 L 165.2 770.0 L 163.0 774.2 L 160.4 778.3 L 157.6 782.5 L 154.5 786.6 L 151.1 790.8 L 147.5 794.9 L 143.7 799.1 L 139.7 803.2 L 135.6 807.4 L 131.3 811.5 L 126.9 815.7 L 122.4 819.8 L 117.8 824.0 L 113.1 828.2 L 108.5 832.3 L 103.9 836.5 L 99.3 840.6 L 94.7 844.8 L 90.3 848.9 L 85.9 853.1 L 81.7 857.2 L 77.7 861.4 L 73.8 865.5 L 70.1 869.7 L 66.7 873.8 L 63.5 878.0 L 60.6 882.2 L 57.9 886.3 L 55.5 890.5 L 53.5 894.6 L 51.7 898.8 L 50.3 902.9 L 49.2 907.1 L 48.5 911.2 L 48.1 915.4 L 48.0 919.5 L 48.3 923.7 L 49.0 927.8 L 49.9 932.0 L 51.3 936.2 L 52.9 940.3 L 54.9 944.5 L 57.2 948.6 L 59.8 952.8 L 62.6 956.9 L 65.7 961.1 L 69.1 965.2 L 72.7 969.4 L 76.5 973.5 L 80.5 977.7 L 84.7 981.8 L 89.0 986.0 L 93.4 990.2 L 97.9 994.3 L 102.5 998.5 L 107.2 1002.6 L 111.8 1006.8 L 116.4 1010.9 L 121.0 1015.1 L 125.6 1019.2 L 130.0 1023.4 L 134.3 1027.5 L 138.5 1031.7 L 142.6 1035.8 L 146.4 1040.0";
+const STRAND_B =
+  "M 110.0 -40.0 L 105.4 -35.8 L 100.7 -31.7 L 96.2 -27.5 L 91.7 -23.4 L 87.3 -19.2 L 83.1 -15.1 L 79.0 -10.9 L 75.0 -6.8 L 71.3 -2.6 L 67.8 1.5 L 64.5 5.7 L 61.5 9.8 L 58.7 14.0 L 56.3 18.2 L 54.1 22.3 L 52.2 26.5 L 50.7 30.6 L 49.5 34.8 L 48.7 38.9 L 48.2 43.1 L 48.0 47.2 L 48.2 51.4 L 48.7 55.5 L 49.6 59.7 L 50.8 63.8 L 52.4 68.0 L 54.2 72.2 L 56.4 76.3 L 58.9 80.5 L 61.7 84.6 L 64.7 88.8 L 68.0 92.9 L 71.5 97.1 L 75.3 101.2 L 79.2 105.4 L 83.3 109.5 L 87.6 113.7 L 92.0 117.8 L 96.5 122.0 L 101.0 126.2 L 105.7 130.3 L 110.3 134.5 L 114.9 138.6 L 119.6 142.8 L 124.1 146.9 L 128.6 151.1 L 133.0 155.2 L 137.2 159.4 L 141.3 163.5 L 145.2 167.7 L 148.9 171.8 L 152.4 176.0 L 155.7 180.2 L 158.7 184.3 L 161.4 188.5 L 163.9 192.6 L 166.0 196.8 L 167.9 200.9 L 169.4 205.1 L 170.5 209.2 L 171.4 213.4 L 171.9 217.5 L 172.0 221.7 L 171.8 225.8 L 171.2 230.0 L 170.3 234.2 L 169.1 238.3 L 167.5 242.5 L 165.6 246.6 L 163.4 250.8 L 160.9 254.9 L 158.2 259.1 L 155.1 263.2 L 151.8 267.4 L 148.2 271.5 L 144.5 275.7 L 140.5 279.8 L 136.4 284.0 L 132.1 288.2 L 127.7 292.3 L 123.2 296.5 L 118.7 300.6 L 114.0 304.8 L 109.4 308.9 L 104.8 313.1 L 100.2 317.2 L 95.6 321.4 L 91.1 325.5 L 86.8 329.7 L 82.5 333.8 L 78.4 338.0 L 74.5 342.2 L 70.8 346.3 L 67.3 350.5 L 64.1 354.6 L 61.1 358.8 L 58.4 362.9 L 56.0 367.1 L 53.8 371.2 L 52.0 375.4 L 50.5 379.5 L 49.4 383.7 L 48.6 387.8 L 48.1 392.0 L 48.0 396.2 L 48.2 400.3 L 48.8 404.5 L 49.7 408.6 L 51.0 412.8 L 52.6 416.9 L 54.5 421.1 L 56.7 425.2 L 59.2 429.4 L 62.0 433.5 L 65.1 437.7 L 68.4 441.8 L 72.0 446.0 L 75.8 450.2 L 79.7 454.3 L 83.9 458.5 L 88.2 462.6 L 92.6 466.8 L 97.1 470.9 L 101.6 475.1 L 106.3 479.2 L 110.9 483.4 L 115.5 487.5 L 120.1 491.7 L 124.7 495.8 L 129.2 500.0 L 133.5 504.2 L 137.7 508.3 L 141.8 512.5 L 145.7 516.6 L 149.4 520.8 L 152.9 524.9 L 156.1 529.1 L 159.1 533.2 L 161.8 537.4 L 164.2 541.5 L 166.3 545.7 L 168.1 549.8 L 169.5 554.0 L 170.7 558.2 L 171.5 562.3 L 171.9 566.5 L 172.0 570.6 L 171.7 574.8 L 171.1 578.9 L 170.2 583.1 L 168.9 587.2 L 167.3 591.4 L 165.4 595.5 L 163.1 599.7 L 160.6 603.8 L 157.8 608.0 L 154.7 612.2 L 151.3 616.3 L 147.8 620.5 L 144.0 624.6 L 140.0 628.8 L 135.9 632.9 L 131.6 637.1 L 127.2 641.2 L 122.6 645.4 L 118.1 649.5 L 113.4 653.7 L 108.8 657.8 L 104.2 662.0 L 99.6 666.2 L 95.0 670.3 L 90.6 674.5 L 86.2 678.6 L 82.0 682.8 L 77.9 686.9 L 74.0 691.1 L 70.4 695.2 L 66.9 699.4 L 63.7 703.5 L 60.7 707.7 L 58.1 711.8 L 55.7 716.0 L 53.6 720.2 L 51.8 724.3 L 50.4 728.5 L 49.3 732.6 L 48.5 736.8 L 48.1 740.9 L 48.0 745.1 L 48.3 749.2 L 48.9 753.4 L 49.9 757.5 L 51.2 761.7 L 52.8 765.8 L 54.8 770.0 L 57.0 774.2 L 59.6 778.3 L 62.4 782.5 L 65.5 786.6 L 68.9 790.8 L 72.5 794.9 L 76.3 799.1 L 80.3 803.2 L 84.4 807.4 L 88.7 811.5 L 93.1 815.7 L 97.6 819.8 L 102.2 824.0 L 106.9 828.2 L 111.5 832.3 L 116.1 836.5 L 120.7 840.6 L 125.3 844.8 L 129.7 848.9 L 134.1 853.1 L 138.3 857.2 L 142.3 861.4 L 146.2 865.5 L 149.9 869.7 L 153.3 873.8 L 156.5 878.0 L 159.4 882.2 L 162.1 886.3 L 164.5 890.5 L 166.5 894.6 L 168.3 898.8 L 169.7 902.9 L 170.8 907.1 L 171.5 911.2 L 171.9 915.4 L 172.0 919.5 L 171.7 923.7 L 171.0 927.8 L 170.1 932.0 L 168.7 936.2 L 167.1 940.3 L 165.1 944.5 L 162.8 948.6 L 160.2 952.8 L 157.4 956.9 L 154.3 961.1 L 150.9 965.2 L 147.3 969.4 L 143.5 973.5 L 139.5 977.7 L 135.3 981.8 L 131.0 986.0 L 126.6 990.2 L 122.1 994.3 L 117.5 998.5 L 112.8 1002.6 L 108.2 1006.8 L 103.6 1010.9 L 99.0 1015.1 L 94.4 1019.2 L 90.0 1023.4 L 85.7 1027.5 L 81.5 1031.7 L 77.4 1035.8 L 73.6 1040.0";
+const RUNGS = [
+  "M 122.7 -19.2 L 97.3 -19.2",
+  "M 133.6 1.5 L 86.4 1.5",
+  "M 141.3 22.3 L 78.7 22.3",
+  "M 144.6 43.1 L 75.4 43.1",
+  "M 143.1 63.8 L 76.9 63.8",
+  "M 137.1 84.6 L 82.9 84.6",
+  "M 127.2 105.4 L 92.8 105.4",
+  "M 90.3 167.7 L 129.7 167.7",
+  "M 81.2 188.5 L 138.8 188.5",
+  "M 76.1 209.2 L 143.9 209.2",
+  "M 75.7 230.0 L 144.3 230.0",
+  "M 80.1 250.8 L 139.9 250.8",
+  "M 88.6 271.5 L 131.4 271.5",
+  "M 100.1 292.3 L 119.9 292.3",
+  "M 125.4 333.8 L 94.6 333.8",
+  "M 135.7 354.6 L 84.3 354.6",
+  "M 142.5 375.4 L 77.5 375.4",
+  "M 144.7 396.2 L 75.3 396.2",
+  "M 142.2 416.9 L 77.8 416.9",
+  "M 135.1 437.7 L 84.9 437.7",
+  "M 124.6 458.5 L 95.4 458.5",
+  "M 99.3 500.0 L 120.7 500.0",
+  "M 87.9 520.8 L 132.1 520.8",
+  "M 79.7 541.5 L 140.3 541.5",
+  "M 75.6 562.3 L 144.4 562.3",
+  "M 76.3 583.1 L 143.7 583.1",
+  "M 81.7 603.8 L 138.3 603.8",
+  "M 91.0 624.6 L 129.0 624.6",
+  "M 128.0 686.9 L 92.0 686.9",
+  "M 137.6 707.7 L 82.4 707.7",
+  "M 143.4 728.5 L 76.6 728.5",
+  "M 144.6 749.2 L 75.4 749.2",
+  "M 140.9 770.0 L 79.1 770.0",
+  "M 133.0 790.8 L 87.0 790.8",
+  "M 121.9 811.5 L 98.1 811.5",
+  "M 96.5 853.1 L 123.5 853.1",
+  "M 85.7 873.8 L 134.3 873.8",
+  "M 78.3 894.6 L 141.7 894.6",
+  "M 75.3 915.4 L 144.7 915.4",
+  "M 77.1 936.2 L 142.9 936.2",
+  "M 83.5 956.9 L 136.5 956.9",
+  "M 93.5 977.7 L 126.5 977.7",
+];
 
 export default function SectionTail() {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,8 +75,6 @@ export default function SectionTail() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  // a few px of drift and a degree of sway across the whole scroll — enough
-  // to feel loose, not enough to read as an animation
   const y = useTransform(scrollYProgress, [0, 1], [26, -26]);
   const rotate = useTransform(scrollYProgress, [0, 1], [-1.2, 1.2]);
 
@@ -58,10 +92,7 @@ export default function SectionTail() {
           fill="none"
         >
           <defs>
-            {/* one sweep for both layers: the stripes are revealed by the
-                same rectangle that reveals the body, so they can never
-                float ahead of it as detached dashes */}
-            <clipPath id="tc-tail-sweep" clipPathUnits="objectBoundingBox">
+            <clipPath id="tc-dna-sweep" clipPathUnits="objectBoundingBox">
               <motion.rect
                 x={-0.5}
                 y={-0.2}
@@ -69,29 +100,49 @@ export default function SectionTail() {
                 initial={{ height: 0 }}
                 whileInView={{ height: 1.6 }}
                 viewport={{ once: true, margin: "-120px" }}
-                transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 2.1, ease: [0.22, 1, 0.36, 1] }}
               />
             </clipPath>
           </defs>
 
-          <g clipPath="url(#tc-tail-sweep)">
-            {/* body */}
+          <g clipPath="url(#tc-dna-sweep)">
+            {/* rungs sit under the strands so the strands read as passing
+                in front of them at the crossovers */}
+            {RUNGS.map((d, i) => (
+              <path
+                key={i}
+                d={d}
+                stroke="#15130E"
+                strokeWidth={1.15}
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+                opacity={0.24}
+              />
+            ))}
             <path
-              d={PATH}
+              d={STRAND_A}
               stroke="#D84A18"
-              strokeWidth={3.4}
+              strokeWidth={3.2}
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
-              opacity={0.8}
+              opacity={0.85}
             />
-            {/* sparse stripes, painted onto the same line */}
             <path
-              d={PATH}
+              d={STRAND_B}
+              stroke="#D84A18"
+              strokeWidth={3.2}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              opacity={0.5}
+            />
+            {/* the tiger marks, painted along the front strand */}
+            <path
+              d={STRAND_A}
               stroke="#15130E"
-              strokeWidth={3.4}
+              strokeWidth={3.2}
               strokeLinecap="butt"
-              strokeDasharray="7 104"
-              strokeDashoffset={-40}
+              strokeDasharray="7 96"
+              strokeDashoffset={-30}
               vectorEffect="non-scaling-stroke"
               opacity={0.8}
             />

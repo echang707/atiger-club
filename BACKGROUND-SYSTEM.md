@@ -2455,3 +2455,39 @@ right of the text box — the words themselves sit on clean cream.
 The short cream band this opens at the top is covered by extending the nav veil
 to 150px on mobile, so the illustration fades in under the header instead of
 starting on a hard edge.
+
+---
+
+# v101 — tiger DNA, and a clean mobile hero
+
+## The strand is a double helix
+
+`SectionTail` is rebuilt as two strands 180 degrees out of phase down the
+right-hand column, with 42 rungs between them. The rungs are **skipped near each
+crossover** and inset 22% from each strand — that is what makes it read as a
+helix rather than a ladder, and the first attempt (full-width rungs, none
+skipped) looked exactly like a rail fence.
+
+The back strand runs at half opacity so it reads as passing behind, and the
+tiger stripe marks stay on the front strand. Both strands and every rung share
+the same sweeping clip, so nothing appears out of order.
+
+## Mobile
+
+Two problems: a screenful of cream above the illustration, and the copy still
+grazing the artwork.
+
+The dead space came from offsetting the artwork by the *full* distance between
+its void centre and the viewport centre. That is now **46px**, and the copy is
+sized to fit the illustration instead.
+
+I measured the clear channel through the copy rows rather than guessing:
+**78-308px at 390 wide, 66-339px at 430 — 59-63% of the viewport.** The type is
+sized and constrained to sit inside it:
+
+- headline `clamp(30px, 7.4vw, 42px)` -> **`clamp(25px, 6.1vw, 34px)`**
+- subline 15px/72% -> **14px/56%**
+
+Result at 390x750, 390x844, 430x930 and 375x700: copy centred **0px off** the
+usable area below the nav, and **0.000% ink behind every glyph** — the bullet
+included.
