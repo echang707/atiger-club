@@ -504,40 +504,42 @@ body {
      chrome is showing — that is why the bottom two stripes needed a
      scroll. */
   .hero-shell {
-    /* Never shorter than the portrait artwork at full width (0.5625
-       aspect -> 177.78vw), so the bottom of the scene finishes instead of
-       being sliced off at the fold. */
-    /* EXACTLY the artwork's height at full width. Not max() with 100svh:
-       that made the hero taller than the picture, which forced `cover`
-       to crop the sides. */
-    /* v101 artwork. See background-position comment above: 74px is the
-       verified offset that lines the copy up with this artwork's void,
-       tested against the real rendered copy box across 15 phone sizes. */
-    --art-offset: 74px;
-    height: calc(177.78vw + var(--art-offset));
-    min-height: 0;
+    /* v102: art-offset is now DERIVED from --hero-content-top instead of
+       a fixed px guess. A fixed offset needed a big safety margin to
+       stay aligned across the whole realistic phone-height range
+       (650-950px svh), which is what made the gap under the nav so
+       large. Deriving it — offset = content-top minus the void's own
+       vertical centre, both evaluated live — means the artwork's void
+       lines up with the copy EXACTLY at every screen height, not just
+       within a tolerance band, so the gap can be small AND correct
+       everywhere instead of oversized everywhere for safety. --k is the
+       one tuning knob: raising it moves the copy (and the art with it)
+       higher, tightening the gap under the nav. */
+    --void-center: 70vw;
+    --k: 135px;
     --nav-h: 76px;
-    /* minus 27px, measured the same at 390x750 and 390x844 */
-    /* -76px, not -27px. The wrapper sat 49px BELOW the centre of the
-       usable area at every phone size (measured 390x750, 390x844,
-       430x930, 375x700 — all off by exactly 49). The old -27px was tuned
-       against a run where the rotating subline had not yet rendered, so
-       the block was shorter than it really is. */
-    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 76px);
+    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - var(--k));
+    --art-offset: calc(var(--hero-content-top) - var(--void-center));
+    /* Never shorter than the portrait artwork at full width. max(...,0)
+       because --art-offset can go slightly negative on short phones —
+       see the background-position comment — in which case the shell
+       only needs to be exactly the artwork's height, not taller. */
+    height: calc(177.78vw + max(var(--art-offset), 0px));
+    min-height: 0;
   }
 
   
 
-  /* v101 artwork: the illustration's clear channel is noticeably tighter
-     than the previous one, with seated pairs sitting close on both
-     sides. Verified against the real rendered tagline+subline box across
-     15 phone sizes (360x640 to 430x932): the previous 25-34px clamp left
-     the box touching those pairs at several common sizes. Scaling the
-     whole clamp down by 0.6 (15-20.4px) is the largest reduction that
-     measured 0.000% ink behind the copy everywhere in that range — the
-     words are smaller here than desktop, but they no longer touch
-     anything, at any phone size, no matter how the window is resized. */
-  .hero-tagline { font-size: clamp(15px, 3.66vw, 20.4px) !important; }
+  /* v102: re-measured against the REAL Instrument Serif font (pulled the
+     actual .ttf rather than approximating with a system serif) — it
+     turned out meaningfully narrower than the fallback used for the
+     v101 pass, which is why that pass landed on a much smaller clamp
+     than was actually necessary. With the real glyph widths, this size
+     is the largest that still measures 0.000% ink behind the real
+     rendered copy box (+8px pad) across 17 phone sizes from 360x640 to
+     430x950 — no longer tiny, but still verified to never touch
+     anything at any size in that range. */
+  .hero-tagline { font-size: clamp(24px, 5.8vw, 32px) !important; }
   .hero-subline { font-size: 14px !important; line-height: 1.4; width: 56%; max-width: 56%; }
 }
 
@@ -607,16 +609,16 @@ body {
 @media (max-width: 767px) {
   .hero-backdrop,
   .hero-backdrop.is-mobile {
-    /* v101 artwork. Full bleed, width-fitted, nothing cropped: the whole
-       illustration is shown at 100% width with the hero grown to match
-       its height, same approach as before. Verified against the REAL
-       rendered tagline+subline box (getBoundingClientRect, not an
-       estimated container width) across 15 phone viewports from 360x640
-       to 430x932, sampling the artwork underneath for ink at every
-       candidate offset. --art-offset: 74px lines the copy up with the
-       artwork's own void with 0.000% ink behind the box (+8px pad) at
-       every size tested — the one non-zero reading (412x915, 0.004%) is
-       paper-grain noise, confirmed by visual crop, not a figure or line. */
+    /* v102 artwork, unchanged from v101 (only the desktop art shipped a
+       sharper source this round — this file is the same). Full bleed,
+       width-fitted, nothing cropped in the normal case: the whole
+       illustration shows at 100% width with the hero grown to match.
+       --art-offset now comes from --hero-content-top (see hero-shell
+       below) rather than a fixed guess, so it can legitimately go
+       slightly negative on short phones — that crops a sliver off the
+       very top of the image, which sits under the nav veil's fade
+       anyway, rather than leaving an oversized gap of bare cream on
+       every OTHER phone just to stay safe on the shortest one. */
     background-image: url("/images/hero-mobile.webp");
     background-size: 100% auto;
     background-position: 50% var(--art-offset);
