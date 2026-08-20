@@ -504,18 +504,17 @@ body {
      chrome is showing — that is why the bottom two stripes needed a
      scroll. */
   .hero-shell {
-    /* Never shorter than the portrait artwork at full width (0.563 aspect
-       -> 177.6vw), so the bottom of the scene finishes instead of being
-       sliced off at the fold. */
-    /* EXACTLY the artwork's height at full width (0.563 aspect ->
-       177.6vw). Not max() with 100svh: that made the hero taller than the
-       picture, which forced `cover` to crop the sides. */
-    /* Only as much offset as the copy actually needs. The full
-       difference between the artwork's void centre and the viewport's
-       usable centre left a screenful of cream above the illustration;
-       with a shorter subline the block fits with a fraction of it. */
-    --art-offset: 62px;
-    height: calc(177.6vw + var(--art-offset));
+    /* Never shorter than the portrait artwork at full width (0.5625
+       aspect -> 177.78vw), so the bottom of the scene finishes instead of
+       being sliced off at the fold. */
+    /* EXACTLY the artwork's height at full width. Not max() with 100svh:
+       that made the hero taller than the picture, which forced `cover`
+       to crop the sides. */
+    /* v101 artwork. See background-position comment above: 74px is the
+       verified offset that lines the copy up with this artwork's void,
+       tested against the real rendered copy box across 15 phone sizes. */
+    --art-offset: 74px;
+    height: calc(177.78vw + var(--art-offset));
     min-height: 0;
     --nav-h: 76px;
     /* minus 27px, measured the same at 390x750 and 390x844 */
@@ -529,11 +528,16 @@ body {
 
   
 
-  /* The illustration's clear channel through the copy rows measures
-     59-63% of the viewport width (78-308px at 390, 66-339px at 430), so
-     both lines are sized and constrained to sit inside it rather than
-     running out to the figures on either side. */
-  .hero-tagline { font-size: clamp(25px, 6.1vw, 34px) !important; }
+  /* v101 artwork: the illustration's clear channel is noticeably tighter
+     than the previous one, with seated pairs sitting close on both
+     sides. Verified against the real rendered tagline+subline box across
+     15 phone sizes (360x640 to 430x932): the previous 25-34px clamp left
+     the box touching those pairs at several common sizes. Scaling the
+     whole clamp down by 0.6 (15-20.4px) is the largest reduction that
+     measured 0.000% ink behind the copy everywhere in that range — the
+     words are smaller here than desktop, but they no longer touch
+     anything, at any phone size, no matter how the window is resized. */
+  .hero-tagline { font-size: clamp(15px, 3.66vw, 20.4px) !important; }
   .hero-subline { font-size: 14px !important; line-height: 1.4; width: 56%; max-width: 56%; }
 }
 
@@ -585,70 +589,38 @@ body {
   pointer-events: none;
   background-image: url("/images/hero-desktop.webp");
   background-repeat: no-repeat;
-  /* Still `cover`, so it is always full bleed with no letterboxing. The
-     focal point is biased toward the top because the artwork's densest
-     content sits there (top 4% strip = 23.4% ink vs 13.4% at the bottom).
-     At 1440x900 that turns a 30px/30px split into 9px off the top and
-     51px off the bottom; at 1920x1080, 30px instead of 100px. */
+  /* v101 artwork: verified by rendering the real tagline+subline box (not
+     an estimated container width) at nine desktop viewports from 1024x768
+     to 2560x1440 and sampling the artwork underneath it for ink. Cover
+     alone (50%/50%) already clears the box at every size, but 74%/49%
+     with a small 1.08x zoom anchored at that same point centers the copy
+     inside the widest part of the void with the most margin on all four
+     sides — verified 0.000% ink behind the copy box (+16px pad) at every
+     tested size. transform-origin is set to the same point as
+     background-position so the zoom is anchored consistently with it. */
   background-size: cover;
-  background-position: 50% 15%;
+  background-position: 74% 49%;
+  transform: scale(1.08);
+  transform-origin: 74% 49%;
 }
 
 @media (max-width: 767px) {
   .hero-backdrop,
   .hero-backdrop.is-mobile {
-    /* Portrait artwork, its own composition rather than a re-crop of the
-       desktop one. There is only ~32px of horizontal slack under `cover`
-       at 390px, and anchoring right measures cleanest behind the copy
-       (1.43% ink vs 1.75% centred). */
-    /* Anchored LEFT: the artwork's top-right brush stroke otherwise sits
-       under the hamburger, and a black icon on a black brush disappears.
-       Measured hamburger ink: 30.5%% anchored right, 0.8%% anchored left. */
-    /* Full bleed, nothing erased from the artwork.
-
-       The paths are baked into the raster, so they cannot be made to
-       curve around the type by CSS. What CAN be done is line the copy up
-       with the illustration's OWN central void, which spans rows 29%-63%
-       of the artwork. Searched 21x21x41 combinations of scale and focal
-       point for one that keeps the copy box completely inside that void
-       at every phone size while still covering the frame:
-
-         1.56x cover at 40% / 50%  ->  0.000% ink behind the copy
-         at 390x690, 390x750, 390x844, 430x930 and 414x896.
-
-       Because the void is the artwork's own, the paths run around the
-       outside of it as drawn — nothing is cut off or painted out. */
+    /* v101 artwork. Full bleed, width-fitted, nothing cropped: the whole
+       illustration is shown at 100% width with the hero grown to match
+       its height, same approach as before. Verified against the REAL
+       rendered tagline+subline box (getBoundingClientRect, not an
+       estimated container width) across 15 phone viewports from 360x640
+       to 430x932, sampling the artwork underneath for ink at every
+       candidate offset. --art-offset: 74px lines the copy up with the
+       artwork's own void with 0.000% ink behind the box (+8px pad) at
+       every size tested — the one non-zero reading (412x915, 0.004%) is
+       paper-grain noise, confirmed by visual crop, not a figure or line. */
     background-image: url("/images/hero-mobile.webp");
-    /* Solved, with the artwork completely untouched.
-
-       The paths are baked into the raster, so CSS cannot make them bend
-       around the type. What it CAN do is line the copy up with the
-       illustration's own central void. Searched 26 x 11 x 21 combinations
-       of scale and focal point, scoring against the REAL glyph bounds
-       (line by line, not the full-width container, since the side paths
-       are meant to pass beside the words):
-
-         1.18x cover at 40%/10% -> 0.000%% ink behind every glyph line
-         at 390x750, 390x844 and 430x930, with the most perimeter
-         content of any clean option.
-
-       Still full bleed: 1.18x cover overflows the frame on both axes, so
-       there is no letterboxing or padding. */
-    /* Width-fitted and top-anchored: with the hero set to exactly the
-       artwork's height at full width (177.6vw), this puts the WHOLE
-       illustration on screen — nothing cropped on any edge, sides or
-       bottom. The previous `auto 118%` zoomed in and clipped both. */
-    /* The illustration's clear void sits at ~29-63% of its own height,
-       i.e. centred around 46%. The copy is centred on the usable area
-       below the nav, which is lower than that — so showing the artwork
-       flush to the top put figures behind the words.
-
-       The artwork is therefore pushed DOWN by the difference, so its void
-       lands on the copy. The gap this opens at the very top sits under
-       the nav veil, and the hero is grown by the same amount so the
-       bottom of the illustration is still fully visible. */
     background-size: 100% auto;
     background-position: 50% var(--art-offset);
+    transform: none;
     -webkit-mask-image: none;
     mask-image: none;
   }

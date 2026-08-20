@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 
-const words: { text: string; from: { x: number; y: number; rotate: number }; nudge: number }[] = [
-  { text: "life", from: { x: -120, y: -60, rotate: -10 }, nudge: 7 },
-  { text: "is", from: { x: 46, y: 88, rotate: 12 }, nudge: 3 },
-  { text: "better", from: { x: 78, y: -74, rotate: -9 }, nudge: -3 },
-  { text: "together", from: { x: 132, y: 92, rotate: 10 }, nudge: -7 },
+const words: { text: string; from: { x: number; y: number; rotate: number }; nudge: string }[] = [
+  { text: "life", from: { x: -120, y: -60, rotate: -10 }, nudge: "0.045em" },
+  { text: "is", from: { x: 46, y: 88, rotate: 12 }, nudge: "0.02em" },
+  { text: "better", from: { x: 78, y: -74, rotate: -9 }, nudge: "-0.02em" },
+  { text: "together", from: { x: 132, y: 92, rotate: 10 }, nudge: "-0.045em" },
 ];
 
 function Word({ w, i }: { w: (typeof words)[number]; i: number }) {
@@ -20,7 +20,16 @@ function Word({ w, i }: { w: (typeof words)[number]; i: number }) {
       {/* The words settle a few px closer together once, right after they
           land — a single time-based "find each other" nudge on mount.
           Nothing here reads scroll position, so once settled the text
-          never moves again while the page scrolls. */}
+          never moves again while the page scrolls.
+
+          Nudge is in em, not px: a fixed-px nudge closes a bigger share
+          of the (em-based) word gap at small font sizes than at large
+          ones, and on the mobile clamp it was eating almost the whole
+          gap and letting "is/better/together" touch. In em it scales
+          with the same font-size as the gap, so the closure is always
+          the same fraction of it — at most 0.045em vs a 0.26em gap,
+          leaving a safe minimum space between every pair of words at
+          any screen size. */}
       <motion.span
         className="inline-block"
         initial={{ x: 0 }}

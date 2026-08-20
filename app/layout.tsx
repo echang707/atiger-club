@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
+import NewsletterPopup from "@/components/NewsletterPopup";
 import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
@@ -184,6 +185,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </div>
+        <NewsletterPopup />
       </body>
     </html>
   );
