@@ -470,10 +470,11 @@ body {
    of its width — so the whole composition is visible with nothing cropped.
    `min-height` keeps it at least a screen tall on very wide windows. */
 .hero-shell {
-  /* At least a screen, but never shorter than the artwork's own height at
-     full width (3:2 -> 66.67vw). On a 16:9 window that adds ~7% so the
-     composition finishes instead of being cut off at the fold. */
-  height: max(100svh, 66.67vw);
+  /* Exactly one screen. The artwork is now 16:9 (1456x819), so at a
+     normal window it fills the frame with only a little side crop and
+     nothing hangs below the fold — the old 3:2 art needed the hero to be
+     taller than the viewport, which is what forced the scroll. */
+  height: 100svh;
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
   /* measured: the visual block (tagline + subline box) sat 7px high at
      50%, because the rotating-line container is taller than its text */
@@ -485,7 +486,7 @@ body {
   /* minus 73px: the value positions the block's top edge and the
      rotating-line container is taller than its text, so the visual centre
      sat 73px low. Measured identical at 1440x900 and 1920x1080. */
-  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 73px);
+  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 80px);
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -516,7 +517,7 @@ body {
        one tuning knob: raising it moves the copy (and the art with it)
        higher, tightening the gap under the nav. */
     --void-center: 70vw;
-    --k: 135px;
+    --k: 76px;
     --nav-h: 76px;
     --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - var(--k));
     --art-offset: calc(var(--hero-content-top) - var(--void-center));
@@ -524,7 +525,9 @@ body {
        because --art-offset can go slightly negative on short phones —
        see the background-position comment — in which case the shell
        only needs to be exactly the artwork's height, not taller. */
-    height: calc(177.78vw + max(var(--art-offset), 0px));
+    /* clamped to the viewport: on a short phone the art-offset pushed the
+       hero past 100svh, which forced a scroll to finish the hero */
+    height: min(100svh, calc(177.78vw + max(var(--art-offset), 0px)));
     min-height: 0;
   }
 
@@ -600,10 +603,11 @@ body {
      sides — verified 0.000% ink behind the copy box (+16px pad) at every
      tested size. transform-origin is set to the same point as
      background-position so the zoom is anchored consistently with it. */
+  /* The 16:9 artwork carries its own clear band at 44-66% of its height,
+     which is where the copy sits, so the old 1.08x zoom-and-offset is no
+     longer needed — plain centred cover keeps the whole composition. */
   background-size: cover;
-  background-position: 74% 49%;
-  transform: scale(1.08);
-  transform-origin: 74% 49%;
+  background-position: 14% 50%;
 }
 
 @media (max-width: 767px) {

@@ -52,6 +52,7 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
             {event.title}
           </span>
           <span className="text-xs md:text-sm text-ink/65">
+            {event.time ? `${event.time} · ` : ""}
             {event.location} · {event.medium}
           </span>
           {/* Every event carries its kind, so it is always clear whether

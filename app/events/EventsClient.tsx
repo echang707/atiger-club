@@ -37,11 +37,16 @@ export default function EventsClient() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   const whenOf = (e: (typeof events)[number]) => new Date(`${e.date}, ${EVENT_YEAR}`);
-  const filtered = matches.filter((e) => whenOf(e) >= startOfToday);
-  const past = matches.filter((e) => whenOf(e) < startOfToday).reverse();
+  // Sorted explicitly rather than trusting the order of lib/events.ts —
+  // editing one event's date used to silently put the list out of sequence.
+  const filtered = matches
+    .filter((e) => whenOf(e) >= startOfToday)
+    .sort((a, b) => whenOf(a).getTime() - whenOf(b).getTime());
+  const past = matches
+    .filter((e) => whenOf(e) < startOfToday)
+    .sort((a, b) => whenOf(b).getTime() - whenOf(a).getTime());
 
-  // Group in chronological order (the source data is already ordered)
-  // under month headers, labeling whichever group matches the current
+  // Group in chronological order under month headers, labeling whichever group matches the current
   // real-world month as "This Month" so the page always opens on what's
   // happening now, then rolls into the months after it.
   const groups: { label: string; items: typeof filtered }[] = [];

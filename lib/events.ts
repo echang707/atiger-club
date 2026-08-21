@@ -57,6 +57,8 @@ export type TigerEvent = {
   image: string;
   link?: string;
   linkLabel?: string;
+  /* Start/end time as it should read on the page, e.g. "10am – 12pm". */
+  time?: string;
 /* Every event is one of three kinds:
 
        original — Tiger Club creates and hosts it from scratch
@@ -73,6 +75,7 @@ export type TigerEvent = {
 // Pulled from atigercub.com/events — swap in real photography when available.
 export const events: TigerEvent[] = [
   {
+    time: "4pm \u2013 8pm",
     id: "indonesia-independence-81",
     title: "81st Indonesia Independence Day Celebration",
     medium: "Explore",
@@ -128,19 +131,23 @@ export const events: TigerEvent[] = [
     linkLabel: "RSVP",
   },
   {
+    time: "10am \u2013 12pm",
+    link: "https://partiful.com/e/6qbYzQvsB2LlHhwzXjlO?c=PBA9uuw5",
+    linkLabel: "RSVP",
     id: "creative-cafe-social",
     title: "Creative Café Social",
     medium: "Create",
     city: "Atlanta",
-    date: "Sep 11",
+    date: "Sep 13",
     month: "SEP",
-    day: "11",
-    location: "The Reading Room, Decatur, GA",
+    day: "13",
+    location: "Recuerdos Cafe, Atlanta",
     description: "A casual show-and-tell for Atlanta's creative community — bring something you've made and share the story behind it.",
     image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1400&auto=format&fit=crop",
   },
   {
     kind: "collab",
+    time: "6am \u2013 4pm",
     id: "dragon-boat-festival",
     title: "Atlanta Hong Kong Dragon Boat Festival",
     medium: "Explore",
@@ -156,6 +163,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "pick",
+    time: "10am \u2013 10pm",
     id: "mini-kennycon",
     title: "Mini-KennyCon 2026",
     medium: "Learn",
@@ -170,6 +178,9 @@ export const events: TigerEvent[] = [
     linkLabel: "Learn More",
   },
   {
+    time: "6:30pm \u2013 8:30pm",
+    link: "https://partiful.com/e/k2VBxjugI1iUasRyoaYj?c=tr7NgZ0G",
+    linkLabel: "RSVP",
     id: "bite-club-mexico",
     title: "Bite Club: A Taste of México",
     medium: "Eat",
@@ -184,6 +195,7 @@ export const events: TigerEvent[] = [
   {
     kind: "collab",
     presentedBy: "Community Bucket",
+    time: "6:45pm",
     id: "beltline-lantern-parade",
     title: "BeltLine Lantern Parade Volunteer Group",
     medium: "Serve",
@@ -228,6 +240,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "collab",
+    time: "1pm \u2013 5pm",
     id: "compassioncon",
     title: "CompassionCon",
     medium: "Serve",

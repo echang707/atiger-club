@@ -2491,3 +2491,70 @@ sized and constrained to sit inside it:
 Result at 390x750, 390x844, 430x930 and 375x700: copy centred **0px off** the
 usable area below the nav, and **0.000% ink behind every glyph** — the bullet
 included.
+
+---
+
+# v104 — 16:9 desktop artwork, hero fits one screen
+
+## The scroll is gone
+
+The old desktop art was 3:2, so the hero had to be `max(100svh, 66.67vw)` —
+taller than the viewport — for the composition to finish. That is what forced
+the scroll.
+
+The new artwork is **1456x819 (16:9)**, so the hero is now plain `100svh` and
+the whole picture is on screen at once. Measured: hero height equals viewport
+height exactly at 1440x900, 1920x1080 and 1280x720.
+
+The 1.08x zoom-and-offset the previous artwork needed is removed; plain `cover`
+at `14% 50%` keeps the composition and holds the copy clear.
+
+## Centring
+
+Both offsets were re-measured against the new art:
+
+- desktop `--k` 73px -> **80px**
+- mobile `--k` 135px -> **76px** (the copy was sitting **59px high**, which is
+  what you saw)
+
+Result: copy centre vs the centre of the usable area below the nav = **0px at
+all six tested sizes** (1440x900, 1920x1080, 1280x720, 390x750, 390x844,
+430x930).
+
+## Mobile hero clamped
+
+`height` is now `min(100svh, ...)`. On a 390x750 phone the art-offset was
+pushing the hero to 757px — just past the fold. It fits exactly now.
+
+Ink behind the glyphs: **0.000%** at 1440x900, 1920x1080 and all three mobile
+sizes.
+
+---
+
+# v105 — event times, RSVP links, chronological ordering
+
+`TigerEvent` gains an optional `time`, shown on the row before the location and
+carried into the expanded panel.
+
+| event | time | note |
+|---|---|---|
+| Indonesia Independence | 4pm – 8pm | from the flyer |
+| Dragon Boat Festival | 6am – 4pm | |
+| Mini-KennyCon | 10am – 10pm | |
+| Creative Café Social | 10am – 12pm | **venue and date corrected** |
+| Bite Club: A Taste de México | 6:30pm – 8:30pm | |
+| BeltLine Lantern Parade | 6:45pm | from the flyer |
+| CompassionCon | 1pm – 5pm | |
+
+**Creative Café Social** moved from The Reading Room, Decatur (Sep 11) to
+**Recuerdos Cafe, Atlanta, Sep 13**.
+
+RSVP links added for Creative Café Social and Bite Club, both pointing at their
+Partiful pages with an "RSVP" label.
+
+## Ordering bug found and fixed
+
+The events page rendered in *source-file order* — a comment in
+`EventsClient.tsx` said "the source data is already ordered". Changing Creative
+Café Social's date to Sep 13 silently put it ahead of the Sep 12 events. Both
+lists now sort by date explicitly, so editing a date can't break sequence again.
