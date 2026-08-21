@@ -591,22 +591,19 @@ body {
   pointer-events: none;
   background-image: url("/images/hero-desktop.webp");
   background-repeat: no-repeat;
-  /* v104 artwork: a new 16:9 composition (1672x941), not a re-export of
-     the v101/v102 one — different aspect ratio and layout, so the old
-     74%/49% position doesn't apply here and was re-solved from scratch.
-     Verified by rendering the real tagline+subline box with the actual
-     Instrument Serif font at nine desktop viewports from 1024x768 to
-     2560x1440 and sampling this artwork underneath it for ink. 50%/59%
-     with a 1.2x zoom anchored at that same point centers the copy in
-     this artwork's void with 0.000% ink behind the copy box (+16px pad)
-     at every tested size — centered position this time rather than
-     off-center, since that's where this composition's void actually
-     sits. transform-origin matches background-position so the zoom is
-     anchored consistently with it. */
+  /* v101 artwork: verified by rendering the real tagline+subline box (not
+     an estimated container width) at nine desktop viewports from 1024x768
+     to 2560x1440 and sampling the artwork underneath it for ink. Cover
+     alone (50%/50%) already clears the box at every size, but 74%/49%
+     with a small 1.08x zoom anchored at that same point centers the copy
+     inside the widest part of the void with the most margin on all four
+     sides — verified 0.000% ink behind the copy box (+16px pad) at every
+     tested size. transform-origin is set to the same point as
+     background-position so the zoom is anchored consistently with it. */
   background-size: cover;
-  background-position: 50% 59%;
-  transform: scale(1.2);
-  transform-origin: 50% 59%;
+  background-position: 74% 49%;
+  transform: scale(1.08);
+  transform-origin: 74% 49%;
 }
 
 @media (max-width: 767px) {
