@@ -606,12 +606,11 @@ body {
   /* The 16:9 artwork carries its own clear band at 44-66% of its height,
      which is where the copy sits, so the old 1.08x zoom-and-offset is no
      longer needed — plain centred cover keeps the whole composition. */
-  /* `contain`, not `cover`: this artwork is 3:2 and the window is
-     usually 16:9, so cover would crop ~16% off the top and bottom. The
-     leftover strip either side is the page's own cream, and the artwork
-     is cream to its edge, so the join is invisible — the whole
-     composition is on screen with nothing cut. */
-  background-size: contain;
+  /* Back to `cover` so it reaches every edge. The artwork is now 1.660,
+     the aspect that minimises cropping across real desktop windows
+     (1.54 MacBook to 1.78 at 1080p): worst case is ~7%, taken off the
+     cream margin rather than the figures. */
+  background-size: cover;
   background-position: center;
 }
 
@@ -629,8 +628,8 @@ body {
        anyway, rather than leaving an oversized gap of bare cream on
        every OTHER phone just to stay safe on the shortest one. */
     background-image: url("/images/hero-mobile.webp");
-    background-size: 100% auto;
-    background-position: 50% var(--art-offset);
+    background-size: cover;
+    background-position: center;
     transform: none;
     -webkit-mask-image: none;
     mask-image: none;

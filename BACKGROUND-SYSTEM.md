@@ -2618,3 +2618,39 @@ space rather than being dodged around obstacles.
 
 1280x720 had carried a 3.9% kite overlap through the last few versions; the new
 artwork's open centre clears it.
+
+---
+
+# v108 — artwork at the optimal aspects, filling edge to edge
+
+Both files are at the aspects I calculated, so `cover` can be used without
+losing anything:
+
+| | file | aspect | worst-case crop |
+|---|---|---|---|
+| desktop | 3400x2048 | **1.660** | ~7% |
+| mobile | 866x1817 -> 1732x3634 | **0.477** | ~8% |
+
+1.660 is the ratio that minimises cropping across real desktop windows (1.54 on
+a MacBook to 1.78 at 1080p); 0.477 does the same across phone viewports
+(0.45-0.52). Both backdrops are back on `cover`, so there are no cream bars —
+the artwork reaches every edge at every size tested.
+
+Verified: **0.000% ink behind every glyph** and copy centre **0px** off the
+usable area, at 1440x900, 1920x1080, 1280x720, 390x750, 390x844 and 430x930.
+Artwork ink is present at the left, right and bottom edges at every size, so it
+is genuinely full bleed.
+
+## The helix, rebuilt with depth
+
+The previous version was two flat sine waves with rungs between them — a ribbon,
+not a helix. It is now a 3D helix projected to 2D, and each strand is split into
+the runs that pass **in front of** the axis and the runs that pass **behind**.
+
+Front runs draw thick and opaque, back runs thin and faded, and the paint order
+interleaves them (back → bonds → front) so the strands actually cross over one
+another. That occlusion is what makes it read correctly.
+
+The bonds are also cut back hard — from 48 spanning the full width to **23**,
+inset 26% from each strand and drawn only near the widest point of each turn.
+The dense version read as hatching filling the loops.
