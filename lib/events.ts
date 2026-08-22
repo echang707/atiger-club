@@ -9,7 +9,7 @@ export const mediums: { name: Medium; icon: string; description: string }[] = [
   {
     name: "Create",
     icon: "/images/icons/create.png",
-    description: "Paint, draw, build — hands-on nights with nothing to prove and no talent required.",
+    description: "Paint, draw, build. Hands-on nights with nothing to prove and no talent required.",
   },
   {
     name: "Move",
@@ -19,7 +19,7 @@ export const mediums: { name: Medium; icon: string; description: string }[] = [
   {
     name: "Explore",
     icon: "/images/icons/explore.png",
-    description: "Festivals, traditions, and flavors from cultures near and far — Atlanta's whole world.",
+    description: "Festivals, traditions, and flavors from cultures near and far. Atlanta's whole world.",
   },
   {
     name: "Serve",
@@ -59,6 +59,8 @@ export type TigerEvent = {
   linkLabel?: string;
   /* Start/end time as it should read on the page, e.g. "10am – 12pm". */
   time?: string;
+  /* Secondary line, e.g. ticket price. Kept out of the description. */
+  price?: string;
 /* Every event is one of three kinds:
 
        original — Tiger Club creates and hosts it from scratch
@@ -85,8 +87,8 @@ export const events: TigerEvent[] = [
     day: "30",
     location: "Korean Community Culture Center, Norcross, GA",
     description:
-      "The Indonesian Community Heritage Foundation invites APAC communities, families and friends to an afternoon and evening of authentic Indonesian food, traditional and pop dance, music and karaoke, a fashion show, games and prizes, a flag ceremony and consular services. Free to attend, 4–8pm. Bring people.",
-    image: "/images/explore-festival.jpg",
+      "Spend the evening inside Atlanta's Indonesian community with Indonesian food, traditional and pop performances, karaoke, games, and a celebration of 81 years of independence.",
+    image: "/images/indonesia.jpg",
     kind: "pick",
     presentedBy: "Indonesian Community Heritage Foundation",
   },
@@ -142,8 +144,9 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "13",
     location: "Recuerdos Cafe, Atlanta",
-    description: "A casual show-and-tell for Atlanta's creative community — bring something you've made and share the story behind it.",
-    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Bring something you've been making, finished or unfinished, grab a coffee, and spend the morning swapping stories and ideas with other creative people around Atlanta.",
+    image: "/images/create-mural.jpg",
   },
   {
     kind: "collab",
@@ -156,8 +159,9 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "12",
     location: "Lake Lanier Olympic Park",
-    description: "A day of dragon boat racing and community celebration on the water.",
-    image: "https://images.unsplash.com/photo-1747326842329-fa63e8748fc4?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Watch dragon boats race across Lake Lanier while exploring food, performances, traditions, and Atlanta's Asian communities. Stop by Tiger Club's cultural storytelling space between races.",
+    image: "/images/explore-festival.jpg",
     link: "https://www.dragonboatatlanta.com/",
     linkLabel: "Learn More",
   },
@@ -172,12 +176,14 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "12",
     location: "West Cobb Church, Marietta",
-    description: "A full day of tabletop games for beginners and strategy regulars alike — bring a friend.",
-    image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Spend a Saturday discovering new tabletop games, learning as you go, and jumping into a table whenever something catches your eye. No board game expertise required.",
+    image: "/images/kennycon.jpg",
     link: "https://fancons.com/events/info/28147/mini-kennycon-2026",
     linkLabel: "Learn More",
   },
   {
+    price: "$45 per person, tax and gratuity included",
     time: "6:30pm \u2013 8:30pm",
     link: "https://partiful.com/e/k2VBxjugI1iUasRyoaYj?c=tr7NgZ0G",
     linkLabel: "RSVP",
@@ -189,8 +195,9 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "16",
     location: "CT Reforma, Buckhead",
-    description: "Celebrate Mexican Independence Day with a curated dinner exploring the flavors and stories behind the food. $45/person.",
-    image: "https://images.unsplash.com/photo-1648437595587-e6a8b0cdf1f9?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Join us at CT Reforma for Mexican Independence Day and travel three courses through Mexican food, stories, and tradition, ending with café de olla and El Grito. Come hungry and leave knowing a little more than what was on your plate.",
+    image: "/images/eat-dinner.jpg",
   },
   {
     kind: "collab",
@@ -203,10 +210,10 @@ export const events: TigerEvent[] = [
     date: "Sep 19",
     month: "SEP",
     day: "19",
-    location: "Adair Park II \u2014 BeltLine tent near the Tift Avenue parking lot",
+    location: "Adair Park II, BeltLine tent near the Tift Avenue parking lot",
     description:
-      "Volunteer with Tiger Club and Community Bucket at the Atlanta BeltLine Lantern Parade. Help guide the parade, support the bands, and experience one of Atlanta\u2019s most iconic community traditions from inside the action. 6:45pm.",
-    image: "/images/explore-festival.jpg",
+      "Don't just watch the Lantern Parade. Help make it happen. Join our volunteer crew to guide the parade, support performers, and see one of Atlanta's favorite traditions from inside the action.",
+    image: "/images/lantern-parade.jpg",
   },
   {
     kind: "collab",
@@ -219,8 +226,9 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "19",
     location: "Clarkston, GA",
-    description: "A race day welcoming newcomers to the Clarkston community — 1K, 5K, or color run.",
-    image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Run, walk, or cheer, then stick around with Tiger Club after the finish line for coffee, treats, and an easygoing hangout instead of heading straight home.",
+    image: "/images/refuge-run.jpg",
     link: "https://www.refugecoffeeco.com/events/refuge-coffee-run/",
     linkLabel: "Learn More",
   },
@@ -235,8 +243,9 @@ export const events: TigerEvent[] = [
     month: "SEP",
     day: "20",
     location: "Gas South Convention Center, Duluth",
-    description: "One of Georgia's largest cultural festivals — we'll explore it together in small groups.",
-    image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "Spend the day wandering JapanFest together through Japanese food, performances, martial arts, traditional crafts, vendors, and plenty of things you probably didn't know existed in Atlanta. We'll explore in small Tiger Club groups so nobody has to go alone.",
+    image: "/images/japanfest.jpg",
     link: "https://www.japanfest.org/",
     linkLabel: "Learn More",
   },
@@ -251,8 +260,9 @@ export const events: TigerEvent[] = [
     month: "OCT",
     day: "25",
     location: "Legacy Decatur",
-    description: "A gathering centered on compassion and community connection.",
-    image: "https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=1400&auto=format&fit=crop",
+    description:
+      "An afternoon of neighborhood tables, live music, hands-on workshops, and free food in Decatur, where dozens of small Atlanta organizations set up shop and you can wander, taste, ask questions, and leave with three new things to do.",
+    image: "/images/compassioncon.jpg",
     link: "https://compassioncon.org/",
     linkLabel: "Learn More",
   },

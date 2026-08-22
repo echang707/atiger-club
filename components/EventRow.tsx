@@ -17,7 +17,7 @@ const KIND = {
     label: "Tiger Pick",
     tone: "text-tiger-text",
     by: "presented by",
-    blurb: "Not hosted or organised by Tiger Club — we just think it\u2019s worth showing up for.",
+    blurb: "Not hosted or organised by Tiger Club. We just think it\u2019s worth showing up for.",
   },
   collab: {
     label: "Tiger Collab",
@@ -54,6 +54,7 @@ export default function EventRow({ event, index }: { event: TigerEvent; index: n
           <span className="text-xs md:text-sm text-ink/65">
             {event.time ? `${event.time} · ` : ""}
             {event.location} · {event.medium}
+            {event.price ? ` · ${event.price}` : ""}
           </span>
           {/* Every event carries its kind, so it is always clear whether
               Tiger Club made it, curated it, or built it with someone. */}

@@ -2685,3 +2685,46 @@ failed the same way: filling the loops with rungs made it read as hatching.
 
 Re-verified after the size increase: **0.000% ink behind every glyph** and copy
 centre **0px** off, at all six viewports.
+
+---
+
+# v110 — event copy, photography, tiger tail
+
+## Descriptions rewritten
+
+All nine rewritten to your direction, each with its own shape rather than a
+shared template. **Zero em dashes render anywhere on the page** (verified in the
+browser with every card expanded; three survivors were tracked down and killed,
+including one in the Tiger Pick note in `EventRow`).
+
+CompassionCon, which needed the most work, now names what is actually there:
+neighborhood tables, live music, hands-on workshops and free food in Decatur,
+with dozens of small Atlanta organisations to wander between.
+
+Bite Club's **$45 per person, tax and gratuity included** sits on the meta line
+beside time and location, via a new optional `price` field, so it does not eat
+description space.
+
+## Photography
+
+Six supplied photos, all cropped to a consistent **1400x933 (3:2)**.
+
+Two of them (KennyCon, Refuge Run) are banner-shaped, 774x258 and 1200x400.
+Cropping those to 3:2 threw away most of the artwork and upscaled the rest into
+mush, so they are instead **fitted whole onto a panel matched to each banner's
+own edge colour** and centred. Same card size, artwork intact.
+
+Three other events were still pointing at Unsplash URLs that now 404
+(Dragon Boat, Creative Cafe, Bite Club). They point at photography already in
+the repo. **0 broken images, 27 loading.**
+
+## The helix is gone
+
+Replaced with the supplied tiger tail, cut out to a transparent background by
+keying the cream and un-premultiplying the edges, so the fur and the wisps
+survive.
+
+Every drawn version was a compromise: strokes and rungs can suggest a coil but
+never carried fur, taper, or a black tip. The artwork needs none of that faking.
+It keeps the downward reveal and the scroll drift, and uses `contain` so it holds
+its proportions at any section height.
