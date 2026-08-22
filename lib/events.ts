@@ -210,6 +210,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "collab",
+    time: "9am – 12pm",
     id: "refuge-coffee-run",
     title: "The Refuge Coffee Run: Welcome Home",
     medium: "Move",
@@ -225,6 +226,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "pick",
+    time: "10am – 5pm",
     id: "japanfest",
     title: "JapanFest 2026",
     medium: "Explore",

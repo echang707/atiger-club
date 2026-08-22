@@ -542,7 +542,7 @@ body {
      rendered copy box (+8px pad) across 17 phone sizes from 360x640 to
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
-  .hero-tagline { font-size: clamp(24px, 5.8vw, 32px) !important; }
+  .hero-tagline { font-size: clamp(28px, 6.9vw, 38px) !important; }
   .hero-subline { font-size: 14px !important; line-height: 1.4; width: 56%; max-width: 56%; }
 }
 

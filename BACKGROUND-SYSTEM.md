@@ -2654,3 +2654,34 @@ another. That occlusion is what makes it read correctly.
 The bonds are also cut back hard — from 48 spanning the full width to **23**,
 inset 26% from each strand and drawn only near the widest point of each turn.
 The dense version read as hatching filling the loops.
+
+---
+
+# v109 — remaining times, tiger helix, type fixes
+
+## Times complete
+
+JapanFest **10am – 5pm**, Refuge Coffee Run **9am – 12pm**. All 9 events now
+carry a time.
+
+## The helix is tiger-coloured
+
+One strand Tiger orange, one charcoal, with short **stripe ticks banded across
+the near face of each** — so the coil reads as tiger-marked rather than as a lab
+diagram. Ticks appear only where the strand faces the viewer and fade with
+depth, which is what sells the twist.
+
+Bonds cut to **seven**, at the widest point of a turn only. Each earlier version
+failed the same way: filling the loops with rungs made it read as hatching.
+
+## Type
+
+- **"Events are just the start."** now uses the editorial serif
+  (`font-tagline`, italic) instead of the wordmark grotesque it shared with the
+  four principles — it reads as a closing statement rather than a fifth
+  principle.
+- **Mobile headline** up from `clamp(24px, 5.8vw, 32px)` to
+  `clamp(28px, 6.9vw, 38px)`.
+
+Re-verified after the size increase: **0.000% ink behind every glyph** and copy
+centre **0px** off, at all six viewports.

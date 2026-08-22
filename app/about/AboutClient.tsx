@@ -27,6 +27,10 @@ const TITLE =
   "font-wordmark font-extrabold text-ink tracking-tight leading-[0.9] text-[14vw] md:text-[7.4vw] lg:text-[6.4vw]";
 const SUB =
   "font-wordmark font-extrabold text-ink tracking-tight leading-[1.0] text-[7.5vw] md:text-[3.4vw] lg:text-[2.9vw]";
+/* The closing line is set in the editorial serif rather than the wordmark
+   grotesque, so it reads as a statement rather than a fifth principle. */
+const CLOSER =
+  "font-tagline italic text-ink tracking-tight leading-[1.05] text-[9vw] md:text-[4.2vw] lg:text-[3.6vw]";
 const BODY = "text-base md:text-lg text-ink/70 leading-relaxed";
 const MARK = "font-mono text-[11px] tracking-wideish uppercase";
 
@@ -122,7 +126,7 @@ className="relative border-b border-ink/12"
       <section className="max-w-content mx-auto px-6 md:px-10 py-16 md:py-24">
         <div className="grid md:grid-cols-12 gap-6 md:gap-10 items-end">
           <Rise className="md:col-span-7">
-            <p className={SUB}>Events are just the start.</p>
+            <p className={CLOSER}>Events are just the start.</p>
           </Rise>
           <Rise delay={0.1} className="md:col-span-5 md:pb-1">
             <p className={BODY}>
