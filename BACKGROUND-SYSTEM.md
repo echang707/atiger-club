@@ -2558,3 +2558,63 @@ The events page rendered in *source-file order* — a comment in
 `EventsClient.tsx` said "the source data is already ordered". Changing Creative
 Café Social's date to Sep 13 silently put it ahead of the Sep 12 events. Both
 lists now sort by date explicitly, so editing a date can't break sequence again.
+
+---
+
+# v106 — newsletter verified end to end
+
+I said in the last round that the MailerLite work was still outstanding. That
+was wrong — it was already built in v103. Rather than rebuild it, I tested it,
+with the live MailerLite call intercepted so no test addresses hit the real
+list.
+
+| behaviour | result |
+|---|---|
+| footer form present | yes |
+| invalid email | blocked, nothing posted |
+| valid email | POSTs to the form action (group 1457893, form 196202585597675120) |
+| success state | "You're in. Watch your inbox." |
+| popup at load | hidden |
+| popup at 40% scroll | shows |
+| popup after 15s, no scroll | shows |
+| dismiss | hides, writes `dismissedAt` |
+| reload after dismissal | stays hidden (10-day rule) |
+| subscribe then reload + scroll | stays hidden (`subscribed=1`) |
+| email input focusable | yes |
+
+Both surfaces post to the same single form action — no API key, no server
+route, no database.
+
+---
+
+# v107 — new desktop artwork, whole composition visible
+
+The new illustration is 3:2 (1536x1024), shipped at **3072x2048, q95**.
+
+## Why `contain` rather than `cover`
+
+The window is usually 16:9 and the artwork is 3:2, so `cover` would crop ~16%
+off the top and bottom — which is exactly the "can't see the whole thing"
+problem. The backdrop is now `contain`, centred, and the hero stays at
+`100svh`.
+
+The leftover strip either side is the page's own cream, and the artwork is cream
+to its own edge, so the join is invisible. Nothing is cropped and nothing hangs
+below the fold.
+
+## Measured
+
+The artwork's centre box is **0.010% inked**, so the copy sits in genuinely open
+space rather than being dodged around obstacles.
+
+| viewport | hero | fits one screen | copy centre offset | ink behind glyphs |
+|---|---|---|---|---|
+| 1440x900 | 900 | yes | **0px** | **0.000%** |
+| 1920x1080 | 1080 | yes | **0px** | **0.000%** |
+| 1280x720 | 720 | yes | **0px** | **0.000%** |
+| 390x750 | 750 | yes | **0px** | **0.000%** |
+| 390x844 | 804 | yes | **0px** | **0.000%** |
+| 430x930 | 890 | yes | **0px** | **0.000%** |
+
+1280x720 had carried a 3.9% kite overlap through the last few versions; the new
+artwork's open centre clears it.
