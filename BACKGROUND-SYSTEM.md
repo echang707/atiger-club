@@ -2728,3 +2728,17 @@ Every drawn version was a compromise: strokes and rungs can suggest a coil but
 never carried fur, taper, or a black tip. The artwork needs none of that faking.
 It keeps the downward reveal and the scroll drift, and uses `contain` so it holds
 its proportions at any section height.
+
+---
+
+# v111 — the DNA tail
+
+`tiger-tail-strand.webp` swapped for the new artwork: a tiger tail coiled as a
+double helix, with bonds running between the turns and a black tip.
+
+Keyed out to transparency the same way (alpha from distance to the backdrop,
+un-premultiplied edges), so the fur, the fine orange and charcoal wisps, the
+bond dots and the tip all survive: **465x1755, 180 KB, 83% fully transparent**.
+
+Nothing else changed. It keeps the downward reveal, the scroll drift, and
+`contain` so it holds its proportions at any section height.

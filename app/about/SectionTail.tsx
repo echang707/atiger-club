@@ -6,11 +6,10 @@ import { motion, useScroll, useTransform } from "framer-motion";
 /* ---------------------------------------------------------------------
    The tiger tail that runs down the right of the principles.
 
-   This replaces the drawn double helix. Every version of that was a
-   compromise: strokes and rungs can suggest a coil, but they never
-   carried the fur, the taper or the black tip that make it read as an
-   actual tail. This is the supplied artwork, cut out with a transparent
-   background, so it needs none of that faking.
+   A tiger tail coiled as a DNA helix, with bonds running between the
+   turns. This is the supplied artwork, keyed out to a transparent
+   background. Every drawn version was a compromise: strokes and rungs can
+   suggest a coil, but never the fur, the taper or the black tip.
 
    It still reveals with a downward sweep and drifts gently on scroll,
    which is what tied it to the rest of the page.
