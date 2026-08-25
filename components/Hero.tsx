@@ -16,8 +16,12 @@ export default function Hero() {
       <div className="hero-content absolute left-1/2 top-[var(--hero-content-top)] z-10 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-5 sm:px-6 md:px-10">
         <div className="hero-tagline-wrap mx-auto w-full max-w-4xl flex flex-col items-center">
           <WordsFindEachOther />
-          <div className="mt-9 md:mt-8 w-full max-w-2xl">
-            <RotatingLine startDelayMs={2300} />
+          {/* No margin here: the gap is owned solely by `.hero-subline`'s
+              own margin-top, so there is one place to tune it. This
+              wrapper used to add mt-9/mt-8 on top of that, which is why
+              the two lines drifted so far apart. */}
+          <div className="w-full max-w-2xl">
+            <RotatingLine />
           </div>
         </div>
       </div>

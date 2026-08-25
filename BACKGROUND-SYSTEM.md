@@ -2778,3 +2778,39 @@ The sandbox lost its browser this round and reinstalling it is blocked by the
 network policy, so unlike every previous change this one is **not** confirmed
 with a screenshot or a pixel measurement. The CSS is deterministic and the build
 compiles, but the centring change above is reasoned, not measured.
+
+---
+
+# v113 — centred on the viewport, gap tightened
+
+## Why it was off centre
+
+Two causes, and the first was mine from last round.
+
+1. **A duplicate gap.** `Hero.tsx` wrapped the subline in `mt-9 md:mt-8`, on
+   top of `.hero-subline`'s own `margin-top`. Two margins were stacking, which
+   both pushed the lines apart and pushed the block's centre downward. The
+   wrapper's margin is removed; the gap now lives in exactly one place.
+
+2. **The nav was being subtracted.** `--hero-content-top` was
+   `nav + (100svh - nav) / 2` — the middle of the area *below the header*, not
+   the middle of the screen. It is now simply **`50svh`**. The wrapper is
+   translated -50%, so its centre lands exactly there.
+
+Both correction terms stay at zero: with the subline a plain paragraph rather
+than text pinned to the top of a fixed 62px box, the wrapper's centre is the
+visual centre.
+
+The mobile artwork offset derives from `--hero-content-top`, so it follows the
+change automatically rather than needing its own edit.
+
+## Gap
+
+Headline to subline is **40px** desktop (mid of the 36-44 range) and 30px
+mobile. No divider.
+
+## Still not visually verified
+
+The sandbox browser is still unavailable and the reinstall is blocked by the
+network policy, so this remains reasoned rather than measured. The stacked-margin
+bug was found by reading `Hero.tsx`, not by screenshot.

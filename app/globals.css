@@ -486,12 +486,13 @@ body {
   /* minus 73px: the value positions the block's top edge and the
      rotating-line container is taller than its text, so the visual centre
      sat 73px low. Measured identical at 1440x900 and 1920x1080. */
-  /* The -80px correction is gone. It existed because the old rotating
-     subline sat inside a fixed 62px box with its text at the top, so the
-     block's visual centre sat above the wrapper's centre. The subline is
-     now a plain paragraph that fills its own box, so the wrapper centre
-     IS the visual centre and no fudge is needed. */
-  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2);
+  /* Dead centre of the whole viewport. The wrapper is translated -50%,
+     so its centre lands exactly here; and because the subline is now a
+     plain paragraph rather than text pinned to the top of a fixed 62px
+     box, the wrapper's centre is also the visual centre. No correction
+     term, and the nav is deliberately NOT subtracted: the copy is centred
+     on the screen, not on the area beneath the header. */
+  --hero-content-top: 50svh;
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -522,9 +523,9 @@ body {
        one tuning knob: raising it moves the copy (and the art with it)
        higher, tightening the gap under the nav. */
     --void-center: 70vw;
-    --k: 0px; /* same reason as desktop: no fixed-height subline box now */
+    --k: 0px;
     --nav-h: 76px;
-    --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - var(--k));
+    --hero-content-top: calc(50svh - var(--k));
     --art-offset: calc(var(--hero-content-top) - var(--void-center));
     /* Never shorter than the portrait artwork at full width. max(...,0)
        because --art-offset can go slightly negative on short phones —
@@ -548,7 +549,7 @@ body {
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
   .hero-tagline { font-size: clamp(28px, 6.9vw, 38px) !important; }
-  .hero-subline { font-size: 17px !important; margin-top: 34px !important; width: 88%; max-width: 88%; }
+  .hero-subline { font-size: 17px !important; margin-top: 30px !important; width: 88%; max-width: 88%; }
 }
 
 /* ---------------------------------------------------------------------
@@ -694,7 +695,7 @@ body {
 .hero-subline {
   font-size: 24px;
   line-height: 1.4;
-  margin-top: 54px;
+  margin-top: 40px;
   letter-spacing: 0.005em;
   white-space: nowrap;
 }
