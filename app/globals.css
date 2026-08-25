@@ -486,7 +486,12 @@ body {
   /* minus 73px: the value positions the block's top edge and the
      rotating-line container is taller than its text, so the visual centre
      sat 73px low. Measured identical at 1440x900 and 1920x1080. */
-  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - 80px);
+  /* The -80px correction is gone. It existed because the old rotating
+     subline sat inside a fixed 62px box with its text at the top, so the
+     block's visual centre sat above the wrapper's centre. The subline is
+     now a plain paragraph that fills its own box, so the wrapper centre
+     IS the visual centre and no fudge is needed. */
+  --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2);
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -517,7 +522,7 @@ body {
        one tuning knob: raising it moves the copy (and the art with it)
        higher, tightening the gap under the nav. */
     --void-center: 70vw;
-    --k: 76px;
+    --k: 0px; /* same reason as desktop: no fixed-height subline box now */
     --nav-h: 76px;
     --hero-content-top: calc(var(--nav-h) + (100svh - var(--nav-h)) / 2 - var(--k));
     --art-offset: calc(var(--hero-content-top) - var(--void-center));
@@ -543,7 +548,7 @@ body {
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
   .hero-tagline { font-size: clamp(28px, 6.9vw, 38px) !important; }
-  .hero-subline { font-size: 14px !important; line-height: 1.4; width: 56%; max-width: 56%; }
+  .hero-subline { font-size: 17px !important; margin-top: 34px !important; width: 88%; max-width: 88%; }
 }
 
 /* ---------------------------------------------------------------------
@@ -681,4 +686,20 @@ body {
   .nav-veil::after {
     height: 150px;
   }
+}
+
+/* Subline under the hero headline: one line on desktop, centred under it,
+   sans-serif at regular weight, softer than the headline's full-strength
+   ink, with room to breathe between the two. */
+.hero-subline {
+  font-size: 24px;
+  line-height: 1.4;
+  margin-top: 54px;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  /* wraps below the nowrap breakpoint rather than overflowing */
+  .hero-subline { white-space: normal; }
 }

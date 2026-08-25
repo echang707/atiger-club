@@ -2742,3 +2742,39 @@ bond dots and the tip all survive: **465x1755, 180 KB, 83% fully transparent**.
 
 Nothing else changed. It keeps the downward reveal, the scroll drift, and
 `contain` so it holds its proportions at any section height.
+
+---
+
+# v112 — the subline is fixed copy, restyled
+
+`experience atlanta, together.` replaces the ten rotating prompts.
+
+| | |
+|---|---|
+| bullet | removed |
+| animation | removed (no fade, no rotation) |
+| font | `font-sans`, regular weight |
+| size | **24px** desktop, 17px mobile |
+| colour | `text-ink/65` — charcoal, softer than the headline |
+| spacing | **54px** below the headline (34px mobile) |
+| case | lowercase, as written |
+| desktop wrapping | `white-space: nowrap`, so it holds one line |
+
+## A fudge factor could be deleted
+
+The hero copy was positioned with a `-80px` (desktop) / `-76px` (mobile)
+correction. That existed because the old rotating subline lived in a fixed 62px
+box with its text at the top, so the block's visual centre sat above the
+wrapper's centre.
+
+The subline is now a plain paragraph that fills its own box, so **the wrapper's
+centre is the visual centre** and both corrections are set to zero. Centring is
+now derived rather than tuned, which also removes the drift that used to depend
+on which rotating line happened to be showing.
+
+## Not visually verified
+
+The sandbox lost its browser this round and reinstalling it is blocked by the
+network policy, so unlike every previous change this one is **not** confirmed
+with a screenshot or a pixel measurement. The CSS is deterministic and the build
+compiles, but the centring change above is reasoned, not measured.
