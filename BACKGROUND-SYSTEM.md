@@ -2814,3 +2814,26 @@ mobile. No divider.
 The sandbox browser is still unavailable and the reinstall is blocked by the
 network policy, so this remains reasoned rather than measured. The stacked-margin
 bug was found by reading `Hero.tsx`, not by screenshot.
+
+---
+
+# v114 — optical centring correction
+
+`50svh` centres the wrapper **box**, but the box is not symmetric around its
+ink: the headline carries `line-height: 1.06` on a ~7vw font, so a band of empty
+leading sits above the cap height. It belongs to the box and shows as nothing,
+which lands the visible text lower than the box.
+
+Measured off the 1440x1456 screenshot: viewport centre ~728, ink centre ~790,
+so the letters sat about **60px low**. The wrapper is pulled up half that.
+
+    --hero-content-top: calc(50svh - 30px);   /* desktop */
+    --k: 26px;                                /* mobile, smaller headline */
+
+The mobile artwork offset derives from `--hero-content-top`, so it follows
+automatically. The 40px / 30px headline-to-subline gap is unchanged.
+
+**Derived from a screenshot, not from a render I ran.** The sandbox browser has
+been unavailable for three rounds and the reinstall is blocked by the network
+policy. If 30px overshoots, reduce toward 20px; the single knob is
+`--hero-content-top`.

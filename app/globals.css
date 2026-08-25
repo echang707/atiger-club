@@ -492,7 +492,13 @@ body {
      box, the wrapper's centre is also the visual centre. No correction
      term, and the nav is deliberately NOT subtracted: the copy is centred
      on the screen, not on the area beneath the header. */
-  --hero-content-top: 50svh;
+  /* 50svh centres the wrapper BOX. The headline carries line-height 1.06
+     on a ~7vw font, so a band of empty leading sits above the cap height
+     and belongs to the box but shows as nothing — which puts the visible
+     text lower than the box. Measured off a 1440x1456 render: viewport
+     centre ~728, ink centre ~790, so the ink sat ~60px low. Pulling the
+     wrapper up 30px lands the letters on the optical centre. */
+  --hero-content-top: calc(50svh - 30px);
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -523,7 +529,8 @@ body {
        one tuning knob: raising it moves the copy (and the art with it)
        higher, tightening the gap under the nav. */
     --void-center: 70vw;
-    --k: 0px;
+    /* same correction, scaled for the smaller mobile headline */
+    --k: 26px;
     --nav-h: 76px;
     --hero-content-top: calc(50svh - var(--k));
     --art-offset: calc(var(--hero-content-top) - var(--void-center));
