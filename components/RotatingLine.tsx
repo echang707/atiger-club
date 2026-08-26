@@ -13,7 +13,7 @@
    every centring value tuned against it still apply.
    --------------------------------------------------------------------- */
 
-const LINE = "experience atlanta, together.";
+const LINE = "meet people. experience atlanta.";
 
 export default function RotatingLine(_props: {
   intervalMs?: number;
@@ -21,7 +21,7 @@ export default function RotatingLine(_props: {
 }) {
   return (
     <div className="flex w-full items-center justify-center">
-      <p className="hero-subline mx-auto text-center font-sans font-normal lowercase text-ink/65">
+      <p className="hero-subline mx-auto text-center font-sans lowercase">
         {LINE}
       </p>
     </div>

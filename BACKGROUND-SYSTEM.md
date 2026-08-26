@@ -2837,3 +2837,73 @@ automatically. The 40px / 30px headline-to-subline gap is unchanged.
 been unavailable for three rounds and the reinstall is blocked by the network
 policy. If 30px overshoots, reduce toward 20px; the single knob is
 `--hero-content-top`.
+
+---
+
+# v115 — safe margin baked into the artwork
+
+## Why the bottom was cut
+
+The artwork's aspect was right (1.660, near the 1.655 optimum), but its
+**content ran to 0.0%-100.0% on all four sides**. With no margin, any crop cuts
+figures. On a 16:9 window `cover` trims 6.6% vertically, which is exactly the
+band the bottom picnic group sits in.
+
+Choosing the aspect was only half the job. The other half was the safe area I
+specified but the file did not have.
+
+## What changed
+
+The artwork is inset to **88.5%** of the canvas and centred on its own paper
+colour, with the seam feathered over 26px so the inset edge cannot read as a
+line. Content now sits at **5.8%-94.1%** horizontally and **6.0%-93.9%**
+vertically. Worst crop takes 3.65% off an edge, against a 5.8% margin.
+
+Same treatment on mobile: content was at 0.0%-99.9%, now inset with a **5.6%**
+margin against a worst crop of 4.15%.
+
+## Verified by simulation
+
+`cover` simulated at every window, counting content pixels outside the visible
+rect:
+
+| | content pixels lost |
+|---|---|
+| 1512x982, 1440x900, 1680x1050 | **0** |
+| 1536x864, 1920x1080, 1366x768 | **0** |
+| 2560x1440, 2560x1456, 1280x720 | **0** |
+| all seven phone sizes | **0** |
+
+No file swap needed. If you do re-cut the artwork later, keep everything inside
+the central 88% and this stays true.
+
+---
+
+# v116 — subline copy and styling
+
+`meet people. experience atlanta.`
+
+| | desktop | mobile |
+|---|---|---|
+| size | **27px** | **18px** |
+| weight | 450 | 450 |
+| colour | **#3B3934** at full opacity | same |
+| letter spacing | 0.1px | 0.1px |
+| line height | 1.3 | 1.3 |
+| gap from headline | **46px** | 34px |
+| case | lowercase | lowercase |
+
+The colour is the real change: it was `text-ink/65`, a faded neutral that washed
+out against the cream. It is now a warm charcoal set at full strength. The
+opacity utility is gone from the component and the colour lives in CSS, so there
+is one place it is defined.
+
+Font family is unchanged (`font-sans`) and the headline keeps the expressive
+serif to itself.
+
+Width check: at 27px the longer line is roughly 432px, so `white-space: nowrap`
+holds it on one line down to the smallest desktop window; mobile keeps
+`white-space: normal` and wraps.
+
+Still not verified in a browser: the sandbox has had no browser for several
+rounds and the reinstall is blocked.
