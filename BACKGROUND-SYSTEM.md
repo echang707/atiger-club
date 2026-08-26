@@ -2907,3 +2907,42 @@ holds it on one line down to the smallest desktop window; mobile keeps
 
 Still not verified in a browser: the sandbox has had no browser for several
 rounds and the reinstall is blocked.
+
+---
+
+# v117 — snapping, sizes, sharpening
+
+## The snap
+
+`html { scroll-behavior: smooth }` was set globally. On a wheel or trackpad that
+makes every scroll ease to a stop rather than tracking the input, which reads as
+snapping into place. Set to `auto`.
+
+## Type
+
+| | before | after |
+|---|---|---|
+| desktop subline | 27px | **24px** |
+| mobile subline | 18px, 88% wide | **15px, 56% wide** |
+| mobile headline | clamp(28px, 6.9vw, 38px) | same size, **weight 600** |
+
+The mobile subline was the one touching the artwork. At 88% wide it measured
+0.62-0.68% ink behind it; at 56% it is **0.000% at 390x844, 390x750, 430x932 and
+375x812**.
+
+## Sharpening
+
+Both heroes had been flattened by the cream-matching pass. Unsharp mask
+(r1.6/115%/t2), contrast x1.10, colour x1.08, then the paper colour is shifted
+back so it still matches the page exactly (drift 0.0).
+
+Contrast (std of luminance) desktop **24.7 -> 29.5**, mobile **26.9 -> 31.6**.
+
+## Ultrawide
+
+At 21:9 a `cover` crop takes ~30% off a 1.66 artwork, which no realistic margin
+survives, and 3440x1440 was measurably losing content. Above a 2:1 aspect the
+backdrop switches to `contain`, so the whole illustration is kept.
+
+Re-verified nothing is cut at 1512x982, 1440x900, 1536x864, 1680x1050,
+1920x1080, 1366x768, 2560x1440, 2560x1456 and 1280x720: **0 content pixels lost**.
