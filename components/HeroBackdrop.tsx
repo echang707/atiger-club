@@ -41,9 +41,10 @@ export default function HeroBackdrop() {
                         runs up under the header.
        --hero-flow-top  where the section starts in the document. Drives
                         the section's height so it ends at the fold.
-       --hero-copy-fix  whatever it takes to land the copy's centre on
-                        the target. Measured off the copy itself, so it
-                        cannot inherit an error from the other two.
+       --hero-copy-fix  whatever it takes to land the HEADLINE'S INK on
+                        the exact centre of the window. Measured off the
+                        headline itself, so it cannot inherit an error
+                        from the other two.
 
      --hero-vis-h is the real window height; `100svh` can disagree with
      what is on screen, and the difference comes off the bottom edge.
@@ -53,16 +54,49 @@ export default function HeroBackdrop() {
     const shell = el?.parentElement;
     if (!el || !shell) return;
 
-    // The copy sits this far ABOVE the dead centre of the window. The
-    // headline's line-height leaves a band of empty leading above the cap
-    // height that belongs to the box but shows as nothing, so centring
-    // the box leaves the letters looking low. The artwork's void centres
-    // at 49.6% of its own height, i.e. on the window's centre, so this is
-    // the only correction the copy needs.
-    const OPTICAL = 30;
+    // Where the headline's INK sits inside its own box, in px from the
+    // box top. This is not the box centre: the line box carries leading
+    // above the cap height and the box is taller than the letters, so
+    // centring the box leaves the letters high. Everything here comes
+    // from the browser's own font metrics via canvas, so there is no
+    // hand-tuned constant and it stays right if the font or size changes.
+    const inkCentreInBox = (h1: HTMLElement): number => {
+      const cs = getComputedStyle(h1);
+      const size = parseFloat(cs.fontSize);
+      const lineBox = parseFloat(cs.lineHeight) || size * 1.06;
+      const fallback = lineBox / 2 + size * 0.05;
+      try {
+        const ctx = document.createElement("canvas").getContext("2d");
+        if (!ctx) return fallback;
+        ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${size}px ${cs.fontFamily}`;
+        // If the canvas rejected the font string it silently keeps its
+        // default (10px sans-serif) and would hand back metrics for the
+        // wrong face, so check the assignment actually took.
+        if (!ctx.font || ctx.font === "10px sans-serif") return fallback;
+        const m = ctx.measureText("life is better together.");
+        if (
+          typeof m.fontBoundingBoxAscent !== "number" ||
+          typeof m.actualBoundingBoxAscent !== "number"
+        ) {
+          return fallback;
+        }
+        // Half-leading centres the font's em box inside the line box, so
+        // the baseline sits this far down; the ink is then measured
+        // relative to that baseline.
+        const halfLeading =
+          (lineBox - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2;
+        const baseline = halfLeading + m.fontBoundingBoxAscent;
+        return (
+          baseline +
+          (m.actualBoundingBoxDescent - m.actualBoundingBoxAscent) / 2
+        );
+      } catch {
+        return fallback;
+      }
+    };
 
     let shift = 0;
-    let copyFix = OPTICAL;
+    let copyFix = 30;
 
     const sync = () => {
       const visH = window.innerHeight;
@@ -80,14 +114,17 @@ export default function HeroBackdrop() {
         shell.style.setProperty("--hero-shift", `${Math.round(shift)}px`);
       }
 
-      // Copy: drive its centre to the target. Measured independently of
-      // the artwork so an error in one cannot leak into the other.
-      const copy = shell.querySelector<HTMLElement>(".hero-content");
-      if (copy) {
+      // Copy: drive the HEADLINE'S INK onto the exact centre of the
+      // window — equal space above the letters and below them. Measured
+      // on the headline itself, NOT on the .hero-content block: the block
+      // also holds the 46px gap and the subline beneath it, so centring
+      // the block hung the headline about 64px high.
+      const h1 = shell.querySelector<HTMLElement>(".hero-tagline");
+      if (h1) {
         for (let i = 0; i < 3; i++) {
-          const r = copy.getBoundingClientRect();
+          const r = h1.getBoundingClientRect();
           const err =
-            r.top + window.scrollY + r.height / 2 - (visH / 2 - OPTICAL);
+            r.top + window.scrollY + inkCentreInBox(h1) - visH / 2;
           if (Math.abs(err) < 0.5) break;
           copyFix += err;
           shell.style.setProperty("--hero-copy-fix", `${Math.round(copyFix)}px`);

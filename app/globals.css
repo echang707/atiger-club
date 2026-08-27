@@ -510,13 +510,16 @@ body {
      centre ~728, ink centre ~790, so the ink sat ~60px low. Pulling the
      wrapper up 30px lands the letters on the optical centre.
 
-     --hero-copy-fix is that 30px, but measured rather than assumed: the
-     copy's own centre is read back and driven onto the window's centre
-     minus the optical correction (see HeroBackdrop.tsx). This used to
-     subtract --hero-shift instead, which is the ARTWORK's paint offset —
-     a different quantity — and that double-correction is what pushed the
-     headline too high. The 30px fallback preserves the original
-     behaviour if the script never runs. */
+  /* This positions the wrapper BOX, which holds the headline, a 46px gap
+     and the subline beneath it. Centring that box hangs the headline
+     high, because the headline is only the top third of it — that is
+     what put the letters ~64px above centre.
+
+     --hero-copy-fix corrects for the whole stack: HeroBackdrop.tsx reads
+     the headline's own ink position (from the browser's font metrics)
+     and drives it onto the exact centre of the window, so there is equal
+     space above the letters and below them. The 30px fallback is the old
+     hand-tuned value, used only if the script never runs. */
   --hero-content-top: calc(
     (var(--hero-vis-h, 100svh) / 2) - var(--hero-copy-fix, 30px)
   );
