@@ -506,7 +506,6 @@ body {
      and belongs to the box but shows as nothing — which puts the visible
      text lower than the box. Measured off a 1440x1456 render: viewport
      centre ~728, ink centre ~790, so the ink sat ~60px low. Pulling the
-     wrapper up 30px lands the letters on the optical centre. */
      wrapper up 30px lands the letters on the optical centre.
 
      Minus --hero-shift for the same reason as the height above: this
