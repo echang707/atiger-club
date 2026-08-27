@@ -576,7 +576,26 @@ body {
      rendered copy box (+8px pad) across 17 phone sizes from 360x640 to
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
-  .hero-tagline { font-size: clamp(28px, 6.9vw, 38px) !important; font-weight: 600 !important; }
+  .hero-tagline {
+    font-size: clamp(28px, 6.9vw, 38px) !important;
+    /* Instrument Serif ships exactly ONE weight — 400, no bold face and no
+       variable axis (see layout.tsx, which requests weight ["400"]). So
+       the 600 that used to be here was never a real weight: it was the
+       browser SYNTHESISING bold off the 400 glyphs. Synthetic bold is
+       all-or-nothing, so asking for 500 or 550 would have dropped it
+       entirely and rendered identically to plain 400 — a full step
+       lighter, not a slight one.
+
+       To get a fractional step the weight is set to the real 400 and the
+       thickening is done with a stroke, which IS continuous. Browsers
+       synthesise bold at roughly 0.04em, so 0.028em is about 70% of the
+       old weight — slightly lighter, as asked. This is also more
+       consistent than synthetic bold, which each engine computes
+       differently. Dial between 0 (plain 400) and 0.04em (the old look).
+       Mobile only: desktop uses the untouched 400 from `font-normal`. */
+    font-weight: 400 !important;
+    -webkit-text-stroke: 0.028em currentColor;
+  }
   .hero-subline { font-size: 15px !important; margin-top: 30px !important; width: 56%; max-width: 56%; }
 }
 
