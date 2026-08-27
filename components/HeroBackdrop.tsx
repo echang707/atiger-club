@@ -28,44 +28,52 @@ export default function HeroBackdrop() {
   }, []);
 
   /* ------------------------------------------------------------------
-     --hero-top: how far down the document the hero actually starts.
+     Pin the artwork to the top of the window.
 
-     The header is meant to be `fixed`, in which case this is 0 and every
-     rule that reads the variable falls back to exactly its old value.
-     But if anything above the hero DOES take up flow — a header that
-     isn't overlaying, a preview/dev bar, an announcement strip — the
-     hero gets pushed down by that much and, because it is 100svh tall,
-     an equal band falls off the bottom of the screen. That is what was
-     clipping the picnic group off the bottom edge of the artwork.
+     Something above the hero pushes it down — the header is `fixed` and
+     should take no flow space, but measuring the SECTION's offset came
+     back 0 while the picture still painted ~80px low, so the cause is
+     not the section's position in flow. Rather than keep guessing at the
+     cause, this measures the effect: where this element actually lands.
 
-     Measuring it rather than subtracting a hard-coded --nav-h means the
-     hero is correct in both cases, and stays correct if the header's
-     height or positioning changes later. `top` is read off the shell,
-     not off this element, because this element is the one that gets
-     moved by the result — reading it back would chase its own tail.
+     `docTop` is where the artwork's top edge really sits in the document.
+     We want 0 — flush with the top of the window, running up under the
+     header. Whatever it reads, we fold that straight into --hero-shift
+     and re-measure; it converges on the first pass and the loop is only
+     there in case a layer we can't see moves it again. Because it reads
+     back its own painted position, it is correct regardless of WHY the
+     artwork was displaced.
+
+     --hero-vis-h is the real visible window height. The height was
+     `100svh`, and if svh disagrees with what is actually on screen by
+     even a few px, the bottom edge of the picture goes with it. This
+     removes that whole class of problem by measuring instead.
      ------------------------------------------------------------------ */
   useEffect(() => {
-    const shell = ref.current?.parentElement;
-    if (!shell) return;
+    const el = ref.current;
+    const shell = el?.parentElement;
+    if (!el || !shell) return;
 
-    let last = -1;
-    const measure = () => {
-      const top = Math.max(
-        0,
-        Math.round(shell.getBoundingClientRect().top + window.scrollY),
-      );
-      if (top === last) return;
-      last = top;
-      shell.style.setProperty("--hero-top", `${top}px`);
+    let shift = 0;
+    const sync = () => {
+      shell.style.setProperty("--hero-vis-h", `${window.innerHeight}px`);
+      // Converges on the first iteration; the extra passes are cheap
+      // insurance against another layer shifting things underneath us.
+      for (let i = 0; i < 3; i++) {
+        const docTop = el.getBoundingClientRect().top + window.scrollY;
+        if (Math.abs(docTop) < 0.5) break;
+        shift += docTop;
+        shell.style.setProperty("--hero-shift", `${Math.round(shift)}px`);
+      }
     };
 
-    measure();
-    window.addEventListener("resize", measure);
+    sync();
+    window.addEventListener("resize", sync);
     // A webfont swapping in can change the height of whatever sits above
     // the hero, so re-measure once the fonts have settled.
-    document.fonts?.ready.then(measure).catch(() => {});
+    document.fonts?.ready.then(sync).catch(() => {});
 
-    return () => window.removeEventListener("resize", measure);
+    return () => window.removeEventListener("resize", sync);
   }, []);
 
   return (

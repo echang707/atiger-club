@@ -477,13 +477,13 @@ body {
      normal window it fills the frame with only a little side crop and
      nothing hangs below the fold — the old 3:2 art needed the hero to be
      taller than the viewport, which is what forced the scroll. */
-  /* Minus --hero-top so the section ENDS at the fold rather than
-     --hero-top below it. Anything in flow above the hero pushes it down
-     by that much; at a fixed 100svh the same amount then hung off the
-     bottom of the screen, which is what cut the bottom of the artwork
-     off. --hero-top is measured live in HeroBackdrop.tsx and is 0 when
-     the header overlays properly, so this is a no-op in that case. */
-  height: calc(100svh - var(--hero-top, 0px));
+  /* Minus --hero-shift so the section ENDS at the fold rather than
+     --hero-shift below it. Whatever pushes the hero down does so by that
+     much; at a fixed 100svh the same amount then hung off the bottom of
+     the screen, which is what cut the bottom off the artwork. Both
+     variables are measured live in HeroBackdrop.tsx and fall back to the
+     original values, so this is a no-op if nothing is displacing it. */
+  height: calc(var(--hero-vis-h, 100svh) - var(--hero-shift, 0px));
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
   /* measured: the visual block (tagline + subline box) sat 7px high at
      50%, because the rotating-line container is taller than its text */
@@ -509,12 +509,14 @@ body {
      wrapper up 30px lands the letters on the optical centre. */
      wrapper up 30px lands the letters on the optical centre.
 
-     Minus --hero-top for the same reason as the height above: this value
-     is measured from the hero's own top edge, so if the hero starts
-     --hero-top down the page, the copy has to come back up by the same
-     amount to stay on the SCREEN's centre — which is also where the
-     artwork's void now sits. 0 when the header overlays. */
-  --hero-content-top: calc(50svh - 30px - var(--hero-top, 0px));
+     Minus --hero-shift for the same reason as the height above: this
+     value is measured from the hero's own top edge, so if the artwork
+     starts --hero-shift down the page, the copy has to come back up by
+     the same amount to stay on the SCREEN's centre — which is also where
+     the artwork's void now sits. 0 when nothing is displacing it. */
+  --hero-content-top: calc(
+    (var(--hero-vis-h, 100svh) / 2) - 30px - var(--hero-shift, 0px)
+  );
 }
 
 /* Positioned ONCE, at a fixed point within the hero — a plain absolute
@@ -646,16 +648,29 @@ body {
 /* The artwork runs up UNDER the header rather than starting below it.
    The shell now ends at the fold, so `inset: 0` alone would shrink the
    picture to the area under the header and letterbox it; pulling the top
-   back up by --hero-top and holding the height at a full 100svh makes
+   back up by --hero-shift and holding the height at the measured window
+   height makes
    the artwork cover exactly the visible screen instead — top edge at the
    top of the window, bottom edge at the bottom, nothing cropped either
    end. The nav-veil gradient already keeps the logo and links legible
-   over it, which is what it was built for. No-op when --hero-top is 0. */
+   over it, which is what it was built for. No-op when --hero-shift is 0. */
 @media (min-width: 768px) {
   .hero-backdrop {
-    top: calc(-1 * var(--hero-top, 0px));
+    /* --hero-shift is measured in HeroBackdrop.tsx: it is however far
+       down the window this element actually painted, read back off the
+       rendered box rather than inferred from the layout. Pulling up by
+       it lands the artwork's top edge on the top of the window.
+
+       --hero-art-nudge is the manual knob. It is 0 by default and only
+       exists so the art can be trimmed by eye without touching the
+       measurement: raise it to lift the picture further, lower it (a
+       negative value) to drop it. */
+    top: calc(-1 * (var(--hero-shift, 0px) + var(--hero-art-nudge, 0px)));
     bottom: auto;
-    height: 100svh;
+    /* The real window height, measured. `100svh` can disagree with what
+       is actually on screen, and any disagreement comes straight off the
+       bottom edge of the picture. */
+    height: var(--hero-vis-h, 100svh);
   }
 }
 
