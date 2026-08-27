@@ -477,13 +477,15 @@ body {
      normal window it fills the frame with only a little side crop and
      nothing hangs below the fold — the old 3:2 art needed the hero to be
      taller than the viewport, which is what forced the scroll. */
-  /* Minus --hero-shift so the section ENDS at the fold rather than
-     --hero-shift below it. Whatever pushes the hero down does so by that
+  /* Minus --hero-flow-top so the section ENDS at the fold rather than
+     that far below it. Whatever pushes the hero down does so by that
      much; at a fixed 100svh the same amount then hung off the bottom of
-     the screen, which is what cut the bottom off the artwork. Both
-     variables are measured live in HeroBackdrop.tsx and fall back to the
-     original values, so this is a no-op if nothing is displacing it. */
-  height: calc(var(--hero-vis-h, 100svh) - var(--hero-shift, 0px));
+     the screen, which is what cut the bottom off the artwork.
+     --hero-flow-top is the section's own document offset, measured in
+     HeroBackdrop.tsx — deliberately NOT --hero-shift, which measures the
+     artwork's paint offset and is a different number. Falls back to the
+     original values when nothing is displacing it. */
+  height: calc(var(--hero-vis-h, 100svh) - var(--hero-flow-top, 0px));
   /* measured: the block sat 7px high at 50%, so nudge by 0.8% */
   /* measured: the visual block (tagline + subline box) sat 7px high at
      50%, because the rotating-line container is taller than its text */
@@ -508,13 +510,15 @@ body {
      centre ~728, ink centre ~790, so the ink sat ~60px low. Pulling the
      wrapper up 30px lands the letters on the optical centre.
 
-     Minus --hero-shift for the same reason as the height above: this
-     value is measured from the hero's own top edge, so if the artwork
-     starts --hero-shift down the page, the copy has to come back up by
-     the same amount to stay on the SCREEN's centre — which is also where
-     the artwork's void now sits. 0 when nothing is displacing it. */
+     --hero-copy-fix is that 30px, but measured rather than assumed: the
+     copy's own centre is read back and driven onto the window's centre
+     minus the optical correction (see HeroBackdrop.tsx). This used to
+     subtract --hero-shift instead, which is the ARTWORK's paint offset —
+     a different quantity — and that double-correction is what pushed the
+     headline too high. The 30px fallback preserves the original
+     behaviour if the script never runs. */
   --hero-content-top: calc(
-    (var(--hero-vis-h, 100svh) / 2) - 30px - var(--hero-shift, 0px)
+    (var(--hero-vis-h, 100svh) / 2) - var(--hero-copy-fix, 30px)
   );
 }
 

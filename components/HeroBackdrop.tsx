@@ -28,49 +28,78 @@ export default function HeroBackdrop() {
   }, []);
 
   /* ------------------------------------------------------------------
-     Pin the artwork to the top of the window.
+     Three separate measurements. They were previously ONE number, which
+     was the bug: --hero-shift means "how far the artwork paints low",
+     and the copy was being lifted by that same amount as though it meant
+     "how far the section sits low". Those are different quantities, so
+     the copy ended up over-corrected and too high. Each is now measured
+     against what it actually controls.
 
-     Something above the hero pushes it down — the header is `fixed` and
-     should take no flow space, but measuring the SECTION's offset came
-     back 0 while the picture still painted ~80px low, so the cause is
-     not the section's position in flow. Rather than keep guessing at the
-     cause, this measures the effect: where this element actually lands.
+       --hero-shift     the backdrop's own painted offset. Read back off
+                        the rendered box and cancelled, so the artwork's
+                        top edge lands on the top of the window and it
+                        runs up under the header.
+       --hero-flow-top  where the section starts in the document. Drives
+                        the section's height so it ends at the fold.
+       --hero-copy-fix  whatever it takes to land the copy's centre on
+                        the target. Measured off the copy itself, so it
+                        cannot inherit an error from the other two.
 
-     `docTop` is where the artwork's top edge really sits in the document.
-     We want 0 — flush with the top of the window, running up under the
-     header. Whatever it reads, we fold that straight into --hero-shift
-     and re-measure; it converges on the first pass and the loop is only
-     there in case a layer we can't see moves it again. Because it reads
-     back its own painted position, it is correct regardless of WHY the
-     artwork was displaced.
-
-     --hero-vis-h is the real visible window height. The height was
-     `100svh`, and if svh disagrees with what is actually on screen by
-     even a few px, the bottom edge of the picture goes with it. This
-     removes that whole class of problem by measuring instead.
+     --hero-vis-h is the real window height; `100svh` can disagree with
+     what is on screen, and the difference comes off the bottom edge.
      ------------------------------------------------------------------ */
   useEffect(() => {
     const el = ref.current;
     const shell = el?.parentElement;
     if (!el || !shell) return;
 
+    // The copy sits this far ABOVE the dead centre of the window. The
+    // headline's line-height leaves a band of empty leading above the cap
+    // height that belongs to the box but shows as nothing, so centring
+    // the box leaves the letters looking low. The artwork's void centres
+    // at 49.6% of its own height, i.e. on the window's centre, so this is
+    // the only correction the copy needs.
+    const OPTICAL = 30;
+
     let shift = 0;
+    let copyFix = OPTICAL;
+
     const sync = () => {
-      shell.style.setProperty("--hero-vis-h", `${window.innerHeight}px`);
-      // Converges on the first iteration; the extra passes are cheap
-      // insurance against another layer shifting things underneath us.
+      const visH = window.innerHeight;
+      shell.style.setProperty("--hero-vis-h", `${visH}px`);
+      shell.style.setProperty(
+        "--hero-flow-top",
+        `${Math.max(0, Math.round(shell.getBoundingClientRect().top + window.scrollY))}px`,
+      );
+
+      // Artwork: drive its painted top edge to the top of the window.
       for (let i = 0; i < 3; i++) {
         const docTop = el.getBoundingClientRect().top + window.scrollY;
         if (Math.abs(docTop) < 0.5) break;
         shift += docTop;
         shell.style.setProperty("--hero-shift", `${Math.round(shift)}px`);
       }
+
+      // Copy: drive its centre to the target. Measured independently of
+      // the artwork so an error in one cannot leak into the other.
+      const copy = shell.querySelector<HTMLElement>(".hero-content");
+      if (copy) {
+        for (let i = 0; i < 3; i++) {
+          const r = copy.getBoundingClientRect();
+          const err =
+            r.top + window.scrollY + r.height / 2 - (visH / 2 - OPTICAL);
+          if (Math.abs(err) < 0.5) break;
+          copyFix += err;
+          shell.style.setProperty("--hero-copy-fix", `${Math.round(copyFix)}px`);
+        }
+      }
     };
 
     sync();
     window.addEventListener("resize", sync);
-    // A webfont swapping in can change the height of whatever sits above
-    // the hero, so re-measure once the fonts have settled.
+    // A webfont swapping in changes the copy's height, and can change the
+    // height of whatever sits above the hero, so re-measure once the
+    // fonts have settled.
     document.fonts?.ready.then(sync).catch(() => {});
 
     return () => window.removeEventListener("resize", sync);
