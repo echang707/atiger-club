@@ -503,13 +503,6 @@ body {
      box, the wrapper's centre is also the visual centre. No correction
      term, and the nav is deliberately NOT subtracted: the copy is centred
      on the screen, not on the area beneath the header. */
-  /* 50svh centres the wrapper BOX. The headline carries line-height 1.06
-     on a ~7vw font, so a band of empty leading sits above the cap height
-     and belongs to the box but shows as nothing — which puts the visible
-     text lower than the box. Measured off a 1440x1456 render: viewport
-     centre ~728, ink centre ~790, so the ink sat ~60px low. Pulling the
-     wrapper up 30px lands the letters on the optical centre.
-
   /* This positions the wrapper BOX, which holds the headline, a 46px gap
      and the subline beneath it. Centring that box hangs the headline
      high, because the headline is only the top third of it — that is
@@ -670,32 +663,30 @@ body {
   background-position: center;
 }
 
-/* The artwork runs up UNDER the header rather than starting below it.
-   The shell now ends at the fold, so `inset: 0` alone would shrink the
-   picture to the area under the header and letterbox it; pulling the top
-   back up by --hero-shift and holding the height at the measured window
-   height makes
-   the artwork cover exactly the visible screen instead — top edge at the
-   top of the window, bottom edge at the bottom, nothing cropped either
-   end. The nav-veil gradient already keeps the logo and links legible
-   over it, which is what it was built for. No-op when --hero-shift is 0. */
+/* The artwork sits just BELOW the header, not underneath it. Its top edge
+   is parked on the header's bottom edge and its height is the window minus
+   that header, so the picture spans exactly the band between the header
+   and the fold — the top of the illustration is fully visible and none of
+   it is hidden behind the nav.
+
+   --hero-shift is measured in HeroBackdrop.tsx: the difference between
+   where this element actually painted and where it belongs, read back off
+   the rendered box rather than inferred from the layout. It is signed, so
+   the same rule corrects a box that starts too high or too low.
+
+   --hero-art-nudge is the manual knob, 0 by default. It exists so the art
+   can be trimmed by eye without disturbing the measurement: raise it to
+   lift the picture, use a negative value to drop it. */
 @media (min-width: 768px) {
   .hero-backdrop {
-    /* --hero-shift is measured in HeroBackdrop.tsx: it is however far
-       down the window this element actually painted, read back off the
-       rendered box rather than inferred from the layout. Pulling up by
-       it lands the artwork's top edge on the top of the window.
-
-       --hero-art-nudge is the manual knob. It is 0 by default and only
-       exists so the art can be trimmed by eye without touching the
-       measurement: raise it to lift the picture further, lower it (a
-       negative value) to drop it. */
     top: calc(-1 * (var(--hero-shift, 0px) + var(--hero-art-nudge, 0px)));
     bottom: auto;
-    /* The real window height, measured. `100svh` can disagree with what
-       is actually on screen, and any disagreement comes straight off the
-       bottom edge of the picture. */
-    height: var(--hero-vis-h, 100svh);
+    /* Measured window height minus measured header height. `100svh` can
+       disagree with what is actually on screen, and any disagreement
+       comes straight off the bottom edge of the picture. */
+    height: calc(
+      var(--hero-vis-h, 100svh) - var(--hero-nav-h, var(--nav-h, 80px))
+    );
   }
 }
 

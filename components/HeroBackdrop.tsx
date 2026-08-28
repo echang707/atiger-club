@@ -36,9 +36,13 @@ export default function HeroBackdrop() {
      against what it actually controls.
 
        --hero-shift     the backdrop's own painted offset. Read back off
-                        the rendered box and cancelled, so the artwork's
-                        top edge lands on the top of the window and it
-                        runs up under the header.
+                        the rendered box and corrected, so the artwork's
+                        top edge lands exactly on the bottom of the
+                        header — the picture starts just below it, with
+                        nothing hidden underneath.
+       --hero-nav-h     the header's measured height, which is both the
+                        artwork's top edge and how much shorter than the
+                        window the artwork is.
        --hero-flow-top  where the section starts in the document. Drives
                         the section's height so it ends at the fold.
        --hero-copy-fix  whatever it takes to land the HEADLINE'S INK on
@@ -106,11 +110,22 @@ export default function HeroBackdrop() {
         `${Math.max(0, Math.round(shell.getBoundingClientRect().top + window.scrollY))}px`,
       );
 
-      // Artwork: drive its painted top edge to the top of the window.
+      // The header's real height, measured. The artwork's top edge is
+      // parked on it so the picture starts immediately BELOW the header
+      // rather than running up underneath it — nothing at the top of the
+      // illustration is hidden.
+      const header = document.querySelector<HTMLElement>("header");
+      const navH = header?.offsetHeight ?? 80;
+      shell.style.setProperty("--hero-nav-h", `${Math.round(navH)}px`);
+
+      // Artwork: drive its painted top edge onto the bottom of the
+      // header. `shift` is signed — it pulls up when the picture sits too
+      // low and pushes down when it sits too high — so this converges
+      // whatever the starting offset happens to be.
       for (let i = 0; i < 3; i++) {
-        const docTop = el.getBoundingClientRect().top + window.scrollY;
-        if (Math.abs(docTop) < 0.5) break;
-        shift += docTop;
+        const err = el.getBoundingClientRect().top + window.scrollY - navH;
+        if (Math.abs(err) < 0.5) break;
+        shift += err;
         shell.style.setProperty("--hero-shift", `${Math.round(shift)}px`);
       }
 
