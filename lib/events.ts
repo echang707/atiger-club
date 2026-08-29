@@ -161,7 +161,7 @@ export const events: TigerEvent[] = [
     location: "Lake Lanier Olympic Park",
     description:
       "Watch dragon boats race across Lake Lanier while exploring food, performances, traditions, and Atlanta's Asian communities. Stop by Tiger Club's cultural storytelling space between races.",
-    image: "/images/explore-festival.jpg",
+    image: "/images/dragon-boat.jpg",
     link: "https://www.dragonboatatlanta.com/",
     linkLabel: "Learn More",
   },
@@ -248,6 +248,22 @@ export const events: TigerEvent[] = [
     image: "/images/japanfest.jpg",
     link: "https://www.japanfest.org/",
     linkLabel: "Learn More",
+  },
+  {
+    kind: "pick",
+    time: "10am \u2013 1pm",
+    id: "doghead-farm-volunteer-social",
+    title: "Doghead Farm Volunteer Social",
+    medium: "Serve",
+    city: "Atlanta",
+    date: "Oct 10",
+    month: "OCT",
+    day: "10",
+    location: "Doghead Farm, Sylvan Hills, Atlanta",
+    description:
+      "Spend the morning on Concrete Jungle's half-acre urban farm planting, cultivating, and harvesting produce to donate. Lend a hand, learn a thing or two about farming, and meet the rest of the crew over the rows.",
+    image: "/images/doghead-farm.jpg",
+    presentedBy: "Concrete Jungle",
   },
   {
     kind: "collab",
