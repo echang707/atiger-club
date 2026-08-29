@@ -33,5 +33,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      // Membership signup is a real, public, indexable landing page.
+      // /login, /forgot-password, /reset-password and /member are
+      // deliberately absent: they are either transactional or private,
+      // and /member additionally carries robots: noindex.
+      url: `${SITE_URL}/join`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
   ];
 }

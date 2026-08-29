@@ -4,6 +4,8 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import TigerWordmark from "./TigerWordmark";
+import NavMember from "./club/NavMember";
+import NavMemberMobile from "./club/NavMemberMobile";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -90,8 +92,10 @@ export default function Nav() {
             }
             className="text-[11px] md:text-[15px] font-semibold leading-none text-[#FFFFFF] bg-tiger-fill border md:border-2 border-tiger-fill px-2.5 md:px-5 py-1.5 md:py-2.5 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
           >
-            Join the Club
+            Join our Discord
           </a>
+
+          <NavMember />
 
           <button
             type="button"
@@ -133,6 +137,11 @@ export default function Nav() {
               <Link href="/about" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
                 About
               </Link>
+              {/* Membership lives below a rule in the drawer so the three
+                  site sections stay one visual group. "Log in" is a real
+                  link on mobile because there is no room in the bar for
+                  it up top. */}
+              <NavMemberMobile onNavigate={() => setOpen(false)} />
             </div>
           </motion.nav>
         )}

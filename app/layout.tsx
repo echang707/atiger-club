@@ -4,6 +4,7 @@ import NewsletterPopup from "@/components/NewsletterPopup";
 import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
+import { MemberProvider } from "@/components/club/MemberProvider";
 import Footer from "@/components/Footer";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
@@ -176,16 +177,20 @@ export default function RootLayout({
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </svg>
+        <MemberProvider>
         <div className="relative">
           {/* Click-anywhere paw prints, on every page. Sits above the
               background layers (z-index -10/-9) and below the copy, so a
               stamp never lands on top of anything readable. */}
           <PawPrints />
+          {/* Session state is resolved once, here, and read by the nav,
+              the dashboard and event pricing. */}
           <Nav />
           {children}
           <Footer />
         </div>
         <NewsletterPopup />
+        </MemberProvider>
       </body>
     </html>
   );

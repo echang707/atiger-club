@@ -44,6 +44,20 @@ export const mediums: { name: Medium; icon: string; description: string }[] = [
 // and start tagging events with it in the array below.
 export const cities: string[] = ["Atlanta"];
 
+export type RegistrationType = "EXTERNAL" | "NATIVE";
+
+/* Whether registration is open right now. Separate from EventStatus so
+   that "the event is on but the door is shut" (sold out, closed early)
+   is expressible without cancelling the event. */
+export type RegistrationStatus =
+  | "OPEN"
+  | "CLOSED"
+  | "SOLD_OUT"
+  | "WAITLIST"
+  | "NOT_REQUIRED";
+
+export type EventStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+
 export type TigerEvent = {
   id: string;
   title: string;
@@ -61,6 +75,48 @@ export type TigerEvent = {
   time?: string;
   /* Secondary line, e.g. ticket price. Kept out of the description. */
   price?: string;
+
+  /* -------------------------------------------------------------------
+     Ticketing fields. All optional, all absent from today's events —
+     the site keeps rendering exactly as before until they are filled in.
+
+     `price` above is free prose ("$45 per person, tax and gratuity
+     included") and stays that way for legacy entries. `priceCents` is
+     the structured value the pricing module reads. When both exist the
+     structured one wins for calculation and `price` is treated as a
+     footnote, so the two can coexist during the migration rather than
+     needing a big-bang rewrite of every event.
+     ------------------------------------------------------------------- */
+
+  /* URL-safe identifier for a future /events/[slug] page. Falls back to
+     `id`, which is already slug-shaped, via eventSlug() below. */
+  slug?: string;
+  address?: string;
+  /* ISO 8601 with offset. The existing `date`/`month`/`day` strings are
+     display values and carry no year or time; these are the machine
+     values that registration, calendar export and history sorting need.
+     Both are kept because the display strings are hand-tuned copy. */
+  startsAt?: string;
+  endsAt?: string;
+  capacity?: number | null;
+
+  /* Integer cents. 0 means genuinely free; omitted means "no structured
+     price yet", which renders no pricing UI at all. */
+  priceCents?: number | null;
+  /* Overrides membershipConfig.defaultMemberDiscountPercentage. */
+  memberDiscountPercentage?: number | null;
+  /* An explicit member price, for events priced by hand rather than by
+     percentage. Beats the percentage when present. */
+  memberPriceCents?: number | null;
+
+  /* EXTERNAL — registration happens on Partiful/Eventbrite/a partner
+     site, and `link` is where we send people. NATIVE — registration
+     happens here. Everything today is EXTERNAL; this field is what lets
+     events move across one at a time. */
+  registrationType?: RegistrationType;
+  externalTicketUrl?: string;
+  registrationStatus?: RegistrationStatus;
+  eventStatus?: EventStatus;
 /* Every event is one of three kinds:
 
        original — Tiger Club creates and hosts it from scratch
@@ -374,6 +430,53 @@ export const EVENT_YEAR = 2026;
 
 export function eventDate(e: TigerEvent) {
   return new Date(`${e.date}, ${EVENT_YEAR}`);
+}
+
+/* ---------------------------------------------------------------------
+   Defaulting helpers. Every existing event predates the ticketing
+   fields, so rather than backfill 19 records by hand (and risk getting
+   one wrong), the defaults live here. Callers ask these functions
+   instead of reading the raw optional field, which means adding a
+   structured value to an event later changes behaviour with no code
+   change anywhere else.
+   --------------------------------------------------------------------- */
+
+export function eventSlug(e: TigerEvent) {
+  return e.slug ?? e.id;
+}
+
+/* Everything is EXTERNAL until explicitly moved. That is the safe
+   default: an event wrongly marked NATIVE would offer a checkout that
+   does not exist, whereas one wrongly marked EXTERNAL just links out. */
+export function registrationTypeOf(e: TigerEvent): RegistrationType {
+  return e.registrationType ?? "EXTERNAL";
+}
+
+export function eventStatusOf(e: TigerEvent): EventStatus {
+  return e.eventStatus ?? "PUBLISHED";
+}
+
+export function registrationStatusOf(e: TigerEvent): RegistrationStatus {
+  if (e.registrationStatus) return e.registrationStatus;
+  // An external event with a link is "go register over there"; one
+  // without any link asks nothing of the visitor.
+  return e.link || e.externalTicketUrl ? "OPEN" : "NOT_REQUIRED";
+}
+
+export function ticketUrlOf(e: TigerEvent) {
+  return e.externalTicketUrl ?? e.link ?? null;
+}
+
+/* The machine-readable start, preferring an explicit ISO timestamp and
+   falling back to the display date. Returns null rather than an Invalid
+   Date so callers must handle "we don't know when this is". */
+export function eventStart(e: TigerEvent): Date | null {
+  if (e.startsAt) {
+    const d = new Date(e.startsAt);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  const d = eventDate(e);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
 export function upcomingEvents(list: TigerEvent[] = events) {
