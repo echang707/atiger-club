@@ -40,6 +40,7 @@ function JoinForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
 
   // Already signed in? Nothing to do here.
   useEffect(() => {
@@ -67,7 +68,28 @@ function JoinForm() {
       setError(AUTH_MESSAGES[res.reason] ?? AUTH_MESSAGES.unavailable);
       return;
     }
+    // Account created, but the project requires email confirmation, so
+    // there is no session to send them onward with yet.
+    if (res.member === null) {
+      setCheckEmail(true);
+      return;
+    }
     router.replace(next);
+  }
+
+  if (checkEmail) {
+    return (
+      <ClubShell
+        eyebrow="Membership"
+        title="You're in — almost."
+        footer={<ClubLink href="/login">Back to log in</ClubLink>}
+      >
+        <FormNote>
+          We've sent a confirmation link to {email.trim()}. Click it and
+          your club is open.
+        </FormNote>
+      </ClubShell>
+    );
   }
 
   return (

@@ -25,6 +25,12 @@ export type SignUpInput = {
 
 export type AuthResult =
   | { ok: true; member: Member }
+  /* Signup succeeded but there is no session yet, because the project
+     requires email confirmation. The account EXISTS — this is a success
+     state that happens to need a detour, not a failure. Treating it as
+     an error (which an earlier version did) told people signup had
+     broken when it had actually worked. */
+  | { ok: true; member: null; needsConfirmation: true }
   | { ok: false; reason: AuthFailure };
 
 /* Deliberately coarse. "email already in use" is intentionally NOT a
@@ -36,6 +42,11 @@ export type AuthFailure =
   | "invalid_input"
   | "weak_password"
   | "rate_limited"
+  /* The auth user was created but the members row was not — i.e. the
+     handle_new_user() trigger is missing or throwing. Split out from
+     "unavailable" because the fix is specific and in the database, and
+     lumping it in with every other error made it undiagnosable. */
+  | "member_record_failed"
   | "unavailable";
 
 export interface ClubAuth {

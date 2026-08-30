@@ -113,5 +113,7 @@ export const AUTH_MESSAGES: Record<string, string> = {
   invalid_input: "We couldn't create an account with those details.",
   weak_password: "Passwords need to be at least 8 characters.",
   rate_limited: "Too many tries just now. Give it a minute.",
+  member_record_failed:
+    "Your login worked but we couldn't open your club record. Get in touch and we'll sort it.",
   unavailable: "Something went wrong on our end. Try again shortly.",
 };

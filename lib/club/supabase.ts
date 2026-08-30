@@ -136,6 +136,9 @@ function fail(reason: AuthFailure): AuthResult {
    same from outside. */
 function mapSignUpError(message: string): AuthFailure {
   const m = message.toLowerCase();
+  // Raised when handle_new_user() throws — the auth insert is rolled
+  // back with it, so no account was created.
+  if (m.includes("database error")) return "member_record_failed";
   if (m.includes("password")) return "weak_password";
   if (m.includes("rate") || m.includes("too many")) return "rate_limited";
   if (m.includes("already")) return "invalid_input";
@@ -161,8 +164,21 @@ export async function signUp(input: SignUpInput): Promise<AuthResult> {
   if (error) return fail(mapSignUpError(error.message));
   if (!data.user) return fail("unavailable");
 
+  /* No session means the project has email confirmation switched on.
+     The account is created and the trigger has run; we simply cannot
+     read the members row yet, because RLS scopes it to auth.uid() and
+     there is no authenticated user until they click the link.
+
+     So do not even try to fetch — a failed read here is expected, not an
+     error, and reporting it as one is what made a working signup look
+     broken. */
+  if (!data.session) {
+    return { ok: true, member: null, needsConfirmation: true };
+  }
+
   const member = await fetchMember(sb, data.user);
-  return member ? { ok: true, member } : fail("unavailable");
+  // We have a session but still no row: the trigger really did fail.
+  return member ? { ok: true, member } : fail("member_record_failed");
 }
 
 export async function signIn(
@@ -182,7 +198,9 @@ export async function signIn(
   }
 
   const member = await fetchMember(sb, data.user);
-  return member ? { ok: true, member } : fail("unavailable");
+  // Session is good but no members row exists — the trigger never ran
+  // for this account. Distinct from a bad password.
+  return member ? { ok: true, member } : fail("member_record_failed");
 }
 
 export async function signOut() {
