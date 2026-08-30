@@ -49,7 +49,7 @@ export default function Nav() {
             "nav-veil border-b border-transparent"
       }`}
     >
-      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <Link href="/" className="justify-self-start" onClick={() => setOpen(false)}>
           <TigerWordmark className="text-[10.5px] sm:text-base md:text-xl" />
         </Link>
@@ -76,25 +76,6 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
-          <a
-            href="https://discord.gg/6u83g4P8Cb"
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() =>
-              window.dispatchEvent(
-                new CustomEvent("tigerclub:join-hover", { detail: true })
-              )
-            }
-            onMouseLeave={() =>
-              window.dispatchEvent(
-                new CustomEvent("tigerclub:join-hover", { detail: false })
-              )
-            }
-            className="text-[11px] md:text-[15px] font-semibold leading-none text-[#FFFFFF] bg-tiger-fill border md:border-2 border-tiger-fill px-2.5 md:px-5 py-1.5 md:py-2.5 rounded-full hover:bg-tiger-deep hover:border-tiger-deep transition-colors duration-300 whitespace-nowrap"
-          >
-            Join our Discord
-          </a>
-
           <NavMember />
 
           <button

@@ -53,21 +53,16 @@ export default function NavMember() {
   if (loading) return <span className="hidden md:block md:w-[68px]" />;
 
   if (!member) {
+    // One button, not two. It opens a panel that does both signing up
+    // and logging in, so a visitor never has to know in advance which
+    // one they need — which is the thing two separate links get wrong.
     return (
-      <div className="flex items-center gap-2 sm:gap-3">
-        <Link
-          href="/login"
-          className="hidden md:block text-[15px] font-semibold text-ink transition-colors hover:text-tiger-text organic-underline"
-        >
-          Log in
-        </Link>
-        <Link
-          href="/join"
-          className="whitespace-nowrap rounded-full border border-tiger-fill px-2.5 py-1.5 text-[11px] font-semibold leading-none text-tiger-text transition-colors duration-300 hover:bg-tiger-fill hover:text-white md:border-2 md:px-5 md:py-2.5 md:text-[15px]"
-        >
-          Join
-        </Link>
-      </div>
+      <Link
+        href="/join"
+        className="whitespace-nowrap rounded-full border-2 border-tiger-fill bg-tiger-fill px-3 py-1.5 text-[11px] font-semibold leading-none text-white transition-colors duration-300 hover:border-tiger-deep hover:bg-tiger-deep md:px-5 md:py-2.5 md:text-[15px]"
+      >
+        Join the Club
+      </Link>
     );
   }
 
@@ -100,8 +95,7 @@ export default function NavMember() {
             className="absolute right-0 top-[calc(100%+10px)] w-48 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
           >
             <MenuLink href="/member">Your Club</MenuLink>
-            <MenuLink href="/events">Your Events</MenuLink>
-            <MenuLink href="/member">Profile</MenuLink>
+            <MenuLink href="/member#profile">Your Profile</MenuLink>
             <button
               type="button"
               role="menuitem"

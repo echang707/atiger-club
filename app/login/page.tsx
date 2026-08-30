@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LoginClient from "./LoginClient";
+import AuthPanel from "@/components/club/AuthPanel";
 
 export const metadata: Metadata = {
   title: "Log in",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <LoginClient />;
+  return <AuthPanel initialMode="login" />;
 }

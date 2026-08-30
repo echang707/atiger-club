@@ -6,6 +6,7 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
 import Footer from "@/components/Footer";
+import DiscordFab from "@/components/DiscordFab";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -189,6 +190,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </div>
+        <DiscordFab />
         <NewsletterPopup />
         </MemberProvider>
       </body>

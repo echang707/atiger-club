@@ -25,7 +25,43 @@ export type Member = {
      there, but nothing reads it yet. */
   referralCode?: string | null;
   referredByMemberId?: string | null;
+
+  /* ---- Profile. All optional: the club asks for four things at signup
+     and everything below is volunteered later, so every one of these
+     must render fine as empty. ---- */
+  avatarUrl?: string | null;
+  phone?: string | null;
+  /* YYYY-MM-DD. Stored as a date, not a timestamp — a birthday has no
+     time zone, and treating it as one is how people end up being wished
+     happy birthday a day early. Feeds the birthday benefits already on
+     the roadmap. */
+  birthday?: string | null;
+  city?: string | null;
+  /* Tiger Club runs a lot of dinners. Worth asking once rather than in
+     every event thread. */
+  dietaryNotes?: string | null;
+  instagram?: string | null;
 };
+
+/* The fields a member may edit. Email is deliberately excluded: it is
+   owned by the auth provider, and changing it needs a verification
+   round-trip rather than a text input. */
+export type EditableProfile = Pick<
+  Member,
+  | "firstName"
+  | "lastName"
+  | "phone"
+  | "birthday"
+  | "city"
+  | "dietaryNotes"
+  | "instagram"
+>;
+
+export function memberInitials(m: Pick<Member, "firstName" | "lastName">) {
+  const a = m.firstName.trim().charAt(0);
+  const b = m.lastName.trim().charAt(0);
+  return ((a + b).toUpperCase() || "T").slice(0, 2);
+}
 
 export function memberDisplayName(m: Pick<Member, "firstName">) {
   return m.firstName.trim();

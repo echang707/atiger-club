@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useMember } from "@/components/club/MemberProvider";
 import { membershipConfig } from "@/lib/membership";
 import { memberSince } from "@/lib/member";
+import ProfilePanel from "@/components/club/ProfilePanel";
 import { events, upcomingEvents } from "@/lib/events";
 import EventRow from "@/components/EventRow";
 
@@ -108,17 +109,17 @@ export default function MemberClient() {
             )}
           </Panel>
 
-          {/* Real history needs registrations, and no registration has
-              ever been recorded — external events happen on Partiful and
-              never tell us who went. Saying "You've been to 0
-              experiences" to a brand-new member would be both true and
-              discouraging, so this states the situation plainly instead
-              of inventing a number. */}
-          <Panel title="Your Events">
+          {/* Events you've signed up for. Nothing can appear here yet:
+              every event is still EXTERNAL, so registration happens on
+              Partiful and never reports back. Rather than an empty list
+              or a demoralising "0 experiences", this says what will fill
+              it. Real rows arrive the moment native registration ships —
+              the Registration model and lib/member.ts bucketing are
+              already built for them. */}
+          <Panel title="Where you've been">
             <p className="text-[15px] leading-relaxed text-ink/60">
-              Once you register for a Tiger Club experience through the site,
-              it'll show up here — upcoming first, then everywhere you've
-              been.
+              When you sign up for a Tiger Club experience here, it'll show up
+              in this spot — what's coming, then everywhere you've been.
             </p>
           </Panel>
 
@@ -135,20 +136,11 @@ export default function MemberClient() {
             </ul>
           </Panel>
 
-          <Panel title="Your Profile">
-            <dl className="space-y-3 text-[15px]">
-              <div className="flex gap-3">
-                <dt className="w-24 shrink-0 text-ink/50">Name</dt>
-                <dd className="text-ink">
-                  {member.firstName} {member.lastName}
-                </dd>
-              </div>
-              <div className="flex gap-3">
-                <dt className="w-24 shrink-0 text-ink/50">Email</dt>
-                <dd className="break-all text-ink">{member.email}</dd>
-              </div>
-            </dl>
-          </Panel>
+          <div id="profile" className="scroll-mt-28">
+            <Panel title="Your Profile">
+              <ProfilePanel member={member} />
+            </Panel>
+          </div>
         </div>
       </div>
     </main>

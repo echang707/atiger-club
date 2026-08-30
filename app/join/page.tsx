@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import JoinClient from "./JoinClient";
+import AuthPanel from "@/components/club/AuthPanel";
 
 export const metadata: Metadata = {
   title: "Join Tiger Club",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <JoinClient />;
+  return <AuthPanel initialMode="join" />;
 }

@@ -34,7 +34,7 @@ import {
   type SupabaseClient,
   type User,
 } from "@supabase/supabase-js";
-import type { Member } from "../member";
+import type { EditableProfile, Member } from "../member";
 import type { MemberStatus } from "../membership";
 import { MEMBER_STATUSES } from "../membership";
 import type { AuthFailure, AuthResult, SignUpInput } from "./store";
@@ -85,6 +85,12 @@ type MemberRow = {
   joined_at: string;
   referral_code: string | null;
   referred_by_member_id: string | null;
+  avatar_url: string | null;
+  phone: string | null;
+  birthday: string | null;
+  city: string | null;
+  dietary_notes: string | null;
+  instagram: string | null;
 };
 
 function rowToMember(r: MemberRow): Member {
@@ -98,6 +104,12 @@ function rowToMember(r: MemberRow): Member {
     joinedAt: r.joined_at,
     referralCode: r.referral_code,
     referredByMemberId: r.referred_by_member_id,
+    avatarUrl: r.avatar_url,
+    phone: r.phone,
+    birthday: r.birthday,
+    city: r.city,
+    dietaryNotes: r.dietary_notes,
+    instagram: r.instagram,
   };
 }
 
@@ -235,4 +247,94 @@ export async function updatePassword(password: string) {
     };
   }
   return { ok: true as const };
+}
+
+
+/* ---------------------------------------------------------------------
+   Profile editing and avatars.
+   --------------------------------------------------------------------- */
+
+/* The UPDATE policy scopes this to the member's own row, so there is no
+   way to write someone else's profile even though this runs in the
+   browser. Note what is NOT here: status. A member must not be able to
+   promote themselves to staff by editing a form, so the column is simply
+   never sent. */
+export async function updateProfile(
+  memberId: string,
+  patch: Partial<EditableProfile>,
+): Promise<Member | null> {
+  const sb = supabase();
+  if (!sb) return null;
+
+  const row: Record<string, unknown> = {};
+  if (patch.firstName !== undefined) row.first_name = patch.firstName?.trim() ?? "";
+  if (patch.lastName !== undefined) row.last_name = patch.lastName?.trim() ?? "";
+  if (patch.phone !== undefined) row.phone = patch.phone?.trim() || null;
+  // An empty date input yields "", which Postgres rejects for a date
+  // column — send null instead of letting the write fail.
+  if (patch.birthday !== undefined) row.birthday = patch.birthday || null;
+  if (patch.city !== undefined) row.city = patch.city?.trim() || null;
+  if (patch.dietaryNotes !== undefined)
+    row.dietary_notes = patch.dietaryNotes?.trim() || null;
+  if (patch.instagram !== undefined)
+    row.instagram = patch.instagram?.trim().replace(/^@/, "") || null;
+
+  const { data, error } = await sb
+    .from("members")
+    .update(row)
+    .eq("id", memberId)
+    .select()
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return rowToMember(data as MemberRow);
+}
+
+export const AVATAR_MAX_BYTES = 3 * 1024 * 1024;
+const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+export type AvatarResult =
+  | { ok: true; url: string }
+  | { ok: false; reason: "too_large" | "wrong_type" | "failed" };
+
+/* Uploads to avatars/<authUserId>/avatar.<ext>. The per-user folder is
+   what the storage policy keys on, so one member cannot overwrite
+   another's picture.
+
+   Size and type are checked here for a fast, friendly error, but that is
+   convenience, not security — the bucket's own limits are what actually
+   enforce it, since anything in the browser can be bypassed. */
+export async function uploadAvatar(
+  authUserId: string,
+  file: File,
+): Promise<AvatarResult> {
+  const sb = supabase();
+  if (!sb) return { ok: false, reason: "failed" };
+  if (!AVATAR_TYPES.includes(file.type)) return { ok: false, reason: "wrong_type" };
+  if (file.size > AVATAR_MAX_BYTES) return { ok: false, reason: "too_large" };
+
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `${authUserId}/avatar.${ext}`;
+
+  const { error } = await sb.storage
+    .from("avatars")
+    .upload(path, file, { upsert: true, contentType: file.type });
+  if (error) return { ok: false, reason: "failed" };
+
+  const { data } = sb.storage.from("avatars").getPublicUrl(path);
+  // Cache-bust: the path is stable across uploads (upsert), so without a
+  // changing query string the browser keeps showing the old picture.
+  return { ok: true, url: `${data.publicUrl}?v=${Date.now()}` };
+}
+
+export async function saveAvatarUrl(memberId: string, url: string) {
+  const sb = supabase();
+  if (!sb) return null;
+  const { data } = await sb
+    .from("members")
+    .update({ avatar_url: url })
+    .eq("id", memberId)
+    .select()
+    .maybeSingle();
+  return data ? rowToMember(data as MemberRow) : null;
 }

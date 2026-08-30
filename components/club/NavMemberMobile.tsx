@@ -25,10 +25,7 @@ export default function NavMemberMobile({
     return (
       <div className="mt-1 flex flex-col gap-5 border-t border-ink/10 pt-5">
         <Link href="/join" className={item} onClick={onNavigate}>
-          Join free
-        </Link>
-        <Link href="/login" className={item} onClick={onNavigate}>
-          Log in
+          Join the Club
         </Link>
       </div>
     );
@@ -39,8 +36,8 @@ export default function NavMemberMobile({
       <Link href="/member" className={item} onClick={onNavigate}>
         Your Club
       </Link>
-      <Link href="/events" className={item} onClick={onNavigate}>
-        Your Events
+      <Link href="/member#profile" className={item} onClick={onNavigate}>
+        Your Profile
       </Link>
       <button
         type="button"
