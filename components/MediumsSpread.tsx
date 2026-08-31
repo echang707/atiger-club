@@ -18,14 +18,14 @@ const words: {
   num: string;
   weave: "left" | "right";
 }[] = [
-  { word: "EAT", variant: "eat", href: "/events?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01", weave: "right" },
-  { word: "CREATE", variant: "create", href: "/events?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02", weave: "left" },
-  { word: "MOVE", variant: "move", href: "/events?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03", weave: "right" },
-  { word: "EXPLORE", variant: "explore", href: "/events?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
-  { word: "SERVE", variant: "serve", href: "/events?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
-  { word: "LEARN", variant: "learn", href: "/events?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
+  { word: "EAT", variant: "eat", href: "/experiences?medium=Eat", align: "start", offset: "md:ml-2 lg:ml-6", rotate: -3, num: "01", weave: "right" },
+  { word: "CREATE", variant: "create", href: "/experiences?medium=Create", align: "end", offset: "md:mr-10 lg:mr-24", rotate: 2, num: "02", weave: "left" },
+  { word: "MOVE", variant: "move", href: "/experiences?medium=Move", align: "center", offset: "md:-ml-12 lg:-ml-20", rotate: -2, num: "03", weave: "right" },
+  { word: "EXPLORE", variant: "explore", href: "/experiences?medium=Explore", align: "start", offset: "md:ml-20 lg:ml-36", rotate: 3, num: "04", weave: "right" },
+  { word: "SERVE", variant: "serve", href: "/experiences?medium=Serve", align: "end", offset: "md:mr-4 lg:mr-10", rotate: -2, num: "05", weave: "left" },
+  { word: "LEARN", variant: "learn", href: "/experiences?medium=Learn", align: "center", offset: "md:ml-14 lg:ml-24", rotate: 2, num: "06", weave: "left" },
   // PLAY closes the list back at the left edge, where EAT opened.
-  { word: "PLAY", variant: "play", href: "/events?medium=Play", align: "start", offset: "md:ml-6 lg:ml-16", rotate: -3, num: "07", weave: "right" },
+  { word: "PLAY", variant: "play", href: "/experiences?medium=Play", align: "start", offset: "md:ml-6 lg:ml-16", rotate: -3, num: "07", weave: "right" },
 ];
 
 export default function MediumsSpread() {

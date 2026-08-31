@@ -95,7 +95,7 @@ export default function NavMember() {
             className="absolute right-0 top-[calc(100%+10px)] w-48 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
           >
             <MenuLink href="/member">Your Club</MenuLink>
-            <MenuLink href="/member#profile">Your Profile</MenuLink>
+            <MenuLink href="/member/profile">Your Profile</MenuLink>
             <button
               type="button"
               role="menuitem"

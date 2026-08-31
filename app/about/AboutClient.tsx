@@ -134,7 +134,7 @@ className="relative border-b border-ink/12"
               city.
             </p>
             <Link
-              href="/events"
+              href="/experiences"
               className={`organic-underline mt-8 inline-block ${MARK} text-ink hover:text-tiger-text transition-colors`}
             >
               see what&rsquo;s happening →

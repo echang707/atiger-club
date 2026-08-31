@@ -1,0 +1,9 @@
+# Belt and braces for the /events -> /experiences rename.
+#
+# next.config.js already declares this redirect, and @cloudflare/next-on-pages
+# normally translates it into the routing config. This file is Cloudflare
+# Pages' own native mechanism and is honoured regardless of what the
+# adapter emits, so the old URL cannot break if that translation changes.
+# A duplicate redirect is harmless — both send the same place.
+/events /experiences 308
+/events/* /experiences/:splat 308

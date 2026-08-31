@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import EventsClient from "./EventsClient";
+import ExperiencesClient from "./ExperiencesClient";
 import { events } from "@/lib/events";
 import { SITE_URL } from "@/lib/seo";
 
@@ -11,10 +11,10 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: "/events" },
+  alternates: { canonical: "/experiences" },
   robots: { index: true, follow: true },
   openGraph: {
-    url: "/events",
+    url: "/experiences",
     title: TITLE,
     description: DESCRIPTION,
   },
@@ -40,7 +40,7 @@ const eventsJsonLd = {
   "@context": "https://schema.org",
   "@graph": events.map((event) => ({
     "@type": "Event",
-    "@id": `${SITE_URL}/events#${event.id}`,
+    "@id": `${SITE_URL}/experiences#${event.id}`,
     name: event.title,
     description: event.description,
     startDate: toIsoDate(event.month, event.day),
@@ -57,7 +57,7 @@ const eventsJsonLd = {
       url: SITE_URL,
     },
     image: [event.image],
-    url: event.link ?? `${SITE_URL}/events`,
+    url: event.link ?? `${SITE_URL}/experiences`,
   })),
 };
 
@@ -70,7 +70,7 @@ export default function EventsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(eventsJsonLd) }}
       />
       <Suspense fallback={null}>
-        <EventsClient />
+        <ExperiencesClient />
       </Suspense>
     </>
   );

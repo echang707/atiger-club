@@ -54,7 +54,7 @@ export default function MemberPrice({
       ) : null}
       {settled && copy.showJoinCta ? (
         <Link
-          href={`/join?next=${encodeURIComponent(pathname || "/events")}`}
+          href={`/join?next=${encodeURIComponent(pathname || "/experiences")}`}
           className="organic-underline ml-2 text-[14px] font-semibold text-tiger-text"
         >
           {joinCtaLabel}

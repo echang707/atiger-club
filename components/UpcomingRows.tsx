@@ -33,7 +33,7 @@ export default function UpcomingRows() {
       </div>
 
       <Link
-        href="/events"
+        href="/experiences"
         className="relative z-10 inline-block mt-10 text-[15px] font-semibold organic-underline text-ink hover:text-tiger-text"
       >
         see everything coming up →

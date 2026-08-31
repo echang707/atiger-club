@@ -56,7 +56,7 @@ export default function Nav() {
 
         <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
           <Link
-            href="/events"
+            href="/experiences"
             className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
           >
             Experiences
@@ -109,7 +109,7 @@ export default function Nav() {
             className="md:hidden overflow-hidden border-t border-ink/10 bg-paper/95 backdrop-blur-md"
           >
             <div className="max-w-content mx-auto px-6 py-6 flex flex-col gap-5 text-lg">
-              <Link href="/events" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
+              <Link href="/experiences" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>
                 Experiences
               </Link>
               <Link href="/work-with-us" className="font-display font-semibold text-ink" onClick={() => setOpen(false)}>

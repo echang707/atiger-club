@@ -9,7 +9,7 @@ import NewsletterForm from "./NewsletterForm";
    keeps the original single row exactly as it was. */
 
 const LINKS = [
-  { label: "Experiences", href: "/events" },
+  { label: "Experiences", href: "/experiences" },
   { label: "Work With Us", href: "/work-with-us" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "mailto:hello@atigercub.com", external: true },

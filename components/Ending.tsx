@@ -344,7 +344,7 @@ export default function Ending() {
         </motion.h2>
 
         <motion.a
-          href="/events"
+          href="/experiences"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}

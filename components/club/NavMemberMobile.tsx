@@ -36,7 +36,7 @@ export default function NavMemberMobile({
       <Link href="/member" className={item} onClick={onNavigate}>
         Your Club
       </Link>
-      <Link href="/member#profile" className={item} onClick={onNavigate}>
+      <Link href="/member/profile" className={item} onClick={onNavigate}>
         Your Profile
       </Link>
       <button

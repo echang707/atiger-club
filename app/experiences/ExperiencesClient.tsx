@@ -10,7 +10,7 @@ import EventRow from "@/components/EventRow";
 // The event data carries "Sep 12"-style dates without a year.
 const EVENT_YEAR = 2026;
 
-export default function EventsClient() {
+export default function ExperiencesClient() {
   const [showPast, setShowPast] = useState(false);
   const params = useSearchParams();
   const [active, setActive] = useState<Medium | "All">("All");

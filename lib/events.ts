@@ -88,7 +88,7 @@ export type TigerEvent = {
      needing a big-bang rewrite of every event.
      ------------------------------------------------------------------- */
 
-  /* URL-safe identifier for a future /events/[slug] page. Falls back to
+  /* URL-safe identifier for a future /experiences/[slug] page. Falls back
      `id`, which is already slug-shaped, via eventSlug() below. */
   slug?: string;
   address?: string;
