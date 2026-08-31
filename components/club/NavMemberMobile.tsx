@@ -45,7 +45,7 @@ export default function NavMemberMobile({
           onNavigate();
           void signOut();
         }}
-        className="text-left font-display font-semibold text-ink/60"
+        className="text-left font-display font-semibold text-ink"
       >
         Log out
       </button>

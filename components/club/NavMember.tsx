@@ -103,7 +103,7 @@ export default function NavMember() {
                 setOpen(false);
                 void signOut();
               }}
-              className="block w-full border-t border-ink/10 px-4 py-3 text-left text-[15px] text-ink/70 transition-colors hover:bg-ink/[0.04]"
+              className="block w-full border-t border-ink/10 px-4 py-3 text-left text-[15px] font-semibold text-ink transition-colors hover:bg-ink/[0.04] hover:text-tiger-text"
             >
               Log out
             </button>
@@ -125,7 +125,7 @@ function MenuLink({
     <Link
       href={href}
       role="menuitem"
-      className="block px-4 py-3 text-[15px] font-semibold text-ink transition-colors hover:bg-ink/[0.04]"
+      className="block px-4 py-3 text-[15px] font-semibold text-ink transition-colors hover:bg-ink/[0.04] hover:text-tiger-text"
     >
       {children}
     </Link>
