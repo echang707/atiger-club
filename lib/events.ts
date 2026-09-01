@@ -149,6 +149,28 @@ export const events: TigerEvent[] = [
     presentedBy: "Indonesian Community Heritage Foundation",
   },
   {
+    kind: "pick",
+    /* The festival itself opens at 6pm on the Friday and runs all
+       weekend (Fri 6pm–12am, Sat & Sun 1pm–12am). 7pm is when Tiger
+       Club is going, which is what this row advertises — the full run is
+       in the description so nobody turns up on Sunday expecting us. */
+    time: "7pm",
+    id: "le-hoi-mua-thu-fall-festival",
+    title: "L\u1ec5 H\u1ed9i M\u00f9a Thu Fall Festival",
+    medium: "Explore",
+    city: "Atlanta",
+    date: "Sep 4",
+    month: "SEP",
+    day: "4",
+    location: "Holy Vietnamese Martyrs Catholic Church, Norcross, GA",
+    description:
+      "The largest gathering of Vietnamese people in the Southeast \u2014 more than 35,000 over one weekend. Live music from Vietnamese and Vietnamese-American artists, food stalls, lantern and \u00e1o d\u00e0i contests, carnival games, and a raffle. Free to get in, and everyone is welcome. We're going Friday at 7pm; the festival runs Friday 6pm to midnight and Saturday and Sunday from 1pm.",
+    image: "/images/fall-festival.jpg",
+    link: "https://fallfestival.hvmatl.org",
+    linkLabel: "Festival Info",
+    presentedBy: "Holy Vietnamese Martyrs Catholic Church",
+  },
+  {
     id: "world-cup-watch-party",
     title: "World Cup Semifinal Watch Party",
     medium: "Move",

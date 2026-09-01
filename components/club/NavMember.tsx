@@ -92,7 +92,16 @@ export default function NavMember() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-[calc(100%+10px)] w-48 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
+            /* z-10 lifts this above .nav-veil::after — the 90px cream
+               gradient that hangs below the header to fade the hero art
+               out. That gradient is a pseudo-element on the header, so
+               it paints as the header's LAST child, which put it on top
+               of this menu. The first item sat under the strongest part
+               of the fade (78% cream) and looked greyed out and
+               half-disabled, while items further down were past it and
+               looked normal. It was also what made the panel appear
+               translucent. */
+            className="absolute right-0 top-[calc(100%+10px)] z-10 w-48 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
           >
             <MenuLink href="/member">Your Club</MenuLink>
             <MenuLink href="/member/profile">Your Profile</MenuLink>
