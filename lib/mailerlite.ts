@@ -1,33 +1,36 @@
 /* ---------------------------------------------------------------------
-   MailerLite submission — one destination, reused by both the popup and
-   the footer form.
+   Newsletter signup.
 
-   This is the exact form action Eric's MailerLite embed already posts
-   to (group 1457893, form 196202585597675120) — nothing new was set up
-   on MailerLite's side, no API key, no server route, no database. Both
-   forms on the site just submit to this one URL, same as the original
-   embed's own <form action> did.
+   WHAT WAS WRONG
+   The previous version could only ever report success. Its fallback
+   posted the form through a hidden cross-origin iframe, which by
+   definition cannot read a response, and the promise wrapping it had no
+   reject path — so the "network failure" branch was unreachable code and
+   every submission returned ok:true. The form said "you're in" whether
+   MailerLite accepted the address, rejected it, or was never reached at
+   all. That is exactly the reported symptom: a confirmation on screen,
+   nothing in the account.
 
-   Two submission paths, tried in order:
+   WHAT THIS DOES INSTEAD
+   The address is written to our own `newsletter_signups` table first.
+   That gives a real success/failure signal, and means a signup is never
+   lost to a third party being down or a form ID going stale — the list
+   is ours and can be read in the Supabase table editor.
 
-   1. `fetch` with mode: "cors". MailerLite's own webform script talks to
-      this same endpoint over AJAX, so a normal cross-origin request is
-      the expected shape and gives a real success/failure signal back —
-      this is what actually drives the loading/error states below.
-   2. A hidden iframe form POST, used only if step 1 throws (a network
-      or CORS failure). This is the same no-reload trick the plain HTML
-      embed snippet uses under the hood (target="_blank" swapped for a
-      same-page hidden iframe) — it can't read the response back, so on
-      this path success is assumed once the iframe finishes loading.
+   MailerLite is then attempted as a best-effort side channel so the
+   existing marketing flow keeps working if the embed is still valid.
+   Its outcome deliberately does NOT affect what the visitor is told,
+   because we still cannot observe it. If MailerLite silently fails, the
+   address is already safely stored.
+   --------------------------------------------------------------------- */
 
-   Either way, nothing here talks to a different MailerLite endpoint or
-   stores emails anywhere else — it's the one form action, submitted
-   two different ways depending on what the browser allows. */
+import { supabase } from "./club/supabase";
 
-export const ML_FORM_ACTION =
-  "https://assets.mailerlite.com/jsonp/1457893/forms/196202585597675120/subscribe";
+export type SubscribeSource = "footer" | "popup";
 
-export type SubscribeResult = { ok: true } | { ok: false; reason: "invalid" | "network" };
+export type SubscribeResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid" | "network" | "unavailable" };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,91 +38,63 @@ export function isValidEmail(email: string): boolean {
   return EMAIL_RE.test(email.trim());
 }
 
-function buildFormData(email: string): FormData {
-  const fd = new FormData();
-  fd.append("fields[email]", email.trim());
-  fd.append("ml-submit", "1");
-  fd.append("anticsrf", "true");
-  return fd;
-}
+/* Hands the address to /api/subscribe, which talks to MailerLite's API
+   with the secret key server-side. Unlike the old embed post, this comes
+   back with a real result — so a bad key or a wrong group id shows up in
+   the console instead of failing silently forever.
 
-// Fallback: submit via a hidden same-page iframe, exactly like the
-// vanilla embed's <form target> does, just not opened in a new tab.
-// Cross-origin means the response can't be read, so this resolves once
-// the iframe has had time to load rather than on a real signal.
-function submitViaHiddenIframe(email: string): Promise<void> {
-  return new Promise((resolve) => {
-    const iframeName = `ml-subscribe-${Date.now()}`;
-    const iframe = document.createElement("iframe");
-    iframe.name = iframeName;
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-
-    const form = document.createElement("form");
-    form.action = ML_FORM_ACTION;
-    form.method = "POST";
-    form.target = iframeName;
-    form.style.display = "none";
-
-    const fd = buildFormData(email);
-    fd.forEach((value, key) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = String(value);
-      form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
-
-    const cleanup = () => {
-      form.remove();
-      iframe.remove();
-    };
-
-    // Resolve on load or after a timeout, whichever comes first — some
-    // browsers don't fire load reliably for cross-origin iframe posts.
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      cleanup();
-      resolve();
-    };
-    iframe.addEventListener("load", finish);
-    setTimeout(finish, 1800);
-  });
-}
-
-export async function subscribeToMailerLite(email: string): Promise<SubscribeResult> {
-  const trimmed = email.trim();
-  if (!isValidEmail(trimmed)) {
-    return { ok: false, reason: "invalid" };
-  }
-
+   Awaited but non-fatal: the address is already in our own table by the
+   time this runs, so a MailerLite outage must not make the visitor think
+   their signup failed. */
+async function sendToMailerLite(
+  email: string,
+  source: SubscribeSource,
+): Promise<void> {
   try {
-    const res = await fetch(ML_FORM_ACTION, {
+    const res = await fetch("/api/subscribe", {
       method: "POST",
-      mode: "cors",
-      body: buildFormData(trimmed),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, source }),
     });
-    // A JSONP-flavored classic MailerLite endpoint returns 200 for a
-    // successful subscribe (including re-subscribing an existing
-    // address, which MailerLite treats as success, not an error).
-    if (res.ok) {
-      return { ok: true };
+    const data = (await res.json()) as { ok: boolean; reason?: string };
+    if (!data.ok) {
+      // Visible in the browser console, which is where you look when
+      // the table has rows but MailerLite does not.
+      console.warn("[newsletter] stored, but MailerLite declined:", data);
     }
-    throw new Error(`MailerLite responded ${res.status}`);
   } catch {
-    // CORS-blocked or offline — fall back to the hidden-iframe post.
-    // This mirrors the plain embed's own behavior and, since it can't
-    // read the response, is treated as a best-effort success.
-    try {
-      await submitViaHiddenIframe(trimmed);
-      return { ok: true };
-    } catch {
-      return { ok: false, reason: "network" };
-    }
+    console.warn("[newsletter] stored, but MailerLite could not be reached");
   }
 }
+
+export async function subscribe(
+  email: string,
+  source: SubscribeSource = "footer",
+): Promise<SubscribeResult> {
+  const trimmed = email.trim().toLowerCase();
+  if (!isValidEmail(trimmed)) return { ok: false, reason: "invalid" };
+
+  const sb = supabase();
+  if (!sb) {
+    // No database configured. Still try MailerLite, but say plainly that
+    // it could not be confirmed rather than inventing a success.
+    void sendToMailerLite(trimmed, source);
+    return { ok: false, reason: "unavailable" };
+  }
+
+  const { error } = await sb
+    .from("newsletter_signups")
+    .insert({ email: trimmed, source });
+
+  // 23505 is unique_violation: already on the list, which from the
+  // visitor's point of view is success, not an error.
+  if (error && error.code !== "23505") {
+    return { ok: false, reason: "network" };
+  }
+
+  void sendToMailerLite(trimmed, source);
+  return { ok: true };
+}
+
+/* Kept so existing imports keep working. */
+export const subscribeToMailerLite = subscribe;

@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { subscribeToMailerLite } from "@/lib/mailerlite";
+import { subscribe } from "@/lib/mailerlite";
 import { markSubscribed } from "@/lib/newsletterStorage";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -31,7 +31,10 @@ export default function NewsletterForm({
     setStatus("loading");
     setErrorMsg("");
 
-    const result = await subscribeToMailerLite(email);
+    // `variant` is passed through so signups can be told apart in the
+    // table — footer form vs popup — which is worth knowing before
+    // deciding whether the popup earns its interruption.
+    const result = await subscribe(email, variant);
 
     if (result.ok) {
       setStatus("success");
@@ -43,6 +46,8 @@ export default function NewsletterForm({
         result.reason === "invalid"
           ? "That email doesn't look right — mind double-checking it?"
           : "Something went wrong on our end. Mind trying again?"
+        /* Note there is no longer a silent success path: if this shows
+           an error, the address genuinely was not saved. */
       );
     }
   };
