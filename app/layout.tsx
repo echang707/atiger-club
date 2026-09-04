@@ -100,6 +100,17 @@ export const metadata: Metadata = {
         height: 630,
         alt: SITE_NAME,
       },
+      /* Square fallback. Some surfaces — iMessage, WhatsApp, Slack's
+         compact preview — want 1:1 and will centre-crop a 1.91:1 card,
+         which would slice the top and bottom off the wordmark. Listing
+         it second means platforms that prefer the wide card still get it
+         first. */
+      {
+        url: "/opengraph-square.png",
+        width: 1200,
+        height: 1200,
+        alt: SITE_NAME,
+      },
     ],
   },
   twitter: {
