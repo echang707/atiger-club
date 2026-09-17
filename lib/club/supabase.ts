@@ -338,3 +338,54 @@ export async function saveAvatarUrl(memberId: string, url: string) {
     .maybeSingle();
   return data ? rowToMember(data as MemberRow) : null;
 }
+
+/* ---------------------------------------------------------------------
+   Saved events. Lightweight — just a member bookmarking an event id.
+   Not the same as a Registration (which has ticket type, payment,
+   attendance status) — this is just "I want this to show up in my club".
+   A future migration can promote a saved event into a Registration when
+   native checkout exists.
+   --------------------------------------------------------------------- */
+
+export type SavedEventRow = {
+  id: string;
+  member_id: string;
+  event_id: string;
+  saved_at: string;
+};
+
+export async function toggleSavedEvent(
+  memberId: string,
+  eventId: string,
+): Promise<{ saved: boolean } | null> {
+  const sb = supabase();
+  if (!sb) return null;
+
+  // Check whether it's already saved.
+  const { data: existing } = await sb
+    .from("saved_events")
+    .select("id")
+    .eq("member_id", memberId)
+    .eq("event_id", eventId)
+    .maybeSingle();
+
+  if (existing) {
+    await sb.from("saved_events").delete().eq("id", existing.id);
+    return { saved: false };
+  }
+
+  const { error } = await sb
+    .from("saved_events")
+    .insert({ member_id: memberId, event_id: eventId });
+  return error ? null : { saved: true };
+}
+
+export async function getSavedEventIds(memberId: string): Promise<string[]> {
+  const sb = supabase();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("saved_events")
+    .select("event_id")
+    .eq("member_id", memberId);
+  return (data ?? []).map((r: { event_id: string }) => r.event_id);
+}

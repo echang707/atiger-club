@@ -71,6 +71,12 @@ export type TigerEvent = {
   image: string;
   link?: string;
   linkLabel?: string;
+  /* The Partiful (or other primary RSVP) URL. Rendered as the main CTA
+     button. Kept separate from `link` so events with a Partiful RSVP can
+     ALSO carry a secondary `link` for "Learn More" — e.g. JapanFest has
+     no Partiful but does have a festival website, while Refuge Coffee Run
+     has both a Partiful RSVP and a race website. */
+  partifulLink?: string;
   /* Start/end time as it should read on the page, e.g. "10am – 12pm". */
   time?: string;
   /* Secondary line, e.g. ticket price. Kept out of the description. */
@@ -292,6 +298,7 @@ export const events: TigerEvent[] = [
     description:
       "Don't just watch the Lantern Parade. Help make it happen. Join our volunteer crew to guide the parade, support performers, and see one of Atlanta's favorite traditions from inside the action.",
     image: "/images/lantern-parade.jpg",
+    partifulLink: "https://partiful.com/e/jnRWU1l6quV3on9pYAkK?c=AOFgnI6C",
   },
   {
     kind: "collab",
@@ -307,6 +314,7 @@ export const events: TigerEvent[] = [
     description:
       "Run, walk, or cheer, then stick around with Tiger Club after the finish line for coffee, treats, and an easygoing hangout instead of heading straight home.",
     image: "/images/refuge-run.jpg",
+    partifulLink: "https://partiful.com/e/0JhHFQMLl8P4ELme0AB8?c=2P_UUtTQ",
     link: "https://www.refugecoffeeco.com/events/refuge-coffee-run/",
     linkLabel: "Learn More",
   },
@@ -341,6 +349,7 @@ export const events: TigerEvent[] = [
     description:
       "Spend the morning on Concrete Jungle's half-acre urban farm planting, cultivating, and harvesting produce to donate. Lend a hand, learn a thing or two about farming, and meet the rest of the crew over the rows.",
     image: "/images/doghead-farm.jpg",
+    partifulLink: "https://partiful.com/e/xEcVGHcU2THUYQCQSEzG?c=zrDHrw7p",
     presentedBy: "Concrete Jungle",
   },
   {
@@ -359,6 +368,71 @@ export const events: TigerEvent[] = [
     image: "/images/compassioncon.jpg",
     link: "https://compassioncon.org/",
     linkLabel: "Learn More",
+  },
+  {
+    kind: "original",
+    time: "3:30pm – 5pm",
+    id: "creative-cafe-collage-oct",
+    title: "Creative Café Social — Collage Night",
+    medium: "Create",
+    city: "Atlanta",
+    date: "Oct 11",
+    month: "OCT",
+    day: "11",
+    location: "Postern Coffee",
+    description:
+      "Scissors, magazines, glue sticks, and good company. Bring yourself — we'll bring everything else. Show up, cut things up, make something, meet people.",
+    image: "/images/collage-night.jpg",
+    partifulLink: "https://partiful.com/e/kGgbaU3n3i0v9GCs7G8m?c=kVbIxMpz",
+  },
+  {
+    kind: "collab",
+    time: "1pm – 3pm",
+    id: "chefs-club-potluck-picnic",
+    title: "Chefs Club × Tiger Club: Fall Community Picnic",
+    medium: "Eat",
+    city: "Atlanta",
+    date: "Oct 18",
+    month: "OCT",
+    day: "18",
+    location: "Piedmont Park, Atlanta",
+    description:
+      "A relaxed fall afternoon in Piedmont Park with the Chefs Club and Tiger Club communities. Bring a dish, a snack, a dessert, or something from your favorite Atlanta spot — no pressure to cook. We'll have music, mini pumpkin painting, and a pie-eating competition. Grab a plate, find a blanket, and meet some people.",
+    image: "/images/eat-dinner.jpg",
+    partifulLink: "https://partiful.com/e/vfSlPvjwMvNFZciMAbsQ?c=jEvOkC1w",
+    presentedBy: "Chefs Club",
+  },
+  {
+    kind: "pick",
+    time: "11am – 2pm",
+    id: "atl-donut-crawl-5k",
+    title: "ATL Donut Crawl 5K",
+    medium: "Move",
+    city: "Atlanta",
+    date: "Nov 7",
+    month: "NOV",
+    day: "7",
+    location: "Atlanta",
+    description:
+      "The sweetest 5K in Atlanta. Walk to some of the city's best donut shops, try delicious treats, and meet new people along the way. Some donuts will be discounted, some free, some available to buy. All of them worth it.",
+    image: "/images/refuge-run.jpg",
+    partifulLink: "https://partiful.com/e/858fqrttTmmSI1EJ5sAV?c=nEN_GJ5a",
+  },
+  {
+    kind: "original",
+    time: "10am",
+    id: "great-atlanta-race",
+    title: "The Great Atlanta Race",
+    medium: "Move",
+    city: "Atlanta",
+    date: "Nov 14",
+    month: "NOV",
+    day: "14",
+    location: "Decatur → Inman Park → Va-Hi → Midtown → Piedmont Park",
+    description:
+      "A real-life city adventure. Teams of 4–5 race through four Atlanta neighborhoods using MARTA and walking only, completing challenges in each neighborhood along the way. Each challenge is specific to where you are — discovery, physical, creative, puzzle, and social tasks that make Atlanta itself the game board. First team to reach Piedmont Park wins. More details and team sign-up coming soon.",
+    image: "/images/great-atlanta-race.jpg",
+    partifulLink: "https://partiful.com/e/M6BJMzsJtZWMsIm7Cx7E?c=DaM93T3T",
   },
 ];
 

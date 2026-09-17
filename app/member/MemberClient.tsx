@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useMember } from "@/components/club/MemberProvider";
 import {
   BODY,
@@ -12,6 +11,9 @@ import {
 } from "@/components/club/ClubUI";
 import { membershipConfig } from "@/lib/membership";
 import { memberSince } from "@/lib/member";
+import { events } from "@/lib/events";
+import { getSavedEventIds } from "@/lib/club/supabase";
+import { useEffect, useState } from "react";
 
 /* ---------------------------------------------------------------------
    Your Club.
@@ -28,6 +30,17 @@ import { memberSince } from "@/lib/member";
 export default function MemberClient() {
   const router = useRouter();
   const { member, loading, available } = useMember();
+
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [savedEvents, setSavedEvents] = useState<typeof events>([]);
+
+  useEffect(() => {
+    if (!member) return;
+    getSavedEventIds(member.id).then(ids => {
+      setSavedIds(ids);
+      setSavedEvents(events.filter(e => ids.includes(e.id)));
+    });
+  }, [member]);
 
   // No server-side guard by design (see lib/club/supabase.ts) — the
   // database enforces access; this is navigation courtesy.

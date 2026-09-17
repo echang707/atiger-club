@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { events, mediums, cities, Medium } from "@/lib/events";
+import { useMember } from "@/components/club/MemberProvider";
+import { getSavedEventIds } from "@/lib/club/supabase";
 import EventRow from "@/components/EventRow";
 
 // The event data carries "Sep 12"-style dates without a year.
@@ -19,6 +21,13 @@ export default function ExperiencesClient() {
   // hovering — and stays pinned open for the one that's actively selected,
   // so at rest the grid is just icon + name.
   const [hoveredMedium, setHoveredMedium] = useState<Medium | null>(null);
+  const { member } = useMember();
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!member) { setSavedIds([]); return; }
+    getSavedEventIds(member.id).then(setSavedIds);
+  }, [member]);
 
   useEffect(() => {
     const m = params.get("medium") as Medium | null;
@@ -186,7 +195,7 @@ export default function ExperiencesClient() {
                 {group.label}
               </motion.h2>
               {group.items.map((event, i) => (
-                <EventRow key={event.id} event={event} index={gi * 10 + i} />
+                <EventRow key={event.id} event={event} index={gi * 10 + i} savedIds={savedIds} />
               ))}
             </div>
           ))}
@@ -221,7 +230,7 @@ export default function ExperiencesClient() {
                 >
                   <div className="pt-6 opacity-65">
                     {past.map((event, i) => (
-                      <EventRow key={event.id} event={event} index={i} />
+                      <EventRow key={event.id} event={event} index={i} savedIds={savedIds} />
                     ))}
                   </div>
                 </motion.div>
