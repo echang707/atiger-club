@@ -1,14 +1,10 @@
 "use client";
 
-/* Profile on its own page rather than a panel on the dashboard. Your
-   Club is somewhere you land; a profile is somewhere you go to change
-   something. */
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useMember } from "@/components/club/MemberProvider";
-import { ClubMasthead, MARK } from "@/components/club/ClubUI";
+import { ClubHero, ClubSection, MARK } from "@/components/club/ClubUI";
 import ProfilePanel from "@/components/club/ProfilePanel";
 
 export default function ProfileClient() {
@@ -23,8 +19,8 @@ export default function ProfileClient() {
     return (
       <main className="min-h-svh pt-[76px] md:pt-20">
         <div className="mx-auto max-w-content px-6 py-16 md:px-10">
-          <p className={`${MARK} text-ink/45`}>
-            {available ? "One moment" : "Membership is unavailable"}
+          <p className={`${MARK} text-ink/40`}>
+            {available ? "One moment…" : "Membership is unavailable."}
           </p>
         </div>
       </main>
@@ -32,22 +28,22 @@ export default function ProfileClient() {
   }
 
   return (
-    <main className="min-h-svh pt-[76px] md:pt-20">
-      <ClubMasthead
+    <main className="min-h-svh bg-paper pt-[76px] md:pt-20">
+      <ClubHero
         member={member}
-        mark="Your profile"
+        eyebrow="Your Profile"
         title={`${member.firstName} ${member.lastName}`}
-        meta={member.email}
+        subtitle={member.email}
+        actions={
+          <Link
+            href="/member"
+            className={`${MARK} text-ink/50 transition-colors hover:text-ink`}
+          >
+            ← Your Club
+          </Link>
+        }
       />
       <ProfilePanel member={member} />
-      <div className="mx-auto max-w-content px-6 py-10 md:px-10">
-        <Link
-          href="/member"
-          className={`organic-underline ${MARK} text-ink transition-colors hover:text-tiger-text`}
-        >
-          back to your club
-        </Link>
-      </div>
     </main>
   );
 }

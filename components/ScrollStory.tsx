@@ -11,30 +11,27 @@ import QuoteTail from "./QuoteTail";
 const scatter = [
   {
     rotate: -5, x: 4, y: 4, w: 24,
-    image: "/images/create-mural.jpg",
-    alt: "Tiger Club members painting a mural together",
-    caption: "left our mark",
+    image: "/images/independence-day-reforma.jpg",
+    alt: "Tiger Club at Mexican Independence Day at CT Reforma",
+    caption: "mexican independence day at ct reforma",
   },
   {
     rotate: 3, x: 34, y: 0, w: 26,
-    image: "/images/eat-dinner.jpg",
-    alt: "Tiger Club dinner with wine and shared plates",
-    caption: "we needed a bigger table",
+    image: "/images/dragon-boat-dance.jpg",
+    alt: "Dragon boat festival wushu performance at Lake Lanier",
+    caption: "hong kong dragon boat festival dance",
   },
   {
     rotate: -4, x: 66, y: 6, w: 26,
-    // Was memories[3], whose image is a remote Unsplash URL that returns
-    // 403 — it rendered as an empty frame. This is the Bite Club photo,
-    // local and reliable, freed up when the hero postcard was removed.
     image: "/images/bite-club-01.jpeg",
-    alt: "Tiger Club members around a long dinner table",
-    caption: "one table was never going to be enough",
+    alt: "Tiger Club members at Bite of Korea",
+    caption: "first bite club at bite of korea",
   },
   {
     rotate: 6, x: 14, y: 44, w: 24,
-    image: "/images/serve-treeplanting.jpg",
-    alt: "Tiger Club members planting a tree together",
-    caption: "good day to get lost",
+    image: "/images/creative-cafe-recuerdos.jpg",
+    alt: "Creative Café Social at Recuerdos",
+    caption: "creative café social at recuerdos",
   },
   {
     rotate: -6, x: 46, y: 48, w: 26,

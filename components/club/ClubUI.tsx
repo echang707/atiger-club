@@ -1,64 +1,128 @@
 "use client";
 
-/* Shared furniture for the two member pages.
-
-   These reuse the About page's vernacular rather than inventing a
-   member-area style: full-bleed hairline rules, a mono mark above the
-   content, the wordmark grotesque for anything that carries weight. No
-   cards, no shadows, no rounded panels — the site doesn't use them, and
-   a member area built out of them would read as a different product
-   bolted on.
-
-   The greys are the site's, too. Marks sit at ink/45 and body at ink/70,
-   which is what About and the event rows use. The earlier version put
-   almost everything at ink/60, so labels and content had the same
-   weight and the whole page looked washed out and unfinished. */
-
+import Link from "next/link";
 import type { Member } from "@/lib/member";
 import { memberInitials } from "@/lib/member";
 
 export const MARK = "font-mono text-[11px] tracking-wideish uppercase";
-export const NAME =
-  "font-wordmark font-extrabold text-ink tracking-tight leading-[1.0] text-[8.5vw] md:text-[3.4vw] lg:text-[2.9vw]";
-export const BODY = "text-base md:text-lg text-ink/70 leading-relaxed";
+export const BODY = "text-[17px] leading-relaxed text-ink/70";
 
-export function Avatar({
-  member,
-  size = 56,
-}: {
-  member: Member;
-  size?: number;
-}) {
-  const px = { width: size, height: size };
+/* ─── Avatar ───────────────────────────────────────────────────────── */
+
+export function Avatar({ member, size = 72 }: { member: Member; size?: number }) {
   if (member.avatarUrl) {
-    /* Plain <img>, not next/image: the URL is user-supplied and lives on
-       a Supabase host, which would need allow-listing in next.config and
-       would route one small avatar through an image-optimisation Worker
-       on Cloudflare for no benefit. */
     // eslint-disable-next-line @next/next/no-img-element
     return (
       <img
         src={member.avatarUrl}
         alt=""
-        style={px}
-        className="shrink-0 rounded-full object-cover"
+        width={size}
+        height={size}
+        className="rounded-full object-cover shrink-0"
+        style={{ width: size, height: size }}
       />
     );
   }
   return (
     <span
       aria-hidden="true"
-      style={px}
-      className="grid shrink-0 place-items-center rounded-full bg-tiger-fill font-wordmark font-extrabold text-white"
+      style={{ width: size, height: size, fontSize: size * 0.36 }}
+      className="grid shrink-0 place-items-center rounded-full bg-tiger-fill font-wordmark font-extrabold text-white select-none"
     >
-      <span style={{ fontSize: size * 0.34 }}>{memberInitials(member)}</span>
+      {memberInitials(member)}
     </span>
   );
 }
 
-/* The page's one bold moment: the member's own name, set in the same
-   face the site uses for its largest statements. Everything below it is
-   deliberately quiet. */
+/* ─── Page hero ─────────────────────────────────────────────────────── */
+
+export function ClubHero({
+  member,
+  eyebrow,
+  title,
+  subtitle,
+  actions,
+}: {
+  member: Member;
+  eyebrow: string;
+  title: string;
+  subtitle?: string | null;
+  actions?: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-ink/10 bg-paper">
+      <div className="mx-auto max-w-content px-6 pt-12 pb-14 md:px-10 md:pt-20 md:pb-20">
+        <p className={`${MARK} text-tiger-text mb-8 md:mb-12`}>{eyebrow}</p>
+
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
+          <Avatar member={member} size={88} />
+
+          <div className="flex-1 min-w-0">
+            <h1 className="font-wordmark font-extrabold text-ink tracking-tight leading-[1.0] text-[clamp(2rem,6vw,3.5rem)]">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className={`${MARK} text-ink/45 mt-3`}>{subtitle}</p>
+            )}
+            {actions && <div className="mt-6 flex flex-wrap gap-3">{actions}</div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Content section ────────────────────────────────────────────────── */
+
+export function ClubSection({
+  eyebrow,
+  children,
+  action,
+}: {
+  eyebrow: string;
+  children: React.ReactNode;
+  action?: React.ReactNode;
+}) {
+  return (
+    <section className="border-b border-ink/10 last:border-b-0">
+      <div className="mx-auto max-w-content px-6 py-10 md:px-10 md:py-14">
+        <div className="flex items-baseline justify-between gap-4 mb-6 md:mb-8">
+          <p className={`${MARK} text-ink/45`}>{eyebrow}</p>
+          {action}
+        </div>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+/* ─── Profile detail row ─────────────────────────────────────────────── */
+
+export function DetailRow({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="grid grid-cols-[9rem_1fr] gap-4 py-4 border-b border-ink/8 last:border-b-0">
+      <dt className={`${MARK} text-ink/40 pt-0.5`}>{label}</dt>
+      <dd className={`text-[16px] ${value ? "text-ink" : "text-ink/30"}`}>
+        {value || "Not added yet"}
+      </dd>
+    </div>
+  );
+}
+
+/* ─── Quiet link ──────────────────────────────────────────────────────── */
+
+export function ClubLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={`organic-underline ${MARK} text-ink transition-colors hover:text-tiger-text`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* Kept for backward compat — Profile page uses this */
 export function ClubMasthead({
   member,
   mark,
@@ -71,59 +135,11 @@ export function ClubMasthead({
   meta?: string | null;
 }) {
   return (
-    <header className="border-b border-ink/12">
-      <div className="mx-auto max-w-content px-6 py-10 md:px-10 md:py-16">
-        <p className={`${MARK} text-tiger-text`}>{mark}</p>
-        <div className="mt-5 flex items-center gap-4 md:mt-7 md:gap-6">
-          <Avatar member={member} size={56} />
-          <div className="min-w-0">
-            <h1 className={NAME}>{title}</h1>
-            {meta ? (
-              <p className={`${MARK} mt-2 text-ink/45`}>{meta}</p>
-            ) : null}
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-/* A section of the page. The rule and the mark are the structure; there
-   is no box. */
-export function ClubSection({
-  mark,
-  children,
-}: {
-  mark: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="border-b border-ink/12">
-      <div className="mx-auto max-w-content px-6 py-8 md:px-10 md:py-12">
-        <p className={`${MARK} text-ink/45`}>{mark}</p>
-        <div className="mt-4 md:mt-5">{children}</div>
-      </div>
-    </section>
-  );
-}
-
-/* Label/value pair. The label column is fixed so every value on the page
-   shares one left edge, the same way About aligns its claims. */
-export function DetailRow({
-  label,
-  value,
-}: {
-  label: string;
-  value?: string | null;
-}) {
-  return (
-    <div className="flex flex-col gap-1 border-b border-ink/10 py-3 last:border-b-0 sm:flex-row sm:gap-6">
-      <dt className={`${MARK} shrink-0 pt-1 text-ink/45 sm:w-40`}>{label}</dt>
-      <dd
-        className={`text-base ${value ? "text-ink" : "text-ink/35"} break-words`}
-      >
-        {value || "Not added yet"}
-      </dd>
-    </div>
+    <ClubHero
+      member={member}
+      eyebrow={mark}
+      title={title}
+      subtitle={meta}
+    />
   );
 }
