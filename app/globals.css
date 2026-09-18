@@ -590,7 +590,7 @@ body {
        differently. Dial between 0 (plain 400) and 0.04em (the old look).
        Mobile only: desktop uses the untouched 400 from `font-normal`. */
     font-weight: 400 !important;
-    -webkit-text-stroke: 0.028em currentColor;
+    -webkit-text-stroke: 0.016em currentColor;
   }
   .hero-subline { font-size: 15px !important; margin-top: 30px !important; width: 56%; max-width: 56%; }
 }

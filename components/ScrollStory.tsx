@@ -124,7 +124,7 @@ export default function ScrollStory() {
         </figure>
       </div>
 
-      <div className="h-[10vh] md:h-[16vh]" />
+      <div className="h-[5vh] md:h-[12vh]" />
 
       <div className="max-w-2xl mx-auto px-6 text-center relative">
         <motion.p
@@ -138,7 +138,7 @@ export default function ScrollStory() {
         </motion.p>
       </div>
 
-      <div className="h-[10vh] md:h-[14vh]" />
+      <div className="h-[5vh] md:h-[10vh]" />
 
       <div className="relative max-w-content mx-auto px-6 md:px-10">
         <div className="relative w-full" style={{ paddingBottom: "78%" }}>

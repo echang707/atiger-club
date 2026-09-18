@@ -76,7 +76,10 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
-          <NavMember />
+          {/* Desktop: auth button visible in the bar. Mobile: it lives
+              in the drawer (NavMemberMobile), so the header stays
+              symmetric — logo left, hamburger right, nothing else. */}
+          <div className="hidden md:block"><NavMember /></div>
 
           <button
             type="button"
