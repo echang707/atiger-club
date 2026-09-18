@@ -16,12 +16,6 @@ import {
   uploadAvatar,
 } from "@/lib/club/supabase";
 
-const AVATAR_ERRORS: Record<string, string> = {
-  too_large: `That image is over ${Math.round(AVATAR_MAX_BYTES / 1024 / 1024)}MB. Pick a smaller one.`,
-  wrong_type: "Use a JPG, PNG or WebP.",
-  failed: "That upload didn't go through. Try again.",
-};
-
 export default function ProfilePanel({ member }: { member: Member }) {
   const { refresh } = useMember();
   const [editing, setEditing] = useState(false);
@@ -54,7 +48,11 @@ export default function ProfilePanel({ member }: { member: Member }) {
       await saveAvatarUrl(member.id, up.url);
       await refresh();
     } else {
-      setError(AVATAR_ERRORS[up.reason]);
+      setError(
+        up.reason === "too_large" ? `Image over ${Math.round(AVATAR_MAX_BYTES / 1024 / 1024)}MB.` :
+        up.reason === "wrong_type" ? "Use a JPG, PNG or WebP." :
+        `Upload failed: ${"detail" in up && up.detail ? up.detail : "check browser console"}`
+      );
     }
     setAvatarBusy(false);
     // Reset so re-picking the same file fires change again.
@@ -69,10 +67,15 @@ export default function ProfilePanel({ member }: { member: Member }) {
       return;
     }
     setPending(true);
-    const updated = await updateProfile(member.id, form);
+    const result = await updateProfile(member.id, form);
     setPending(false);
-    if (!updated) {
-      setError("That didn't save. Try again.");
+    if ("error" in result) {
+      // The real error is in the browser console — check DevTools.
+      setError(
+        result.error === "42703"
+          ? "Profile fields aren't set up yet in the database. Run the supabase-migration-v133.sql in Supabase SQL Editor."
+          : "That didn't save. Check the browser console for the exact error.",
+      );
       return;
     }
     await refresh();

@@ -262,16 +262,14 @@ export async function updatePassword(password: string) {
 export async function updateProfile(
   memberId: string,
   patch: Partial<EditableProfile>,
-): Promise<Member | null> {
+): Promise<{ member: Member } | { error: string }> {
   const sb = supabase();
-  if (!sb) return null;
+  if (!sb) return { error: "not_configured" };
 
   const row: Record<string, unknown> = {};
   if (patch.firstName !== undefined) row.first_name = patch.firstName?.trim() ?? "";
   if (patch.lastName !== undefined) row.last_name = patch.lastName?.trim() ?? "";
   if (patch.phone !== undefined) row.phone = patch.phone?.trim() || null;
-  // An empty date input yields "", which Postgres rejects for a date
-  // column — send null instead of letting the write fail.
   if (patch.birthday !== undefined) row.birthday = patch.birthday || null;
   if (patch.city !== undefined) row.city = patch.city?.trim() || null;
   if (patch.dietaryNotes !== undefined)
@@ -286,8 +284,15 @@ export async function updateProfile(
     .select()
     .maybeSingle();
 
-  if (error || !data) return null;
-  return rowToMember(data as MemberRow);
+  if (error) {
+    console.error("[profile] update failed:", error.code, error.message, error.details);
+    return { error: `${error.code}: ${error.message}` };
+  }
+  if (!data) {
+    console.error("[profile] update returned no row — RLS or wrong memberId?");
+    return { error: "no_row_returned" };
+  }
+  return { member: rowToMember(data as MemberRow) };
 }
 
 export const AVATAR_MAX_BYTES = 3 * 1024 * 1024;
@@ -295,7 +300,7 @@ const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export type AvatarResult =
   | { ok: true; url: string }
-  | { ok: false; reason: "too_large" | "wrong_type" | "failed" };
+  | { ok: false; reason: "too_large" | "wrong_type" | "failed"; detail?: string };
 
 /* Uploads to avatars/<authUserId>/avatar.<ext>. The per-user folder is
    what the storage policy keys on, so one member cannot overwrite
@@ -319,7 +324,10 @@ export async function uploadAvatar(
   const { error } = await sb.storage
     .from("avatars")
     .upload(path, file, { upsert: true, contentType: file.type });
-  if (error) return { ok: false, reason: "failed" };
+  if (error) {
+    console.error("[avatar] upload failed:", error.message, (error as { statusCode?: string }).statusCode);
+    return { ok: false, reason: "failed" as const, detail: error.message };
+  }
 
   const { data } = sb.storage.from("avatars").getPublicUrl(path);
   // Cache-bust: the path is stable across uploads (upsert), so without a

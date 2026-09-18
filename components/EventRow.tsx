@@ -91,19 +91,19 @@ export default function EventRow({
   const kind = event.kind ?? "original";
   const [open, setOpen] = useState(false);
 
-  /* Primary CTA: Partiful RSVP takes priority; falls back to link. */
+  /* Button logic:
+     - If partifulLink → "RSVP on Partiful" only. No Learn More alongside.
+     - If only link → show linkLabel (usually "Learn More").
+     - If neither → "RSVP on Discord" fallback.
+     "Save to your club" always appears alongside. */
   const primaryHref = event.partifulLink ?? event.link ?? null;
-  const primaryLabel = event.partifulLink ? "RSVP on Partiful" : (event.linkLabel ?? "Learn More");
+  const primaryLabel = event.partifulLink
+    ? "RSVP on Partiful"
+    : (event.linkLabel ?? "Learn More");
 
-  /* Secondary: only show a Learn More link when BOTH a Partiful link AND
-     a separate info URL exist (e.g. Refuge Coffee Run has both). If there
-     is only a `link` and no Partiful it becomes the primary CTA above,
-     so we never show two identical links. */
-  const secondaryHref =
-    event.partifulLink && event.link ? event.link : null;
-  const secondaryLabel = event.partifulLink && event.link
-    ? (event.linkLabel ?? "Learn More")
-    : null;
+  // Only show a secondary link when there is NO Partiful — if Partiful
+  // exists it is the one action, full stop.
+  const secondaryHref = event.partifulLink ? null : null; // reserved for future use
 
   return (
     <motion.div
@@ -189,18 +189,6 @@ export default function EventRow({
                       className="inline-block rounded-full bg-tiger-fill border-2 border-tiger-fill px-5 py-2.5 text-[13px] font-semibold leading-none text-white transition-colors hover:bg-tiger-deep hover:border-tiger-deep"
                     >
                       RSVP on Discord
-                    </a>
-                  )}
-
-                  {/* Secondary "Learn More" — only when there is ALSO a Partiful */}
-                  {secondaryHref && (
-                    <a
-                      href={secondaryHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium organic-underline text-ink"
-                    >
-                      {secondaryLabel}
                     </a>
                   )}
 
