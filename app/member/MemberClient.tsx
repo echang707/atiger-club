@@ -79,17 +79,46 @@ export default function MemberClient() {
           Registration model and the bucketing in lib/member.ts are
           already built for them. */}
       <ClubSection mark="Your experiences">
-        <p className={BODY}>
-          Nothing booked yet. When you sign up for a Tiger Club experience,
-          it&rsquo;ll live here &mdash; what&rsquo;s coming, then everywhere
-          you&rsquo;ve been.
-        </p>
-        <Link
-          href="/experiences"
-          className={`organic-underline mt-6 inline-block ${MARK} text-ink transition-colors hover:text-tiger-text`}
-        >
-          see what&rsquo;s happening
-        </Link>
+        {savedEvents.length === 0 ? (
+          <>
+            <p className={BODY}>
+              Nothing saved yet. Hit &ldquo;Save to your club&rdquo; on any
+              experience and it&rsquo;ll show up here.
+            </p>
+            <Link
+              href="/experiences"
+              className={`organic-underline mt-6 inline-block ${MARK} text-ink transition-colors hover:text-tiger-text`}
+            >
+              see what&rsquo;s happening
+            </Link>
+          </>
+        ) : (
+          <ul className="space-y-5">
+            {savedEvents.map((e) => (
+              <li
+                key={e.id}
+                className="border-b border-ink/10 pb-5 last:border-b-0 last:pb-0"
+              >
+                <p className="font-display text-xl text-ink">{e.title}</p>
+                <p className={`${MARK} mt-1 text-ink/45`}>
+                  {e.month} {e.day}
+                  {e.time ? ` · ${e.time}` : ""}
+                  {e.location ? ` · ${e.location}` : ""}
+                </p>
+                {(e.partifulLink ?? e.link) && (
+                  <a
+                    href={e.partifulLink ?? e.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`organic-underline mt-3 inline-block ${MARK} text-ink transition-colors hover:text-tiger-text`}
+                  >
+                    {e.partifulLink ? "RSVP on Partiful" : (e.linkLabel ?? "Learn More")}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </ClubSection>
 
       <ClubSection mark="Member benefits">
