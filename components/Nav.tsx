@@ -6,6 +6,30 @@ import { useEffect, useState } from "react";
 import TigerWordmark from "./TigerWordmark";
 import NavMember from "./club/NavMember";
 import NavMemberMobile from "./club/NavMemberMobile";
+import { useMember } from "./club/MemberProvider";
+
+/* Avatar-only button for the mobile nav bar right slot. Tapping it
+   opens the drawer — same as the hamburger — so the icon is just a
+   visual shortcut to the membership section. */
+function MobileAvatar() {
+  const { member, loading, available } = useMember();
+  if (!available || loading) return <span className="h-7 w-7 md:hidden" />;
+  if (!member) {
+    return (
+      <Link
+        href="/join"
+        className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-[11px] font-semibold text-ink"
+      >
+        ?
+      </Link>
+    );
+  }
+  return (
+    <span className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[11px] font-bold text-white select-none">
+      {member.firstName.trim().charAt(0).toUpperCase() || "T"}
+    </span>
+  );
+}
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -49,7 +73,7 @@ export default function Nav() {
             "nav-veil border-b border-transparent"
       }`}
     >
-      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+      <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 h-[76px] md:h-20 grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-3">
         <Link href="/" className="justify-self-start" onClick={() => setOpen(false)}>
           <TigerWordmark className="text-[10.5px] sm:text-base md:text-xl" />
         </Link>
@@ -76,17 +100,17 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
-          {/* Desktop: auth button visible in the bar. Mobile: it lives
-              in the drawer (NavMemberMobile), so the header stays
-              symmetric — logo left, hamburger right, nothing else. */}
+          {/* Desktop: full auth button. Mobile: avatar icon only on the
+              right, hamburger in the middle — Tiger Club · ≡ · avatar */}
           <div className="hidden md:block"><NavMember /></div>
+          <MobileAvatar />
 
           <button
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
-            className="md:hidden relative -mr-1 h-8 w-8 flex items-center justify-center text-ink"
+            className="md:hidden relative -mr-1 h-8 w-8 flex items-center justify-center text-ink order-first"
           >
             <span className="relative block h-3.5 w-5">
               <span

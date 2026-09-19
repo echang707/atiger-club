@@ -387,9 +387,9 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "collab",
-    time: "1pm – 3pm",
+    time: "1pm – 4pm",
     id: "chefs-club-potluck-picnic",
-    title: "Chefs Club × Tiger Club: Fall Community Picnic",
+    title: "Fall Potluck",
     medium: "Eat",
     city: "Atlanta",
     date: "Oct 18",
@@ -398,7 +398,7 @@ export const events: TigerEvent[] = [
     location: "Piedmont Park, Atlanta",
     description:
       "A relaxed fall afternoon in Piedmont Park with the Chefs Club and Tiger Club communities. Bring a dish, a snack, a dessert, or something from your favorite Atlanta spot — no pressure to cook. We'll have music, mini pumpkin painting, and a pie-eating competition. Grab a plate, find a blanket, and meet some people.",
-    image: "/images/eat-dinner.jpg",
+    image: "/images/fall-potluck.jpg",
     partifulLink: "https://partiful.com/e/vfSlPvjwMvNFZciMAbsQ?c=jEvOkC1w",
     presentedBy: "Chefs Club",
   },
@@ -415,12 +415,8 @@ export const events: TigerEvent[] = [
     location: "Atlanta",
     description:
       "The sweetest 5K in Atlanta. Walk to some of the city's best donut shops, try delicious treats, and meet new people along the way. Some donuts will be discounted, some free, some available to buy. All of them worth it.",
-    image: "/images/refuge-run.jpg",
+    image: "/images/atl-donut-crawl.jpg",
     partifulLink: "https://partiful.com/e/858fqrttTmmSI1EJ5sAV?c=nEN_GJ5a",
-  },
-  {
-    kind: "original",
-    time: "10am",
     id: "great-atlanta-race",
     title: "The Great Atlanta Race",
     medium: "Move",
