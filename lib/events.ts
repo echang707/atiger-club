@@ -417,6 +417,10 @@ export const events: TigerEvent[] = [
       "The sweetest 5K in Atlanta. Walk to some of the city's best donut shops, try delicious treats, and meet new people along the way. Some donuts will be discounted, some free, some available to buy. All of them worth it.",
     image: "/images/atl-donut-crawl.jpg",
     partifulLink: "https://partiful.com/e/858fqrttTmmSI1EJ5sAV?c=nEN_GJ5a",
+  },
+  {
+    kind: "original",
+    time: "10am",
     id: "great-atlanta-race",
     title: "The Great Atlanta Race",
     medium: "Move",
