@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { events, mediums, cities, Medium } from "@/lib/events";
@@ -33,6 +34,8 @@ export default function ExperiencesClient() {
     const c = params.get("city");
     if (c && cities.includes(c)) setActiveCity(c);
   }, [params]);
+
+  const selectedMedium = active === "All" ? null : mediums.find((m) => m.name === active) ?? null;
 
   const matches = events.filter(
     (e) => (active === "All" || e.medium === active) && e.city === activeCity
@@ -137,10 +140,30 @@ export default function ExperiencesClient() {
             })}
           </div>
 
-          {/* The selected (or hovered) medium's one-line description. */}
-          <p className="mt-3 min-h-[1.25rem] text-xs text-ink/60">
-            {mediums.find((m) => m.name === (hoveredMedium ?? active))?.description ?? ""}
-          </p>
+          {/* The selected medium's tiger, next to its one-line description.
+              Only one, only once something is picked ("All" shows none), and
+              it swaps with a small pop when the choice changes. Hovering
+              another pill previews that pill's description. */}
+          <div className="mt-4 flex min-h-[2.75rem] items-center gap-3">
+            <AnimatePresence mode="wait">
+              {selectedMedium && (
+                <motion.span
+                  key={selectedMedium.name}
+                  aria-hidden="true"
+                  initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+                  className="relative h-11 w-11 shrink-0"
+                >
+                  <Image src={selectedMedium.icon} alt="" fill sizes="44px" className="object-contain" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+            <p className="text-xs text-ink/60 md:text-sm">
+              {mediums.find((m) => m.name === (hoveredMedium ?? active))?.description ?? ""}
+            </p>
+          </div>
         </div>
 
         <div>
