@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { events, mediums, cities, Medium } from "@/lib/events";
@@ -17,9 +16,8 @@ export default function ExperiencesClient() {
   const params = useSearchParams();
   const [active, setActive] = useState<Medium | "All">("All");
   const [activeCity, setActiveCity] = useState<string>(cities[0]);
-  // Description only appears for whichever medium the visitor is currently
-  // hovering — and stays pinned open for the one that's actively selected,
-  // so at rest the grid is just icon + name.
+  // A medium's description shows for whichever pill is hovered, and stays
+  // for the one that's selected.
   const [hoveredMedium, setHoveredMedium] = useState<Medium | null>(null);
   const { member } = useMember();
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -110,72 +108,37 @@ export default function ExperiencesClient() {
           </span>
         </div>
 
+        {/* One row: All plus the seven mediums, in the same pill language as
+            the city picker above, so the whole filter reads as two simple
+            lines instead of a button and a separate icon grid. */}
         <div className="mb-8 md:mb-10">
-          <button
-            onClick={() => setActive("All")}
-            className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-300 mb-3 ${
-              active === "All" ? "bg-ink text-paper" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
-            }`}
-          >
-            All
-          </button>
-
-          {/* All seven mediums on a single row from `sm` up. Compact by design:
-              small icon, small label, and the description lifted out to one
-              shared line beneath the row rather than expanding each tile and
-              pushing the list down the page. */}
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-1 md:gap-1.5">
-            {mediums.map((m, i) => {
-              const expanded = active === m.name || hoveredMedium === m.name;
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[11px] tracking-wideish uppercase text-ink/55 mr-1">
+              type
+            </span>
+            {(["All", ...mediums.map((m) => m.name)] as (Medium | "All")[]).map((name) => {
+              const on = active === name;
               return (
-                <motion.button
-                  key={m.name}
-                  onClick={() => setActive(active === m.name ? "All" : m.name)}
-                  onMouseEnter={() => setHoveredMedium(m.name)}
-                  onMouseLeave={() => setHoveredMedium((h) => (h === m.name ? null : h))}
-                  onFocus={() => setHoveredMedium(m.name)}
-                  onBlur={() => setHoveredMedium((h) => (h === m.name ? null : h))}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.5, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  // The tiles were reading as heavy boxes. The border and fill are
-                  // now only drawn on the active/hovered one — the rest sit on
-                  // plain cream, so the row is the tigers and their labels
-                  // rather than seven containers.
-                  className={`group relative flex flex-col items-center text-center gap-0.5 rounded-lg border px-1 py-1.5 transition-colors duration-300 ${
-                    active === m.name
-                      ? "border-tiger/60 bg-tiger/[0.07]"
-                      : "border-transparent hover:bg-ink/[0.04]"
+                <button
+                  key={name}
+                  onClick={() => setActive(name === "All" || on ? "All" : name)}
+                  onMouseEnter={() => name !== "All" && setHoveredMedium(name as Medium)}
+                  onMouseLeave={() => setHoveredMedium((h) => (h === name ? null : h))}
+                  onFocus={() => name !== "All" && setHoveredMedium(name as Medium)}
+                  onBlur={() => setHoveredMedium((h) => (h === name ? null : h))}
+                  aria-pressed={on}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 ${
+                    on ? "bg-ink text-paper" : "bg-paper-dim text-ink/80 hover:bg-ink/10"
                   }`}
                 >
-                  <motion.span
-                    className="relative h-8 w-8 md:h-9 md:w-9 shrink-0"
-                    animate={{ scale: expanded ? 1.1 : 1, rotate: expanded ? -4 : 0 }}
-                    transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
-                  >
-                    <Image
-                      src={m.icon}
-                      alt=""
-                      fill
-                      sizes="36px"
-                      className="object-contain"
-                    />
-                  </motion.span>
-                  <span
-                    className={`font-display text-[11px] md:text-[13px] leading-none ${
-                      active === m.name ? "text-tiger-text" : "text-ink"
-                    }`}
-                  >
-                    {m.name}
-                  </span>
-                </motion.button>
+                  {name}
+                </button>
               );
             })}
           </div>
 
-          {/* One shared line instead of seven expanding tiles. */}
-          <p className="mt-2 min-h-[1.25rem] text-xs text-ink/70">
+          {/* The selected (or hovered) medium's one-line description. */}
+          <p className="mt-3 min-h-[1.25rem] text-xs text-ink/60">
             {mediums.find((m) => m.name === (hoveredMedium ?? active))?.description ?? ""}
           </p>
         </div>

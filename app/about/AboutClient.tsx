@@ -13,11 +13,11 @@ import { useRef } from "react";
    adds a little more than the last.
 
      OPENING   masthead rule, the big question, a serif lede and one photo
-     01        number + claim, photo pair            (cream, simple)
-     02        photo, the DNA tail, claim — mirrored (cream, one detail)
+     01        number + claim, one photo             (cream, simple)
+     02        photo + claim, mirrored               (cream)
      03        the page inverts to ink, polaroid pile (the loud beat)
      04        claim over a four-photo mosaic         (the widest beat)
-     CLOSE     the serif line, one CTA, seven ways in (mascots)
+     CLOSE     the serif line, one CTA, seven ways in
 
    Type is still three families and a short list of sizes:
      Bricolage   — the title, the claims, the big numerals
@@ -109,23 +109,6 @@ function Drift({
   return (
     <motion.div ref={ref} style={{ y }} className={className}>
       {children}
-    </motion.div>
-  );
-}
-
-function Mascot({ src, className = "", rotate = 0 }: { src: string; className?: string; rotate?: number }) {
-  return (
-    <motion.div
-      aria-hidden="true"
-      initial={{ opacity: 0, scale: 0.7, rotate: rotate - 10 }}
-      whileInView={{ opacity: 1, scale: 1, rotate }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7, delay: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
-      className={`pointer-events-none absolute ${className}`}
-    >
-      <div className="relative h-full w-full">
-        <Image src={src} alt="" fill sizes="120px" className="object-contain" />
-      </div>
     </motion.div>
   );
 }
@@ -238,7 +221,7 @@ export default function AboutClient() {
               </Rise>
             </div>
 
-            <div className="relative md:col-span-7 md:pl-6">
+            <div className="md:col-span-7 md:pl-6">
               <Rise delay={0.1}>
                 <Photo
                   src="/images/dragon-boat.jpg"
@@ -248,20 +231,6 @@ export default function AboutClient() {
                   sizes="(min-width: 768px) 52vw, 100vw"
                 />
               </Rise>
-              <Drift amount={24} className="absolute -bottom-12 right-3 w-[34%] md:-bottom-14 md:-left-10 md:right-auto md:w-[30%]">
-                <div className="bg-paper p-1.5 shadow-[0_18px_40px_-20px_rgba(21,19,14,0.45)] md:p-2">
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    <Image
-                      src="/images/serve-treeplanting.jpg"
-                      alt="Volunteers planting trees in a wooded park"
-                      fill
-                      sizes="(min-width: 768px) 20vw, 42vw"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-              </Drift>
-              <Mascot src="/images/icons/move.png" rotate={6} className="-top-10 right-2 h-20 w-24 md:-top-14 md:h-28 md:w-32" />
             </div>
           </div>
         </section>
@@ -280,20 +249,7 @@ export default function AboutClient() {
                 />
               </Rise>
 
-              {/* The DNA tail from the old page, now doing a job: it is the
-                  "connection" drawn between the photo and the claim. */}
-              <motion.div
-                aria-hidden="true"
-                initial={{ clipPath: "inset(0 0 100% 0)" }}
-                whileInView={{ clipPath: "inset(0 0 0% 0)" }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 1.8, ease: EASE }}
-                className="relative order-3 hidden h-[26rem] md:order-2 md:col-span-1 md:block"
-              >
-                <Image src="/images/tiger-tail-strand.webp" alt="" fill sizes="80px" className="object-contain" />
-              </motion.div>
-
-              <div className="relative order-1 md:order-3 md:col-span-5 md:pl-4">
+              <div className="order-1 md:order-2 md:col-span-5 md:col-start-8">
                 <Rise>
                   <span
                     aria-hidden="true"
@@ -310,7 +266,6 @@ export default function AboutClient() {
                     icebreaking, so you don&rsquo;t have to.
                   </p>
                 </Rise>
-                <Mascot src="/images/icons/eat.png" rotate={-5} className="-top-4 right-0 h-20 w-24 md:right-6 md:top-2 md:h-24 md:w-28" />
               </div>
             </div>
           </div>
@@ -318,14 +273,6 @@ export default function AboutClient() {
 
         {/* ================= 03 — BREAK THE SCRIPT (inverted) ================= */}
         <section className="relative overflow-hidden bg-ink text-paper">
-          {/* one oversized numeral as texture, bleeding off the edge */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-[4vw] -top-[6vw] select-none font-wordmark font-extrabold leading-none tracking-[-0.06em] text-paper/[0.04] text-[48vw] md:text-[34vw]"
-          >
-            03
-          </span>
-
           <div className="relative mx-auto max-w-content px-5 py-16 md:px-10 md:py-24">
             <div className="grid items-center gap-14 md:grid-cols-12 md:gap-10">
               <div className="md:col-span-5">
@@ -358,7 +305,7 @@ export default function AboutClient() {
                   <Drift amount={18} className="absolute left-0 top-0 w-[74%]">
                     <motion.div
                       initial={{ opacity: 0, rotate: 0, y: 30 }}
-                      whileInView={{ opacity: 1, rotate: -3, y: 0 }}
+                      whileInView={{ opacity: 1, rotate: -2, y: 0 }}
                       viewport={{ once: true, margin: "-80px" }}
                       transition={{ duration: 0.9, ease: EASE }}
                       className="bg-paper p-2 pb-8 shadow-[0_30px_60px_-25px_rgba(0,0,0,0.7)] md:p-2.5 md:pb-10"
@@ -380,7 +327,7 @@ export default function AboutClient() {
                   <Drift amount={-26} className="absolute bottom-0 right-0 w-[56%]">
                     <motion.div
                       initial={{ opacity: 0, rotate: 0, y: 40 }}
-                      whileInView={{ opacity: 1, rotate: 4, y: 0 }}
+                      whileInView={{ opacity: 1, rotate: 2.5, y: 0 }}
                       viewport={{ once: true, margin: "-80px" }}
                       transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
                       className="bg-paper p-2 pb-8 shadow-[0_30px_60px_-25px_rgba(0,0,0,0.7)] md:p-2.5 md:pb-10"
@@ -399,7 +346,6 @@ export default function AboutClient() {
                       </p>
                     </motion.div>
                   </Drift>
-                  <Mascot src="/images/icons/play.png" rotate={-8} className="-bottom-6 left-[6%] h-24 w-24 md:-bottom-4 md:h-32 md:w-32" />
                 </div>
               </div>
             </div>
@@ -428,12 +374,7 @@ export default function AboutClient() {
             </Rise>
           </div>
 
-          <div className="relative mt-10 md:mt-14">
-            <Mascot
-              src="/images/icons/learn.png"
-              rotate={4}
-              className="-top-14 right-3 z-10 h-20 w-16 md:-top-20 md:right-8 md:h-28 md:w-24"
-            />
+          <div className="mt-10 md:mt-14">
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:grid-rows-2 md:gap-3">
               {[
                 {
@@ -535,32 +476,21 @@ export default function AboutClient() {
             </div>
 
             {/* seven ways in: the mediums, each one a door */}
-            <div className="mt-14 border-t border-ink/15 pt-6 md:mt-20">
+            <div className="mt-12 border-t border-ink/15 pt-6 md:mt-16">
               <div className="flex items-baseline justify-between">
                 <p className={`${MARK} text-tiger-text`}>Seven ways in</p>
                 <p className={`${MARK} hidden text-ink/45 md:block`}>Pick one. Show up.</p>
               </div>
-              <ul className="mt-6 grid grid-cols-4 gap-x-2 gap-y-6 md:grid-cols-7 md:gap-4">
-                {MEDIUMS.map(([name, key], i) => (
-                  <motion.li
-                    key={key}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.6, delay: i * 0.06, ease: EASE }}
-                  >
+              <ul className="mt-5 flex flex-wrap items-baseline gap-x-6 gap-y-2 md:gap-x-10">
+                {MEDIUMS.map(([name, key]) => (
+                  <li key={key}>
                     <Link
                       href={`/experiences?medium=${name}`}
-                      className="group flex flex-col items-center gap-2 rounded-lg py-2 transition-colors hover:bg-ink/[0.04]"
+                      className="organic-underline font-wordmark text-2xl font-extrabold tracking-tight text-ink transition-colors hover:text-tiger-text md:text-[2.1rem]"
                     >
-                      <span className="relative h-14 w-14 transition-transform duration-300 ease-snap group-hover:-translate-y-1 group-hover:-rotate-6 md:h-20 md:w-20">
-                        <Image src={`/images/icons/${key}.png`} alt="" fill sizes="80px" className="object-contain" />
-                      </span>
-                      <span className="font-wordmark text-sm font-bold text-ink transition-colors group-hover:text-tiger-text md:text-base">
-                        {name}
-                      </span>
+                      {name}
                     </Link>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </div>

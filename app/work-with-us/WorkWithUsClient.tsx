@@ -153,9 +153,6 @@ export default function WorkWithUsClient() {
               </motion.span>
             )}
           </div>
-          <p className="text-xs text-ink/60 -mt-1">
-            This opens an email to {CONTACT_EMAIL}, pre-filled with what you enter above.
-          </p>
         </motion.form>
       </div>
     </main>
