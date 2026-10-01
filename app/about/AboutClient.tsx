@@ -12,29 +12,31 @@ import { useRef } from "react";
    as you scroll: each principle is its own composed moment, and each one
    adds a little more than the last.
 
-     OPENING   masthead rule, the big question, a serif lede and one photo
+     OPENING   the title, a serif lede and one photo
      01        number + claim, one photo             (cream, simple)
      02        photo + claim, mirrored               (cream)
      03        the page inverts to ink, polaroid pile (the loud beat)
      04        claim over a four-photo mosaic         (the widest beat)
      CLOSE     the serif line, one CTA, seven ways in
 
-   Type is still three families and a short list of sizes:
-     Bricolage   — the title, the claims, the big numerals
-     Instrument  — the lede, the section intro, the closing line
-     JetBrains   — every label and caption
-   Orange is used for marks and large numerals only; text that has to be
-   read in orange uses tiger-text, which clears AA on cream.
+   Type follows the rest of the site exactly: Fraunces (font-display)
+   for every heading, the body sans for prose, JetBrains for labels.
+   Orange is used for marks and numerals only; text that has to be read
+   in orange uses tiger-text, which clears AA on cream.
    --------------------------------------------------------------------- */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const MARK = "font-mono text-[11px] tracking-wideish uppercase";
-const BODY = "text-base md:text-[17px] text-ink/70 leading-relaxed";
-const CLAIM =
-  "font-wordmark font-extrabold tracking-tight leading-[0.98] text-[clamp(2.3rem,4.6vw,4.4rem)]";
-const NUMERAL =
-  "font-wordmark font-extrabold leading-[0.8] tracking-[-0.06em] select-none text-[clamp(5.5rem,12vw,11.5rem)]";
+const BODY = "text-sm md:text-base text-ink/70 leading-relaxed";
+/* Same scale as the rest of the site: page titles are font-display at
+   text-4xl / md:text-6xl (see /experiences and /work-with-us), so the
+   claims sit one step under that and nothing here is bigger than a title
+   elsewhere. The numerals are the one oversized element, and even they
+   stay in the same face. */
+const TITLE = "font-display text-4xl md:text-6xl text-ink leading-tight";
+const CLAIM = "font-display leading-tight text-3xl md:text-5xl";
+const NUMERAL = "font-display leading-none select-none text-6xl md:text-8xl";
 
 function Rise({
   children,
@@ -128,29 +130,15 @@ export default function AboutClient() {
     <MotionConfig reducedMotion="user">
       <main className="overflow-x-hidden">
         {/* ================= OPENING ================= */}
-        <section className="mx-auto max-w-content px-5 pb-16 pt-6 md:px-10 md:pb-24 md:pt-10">
-          {/* masthead rule: gives the title a page to sit on */}
-          <Rise y={8}>
-            <div className={`${MARK} flex items-center justify-between border-b border-ink pb-2.5 text-ink`}>
-              <span>About</span>
-              <span className="hidden text-ink/50 md:inline">Four principles, one idea</span>
-              <span>Atlanta, GA</span>
-            </div>
+        <section className="mx-auto max-w-content px-6 pb-16 pt-28 md:px-10 md:pb-24 md:pt-36">
+          <Rise>
+            <h1 className={TITLE}>why Tiger Club?</h1>
           </Rise>
 
-          <Rise delay={0.05}>
-            <h1 className="mt-6 font-wordmark font-extrabold leading-[0.86] tracking-[-0.04em] text-ink text-[12.6vw] md:mt-8 md:text-[clamp(4rem,12.4vw,11.5rem)]">
-              <span className="mr-[0.12em] font-tagline font-normal italic tracking-[-0.02em] text-tiger-text">
-                Why
-              </span>
-              Tiger&nbsp;Club?
-            </h1>
-          </Rise>
-
-          <div className="mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:gap-10">
+          <div className="mt-8 grid gap-10 md:mt-10 md:grid-cols-12 md:gap-10">
             <div className="md:col-span-5 md:pt-1">
               <Rise delay={0.12}>
-                <p className="font-tagline text-[clamp(1.7rem,2.7vw,2.5rem)] leading-[1.1] tracking-[-0.01em] text-ink">
+                <p className="font-display text-xl leading-snug text-ink md:text-3xl">
                   Adulthood quietly removes the social infrastructure that used to make connection{" "}
                   <em className="text-tiger-text">automatic.</em>
                 </p>
@@ -190,12 +178,12 @@ export default function AboutClient() {
 
         {/* ================= PRINCIPLES INTRO ================= */}
         <section id="principles" className="scroll-mt-20 border-t border-ink/15">
-          <div className="mx-auto grid max-w-content items-end gap-3 px-5 pb-2 pt-10 md:grid-cols-12 md:gap-10 md:px-10 md:pt-14">
+          <div className="mx-auto grid max-w-content items-end gap-3 px-6 pb-2 pt-10 md:grid-cols-12 md:gap-10 md:px-10 md:pt-14">
             <Rise className="md:col-span-3">
               <p className={`${MARK} text-tiger-text`}>Four principles</p>
             </Rise>
             <Rise delay={0.08} className="md:col-span-9">
-              <h2 className="font-tagline italic leading-[1.02] tracking-[-0.01em] text-ink text-[clamp(2rem,4.2vw,3.9rem)]">
+              <h2 className="font-display leading-tight text-ink text-2xl md:text-4xl">
                 We don&rsquo;t just put people in the same room.
               </h2>
             </Rise>
@@ -203,7 +191,7 @@ export default function AboutClient() {
         </section>
 
         {/* ================= 01 — NO SPECTATORS ================= */}
-        <section className="mx-auto max-w-content px-5 pb-16 pt-12 md:px-10 md:pb-24 md:pt-16">
+        <section className="mx-auto max-w-content px-6 pb-16 pt-12 md:px-10 md:pb-24 md:pt-16">
           <div className="grid items-center gap-12 md:grid-cols-12 md:gap-10">
             <div className="md:col-span-5">
               <Rise>
@@ -237,7 +225,7 @@ export default function AboutClient() {
 
         {/* ================= 02 — CONNECTION BY DESIGN ================= */}
         <section className="border-t border-ink/10">
-          <div className="mx-auto max-w-content px-5 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
+          <div className="mx-auto max-w-content px-6 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
             <div className="grid items-center gap-10 md:grid-cols-12 md:gap-10">
               <Rise className="order-2 md:order-1 md:col-span-6">
                 <Photo
@@ -253,7 +241,7 @@ export default function AboutClient() {
                 <Rise>
                   <span
                     aria-hidden="true"
-                    className={`${NUMERAL} block text-transparent [-webkit-text-stroke:2px_#e0521c]`}
+                    className={`${NUMERAL} block text-tiger`}
                   >
                     02
                   </span>
@@ -273,7 +261,7 @@ export default function AboutClient() {
 
         {/* ================= 03 — BREAK THE SCRIPT (inverted) ================= */}
         <section className="relative overflow-hidden bg-ink text-paper">
-          <div className="relative mx-auto max-w-content px-5 py-16 md:px-10 md:py-24">
+          <div className="relative mx-auto max-w-content px-6 py-16 md:px-10 md:py-24">
             <div className="grid items-center gap-14 md:grid-cols-12 md:gap-10">
               <div className="md:col-span-5">
                 <Rise>
@@ -288,7 +276,7 @@ export default function AboutClient() {
                   </p>
                   <h3 className={`${CLAIM} mt-2 text-paper`}>
                     Expect something{" "}
-                    <span className="font-tagline font-normal italic tracking-[-0.01em] text-tiger-soft">
+                    <span className="italic text-tiger-soft">
                       unexpected.
                     </span>
                   </h3>
@@ -353,7 +341,7 @@ export default function AboutClient() {
         </section>
 
         {/* ================= 04 — DISCOVERY BY DESIGN ================= */}
-        <section className="mx-auto max-w-content px-5 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
+        <section className="mx-auto max-w-content px-6 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
           <div className="grid items-end gap-6 md:grid-cols-12 md:gap-10">
             <div className="flex items-end gap-5 md:col-span-7 md:gap-8">
               <Rise>
@@ -434,10 +422,10 @@ export default function AboutClient() {
 
         {/* ================= CLOSE ================= */}
         <section className="border-t border-ink/15">
-          <div className="mx-auto max-w-content px-5 pb-14 pt-14 md:px-10 md:pb-20 md:pt-20">
+          <div className="mx-auto max-w-content px-6 pb-14 pt-14 md:px-10 md:pb-20 md:pt-20">
             <div className="grid items-end gap-8 md:grid-cols-12 md:gap-10">
               <Rise className="md:col-span-8">
-                <p className="font-tagline italic leading-[0.95] tracking-[-0.02em] text-ink text-[clamp(3rem,7.6vw,7.25rem)]">
+                <p className={`${TITLE} italic`}>
                   Events are just the{" "}
                   <span className="relative inline-block">
                     start.
@@ -468,7 +456,7 @@ export default function AboutClient() {
                 </p>
                 <Link
                   href="/experiences"
-                  className={`${MARK} mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-paper transition-colors duration-300 hover:bg-tiger-fill`}
+                  className={`${MARK} mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-paper transition-colors duration-300 hover:bg-tiger-fill`}
                 >
                   See what&rsquo;s happening <span aria-hidden="true">→</span>
                 </Link>
@@ -486,7 +474,7 @@ export default function AboutClient() {
                   <li key={key}>
                     <Link
                       href={`/experiences?medium=${name}`}
-                      className="organic-underline font-wordmark text-2xl font-extrabold tracking-tight text-ink transition-colors hover:text-tiger-text md:text-[2.1rem]"
+                      className="organic-underline font-display text-xl text-ink transition-colors hover:text-tiger-text md:text-2xl"
                     >
                       {name}
                     </Link>

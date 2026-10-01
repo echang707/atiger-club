@@ -432,6 +432,7 @@ export const events: TigerEvent[] = [
     description:
       "Trees Atlanta\u2019s biggest volunteer event of the year. We\u2019ll spend the morning at Freedom Park planting trees alongside volunteers from across Atlanta, helping make the city greener while meeting new people along the way. Plantlanta brings hundreds of volunteers together to plant hundreds of trees across Atlanta in just two days, and we\u2019re bringing a Tiger Club group to be part of it. No planting experience is needed: Trees Atlanta provides the guidance and everything you need to get started. Just come ready to get your hands dirty, meet some new people, and leave a lasting impact on one of Atlanta\u2019s green spaces.",
     image: "/images/plantlanta.jpg",
+    partifulLink: "https://partiful.com/e/9iy1nu9zoPpFNdpS8nW6?c=wnsOSHZW",
     presentedBy: "Trees Atlanta",
   },
   {
