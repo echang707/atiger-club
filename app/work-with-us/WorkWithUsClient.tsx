@@ -3,8 +3,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { cities } from "@/lib/events";
+import { supabase } from "@/lib/club/supabase";
 
 const CONTACT_EMAIL = "eric@atigercub.com";
+
+/* Submissions are saved to Supabase, the same database the member
+   accounts and newsletter signups already use: one row per idea in the
+   `work_with_us_submissions` table (see the setup SQL in README.md).
+   The page talks to Supabase directly from the browser with the public
+   anon key; a row-level-security policy lets visitors add a row and
+   nothing else, so nobody can read other people's submissions. */
+const TABLE = "work_with_us_submissions";
 
 export default function WorkWithUsClient() {
   const [name, setName] = useState("");
@@ -12,34 +21,58 @@ export default function WorkWithUsClient() {
   const [city, setCity] = useState(cities[0]);
   const [idea, setIdea] = useState("");
   const [details, setDetails] = useState("");
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const canSubmit = name.trim() && email.trim() && idea.trim() && details.trim();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const subject = `Event idea: ${idea}`;
+  const mailtoHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(
+    [`Name: ${name}`, `Email: ${email}`, `City: ${city}`, "", "The idea:", details].join("\n")
+  )}`;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || status === "sending") return;
 
-    const subject = `Event idea: ${idea}`;
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `City: ${city}`,
-      "",
-      "The idea:",
-      details,
-    ].join("\n");
+    // Honeypot: real people never see or tick this; bots do.
+    const trap = (e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement | null)?.checked;
+    if (trap) {
+      setStatus("sent");
+      return;
+    }
 
-    // No backend to wire up yet, so this hands the submission straight
-    // to the visitor's own email client, addressed to Eric — the message
-    // arrives pre-filled, they just hit send. If Tiger Club later wants
-    // this to submit silently in the background instead, swap this for
-    // a POST to a serverless function backed by an email API (e.g.
-    // Resend) — the form fields above stay the same either way.
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-    setSent(true);
+    const sb = supabase();
+    if (!sb) {
+      console.warn("[work-with-us] Supabase is not configured");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    try {
+      const { error } = await sb.from(TABLE).insert({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        city,
+        idea: idea.trim(),
+        details: details.trim(),
+      });
+      if (error) {
+        console.warn("[work-with-us] not saved:", error.message);
+        setStatus("error");
+        return;
+      }
+      setStatus("sent");
+      setName("");
+      setEmail("");
+      setIdea("");
+      setDetails("");
+    } catch (err) {
+      console.warn("[work-with-us] send failed:", err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -135,21 +168,29 @@ export default function WorkWithUsClient() {
             />
           </label>
 
-          <div className="flex items-center gap-4 pt-2">
+          {/* hidden from people, catches bots */}
+          <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
             <button
               type="submit"
-              disabled={!canSubmit}
+              disabled={!canSubmit || status === "sending"}
               className="px-6 py-3 rounded-full text-sm font-medium bg-ink text-paper hover:bg-tiger-fill transition-colors duration-300 disabled:opacity-40 disabled:hover:bg-ink"
             >
-              Send it our way
+              {status === "sending" ? "Sending…" : "Send it our way"}
             </button>
-            {sent && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-ink/70"
-              >
-                Opening your email — just hit send.
+            {status === "sent" && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="status" className="text-sm text-ink/80">
+                Got it. We&rsquo;ll be in touch soon.
+              </motion.span>
+            )}
+            {status === "error" && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="alert" className="text-sm text-tiger-text">
+                That didn&rsquo;t send. Try again, or{" "}
+                <a href={mailtoHref} className="underline">
+                  email us directly
+                </a>
+                .
               </motion.span>
             )}
           </div>
