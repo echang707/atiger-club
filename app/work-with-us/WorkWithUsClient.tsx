@@ -6,14 +6,8 @@ import { cities } from "@/lib/events";
 import { supabase } from "@/lib/club/supabase";
 
 const CONTACT_EMAIL = "eric@atigercub.com";
-
-/* Submissions are saved to Supabase, the same database the member
-   accounts and newsletter signups already use: one row per idea in the
-   `work_with_us_submissions` table (see the setup SQL in README.md).
-   The page talks to Supabase directly from the browser with the public
-   anon key; a row-level-security policy lets visitors add a row and
-   nothing else, so nobody can read other people's submissions. */
-const TABLE = "work_with_us_submissions";
+// Supabase table that stores submissions — see run-this-in-supabase.sql.
+const IDEAS_TABLE = "work_with_us_submissions";
 
 export default function WorkWithUsClient() {
   const [name, setName] = useState("");
@@ -21,38 +15,38 @@ export default function WorkWithUsClient() {
   const [city, setCity] = useState(cities[0]);
   const [idea, setIdea] = useState("");
   const [details, setDetails] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle"
+  );
 
-  const canSubmit = name.trim() && email.trim() && idea.trim() && details.trim();
+  const canSubmit =
+    name.trim() && email.trim() && idea.trim() && details.trim();
 
-  const subject = `Event idea: ${idea}`;
+  // Fallback only: a pre-filled email to Eric, offered if the save fails.
   const mailtoHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-    subject
+    `Event idea: ${idea}`
   )}&body=${encodeURIComponent(
     [`Name: ${name}`, `Email: ${email}`, `City: ${city}`, "", "The idea:", details].join("\n")
   )}`;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit || status === "sending") return;
+    setStatus("sending");
 
-    // Honeypot: real people never see or tick this; bots do.
-    const trap = (e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement | null)?.checked;
-    if (trap) {
-      setStatus("sent");
-      return;
-    }
-
+    /* Saved straight to Supabase from the browser, same as the
+       newsletter. The table allows anonymous INSERT only (see
+       run-this-in-supabase.sql), so no .select() afterwards — reading
+       the row back would be refused by RLS and look like a failure. */
     const sb = supabase();
     if (!sb) {
-      console.warn("[work-with-us] Supabase is not configured");
+      console.error("[work-with-us] Supabase env vars are missing");
       setStatus("error");
       return;
     }
 
-    setStatus("sending");
     try {
-      const { error } = await sb.from(TABLE).insert({
+      const { error } = await sb.from(IDEAS_TABLE).insert({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         city,
@@ -60,19 +54,21 @@ export default function WorkWithUsClient() {
         details: details.trim(),
       });
       if (error) {
-        console.warn("[work-with-us] not saved:", error.message);
+        console.error("[work-with-us] insert failed:", error.code, error.message);
         setStatus("error");
         return;
       }
-      setStatus("sent");
-      setName("");
-      setEmail("");
-      setIdea("");
-      setDetails("");
     } catch (err) {
-      console.warn("[work-with-us] send failed:", err);
+      console.error("[work-with-us] Supabase unreachable:", err);
       setStatus("error");
+      return;
     }
+
+    setStatus("sent");
+    setName("");
+    setEmail("");
+    setIdea("");
+    setDetails("");
   };
 
   return (
@@ -168,10 +164,7 @@ export default function WorkWithUsClient() {
             />
           </label>
 
-          {/* hidden from people, catches bots */}
-          <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
+          <div className="flex items-center gap-4 pt-2">
             <button
               type="submit"
               disabled={!canSubmit || status === "sending"}
@@ -180,15 +173,24 @@ export default function WorkWithUsClient() {
               {status === "sending" ? "Sending…" : "Send it our way"}
             </button>
             {status === "sent" && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="status" className="text-sm text-ink/80">
-                Got it. We&rsquo;ll be in touch soon.
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-ink/70"
+              >
+                Got it — we&rsquo;ll be in touch.
               </motion.span>
             )}
             {status === "error" && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} role="alert" className="text-sm text-tiger-text">
-                That didn&rsquo;t send. Try again, or{" "}
-                <a href={mailtoHref} className="underline">
-                  email us directly
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                role="alert"
+                className="text-sm text-ink/70"
+              >
+                That didn&rsquo;t go through.{" "}
+                <a href={mailtoHref} className="underline text-tiger-text">
+                  Email it to us instead
                 </a>
                 .
               </motion.span>
