@@ -337,6 +337,29 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "pick",
+    presentedBy: "The Bakery Atlanta",
+    time: "8pm \u2013 12am",
+    id: "bakery-cloud-nine",
+    title: "Cloud Nine: The Bakery Atlanta's 9th Birthday Party",
+    medium: "Explore",
+    city: "Atlanta",
+    date: "Oct 9",
+    month: "OCT",
+    day: "9",
+    location: "The Supermarket, 638 N Highland Ave NE",
+    address: "638 N Highland Ave NE, Atlanta, GA 30306",
+    description:
+      "Come spend Friday night on Cloud Nine. The Bakery Atlanta has spent nine years supporting the city's emerging, DIY, and underground arts scene, and we're bringing a group to celebrate at their birthday party. Expect a full night of live music, DJs, karaoke, art, installations, drag, and plenty of Atlanta creative energy. Come alone or bring a friend: we'll have a Tiger Club group there, make introductions, and experience the night together. Tickets are through The Bakery, and Tiger Club gets a discount, so DM us for the access code before you buy. RSVP on Partiful too so we know who's coming with the group.",
+    image: "/images/cloud-nine.jpg",
+    partifulLink: "https://partiful.com/e/ZaIDMOnNq49VRRPmMn4m?c=0gM7u6UN",
+    /* Ticket page. EventRow shows only the Partiful button when a
+       partifulLink exists, so this is not rendered today \u2014 the Partiful
+       page carries the ticket link. Kept here so it is on record. */
+    link: "https://www.tickettailor.com/events/thebakeryatlanta/2384479",
+    linkLabel: "Tickets",
+  },
+  {
+    kind: "pick",
     time: "10am \u2013 1pm",
     id: "doghead-farm-volunteer-social",
     title: "Doghead Farm Volunteer Social",
