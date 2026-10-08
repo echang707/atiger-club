@@ -365,9 +365,9 @@ export const events: TigerEvent[] = [
     title: "Doghead Farm Volunteer Social",
     medium: "Serve",
     city: "Atlanta",
-    date: "Oct 10",
+    date: "Oct 17",
     month: "OCT",
-    day: "10",
+    day: "17",
     location: "Doghead Farm, Sylvan Hills, Atlanta",
     description:
       "Spend the morning on Concrete Jungle's half-acre urban farm planting, cultivating, and harvesting produce to donate. Lend a hand, learn a thing or two about farming, and meet the rest of the crew over the rows.",
