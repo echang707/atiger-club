@@ -154,7 +154,10 @@ body {
    The vw-based value is a fallback for browsers without container query
    support; the @supports block overrides it once cqw is available. */
 .hero-tagline {
-  font-size: clamp(2.1rem, 8.7vw, 5.1rem);
+  font-size: clamp(2.1rem, 10.5vw, 6.4rem);
+  /* Fractional stroke adds weight without requiring a bold axis —
+     Instrument Serif only ships at 400. Dial between 0 and 0.04em. */
+  -webkit-text-stroke: 0.016em currentColor;
 }
 
 @supports (container-type: inline-size) {
@@ -162,7 +165,7 @@ body {
     container-type: inline-size;
   }
   .hero-tagline {
-    font-size: clamp(1.75rem, 8.1cqw, 5.1rem);
+    font-size: clamp(1.75rem, 9.5cqw, 6.4rem);
   }
 }
 
@@ -573,26 +576,28 @@ body {
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
   .hero-tagline {
-    font-size: clamp(28px, 6.9vw, 38px) !important;
-    /* Instrument Serif ships exactly ONE weight — 400, no bold face and no
-       variable axis (see layout.tsx, which requests weight ["400"]). So
-       the 600 that used to be here was never a real weight: it was the
-       browser SYNTHESISING bold off the 400 glyphs. Synthetic bold is
-       all-or-nothing, so asking for 500 or 550 would have dropped it
-       entirely and rendered identically to plain 400 — a full step
-       lighter, not a slight one.
+    /* Let the headline wrap across two lines so the font can be large
+       enough to actually read as a hero — at 28px it looked like body
+       text. With flex-wrap the words settle as two balanced rows:
+         "life is better"
+         "together."
+       which is a proper editorial headline weight on mobile.
 
-       To get a fractional step the weight is set to the real 400 and the
-       thickening is done with a stroke, which IS continuous. Browsers
-       synthesise bold at roughly 0.04em, so 0.028em is about 70% of the
-       old weight — slightly lighter, as asked. This is also more
-       consistent than synthetic bold, which each engine computes
-       differently. Dial between 0 (plain 400) and 0.04em (the old look).
-       Mobile only: desktop uses the untouched 400 from `font-normal`. */
+       Instrument Serif ships exactly ONE weight — 400, no bold face.
+       Thickening is done via stroke (continuous, unlike synthetic bold).
+       Dial between 0 (plain 400) and 0.04em (full synthetic-bold look). */
+    font-size: clamp(52px, 13.5vw, 68px) !important;
     font-weight: 400 !important;
-    -webkit-text-stroke: 0.016em currentColor;
+    -webkit-text-stroke: 0.018em currentColor;
+    flex-wrap: wrap !important;
+    line-height: 1.05 !important;
   }
-  .hero-subline { font-size: 15px !important; margin-top: 30px !important; width: 56%; max-width: 56%; }
+  .hero-subline {
+    font-size: 17px !important;
+    margin-top: 32px !important;
+    width: auto !important;
+    max-width: 78% !important;
+  }
 }
 
 /* ---------------------------------------------------------------------

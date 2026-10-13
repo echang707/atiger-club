@@ -112,13 +112,17 @@ export default function Nav() {
             onClick={() => setOpen((o) => !o)}
             className="md:hidden relative -mr-1 h-8 w-8 flex items-center justify-center text-ink order-first"
           >
-            <span className="relative block h-3.5 w-5">
+            <span className="relative block h-[14px] w-[22px]">
               <span
-                className="absolute left-0 top-0 h-[1.5px] w-full bg-current transition-all duration-300"
+                className="absolute left-0 top-0 h-[2px] w-full bg-current rounded-full transition-all duration-300"
                 style={{ transform: open ? "translateY(6px) rotate(45deg)" : "none" }}
               />
               <span
-                className="absolute left-0 bottom-0 h-[1.5px] w-full bg-current transition-all duration-300"
+                className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-full bg-current rounded-full transition-all duration-300"
+                style={{ opacity: open ? 0 : 1, transform: open ? "scaleX(0)" : "scaleX(1)" }}
+              />
+              <span
+                className="absolute left-0 bottom-0 h-[2px] w-full bg-current rounded-full transition-all duration-300"
                 style={{ transform: open ? "translateY(-6px) rotate(-45deg)" : "none" }}
               />
             </span>
