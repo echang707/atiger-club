@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 /* TODO: Replace with your real Discord invite link */
-const DISCORD_INVITE = "https://discord.gg/tigerclub";
+const DISCORD_INVITE = "https://discord.gg/mUKgjx9zqn";
 
 export default function Page() {
   return (
