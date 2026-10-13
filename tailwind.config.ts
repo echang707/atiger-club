@@ -36,7 +36,7 @@ const config: Config = {
         brass: "#B98A34",
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "serif"],
+        display: ["var(--font-bricolage)", "sans-serif"],
         sans: ["var(--font-inter)", "sans-serif"],
         hand: ["var(--font-caveat)", "cursive"],
         mono: ["var(--font-jetbrains)", "monospace"],

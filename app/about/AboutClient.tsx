@@ -34,9 +34,9 @@ const BODY = "text-sm md:text-base text-ink/70 leading-relaxed";
    claims sit one step under that and nothing here is bigger than a title
    elsewhere. The numerals are the one oversized element, and even they
    stay in the same face. */
-const TITLE = "font-display text-4xl md:text-6xl text-ink leading-tight";
-const CLAIM = "font-display leading-tight text-3xl md:text-5xl";
-const NUMERAL = "font-display leading-none select-none text-6xl md:text-8xl";
+const TITLE = "font-display text-5xl md:text-7xl text-ink leading-tight";
+const CLAIM = "font-display leading-tight text-4xl md:text-6xl";
+const NUMERAL = "font-display leading-none select-none text-7xl md:text-8xl";
 
 function Rise({
   children,
@@ -138,7 +138,7 @@ export default function AboutClient() {
           <div className="mt-8 grid gap-10 md:mt-10 md:grid-cols-12 md:gap-10">
             <div className="md:col-span-5 md:pt-1">
               <Rise delay={0.12}>
-                <p className="font-display text-xl leading-snug text-ink md:text-3xl">
+                <p className="font-display text-2xl leading-snug text-ink md:text-4xl">
                   Adulthood quietly removes the social infrastructure that used to make connection{" "}
                   <em className="text-tiger-text">automatic.</em>
                 </p>
@@ -183,7 +183,7 @@ export default function AboutClient() {
               <p className={`${MARK} text-tiger-text`}>Four principles</p>
             </Rise>
             <Rise delay={0.08} className="md:col-span-9">
-              <h2 className="font-display leading-tight text-ink text-2xl md:text-4xl">
+              <h2 className="font-display leading-tight text-ink text-3xl md:text-5xl">
                 We don&rsquo;t just put people in the same room.
               </h2>
             </Rise>
@@ -474,7 +474,7 @@ export default function AboutClient() {
                   <li key={key}>
                     <Link
                       href={`/experiences?medium=${name}`}
-                      className="organic-underline font-display text-xl text-ink transition-colors hover:text-tiger-text md:text-2xl"
+                      className="organic-underline font-display text-2xl text-ink transition-colors hover:text-tiger-text md:text-3xl"
                     >
                       {name}
                     </Link>

@@ -16,7 +16,7 @@ export default function Page() {
 
       {/* Heading */}
       <div className="text-center max-w-md mx-auto">
-        <h1 className="font-display text-4xl sm:text-5xl font-semibold text-ink mb-4 leading-tight">
+        <h1 className="font-display text-5xl sm:text-6xl font-semibold text-ink mb-4 leading-tight">
           Join Tiger Club
         </h1>
         <p className="text-ink/65 text-base sm:text-lg leading-relaxed">

@@ -83,7 +83,7 @@ export default function WorkWithUsClient() {
           <p className="font-mono text-xs tracking-wideish uppercase text-tiger-text mb-3">
             work with us
           </p>
-          <h1 className="font-display text-4xl md:text-6xl text-ink leading-tight">
+          <h1 className="font-display text-5xl md:text-7xl text-ink leading-tight">
             we turn your ideas into real experiences.
           </h1>
           <p className="text-ink/70 mt-4 text-sm md:text-base max-w-xl">
