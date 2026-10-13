@@ -154,7 +154,7 @@ body {
    The vw-based value is a fallback for browsers without container query
    support; the @supports block overrides it once cqw is available. */
 .hero-tagline {
-  font-size: clamp(2.4rem, 9.5vw, 5.8rem);
+  font-size: clamp(2.1rem, 8.5vw, 5.2rem);
 }
 
 @supports (container-type: inline-size) {
@@ -583,7 +583,7 @@ body {
        Instrument Serif ships exactly ONE weight — 400, no bold face.
        Thickening is done via stroke (continuous, unlike synthetic bold).
        Dial between 0 (plain 400) and 0.04em (full synthetic-bold look). */
-    font-size: clamp(50px, 13vw, 66px) !important;
+    font-size: clamp(46px, 12vw, 60px) !important;
     font-weight: 700 !important;
     flex-wrap: wrap !important;
     line-height: 1.05 !important;
