@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import WordsFindEachOther from "./WordsFindEachOther";
-import RotatingLine from "./RotatingLine";
 import HeroBackdrop from "./HeroBackdrop";
 
 export default function Hero() {
@@ -18,15 +17,11 @@ export default function Hero() {
         <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10">
           <WordsFindEachOther />
 
-          <div className="w-full max-w-2xl">
-            <RotatingLine />
-          </div>
-
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 1.1 }}
-            className="mt-10 md:mt-12"
+            className="mt-8 md:mt-10"
           >
             <Link
               href="/experiences"
