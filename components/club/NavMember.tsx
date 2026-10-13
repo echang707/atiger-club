@@ -7,7 +7,7 @@ export default function NavMember() {
   return (
     <Link
       href="/join"
-      className="whitespace-nowrap text-[14px] font-semibold text-tiger-fill transition-colors duration-200 hover:text-tiger-deep"
+      className="whitespace-nowrap text-[16px] font-semibold text-tiger-fill transition-colors duration-200 hover:text-tiger-deep"
     >
       Join →
     </Link>

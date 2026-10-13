@@ -54,7 +54,7 @@ export default function Nav() {
           <TigerWordmark className="text-[10.5px] sm:text-base md:text-xl" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
+        <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[17px] justify-self-center">
           <Link
             href="/experiences"
             className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"

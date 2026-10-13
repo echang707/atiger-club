@@ -58,7 +58,7 @@ const instrument = Instrument_Serif({
 const barlowSC = Barlow_Semi_Condensed({
   subsets: ["latin"],
   variable: "--font-barlow-sc",
-  weight: ["700"],
+  weight: ["600", "700"],
   style: ["normal", "italic"],  // next/font loader needs both to build the download URL
   display: "swap",
 });

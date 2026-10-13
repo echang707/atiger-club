@@ -14,7 +14,7 @@ export default function Hero() {
 
       {/* Content centred via --hero-copy-fix system from HeroBackdrop */}
       <div className="hero-content absolute inset-0 flex items-center justify-center">
-        <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10">
+        <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10 -translate-y-6 sm:translate-y-0">
           <WordsFindEachOther />
 
           <motion.div
@@ -23,24 +23,64 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 1.1 }}
             className="mt-8 md:mt-10"
           >
+            {/* Tail-shaped button — wide orange base with black tiger stripes
+                tapering to a narrow tip. Text sits on the clean base,
+                stripes occupy the taper. */}
             <Link
               href="/experiences"
-              className="btn-tiger inline-flex items-center gap-2 rounded-full px-7 py-4 text-[15px] font-semibold text-white"
+              aria-label="Explore experiences"
+              className="inline-block transition-[filter,transform] duration-200 hover:brightness-110 hover:-translate-y-px active:translate-y-0 active:brightness-95"
             >
-              Explore experiences
-              {/* Tiger tail — replaces the boring arrow */}
               <svg
-                width="16" height="18" viewBox="0 0 16 18"
-                fill="none" aria-hidden="true"
-                style={{ display: "block", flexShrink: 0 }}
+                viewBox="0 0 294 56"
+                width="294"
+                height="56"
+                aria-hidden="true"
+                style={{ display: "block", overflow: "visible",
+                         filter: "drop-shadow(0 4px 18px rgba(210,71,15,0.42))" }}
               >
+                <defs>
+                  <linearGradient id="tail-tg" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stopColor="#E0500E" />
+                    <stop offset="60%"  stopColor="#C84010" />
+                    <stop offset="100%" stopColor="#A03208" />
+                  </linearGradient>
+                  <clipPath id="tail-clip">
+                    <path d="M 36,5 C 92,2 160,4 210,10 C 244,14 268,20 274,28 C 268,36 244,42 210,46 C 160,52 92,54 36,51 C 17,51 4,41 4,28 C 4,15 17,5 36,5 Z" />
+                  </clipPath>
+                </defs>
+                {/* Orange body */}
                 <path
-                  d="M 4,17 C 4,10 4,4 9,3 C 12.5,2.5 14,5.5 11,8 C 9.5,9.2 7.5,8.5 8.5,6.5"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  d="M 36,5 C 92,2 160,4 210,10 C 244,14 268,20 274,28 C 268,36 244,42 210,46 C 160,52 92,54 36,51 C 17,51 4,41 4,28 C 4,15 17,5 36,5 Z"
+                  fill="url(#tail-tg)"
                 />
+                {/* Black stripes — taper only, so text base stays clean */}
+                <g clipPath="url(#tail-clip)">
+                  <line x1="158" y1="-4" x2="152" y2="60" stroke="#0E0A06" strokeWidth="11" />
+                  <line x1="186" y1="-4" x2="181" y2="60" stroke="#0E0A06" strokeWidth="9"  />
+                  <line x1="211" y1="-4" x2="207" y2="60" stroke="#0E0A06" strokeWidth="7"  />
+                  <line x1="233" y1="-4" x2="230" y2="60" stroke="#0E0A06" strokeWidth="5"  />
+                  <line x1="251" y1="-4" x2="249" y2="60" stroke="#0E0A06" strokeWidth="4"  />
+                  <line x1="264" y1="-4" x2="263" y2="60" stroke="#0E0A06" strokeWidth="3"  />
+                  <line x1="272" y1="-4" x2="271" y2="60" stroke="#0E0A06" strokeWidth="2"  />
+                </g>
+                {/* Soft top-edge highlight */}
+                <path
+                  d="M 36,5 C 92,2 160,4 210,10 C 244,14 268,20 274,28"
+                  stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"
+                  fill="none" strokeLinecap="round"
+                />
+                {/* Label — centred in the clean wide base */}
+                <text
+                  x="100" y="28"
+                  dominantBaseline="central" textAnchor="middle"
+                  fontFamily="var(--font-bricolage), sans-serif"
+                  fontSize="15" fontWeight="600" letterSpacing="0.01em"
+                  fill="white"
+                  style={{ textShadow: "0 1px 8px rgba(0,0,0,0.45)" }}
+                >
+                  Explore experiences
+                </text>
               </svg>
             </Link>
           </motion.div>
