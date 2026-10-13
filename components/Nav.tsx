@@ -18,9 +18,10 @@ function MobileAvatar() {
     return (
       <Link
         href="/join"
-        className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-[11px] font-semibold text-ink"
+        className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[12px] font-bold text-white"
+        aria-label="Join the club"
       >
-        ?
+        +
       </Link>
     );
   }

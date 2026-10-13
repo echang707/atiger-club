@@ -594,7 +594,9 @@ body {
   }
   .hero-subline {
     font-size: 17px !important;
-    margin-top: 32px !important;
+    /* Reduced from 32px — the two-line headline is taller now and the
+       old gap pushed the subline down into the illustration figures. */
+    margin-top: 16px !important;
     width: auto !important;
     max-width: 78% !important;
   }
@@ -665,7 +667,10 @@ body {
      (1.54 MacBook to 1.78 at 1080p): worst case is ~7%, taken off the
      cream margin rather than the figures. */
   background-size: cover;
-  background-position: center;
+  /* Shift the composition upward so the figures and illustration centre
+     on the text rather than sitting below it. 42% = slightly above
+     centre; bump to 38% to go further, 46% to return closer to centre. */
+  background-position: center 42%;
 }
 
 /* The artwork sits just BELOW the header, not underneath it. Its top edge
