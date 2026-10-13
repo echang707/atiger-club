@@ -70,7 +70,8 @@ export default function CursorThread() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
+    const c = canvas; // non-nullable alias for use inside closures
+    const ctx = c.getContext("2d")!;
 
     let W = 0, H = 0;
     let mx = window.innerWidth / 2;
@@ -86,8 +87,8 @@ export default function CursorThread() {
 
     /* ── resize ──────────────────────────────────────────────────── */
     function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      W = c.width  = window.innerWidth;
+      H = c.height = window.innerHeight;
     }
     window.addEventListener("resize", resize);
     resize();
