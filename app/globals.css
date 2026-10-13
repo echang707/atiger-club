@@ -155,9 +155,6 @@ body {
    support; the @supports block overrides it once cqw is available. */
 .hero-tagline {
   font-size: clamp(2.1rem, 10.5vw, 6.4rem);
-  /* Fractional stroke adds weight without requiring a bold axis —
-     Instrument Serif only ships at 400. Dial between 0 and 0.04em. */
-  -webkit-text-stroke: 0.016em currentColor;
 }
 
 @supports (container-type: inline-size) {
@@ -587,8 +584,7 @@ body {
        Thickening is done via stroke (continuous, unlike synthetic bold).
        Dial between 0 (plain 400) and 0.04em (full synthetic-bold look). */
     font-size: clamp(52px, 13.5vw, 68px) !important;
-    font-weight: 400 !important;
-    -webkit-text-stroke: 0.018em currentColor;
+    font-weight: 800 !important;
     flex-wrap: wrap !important;
     line-height: 1.05 !important;
   }

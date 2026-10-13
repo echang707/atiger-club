@@ -41,7 +41,7 @@ const config: Config = {
         hand: ["var(--font-caveat)", "cursive"],
         mono: ["var(--font-jetbrains)", "monospace"],
         wordmark: ["var(--font-bricolage)", "sans-serif"],
-        tagline: ["var(--font-instrument)", "serif"],
+        tagline: ["var(--font-bricolage)", "sans-serif"],
       },
       letterSpacing: {
         tightest: "-0.045em",
