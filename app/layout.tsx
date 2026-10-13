@@ -59,7 +59,7 @@ const barlowSC = Barlow_Semi_Condensed({
   subsets: ["latin"],
   variable: "--font-barlow-sc",
   weight: ["700"],
-  style: ["italic"],
+  style: ["normal", "italic"],  // next/font loader needs both to build the download URL
   display: "swap",
 });
 
