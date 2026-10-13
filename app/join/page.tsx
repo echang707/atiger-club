@@ -34,7 +34,7 @@ export default function Page() {
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full rounded-full bg-[#5865F2] hover:bg-[#4752C4] active:bg-[#3C45A5] transition-colors px-8 py-4 text-white font-semibold text-[17px]"
         >
-          <DiscordLogo aria-hidden="true" />
+          <DiscordLogo aria-hidden={true} />
           Join the Discord
         </a>
       </div>
