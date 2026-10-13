@@ -49,7 +49,7 @@ export default function WordsFindEachOther() {
     // has anywhere to wrap to regardless of how the surrounding layout
     // constrains this element's width.
     <div className="hero-tagline-wrap w-full">
-      <h1 className="hero-tagline font-tagline font-extrabold tracking-tighter text-ink text-center leading-[1.06] flex flex-nowrap items-baseline justify-center whitespace-nowrap gap-x-[0.26em]">
+      <h1 className="hero-tagline font-tagline font-bold tracking-tighter text-ink text-center leading-[1.06] flex flex-nowrap items-baseline justify-center whitespace-nowrap gap-x-[0.26em]">
         {words.map((w, i) => <Word key={w.text} w={w} i={i} />)}
         <motion.span
           initial={{ opacity: 0, scale: 0.82 }}
