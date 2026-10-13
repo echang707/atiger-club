@@ -25,9 +25,23 @@ export default function Hero() {
           >
             <Link
               href="/experiences"
-              className="inline-flex items-center gap-2 rounded-full bg-tiger-fill px-7 py-3.5 text-[15px] font-semibold text-white transition-colors duration-300 hover:bg-tiger-deep"
+              className="btn-tiger inline-flex items-center gap-2 rounded-full px-7 py-4 text-[15px] font-semibold text-white"
             >
-              Explore experiences →
+              Explore experiences
+              {/* Tiger tail — replaces the boring arrow */}
+              <svg
+                width="16" height="18" viewBox="0 0 16 18"
+                fill="none" aria-hidden="true"
+                style={{ display: "block", flexShrink: 0 }}
+              >
+                <path
+                  d="M 4,17 C 4,10 4,4 9,3 C 12.5,2.5 14,5.5 11,8 C 9.5,9.2 7.5,8.5 8.5,6.5"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Link>
           </motion.div>
         </div>

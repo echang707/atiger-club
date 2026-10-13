@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
 import NewsletterPopup from "@/components/NewsletterPopup";
-import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
+import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif, Barlow_Semi_Condensed } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
@@ -51,6 +51,15 @@ const instrument = Instrument_Serif({
   variable: "--font-instrument",
   weight: ["400"],
   style: ["normal", "italic"],
+  display: "swap",
+});
+
+// Hero headline: condensed bold italic — has real weight, no text-stroke needed.
+const barlowSC = Barlow_Semi_Condensed({
+  subsets: ["latin"],
+  variable: "--font-barlow-sc",
+  weight: ["700"],
+  style: ["italic"],
   display: "swap",
 });
 
@@ -159,7 +168,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable} ${bricolage.variable} ${instrument.variable}`}
+      className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable} ${bricolage.variable} ${instrument.variable} ${barlowSC.variable}`}
     >
       <body className="font-sans antialiased">
         <script
