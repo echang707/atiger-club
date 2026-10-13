@@ -6,31 +6,6 @@ import { useEffect, useState } from "react";
 import TigerWordmark from "./TigerWordmark";
 import NavMember from "./club/NavMember";
 import NavMemberMobile from "./club/NavMemberMobile";
-import { useMember } from "./club/MemberProvider";
-
-/* Avatar-only button for the mobile nav bar right slot. Tapping it
-   opens the drawer — same as the hamburger — so the icon is just a
-   visual shortcut to the membership section. */
-function MobileAvatar() {
-  const { member, loading, available } = useMember();
-  if (!available || loading) return <span className="h-7 w-7 md:hidden" />;
-  if (!member) {
-    return (
-      <Link
-        href="/join"
-        className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[12px] font-bold text-white"
-        aria-label="Join the club"
-      >
-        +
-      </Link>
-    );
-  }
-  return (
-    <span className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[11px] font-bold text-white select-none">
-      {member.firstName.trim().charAt(0).toUpperCase() || "T"}
-    </span>
-  );
-}
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -101,10 +76,7 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
-          {/* Desktop: full auth button. Mobile: avatar icon only on the
-              right, hamburger in the middle — Tiger Club · ≡ · avatar */}
           <div className="hidden md:block"><NavMember /></div>
-          <MobileAvatar />
 
           <button
             type="button"

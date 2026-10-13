@@ -593,12 +593,14 @@ body {
     line-height: 1.05 !important;
   }
   .hero-subline {
-    font-size: 17px !important;
-    /* Reduced from 32px — the two-line headline is taller now and the
-       old gap pushed the subline down into the illustration figures. */
-    margin-top: 16px !important;
-    width: auto !important;
-    max-width: 78% !important;
+    /* New hero has no illustration to collide with — subline is restored.
+       Smaller font, tighter margin, and wrapping allowed on mobile. */
+    display: block !important;
+    font-size: 16px !important;
+    margin-top: 20px !important;
+    white-space: normal !important;
+    max-width: 85% !important;
+    text-align: center !important;
   }
 }
 
