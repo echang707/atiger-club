@@ -8,13 +8,13 @@ import CursorThread from "./CursorThread";
 
 export default function Hero() {
   return (
-    <section className="relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden pt-[72px]">
 
       {/* Interactive cursor thread — fixed canvas, pointer-events none */}
       <CursorThread />
 
-      {/* Copy — padded below the fixed nav */}
-      <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10 pt-[76px] md:pt-20">
+      {/* Copy — centered in the space below the fixed nav */}
+      <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10">
         <WordsFindEachOther />
 
         {/* hero-subline margin-top is owned by the CSS class */}
