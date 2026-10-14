@@ -42,6 +42,7 @@ const config: Config = {
         mono: ["var(--font-jetbrains)", "monospace"],
         wordmark: ["var(--font-bricolage)", "sans-serif"],
         tagline: ["var(--font-barlow-sc)", "sans-serif"],
+        instrument: ["var(--font-instrument)", "serif"],
       },
       letterSpacing: {
         tightest: "-0.045em",

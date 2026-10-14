@@ -180,9 +180,48 @@ body {
 
 .hero-tagline {
   font-size: clamp(2.1rem, 10.5vw, 6.4rem);
-  /* Barlow Semi Condensed ships at real 700 weight — no fake stroke needed. */
-  -webkit-text-stroke: 0;
+  /* Instrument Serif italic 400 is naturally thin at large sizes — a hairline
+     stroke adds just enough presence without looking synthetic. */
+  -webkit-text-stroke: 0.012em currentColor;
 }
+
+/* Hero CTA — rounded box, ink border, orange flood fill on hover */
+.btn-hero {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(21,19,14,0.28);
+  color: #15130E;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color 0.28s ease, border-color 0.28s ease, transform 0.2s ease;
+  text-decoration: none;
+}
+.btn-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #D2470F;
+  transform: translateY(101%);
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-hero:hover {
+  color: white;
+  border-color: #D2470F;
+  transform: translateY(-1px);
+}
+.btn-hero:hover::before { transform: translateY(0); }
+.btn-hero:active { transform: translateY(0); }
+.btn-hero > * { position: relative; z-index: 1; }
+.btn-hero .btn-arrow {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-hero:hover .btn-arrow { transform: translateX(3px); }
 
 @supports (container-type: inline-size) {
   .hero-tagline-wrap {
