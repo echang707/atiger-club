@@ -24,7 +24,7 @@ export default function Hero() {
             className="mt-8 md:mt-10"
           >
             <Link href="/experiences" className="btn-hero font-sans">
-              Explore experiences
+              <span>Explore experiences</span>
               <span className="btn-arrow" aria-hidden="true">→</span>
             </Link>
           </motion.div>
