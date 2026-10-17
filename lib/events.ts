@@ -460,6 +460,24 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "original",
+    time: "6pm – 10pm",
+    id: "multicultural-friendsgiving",
+    title: "Multicultural Friendsgiving",
+    medium: "Eat",
+    city: "Atlanta",
+    date: "Nov 19",
+    month: "NOV",
+    day: "19",
+    location: "Chow À La Carte, Atlanta",
+    address: "2440 Piedmont Rd, Atlanta, GA",
+    description:
+      "This Friendsgiving, we’re bringing the world to the table. Ten local food pop-ups and vendors will be sharing dishes rooted in their cultures, family traditions, and celebrations — available to purchase à la carte. Come hungry, try something new, meet the people behind the food, and leave knowing a little more about the cultures that make Atlanta special. Whether you’re coming with friends or showing up solo, everyone’s welcome.",
+    image: "/images/multicultural-friendsgiving.png",
+    price: "À la carte",
+    /* Add partifulLink once the Partiful event is live */
+  },
+  {
+    kind: "original",
     time: "10am",
     id: "great-atlanta-race",
     title: "The Great Atlanta Race",
