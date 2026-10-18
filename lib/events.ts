@@ -426,6 +426,26 @@ export const events: TigerEvent[] = [
     presentedBy: "Chefs Club",
   },
   {
+    kind: "collab",
+    presentedBy: "Atlanta International Night Market",
+    time: "Fri 5–10pm · Sat 2–10pm",
+    id: "atl-night-market-creative-corner",
+    title: "The Creative Corner — ATL Night Market",
+    medium: "Create",
+    city: "Atlanta",
+    date: "Nov 6",
+    month: "NOV",
+    day: "6",
+    location: "Lillian Webb Park, Norcross, GA",
+    address: "33 College St, Norcross, GA",
+    description:
+      "Tiger Club is curating an interactive creative corner at the Atlanta International Night Market — two nights of artists, makers, and hands-on activities inspired by cultures from around the world. Try something new, make something to take home, contribute to a collaborative art piece, and meet some interesting people. More artists and activities to be announced.",
+    image: "/images/atl-night-market.jpg",
+    link: "https://atlantanightmarket.com",
+    linkLabel: "Night Market Info",
+    /* Add partifulLink once the Partiful event is live */
+  },
+  {
     kind: "pick",
     time: "11am – 2pm",
     id: "atl-donut-crawl-5k",
@@ -474,6 +494,23 @@ export const events: TigerEvent[] = [
       "This Friendsgiving, we’re bringing the world to the table. Ten local food pop-ups and vendors will be sharing dishes rooted in their cultures, family traditions, and celebrations — available to purchase à la carte. Come hungry, try something new, meet the people behind the food, and leave knowing a little more about the cultures that make Atlanta special. Whether you’re coming with friends or showing up solo, everyone’s welcome.",
     image: "/images/multicultural-friendsgiving.png",
     price: "À la carte",
+    /* Add partifulLink once the Partiful event is live */
+  },
+  {
+    kind: "original",
+    time: "10am – 12pm",
+    id: "tiny-art-exchange",
+    title: "Creative Café: Tiny Art Exchange",
+    medium: "Create",
+    city: "Atlanta",
+    date: "Nov 21",
+    month: "NOV",
+    day: "21",
+    location: "Amistad Coffee, Atlanta",
+    address: "1270 W Peachtree St NW, Atlanta, GA 30309",
+    description:
+      "Make a tiny piece of art, exchange it with someone new, and take home something handmade. Bring something you’ve already made or create at the café — paintings, drawings, collages, anything small works. The first hour is for making and meeting people; the second is for the exchange itself. No art experience needed, just show up and see what you make.",
+    image: "/images/tiny-art-exchange.png",
     /* Add partifulLink once the Partiful event is live */
   },
   {
