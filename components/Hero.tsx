@@ -1,42 +1,30 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import WordsFindEachOther from "./WordsFindEachOther";
 import HeroBackdrop from "./HeroBackdrop";
+import RotatingLine from "./RotatingLine";
+import WordsFindEachOther from "./WordsFindEachOther";
 
 export default function Hero() {
   return (
-    <section className="hero-shell relative overflow-hidden">
-
-      {/* Character illustration backdrop — sets CSS vars for centering */}
+    <section className="hero-shell relative w-full">
+      {/* One static illustration, sized to cover the hero. */}
       <HeroBackdrop />
 
-      {/* Content centred via --hero-copy-fix system from HeroBackdrop */}
-      <div className="hero-content absolute inset-0 flex items-center justify-center">
-        <div className="relative z-10 flex flex-col items-center w-full max-w-4xl mx-auto px-5 sm:px-6 md:px-10 -translate-y-6 sm:translate-y-0">
+      {/* Centred in the viewport AND in the artwork's clear middle — the
+          hero is exactly one screen and both illustrations leave their
+          open cream in the centre, so one position satisfies both. */}
+      <div className="hero-content absolute left-1/2 top-[var(--hero-content-top)] z-10 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-5 sm:px-6 md:px-10">
+        <div className="hero-tagline-wrap mx-auto w-full max-w-4xl flex flex-col items-center">
           <WordsFindEachOther />
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 1.1 }}
-            className="mt-8 md:mt-10"
-          >
-            <Link href="/experiences" className="btn-hero font-sans">
-              <span>Explore experiences</span>
-              <span className="btn-arrow" aria-hidden="true">→</span>
-            </Link>
-          </motion.div>
+          {/* No margin here: the gap is owned solely by `.hero-subline`'s
+              own margin-top, so there is one place to tune it. This
+              wrapper used to add mt-9/mt-8 on top of that, which is why
+              the two lines drifted so far apart. */}
+          <div className="w-full max-w-2xl">
+            <RotatingLine />
+          </div>
         </div>
       </div>
-
-      {/* Cream fade at the bottom */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 md:h-36"
-        style={{ background: "linear-gradient(to bottom, transparent, #F4E9D6)" }}
-      />
     </section>
   );
 }

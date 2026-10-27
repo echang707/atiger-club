@@ -6,6 +6,30 @@ import { useEffect, useState } from "react";
 import TigerWordmark from "./TigerWordmark";
 import NavMember from "./club/NavMember";
 import NavMemberMobile from "./club/NavMemberMobile";
+import { useMember } from "./club/MemberProvider";
+
+/* Avatar-only button for the mobile nav bar right slot. Tapping it
+   opens the drawer — same as the hamburger — so the icon is just a
+   visual shortcut to the membership section. */
+function MobileAvatar() {
+  const { member, loading, available } = useMember();
+  if (!available || loading) return <span className="h-7 w-7 md:hidden" />;
+  if (!member) {
+    return (
+      <Link
+        href="/join"
+        className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-[11px] font-semibold text-ink"
+      >
+        ?
+      </Link>
+    );
+  }
+  return (
+    <span className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[11px] font-bold text-white select-none">
+      {member.firstName.trim().charAt(0).toUpperCase() || "T"}
+    </span>
+  );
+}
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -54,7 +78,7 @@ export default function Nav() {
           <TigerWordmark className="text-[10.5px] sm:text-base md:text-xl" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[17px] justify-self-center">
+        <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
           <Link
             href="/experiences"
             className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
@@ -76,7 +100,10 @@ export default function Nav() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 justify-self-end">
+          {/* Desktop: full auth button. Mobile: avatar icon only on the
+              right, hamburger in the middle — Tiger Club · ≡ · avatar */}
           <div className="hidden md:block"><NavMember /></div>
+          <MobileAvatar />
 
           <button
             type="button"
@@ -85,17 +112,13 @@ export default function Nav() {
             onClick={() => setOpen((o) => !o)}
             className="md:hidden relative -mr-1 h-8 w-8 flex items-center justify-center text-ink order-first"
           >
-            <span className="relative block h-[14px] w-[22px]">
+            <span className="relative block h-3.5 w-5">
               <span
-                className="absolute left-0 top-0 h-[2px] w-full bg-current rounded-full transition-all duration-300"
+                className="absolute left-0 top-0 h-[1.5px] w-full bg-current transition-all duration-300"
                 style={{ transform: open ? "translateY(6px) rotate(45deg)" : "none" }}
               />
               <span
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-full bg-current rounded-full transition-all duration-300"
-                style={{ opacity: open ? 0 : 1, transform: open ? "scaleX(0)" : "scaleX(1)" }}
-              />
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current rounded-full transition-all duration-300"
+                className="absolute left-0 bottom-0 h-[1.5px] w-full bg-current transition-all duration-300"
                 style={{ transform: open ? "translateY(-6px) rotate(-45deg)" : "none" }}
               />
             </span>

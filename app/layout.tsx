@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
 import NewsletterPopup from "@/components/NewsletterPopup";
-import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif, Barlow_Semi_Condensed } from "next/font/google";
+import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
 import Footer from "@/components/Footer";
+import DiscordFab from "@/components/DiscordFab";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
 const fraunces = Fraunces({
@@ -51,15 +52,6 @@ const instrument = Instrument_Serif({
   variable: "--font-instrument",
   weight: ["400"],
   style: ["normal", "italic"],
-  display: "swap",
-});
-
-// Hero headline: condensed bold italic — has real weight, no text-stroke needed.
-const barlowSC = Barlow_Semi_Condensed({
-  subsets: ["latin"],
-  variable: "--font-barlow-sc",
-  weight: ["600", "700"],
-  style: ["normal", "italic"],  // next/font loader needs both to build the download URL
   display: "swap",
 });
 
@@ -168,7 +160,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable} ${bricolage.variable} ${instrument.variable} ${barlowSC.variable}`}
+      className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable} ${bricolage.variable} ${instrument.variable}`}
     >
       <body className="font-sans antialiased">
         <script
@@ -209,6 +201,7 @@ export default function RootLayout({
           {children}
           <Footer />
         </div>
+        <DiscordFab />
         <NewsletterPopup />
         </MemberProvider>
       </body>

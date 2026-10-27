@@ -153,82 +153,16 @@ body {
    matter how the surrounding layout constrains this element's width.
    The vw-based value is a fallback for browsers without container query
    support; the @supports block overrides it once cqw is available. */
-/* Tiger CTA button — gradient + warm glow, used in Hero and anywhere
-   else a primary "tiger" button is needed. Replaces flat bg-tiger-fill. */
-.btn-tiger {
-  /* Tiger stripes: subtle diagonal bars over the orange gradient */
-  background:
-    repeating-linear-gradient(
-      -52deg,
-      transparent 0,
-      transparent 10px,
-      rgba(0, 0, 0, 0.07) 10px,
-      rgba(0, 0, 0, 0.07) 14px
-    ),
-    linear-gradient(140deg, #D2470F 0%, #A9350C 100%);
-  box-shadow: 0 4px 22px rgba(210, 71, 15, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: box-shadow 0.28s ease, transform 0.22s ease;
-}
-.btn-tiger:hover {
-  box-shadow: 0 6px 32px rgba(210, 71, 15, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-.btn-tiger:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 14px rgba(210, 71, 15, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
 .hero-tagline {
-  font-size: clamp(2.1rem, 10.5vw, 6.4rem);
-  /* Instrument Serif italic 400 is naturally thin at large sizes — a hairline
-     stroke adds just enough presence without looking synthetic. */
-  -webkit-text-stroke: 0.012em currentColor;
+  font-size: clamp(2.1rem, 8.7vw, 5.1rem);
 }
-
-/* Hero CTA — rounded box, ink border, orange flood fill on hover */
-.btn-hero {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 26px;
-  border-radius: 12px;
-  border: 1.5px solid rgba(21,19,14,0.28);
-  color: #15130E;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  transition: color 0.28s ease, border-color 0.28s ease, transform 0.2s ease;
-  text-decoration: none;
-}
-.btn-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #D2470F;
-  transform: translateY(101%);
-  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.btn-hero:hover {
-  color: white;
-  border-color: #D2470F;
-  transform: translateY(-1px);
-}
-.btn-hero:hover::before { transform: translateY(0); }
-.btn-hero:active { transform: translateY(0); }
-.btn-hero > * { position: relative; z-index: 1; }
-.btn-hero .btn-arrow {
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.btn-hero:hover .btn-arrow { transform: translateX(3px); }
 
 @supports (container-type: inline-size) {
   .hero-tagline-wrap {
     container-type: inline-size;
   }
   .hero-tagline {
-    font-size: clamp(1.75rem, 9.5cqw, 6.4rem);
+    font-size: clamp(1.75rem, 8.1cqw, 5.1rem);
   }
 }
 
@@ -639,32 +573,26 @@ body {
      430x950 — no longer tiny, but still verified to never touch
      anything at any size in that range. */
   .hero-tagline {
-    /* Let the headline wrap across two lines so the font can be large
-       enough to actually read as a hero — at 28px it looked like body
-       text. With flex-wrap the words settle as two balanced rows:
-         "life is better"
-         "together."
-       which is a proper editorial headline weight on mobile.
+    font-size: clamp(28px, 6.9vw, 38px) !important;
+    /* Instrument Serif ships exactly ONE weight — 400, no bold face and no
+       variable axis (see layout.tsx, which requests weight ["400"]). So
+       the 600 that used to be here was never a real weight: it was the
+       browser SYNTHESISING bold off the 400 glyphs. Synthetic bold is
+       all-or-nothing, so asking for 500 or 550 would have dropped it
+       entirely and rendered identically to plain 400 — a full step
+       lighter, not a slight one.
 
-       Instrument Serif ships exactly ONE weight — 400, no bold face.
-       Thickening is done via stroke (continuous, unlike synthetic bold).
-       Dial between 0 (plain 400) and 0.04em (full synthetic-bold look). */
-    font-size: clamp(52px, 13.5vw, 68px) !important;
+       To get a fractional step the weight is set to the real 400 and the
+       thickening is done with a stroke, which IS continuous. Browsers
+       synthesise bold at roughly 0.04em, so 0.028em is about 70% of the
+       old weight — slightly lighter, as asked. This is also more
+       consistent than synthetic bold, which each engine computes
+       differently. Dial between 0 (plain 400) and 0.04em (the old look).
+       Mobile only: desktop uses the untouched 400 from `font-normal`. */
     font-weight: 400 !important;
-    -webkit-text-stroke: 0.018em currentColor;
-    flex-wrap: wrap !important;
-    line-height: 1.05 !important;
+    -webkit-text-stroke: 0.016em currentColor;
   }
-  .hero-subline {
-    /* New hero has no illustration to collide with — subline is restored.
-       Smaller font, tighter margin, and wrapping allowed on mobile. */
-    display: block !important;
-    font-size: 16px !important;
-    margin-top: 20px !important;
-    white-space: normal !important;
-    max-width: 85% !important;
-    text-align: center !important;
-  }
+  .hero-subline { font-size: 15px !important; margin-top: 30px !important; width: 56%; max-width: 56%; }
 }
 
 /* ---------------------------------------------------------------------
@@ -732,10 +660,7 @@ body {
      (1.54 MacBook to 1.78 at 1080p): worst case is ~7%, taken off the
      cream margin rather than the figures. */
   background-size: cover;
-  /* Shift the composition upward so the figures and illustration centre
-     on the text rather than sitting below it. 42% = slightly above
-     centre; bump to 38% to go further, 46% to return closer to centre. */
-  background-position: center 42%;
+  background-position: center;
 }
 
 /* The artwork sits just BELOW the header, not underneath it. Its top edge

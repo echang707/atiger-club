@@ -13,7 +13,7 @@
    every centring value tuned against it still apply.
    --------------------------------------------------------------------- */
 
-const LINE = "explore experiences.";
+const LINE = "meet people. experience atlanta.";
 
 export default function RotatingLine(_props: {
   intervalMs?: number;
