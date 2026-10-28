@@ -50,6 +50,7 @@ const bricolage = Bricolage_Grotesque({
 const instrument = Instrument_Serif({
   subsets: ["latin"],
   variable: "--font-instrument",
+  weight: "400",
   style: ["normal", "italic"],
   display: "swap",
 });
