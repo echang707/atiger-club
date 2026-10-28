@@ -509,6 +509,8 @@ export const events: TigerEvent[] = [
     description:
       "A meal, a play, and a conversation about the American Dream. Tiger Club joins Out of Hand Theater for a free community experience — enjoy a free meal, watch a short thought-provoking play, then join a small-group discussion guided by trained facilitators. Come curious and ready to hear someone else's perspective.",
     image: "/images/we-hold-these-truths.png",
+    price: "Free",
+    partifulLink: "https://partiful.com/e/UBKbdBAOBm5qw9JEsWLg",
   },
   {
     kind: "original",
