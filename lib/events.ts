@@ -427,7 +427,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "pick",
-    time: "11am – 2pm",
+    time: "10am – 12pm",
     id: "atl-donut-crawl-5k",
     title: "ATL Donut Crawl 5K",
     medium: "Move",
