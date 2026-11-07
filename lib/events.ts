@@ -545,6 +545,43 @@ export const events: TigerEvent[] = [
       "Make a tiny piece of art, exchange it with someone new, and take home something handmade.",
     image: "/images/tiny-art-exchange.png",
   },
+  {
+    kind: "collab",
+    presentedBy: "The Bakery Atlanta",
+    time: "7pm – 9pm",
+    id: "letter-writing-social",
+    title: "Letter Writing Social",
+    medium: "Create",
+    city: "Atlanta",
+    date: "Dec 9",
+    month: "DEC",
+    day: "9",
+    location: "The Supermarket, Atlanta",
+    address: "638 N Highland Ave NE, Atlanta, GA",
+    description:
+      "Tiger Club and The Bakery Atlanta team up for an evening of letter writing, creativity, and connection. Put pen to paper and write to a friend, a loved one, or yourself — then meet the people around you over a relaxed evening of conversation. Come solo or with a friend, no writing experience needed.",
+    image: "/images/letter-writing-social.png",
+    partifulLink: "https://partiful.com/e/ty2YiLp0ZqIXCsnQscFs",
+    link: "https://www.tickettailor.com/events/thebakeryatlanta/2514786",
+    linkLabel: "Get Tickets",
+  },
+  {
+    kind: "original",
+    time: "2pm – 4pm",
+    id: "creative-cafe-ornament-making",
+    title: "Creative Café: Ornament Making",
+    medium: "Create",
+    city: "Atlanta",
+    date: "Dec 12",
+    month: "DEC",
+    day: "12",
+    location: "Postern Coffee, Doraville",
+    address: "2421 Van Fleet Cir, Unit 124, Doraville, GA",
+    description:
+      "A holiday edition of Creative Café Social at Postern Coffee. Make your own ornaments, sip on something warm, and meet new people in a relaxed, creative setting. No experience needed — ornament-making supplies provided while supplies last.",
+    image: "/images/ornament-making.png",
+    partifulLink: "https://partiful.com/e/wU5SLcQ2JYAACCfik6ZC",
+  },
 ];
 
 export type Memory = {
