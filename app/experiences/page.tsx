@@ -4,12 +4,14 @@ import ExperiencesClient from "./ExperiencesClient";
 import { events } from "@/lib/events";
 import { SITE_URL } from "@/lib/seo";
 
-const TITLE = "Atlanta Events & Experiences";
+const TITLE = "Atlanta Social Events & Experiences | Tiger Club";
 const DESCRIPTION =
-  "Every upcoming Tiger Club experience in Atlanta — dinners, watch parties, creative meetups, service days, and more — sorted by how you want to leave the house.";
+  "Discover social events in Atlanta with Tiger Club. Meet new people through community dinners, creative workshops, neighborhood adventures, and more.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  // `absolute` bypasses the layout's "%s — Tiger Club" template so the
+  // full title string is used exactly as written, without a doubled suffix.
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: "/experiences" },
   robots: { index: true, follow: true },
