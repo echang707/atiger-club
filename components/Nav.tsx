@@ -13,8 +13,8 @@ import { useMember } from "./club/MemberProvider";
    visual shortcut to the membership section. */
 function MobileAvatar() {
   const { member, loading, available } = useMember();
-  if (available && loading) return <span className="h-7 w-7 md:hidden" />;
-  if (!available || !member) {
+  if (!available || loading) return <span className="h-7 w-7 md:hidden" />;
+  if (!member) {
     return (
       <Link
         href="/join"

@@ -16,7 +16,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMember } from "./MemberProvider";
-import { signOut } from "@/lib/club/supabase";
+import { getSavedEventIds, signOut } from "@/lib/club/supabase";
+import { events, eventSlug } from "@/lib/events";
+import { upcomingAlerts, whenLabel, type Alert } from "@/lib/club/alerts";
 
 export default function NavMember() {
   const { member, loading, available } = useMember();
@@ -43,13 +45,34 @@ export default function NavMember() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  /* Alerts = saved events happening in the next 7 days. Re-checked on
+     every navigation so saving an event updates the dot right away. */
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  useEffect(() => {
+    if (!member) {
+      setAlerts([]);
+      return;
+    }
+    let live = true;
+    getSavedEventIds(member.id).then((ids) => {
+      if (!live) return;
+      setAlerts(upcomingAlerts(events.filter((e) => ids.includes(e.id))));
+    });
+    return () => {
+      live = false;
+    };
+  }, [member, pathname, open]);
+
+  // Membership not configured (missing env vars) — show nothing rather
+  // than links that lead to a broken signup.
+  if (!available) return null;
+
   // Render nothing until the session resolves. Flashing "Join" at a
   // signed-in member on every navigation is the classic tell of a
-  // bolted-on auth system. Joining is a mailing-list signup, so it
-  // works even when account login isn't configured.
-  if (available && loading) return <span className="hidden md:block md:w-[68px]" />;
+  // bolted-on auth system.
+  if (loading) return <span className="hidden md:block md:w-[68px]" />;
 
-  if (!available || !member) {
+  if (!member) {
     // One button, not two. It opens a panel that does both signing up
     // and logging in, so a visitor never has to know in advance which
     // one they need — which is the thing two separate links get wrong.
@@ -70,7 +93,7 @@ export default function NavMember() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-2 whitespace-nowrap rounded-full border border-ink/20 px-2.5 py-1.5 text-[11px] font-semibold leading-none text-ink transition-colors duration-300 hover:border-ink/40 md:border-2 md:px-4 md:py-2.5 md:text-[15px]"
+        className="relative flex items-center gap-2 whitespace-nowrap rounded-full border border-ink/20 px-2.5 py-1.5 text-[11px] font-semibold leading-none text-ink transition-colors duration-300 hover:border-ink/40 md:border-2 md:px-4 md:py-2.5 md:text-[15px]"
       >
         <span
           aria-hidden="true"
@@ -79,6 +102,14 @@ export default function NavMember() {
           {member.firstName.trim().charAt(0).toUpperCase() || "T"}
         </span>
         <span className="hidden sm:inline">Your Club</span>
+        {alerts.length > 0 && (
+          <span
+            className="absolute -top-1 -right-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-tiger-fill px-1 text-[10px] font-bold leading-none text-white ring-2 ring-paper"
+            aria-label={`${alerts.length} saved event${alerts.length === 1 ? "" : "s"} coming up`}
+          >
+            {alerts.length}
+          </span>
+        )}
       </button>
 
       <AnimatePresence>
@@ -98,8 +129,41 @@ export default function NavMember() {
                half-disabled, while items further down were past it and
                looked normal. It was also what made the panel appear
                translucent. */
-            className="absolute right-0 top-[calc(100%+10px)] z-10 w-48 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
+            className="absolute right-0 top-[calc(100%+10px)] z-10 w-72 overflow-hidden rounded-sm border border-ink/10 bg-paper shadow-sm"
           >
+            {/* Coming up — saved events in the next 7 days */}
+            <div className="border-b border-ink/10 px-4 py-3">
+              <p className="font-mono text-[10px] uppercase tracking-wideish text-ink/45">
+                Coming up
+              </p>
+              {alerts.length === 0 ? (
+                <p className="mt-1.5 text-[13px] leading-snug text-ink/55">
+                  Nothing saved this week.{" "}
+                  <Link href="/experiences" className="font-semibold text-tiger-text">
+                    Find something →
+                  </Link>
+                </p>
+              ) : (
+                <ul className="mt-2 space-y-2.5">
+                  {alerts.slice(0, 4).map(({ event, days }) => (
+                    <li key={event.id}>
+                      <Link
+                        href={`/experiences/${eventSlug(event)}`}
+                        role="menuitem"
+                        className="group block"
+                      >
+                        <span className={`font-mono text-[10px] uppercase tracking-wideish ${days <= 1 ? "text-tiger-text" : "text-ink/45"}`}>
+                          {whenLabel(days)}{event.time ? ` · ${event.time}` : ""}
+                        </span>
+                        <span className="block truncate text-[14px] font-semibold text-ink group-hover:text-tiger-text">
+                          {event.title}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <MenuLink href="/member">Your Club</MenuLink>
             <MenuLink href="/member/profile">Your Profile</MenuLink>
             <button

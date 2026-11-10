@@ -19,11 +19,11 @@ export default function NavMemberMobile({
 }) {
   const { member, loading, available } = useMember();
 
-  if (available && loading) return null;
+  if (!available || loading) return null;
 
   const link = "font-display font-semibold text-ink";
 
-  if (!available || !member) {
+  if (!member) {
     return (
       <div className="mt-1 border-t border-ink/10 pt-5">
         <Link href="/join" className={link} onClick={onNavigate}>

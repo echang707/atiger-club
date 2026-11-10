@@ -25,6 +25,8 @@ import {
 } from "./ClubForm";
 import { useMember } from "./MemberProvider";
 import { signIn, signUp } from "@/lib/club/supabase";
+import { subscribe } from "@/lib/mailerlite";
+import { markSubscribed } from "@/lib/newsletterStorage";
 
 type Mode = "join" | "login";
 const MIN_PASSWORD = 8;
@@ -84,12 +86,23 @@ function Panel({ initialMode }: { initialMode: Mode }) {
       mode === "join"
         ? await signUp({ firstName, lastName, email, password })
         : await signIn(email, password);
-    setPending(false);
 
     if (!res.ok) {
+      setPending(false);
       setError(AUTH_MESSAGES[res.reason] ?? AUTH_MESSAGES.unavailable);
       return;
     }
+
+    /* Every new member is also added to the MailerLite list (event
+       invites + newsletter + welcome automation). Same pipeline as the
+       footer form. A MailerLite hiccup must never block the account
+       that was just created, so the result is logged, not surfaced. */
+    if (mode === "join") {
+      const ml = await subscribe(email, "join", firstName);
+      if (ml.ok) markSubscribed();
+      else console.warn("[join] account created but MailerLite subscribe failed");
+    }
+    setPending(false);
     if (res.member === null) {
       setCheckEmail(true);
       return;
@@ -177,8 +190,8 @@ function Panel({ initialMode }: { initialMode: Mode }) {
 
         {joining ? (
           <FormNote>
-            Free, always. Membership gets you member pricing on Tiger Club
-            experiences.
+            Free, always. Save experiences, get reminders before they
+            happen, and get event invites and our newsletter by email.
           </FormNote>
         ) : (
           <p className="text-[14px] text-ink/70">
