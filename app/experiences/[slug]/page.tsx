@@ -176,85 +176,164 @@ export default function EventPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="pt-28 md:pt-36 pb-24">
-        <div className="max-w-content mx-auto px-6 md:px-10">
+      <main className="pt-24 md:pt-32 pb-24">
+        {/* Narrow centered container — Partiful-style focused reading width */}
+        <div className="max-w-lg mx-auto px-5">
 
-          {/* ── top nav ── */}
+          {/* ── back nav ── */}
           <Link
             href="/experiences"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] tracking-wideish uppercase text-ink/50 hover:text-tiger-text transition-colors mb-10 md:mb-14"
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wideish uppercase text-ink/40 hover:text-tiger-text transition-colors mb-8"
           >
-            ← all experiences
+            ← Experiences
           </Link>
 
-          {/* ── past-event notice ── */}
-          {past && (
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-ink/15 px-4 py-1.5">
-              <span className="font-mono text-[10px] tracking-wideish uppercase text-ink/50">
-                Past Event
-              </span>
-            </div>
-          )}
-
-          {/* ── kind badge ── */}
-          <p className="font-mono text-[10px] tracking-wideish uppercase text-tiger-text mb-3">
-            {KIND[kind].label}
-            {event.presentedBy &&
-              ` · ${KIND[kind].by} ${event.presentedBy}`}
-          </p>
-
-          {/* ── title ── */}
-          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-ink leading-tight mb-5 max-w-3xl">
-            {event.title}
-          </h1>
-
-          {/* ── meta row ── */}
-          <p className="font-mono text-xs md:text-sm text-ink/60 mb-10 md:mb-14 leading-relaxed">
-            {event.month} {event.day}, 2026
-            {event.time && ` · ${event.time}`}
-            {" · "}
-            {event.location}
-            {" · "}
-            {event.medium}
-            {event.price && ` · ${event.price}`}
-          </p>
-
           {/* ── hero image ── */}
-          <div className="relative w-full aspect-[4/3] md:aspect-video rounded-sm overflow-hidden mb-10 md:mb-16">
+          <div className="relative w-full aspect-square rounded-xl overflow-hidden">
             <Image
               src={event.image}
               alt={event.title}
               fill
-              sizes="(max-width: 768px) 100vw, 1400px"
+              sizes="(max-width: 640px) 100vw, 512px"
               className="object-cover"
               priority
             />
+            {/* Past event ribbon over image */}
+            {past && (
+              <div className="absolute top-3 left-3">
+                <span className="rounded-full bg-ink/70 backdrop-blur-sm px-3 py-1 font-mono text-[10px] tracking-wideish uppercase text-paper/90">
+                  Past Event
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* ── body ── */}
-          <div className="max-w-2xl">
-
-            {/* Kind blurb */}
-            <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-5 leading-relaxed">
-              {KIND[kind].blurb}
+          {/* ── title block ── */}
+          <div className="mt-5">
+            <p className="font-mono text-[10px] tracking-wideish uppercase text-tiger-text mb-2">
+              {KIND[kind].label}
+              {event.presentedBy && ` · ${KIND[kind].by} ${event.presentedBy}`}
             </p>
+            <h1 className="font-display text-3xl md:text-4xl text-ink leading-tight">
+              {event.title}
+            </h1>
+          </div>
 
-            {/* Description — the single most important text on the page.
-                Never truncated; full prose from lib/events.ts. */}
-            <p className="text-ink/80 leading-relaxed text-base md:text-lg mb-8">
+          {/* ── info rows ── */}
+          <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
+
+            {/* Date & time */}
+            <div className="flex items-start gap-4 py-4">
+              {/* Calendar icon */}
+              <svg
+                aria-hidden="true"
+                className="mt-0.5 w-4 h-4 shrink-0 text-ink/35"
+                fill="none" stroke="currentColor" strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <div>
+                <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-0.5">
+                  Date &amp; Time
+                </p>
+                <p className="text-sm text-ink">
+                  {/* Full month name for readability */}
+                  {new Date(`${event.month} 1, 2026`).toLocaleString("en-US", { month: "long" })}{" "}
+                  {event.day}, 2026
+                </p>
+                {event.time && (
+                  <p className="text-sm text-ink/60 mt-0.5">{event.time}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="flex items-start gap-4 py-4">
+              {/* Pin icon */}
+              <svg
+                aria-hidden="true"
+                className="mt-0.5 w-4 h-4 shrink-0 text-ink/35"
+                fill="none" stroke="currentColor" strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 21C12 21 5 13.5 5 8.5a7 7 0 0 1 14 0C19 13.5 12 21 12 21z"/>
+                <circle cx="12" cy="8.5" r="2.5"/>
+              </svg>
+              <div>
+                <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-0.5">
+                  Location
+                </p>
+                <p className="text-sm text-ink">{event.location}</p>
+                {event.address && (
+                  <p className="text-xs text-ink/50 mt-0.5">{event.address}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Price — only when explicitly set */}
+            {event.price && (
+              <div className="flex items-start gap-4 py-4">
+                {/* Ticket icon */}
+                <svg
+                  aria-hidden="true"
+                  className="mt-0.5 w-4 h-4 shrink-0 text-ink/35"
+                  fill="none" stroke="currentColor" strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M20 12a2 2 0 0 0 0-4V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2z"/>
+                </svg>
+                <div>
+                  <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-0.5">
+                    Price
+                  </p>
+                  <p className="text-sm text-ink">{event.price}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Medium / category */}
+            <div className="flex items-start gap-4 py-4">
+              {/* Tag icon */}
+              <svg
+                aria-hidden="true"
+                className="mt-0.5 w-4 h-4 shrink-0 text-ink/35"
+                fill="none" stroke="currentColor" strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              <div>
+                <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-0.5">
+                  Category
+                </p>
+                <p className="text-sm text-ink">{event.medium}</p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* ── description ── */}
+          <div className="mt-6">
+            <p className="text-sm md:text-base text-ink/75 leading-relaxed">
               {event.description}
             </p>
+          </div>
 
-            {/* ── CTA ── */}
+          {/* ── CTA ── */}
+          <div className="mt-8">
             {past ? (
-              /* Past events: registration is closed. Show a path forward. */
               <div>
-                <p className="text-sm text-ink/50 mb-5">
-                  Registration for this event has closed.
+                <p className="text-xs text-ink/40 font-mono tracking-wideish uppercase mb-4">
+                  Registration closed
                 </p>
                 <Link
                   href="/experiences"
-                  className="inline-block rounded-full bg-tiger-fill border-2 border-tiger-fill px-6 py-3 text-sm font-semibold leading-none text-white transition-colors hover:bg-tiger-deep hover:border-tiger-deep"
+                  className="block w-full text-center rounded-full bg-ink/8 border border-ink/15 px-6 py-3.5 text-sm font-semibold text-ink/70 transition-colors hover:bg-ink/12"
                 >
                   See upcoming experiences →
                 </Link>
@@ -264,32 +343,46 @@ export default function EventPage({
                 href={primaryHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-full bg-tiger-fill border-2 border-tiger-fill px-6 py-3 text-sm font-semibold leading-none text-white transition-colors hover:bg-tiger-deep hover:border-tiger-deep"
+                className="block w-full text-center rounded-full bg-tiger-fill px-6 py-4 text-sm font-semibold text-white transition-colors hover:bg-tiger-deep"
               >
                 {primaryLabel}
               </a>
             ) : (
-              /* No registration link — direct to Discord */
               <a
                 href="https://discord.gg/6u83g4P8Cb"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-full bg-tiger-fill border-2 border-tiger-fill px-6 py-3 text-sm font-semibold leading-none text-white transition-colors hover:bg-tiger-deep hover:border-tiger-deep"
+                className="block w-full text-center rounded-full bg-tiger-fill px-6 py-4 text-sm font-semibold text-white transition-colors hover:bg-tiger-deep"
               >
                 RSVP on Discord
               </a>
             )}
           </div>
 
+          {/* ── hosted by ── */}
+          <div className="mt-8 pt-6 border-t border-ink/10">
+            <p className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 mb-2">
+              Hosted by
+            </p>
+            <p className="text-sm text-ink font-medium">
+              Tiger Club
+              {event.presentedBy && (
+                <span className="font-normal text-ink/60"> · {event.presentedBy}</span>
+              )}
+            </p>
+            <p className="mt-1 text-xs text-ink/40">{KIND[kind].blurb}</p>
+          </div>
+
           {/* ── footer nav ── */}
-          <div className="mt-16 md:mt-24 pt-8 border-t border-ink/10">
+          <div className="mt-10 pt-6 border-t border-ink/10">
             <Link
               href="/experiences"
-              className="font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink/60 hover:text-tiger-text transition-colors"
+              className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 hover:text-tiger-text transition-colors"
             >
-              ← see all experiences
+              ← All experiences
             </Link>
           </div>
+
         </div>
       </main>
     </>
