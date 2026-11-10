@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { TigerEvent } from "@/lib/events";
+import { TigerEvent, eventSlug } from "@/lib/events";
 import { useMember } from "@/components/club/MemberProvider";
 import { toggleSavedEvent } from "@/lib/club/supabase";
 
@@ -197,6 +197,18 @@ export default function EventRow({
                     eventId={event.id}
                     initialSaved={savedIds.includes(event.id)}
                   />
+                </div>
+
+                {/* Dedicated event page — a secondary, unobtrusive link so
+                    the page is discoverable from the listing without
+                    competing with the primary RSVP action. */}
+                <div className="mt-4">
+                  <Link
+                    href={`/experiences/${eventSlug(event)}`}
+                    className="font-mono text-[10px] tracking-wideish uppercase text-ink/40 hover:text-tiger-text transition-colors"
+                  >
+                    Event page →
+                  </Link>
                 </div>
               </div>
             </div>

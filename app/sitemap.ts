@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { events, eventSlug } from "@/lib/events";
 
 // Served at /sitemap.xml.
 //
@@ -31,6 +32,20 @@ import { SITE_URL } from "@/lib/seo";
 // this function to map over `events` from "@/lib/events" and push one entry per
 // event — new events will appear automatically on every build.
 export default function sitemap(): MetadataRoute.Sitemap {
+  // Individual event pages — one entry per event, generated automatically
+  // from the same lib/events.ts array that builds the pages themselves, so
+  // new events appear in the sitemap on the next deploy without any manual
+  // update. lastmod is intentionally omitted: the only timestamp on an event
+  // is its scheduled date, which reflects when it *occurs*, not when its
+  // content was last edited. Supplying a future event date as lastmod would
+  // be incorrect. Add lastmod here once a git-based modification timestamp
+  // is available at build time.
+  const eventUrls: MetadataRoute.Sitemap = events.map((event) => ({
+    url: `${SITE_URL}/experiences/${eventSlug(event)}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   return [
     {
       url: `${SITE_URL}/`,
@@ -42,6 +57,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.9,
     },
+    // Individual event pages follow the listing in priority order.
+    ...eventUrls,
     {
       url: `${SITE_URL}/about`,
       changeFrequency: "monthly",

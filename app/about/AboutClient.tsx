@@ -452,7 +452,7 @@ export default function AboutClient() {
               </Rise>
               <Rise delay={0.1} className="md:col-span-4 md:pb-3">
                 <p className={BODY}>
-                  We&rsquo;re building the social infrastructure for a more connected city.
+                  We&rsquo;re building the social infrastructure for a more connected Atlanta.
                 </p>
                 <Link
                   href="/experiences"

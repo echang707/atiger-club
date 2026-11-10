@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import ExperiencesClient from "./ExperiencesClient";
-import { events } from "@/lib/events";
+import { events, eventSlug } from "@/lib/events";
 import { SITE_URL } from "@/lib/seo";
 
 const TITLE = "Atlanta Social Events & Experiences | Tiger Club";
@@ -38,29 +38,37 @@ function toIsoDate(month: string, day: string, year = "2026") {
 
 // Event structured data for every listed event — rendered server-side
 // so it's present in the initial HTML with no client JS required.
+//
+// @id and url now point to each event's dedicated page rather than a
+// fragment identifier on /experiences or a third-party registration link.
+// This aligns the listing-page structured data with the canonical URLs
+// that exist at app/experiences/[slug]/page.tsx.
 const eventsJsonLd = {
   "@context": "https://schema.org",
-  "@graph": events.map((event) => ({
-    "@type": "Event",
-    "@id": `${SITE_URL}/experiences#${event.id}`,
-    name: event.title,
-    description: event.description,
-    startDate: toIsoDate(event.month, event.day),
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    eventStatus: "https://schema.org/EventScheduled",
-    location: {
-      "@type": "Place",
-      name: event.location,
-      address: event.location,
-    },
-    organizer: {
-      "@type": "Organization",
-      name: "Tiger Club",
-      url: SITE_URL,
-    },
-    image: [event.image],
-    url: event.link ?? `${SITE_URL}/experiences`,
-  })),
+  "@graph": events.map((event) => {
+    const eventPageUrl = `${SITE_URL}/experiences/${eventSlug(event)}`;
+    return {
+      "@type": "Event",
+      "@id": eventPageUrl,
+      name: event.title,
+      description: event.description,
+      startDate: toIsoDate(event.month, event.day),
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      location: {
+        "@type": "Place",
+        name: event.location,
+        address: event.address ?? event.location,
+      },
+      organizer: {
+        "@type": "Organization",
+        name: "Tiger Club",
+        url: SITE_URL,
+      },
+      image: [event.image.startsWith("http") ? event.image : `${SITE_URL}${event.image}`],
+      url: eventPageUrl,
+    };
+  }),
 };
 
 export default function EventsPage() {
