@@ -43,16 +43,13 @@ export default function NavMember() {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  // Membership not configured (missing env vars) — show nothing rather
-  // than links that lead to a broken signup.
-  if (!available) return null;
-
   // Render nothing until the session resolves. Flashing "Join" at a
   // signed-in member on every navigation is the classic tell of a
-  // bolted-on auth system.
-  if (loading) return <span className="hidden md:block md:w-[68px]" />;
+  // bolted-on auth system. Joining is a mailing-list signup, so it
+  // works even when account login isn't configured.
+  if (available && loading) return <span className="hidden md:block md:w-[68px]" />;
 
-  if (!member) {
+  if (!available || !member) {
     // One button, not two. It opens a panel that does both signing up
     // and logging in, so a visitor never has to know in advance which
     // one they need — which is the thing two separate links get wrong.

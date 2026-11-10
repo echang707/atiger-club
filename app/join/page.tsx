@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import AuthPanel from "@/components/club/AuthPanel";
+import JoinClubForm from "@/components/club/JoinClubForm";
 
 export const metadata: Metadata = {
   title: "Join Tiger Club",
   description:
-    "Create a free Tiger Club account and get member pricing on Atlanta experiences.",
+    "Join Tiger Club free — get invites to Atlanta social experiences and our newsletter straight to your inbox.",
 };
 
 export default function Page() {
-  return <AuthPanel initialMode="join" />;
+  return <JoinClubForm />;
 }

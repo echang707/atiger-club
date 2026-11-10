@@ -40,7 +40,7 @@ import { supabase } from "./club/supabase";
 export const ML_FORM_ACTION =
   "https://assets.mailerlite.com/jsonp/1457893/forms/196202585597675120/subscribe";
 
-export type SubscribeSource = "footer" | "popup";
+export type SubscribeSource = "footer" | "popup" | "join";
 
 export type SubscribeResult =
   | { ok: true }
@@ -55,9 +55,11 @@ export function isValidEmail(email: string): boolean {
 /* urlencoded, not FormData. FormData sends multipart/form-data, which
    this endpoint does not parse — that was the original failure. It is
    also a CORS "simple request" in this shape, so no preflight. */
-async function sendToMailerLite(email: string): Promise<boolean> {
+async function sendToMailerLite(email: string, name?: string): Promise<boolean> {
   const body = new URLSearchParams();
   body.set("fields[email]", email);
+  // MailerLite's default "name" field — shows as First name on the subscriber.
+  if (name) body.set("fields[name]", name);
   body.set("ml-submit", "1");
   body.set("anticsrf", "true");
 
@@ -90,6 +92,7 @@ async function sendToMailerLite(email: string): Promise<boolean> {
 export async function subscribe(
   email: string,
   source: SubscribeSource = "footer",
+  name?: string,
 ): Promise<SubscribeResult> {
   const trimmed = email.trim().toLowerCase();
   if (!isValidEmail(trimmed)) return { ok: false, reason: "invalid" };
@@ -109,7 +112,7 @@ export async function subscribe(
   }
 
   try {
-    const ok = await sendToMailerLite(trimmed);
+    const ok = await sendToMailerLite(trimmed, name?.trim() || undefined);
     return ok ? { ok: true } : { ok: false, reason: "network" };
   } catch (err) {
     console.warn("[newsletter] MailerLite unreachable:", err);
