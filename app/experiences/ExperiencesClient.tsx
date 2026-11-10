@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { events, mediums, cities, Medium } from "@/lib/events";
 import { useMember } from "@/components/club/MemberProvider";
@@ -12,11 +11,32 @@ import EventRow from "@/components/EventRow";
 // The event data carries "Sep 12"-style dates without a year.
 const EVENT_YEAR = 2026;
 
-export default function ExperiencesClient() {
+/* "Sep 12" + EVENT_YEAR → "2026-09-12", built from the date's own local
+   parts so it means the same calendar day on the server and in the browser. */
+function dayKey(date: string): string {
+  const d = new Date(`${date}, ${EVENT_YEAR}`);
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+export default function ExperiencesClient({
+  initialMedium,
+  initialCity,
+  today,
+}: {
+  /* Read from ?medium= / ?city= on the server (page.tsx), so the first
+     render — server HTML and hydration alike — is already filtered. */
+  initialMedium: Medium | "All";
+  initialCity: string;
+  /* Today in Atlanta, YYYY-MM-DD, decided once on the server so the
+     server HTML and the browser agree on what's upcoming vs past. */
+  today: string;
+}) {
   const [showPast, setShowPast] = useState(false);
-  const params = useSearchParams();
-  const [active, setActive] = useState<Medium | "All">("All");
-  const [activeCity, setActiveCity] = useState<string>(cities[0]);
+  const pastId = useId();
+  const [active, setActive] = useState<Medium | "All">(initialMedium);
+  const [activeCity, setActiveCity] = useState<string>(initialCity);
   // A medium's description shows for whichever pill is hovered, and stays
   // for the one that's selected.
   const [hoveredMedium, setHoveredMedium] = useState<Medium | null>(null);
@@ -28,13 +48,6 @@ export default function ExperiencesClient() {
     getSavedEventIds(member.id).then(setSavedIds);
   }, [member]);
 
-  useEffect(() => {
-    const m = params.get("medium") as Medium | null;
-    if (m && mediums.some((x) => x.name === m)) setActive(m);
-    const c = params.get("city");
-    if (c && cities.includes(c)) setActiveCity(c);
-  }, [params]);
-
   const selectedMedium = active === "All" ? null : mediums.find((m) => m.name === active) ?? null;
 
   const matches = events.filter(
@@ -44,23 +57,23 @@ export default function ExperiencesClient() {
   // Only what's still to come belongs in the main list. Anything whose date
   // has passed moves to its own section further down, so the page opens on
   // what you can actually still turn up to.
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const whenOf = (e: (typeof events)[number]) => new Date(`${e.date}, ${EVENT_YEAR}`);
+  // "YYYY-MM-DD" strings compare correctly as plain strings.
   // Sorted explicitly rather than trusting the order of lib/events.ts —
   // editing one event's date used to silently put the list out of sequence.
   const filtered = matches
-    .filter((e) => whenOf(e) >= startOfToday)
-    .sort((a, b) => whenOf(a).getTime() - whenOf(b).getTime());
+    .filter((e) => dayKey(e.date) >= today)
+    .sort((a, b) => dayKey(a.date).localeCompare(dayKey(b.date)));
   const past = matches
-    .filter((e) => whenOf(e) < startOfToday)
-    .sort((a, b) => whenOf(b).getTime() - whenOf(a).getTime());
+    .filter((e) => dayKey(e.date) < today)
+    .sort((a, b) => dayKey(b.date).localeCompare(dayKey(a.date)));
 
   // Group in chronological order under month headers, labeling whichever group matches the current
   // real-world month as "This Month" so the page always opens on what's
   // happening now, then rolls into the months after it.
   const groups: { label: string; items: typeof filtered }[] = [];
-  const thisMonthAbbr = new Date().toLocaleString("en-US", { month: "short" }).toUpperCase();
+  const thisMonthAbbr = new Date(`${today}T12:00:00`)
+    .toLocaleString("en-US", { month: "short" })
+    .toUpperCase();
   for (const event of filtered) {
     const last = groups[groups.length - 1];
     if (last && last.items[0]?.month === event.month) {
@@ -198,30 +211,37 @@ export default function ExperiencesClient() {
         {past.length > 0 && (
           <section className="mt-12 md:mt-16 border-t border-ink/10 pt-8 md:pt-10">
             <button
+              type="button"
               onClick={() => setShowPast((v) => !v)}
               aria-expanded={showPast}
+              aria-controls={pastId}
               className="organic-underline font-mono text-[11px] md:text-xs tracking-wideish uppercase text-ink/70 hover:text-tiger-text transition-colors"
             >
               {showPast ? "hide past events" : `view past events (${past.length}) →`}
             </button>
 
-            <AnimatePresence initial={false}>
-              {showPast && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="pt-6 opacity-65">
-                    {past.map((event, i) => (
-                      <EventRow key={event.id} event={event} index={i} savedIds={savedIds} />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Disclosure panel. The past list is always in the page (so
+                each past event keeps a real link to its own page) but stays
+                collapsed until asked for — same look and animation as
+                before. While collapsed it is `inert`: not focusable, not
+                clickable, and skipped by screen readers. */}
+            <motion.div
+              id={pastId}
+              initial={false}
+              animate={showPast ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden"
+              style={showPast ? undefined : { height: 0, opacity: 0 }}
+              // React 18 only forwards `inert` as a string attribute; the
+              // newer types expect a boolean, hence the cast.
+              {...(showPast ? {} : ({ inert: "" } as unknown as Record<string, never>))}
+            >
+              <div className="pt-6 opacity-65">
+                {past.map((event, i) => (
+                  <EventRow key={event.id} event={event} index={i} savedIds={savedIds} />
+                ))}
+              </div>
+            </motion.div>
           </section>
         )}
       </div>
