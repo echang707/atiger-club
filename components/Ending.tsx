@@ -322,6 +322,9 @@ export default function Ending() {
                      md:text-[8vw] md:leading-[0.88]
                      lg:text-[7.3vw]"
         >
+          {/* the visible line spells "wild" as an animated m→w morph, so
+              the plain sentence is given here for crawlers and readers */}
+          <span className="sr-only">Life&rsquo;s happening. Go wild.</span>
           <span aria-hidden="true">
             Life&rsquo;s happening.
             <br />

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import WordBuddy from "./WordBuddy";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 type Variant = "eat" | "create" | "move" | "explore" | "serve" | "learn" | "play";
@@ -35,15 +35,16 @@ export default function MediumWord({
   word,
   variant,
   href,
+  description,
   size = "text-4xl sm:text-5xl md:text-6xl lg:text-7xl",
 }: {
   word: string;
   variant: Variant;
   href: string;
+  description?: string;
   size?: string;
 }) {
-  const router = useRouter();
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [hovered, setHovered] = useState(false);
   const [cycle, setCycle] = useState(0);
@@ -256,7 +257,7 @@ export default function MediumWord({
     }
   }, [runLeave, variant]);
 
-  const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const onMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     setMouse({ x: e.clientX - rect.left, y: e.clientY - rect.top });
@@ -270,18 +271,25 @@ export default function MediumWord({
   // personality is in the interactions, not the lettering.
   const baseCls = `font-wordmark font-extrabold ${size} leading-none tracking-tight text-ink`;
 
+  // The word is drawn letter by letter (and EXPLORE as a door), so the
+  // visual layer is hidden from assistive tech and crawlers get the plain
+  // category name and its description instead. The link itself is a real
+  // <a href>, so search engines can follow it. Same classes as before.
+  const label = word.charAt(0) + word.slice(1).toLowerCase();
+
   return (
-    <div
+    <>
+    <Link
       ref={ref}
-      role="link"
-      tabIndex={0}
-      onClick={() => router.push(href)}
-      onKeyDown={(e) => (e.key === "Enter" ? router.push(href) : null)}
+      href={href}
+      prefetch={false}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onMouseMove={onMove}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
+      <span className="sr-only">{label}</span>
+      <span aria-hidden="true" style={{ display: "contents" }}>
       {/* the little explorer doing this category's thing on top of the word */}
       <WordBuddy variant={variant} size={size} />
       {variant === "explore" ? (
@@ -456,6 +464,9 @@ export default function MediumWord({
       )}
 
       <span className="pointer-events-none absolute -bottom-2 left-0 h-px w-0 bg-ink/25 group-hover:w-full transition-all duration-500" />
+      </span>
+    </Link>
+    {description && <span className="sr-only">{label}: {description}</span>}
 
       <style jsx global>{`
         @keyframes eat-crunch {
@@ -534,7 +545,7 @@ export default function MediumWord({
           100% { opacity: 0; transform: scale(1.03) rotate(0.5deg); }
         }
       `}</style>
-    </div>
+    </>
   );
 }
 

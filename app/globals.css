@@ -912,19 +912,24 @@ body {
 .tc-scene .explorer-eyes, .tc-scene .explorer-head { transition: transform calc(0.18s * var(--slow)); }
 .tc-scene .scarf-tail { transform-origin: 17.6px 19.6px; }
 /* idle: the faintest sign of life */
-.tc-scene .explorer-body { animation: explorer-breathe calc(2.8s * var(--slow)) ease-in-out infinite; }
-@keyframes explorer-breathe { 50% { transform: translateY(0.5px); } }
+/* Body motion never separates the body from the legs: the tilt pivots at
+   the hip (20,36), and any up-and-down bob moves the whole drawing. */
+.tc-scene .explorer-body { transform-origin: 20px 36px; }
+.tc-scene .explorer { animation: explorer-breathe calc(2.8s * var(--slow)) ease-in-out infinite; }
+@keyframes explorer-breathe { 50% { transform: translateY(0.9%); } }
 /* running */
 .tc-scene [data-run] .explorer-leg-a { animation: explorer-stride calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
 .tc-scene [data-run] .explorer-leg-b { animation: explorer-stride calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
 .tc-scene [data-run] .explorer-arm-front { animation: explorer-swing calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
 .tc-scene [data-run] .explorer-arm-back { animation: explorer-swing calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
 .tc-scene [data-run] .explorer-body { animation: explorer-bob calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
+.tc-scene [data-run] .explorer { animation: explorer-lift calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
 .tc-scene [data-run] .explorer-pack { animation: explorer-pack calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
 .tc-scene [data-run] .scarf-tail { animation: scarf-flap calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
 @keyframes explorer-stride { from { transform: rotate(-31deg); } to { transform: rotate(29deg); } }
 @keyframes explorer-swing { from { transform: rotate(-24deg); } to { transform: rotate(21deg); } }
-@keyframes explorer-bob { from { transform: translateY(0) rotate(5deg); } to { transform: translateY(-1.3px) rotate(7deg); } }
+@keyframes explorer-bob { from { transform: rotate(5deg); } to { transform: rotate(7deg); } }
+@keyframes explorer-lift { from { transform: translateY(0); } to { transform: translateY(-2.3%); } }
 @keyframes explorer-pack { from { transform: translateY(0.3px); } to { transform: translateY(-1.6px); } }
 @keyframes scarf-flap { from { transform: rotate(-14deg); } to { transform: rotate(18deg); } }
 /* stopped: a glance at each other */
@@ -1024,10 +1029,14 @@ body {
 .wb-scope .move .leg-a { animation: stride .26s ease-in-out infinite alternate; }
 .wb-scope .move .leg-b { animation: stride .26s ease-in-out infinite alternate-reverse; }
 .wb-scope .move .arm-f { transform-origin: 20px 23.5px; animation: swing .26s ease-in-out infinite alternate-reverse; }
-.wb-scope .move .body { animation: bob .26s ease-in-out infinite alternate; }
+.wb-scope .move .body { transform-origin: 20px 36px; animation: bob .26s ease-in-out infinite alternate; }
+.wb-scope .move { animation: lift .26s ease-in-out infinite alternate; }
 @keyframes stride { from { transform: rotate(-31deg); } to { transform: rotate(29deg); } }
 @keyframes swing { from { transform: rotate(-24deg); } to { transform: rotate(21deg); } }
-@keyframes bob { from { transform: translateY(0) rotate(5deg); } to { transform: translateY(-1.3px) rotate(7deg); } }
+/* the lean pivots at the hip and the bob lifts the whole drawing, so the
+   body and legs never come apart */
+@keyframes bob { from { transform: rotate(5deg); } to { transform: rotate(7deg); } }
+@keyframes lift { from { transform: translateY(0); } to { transform: translateY(-2.3%); } }
 
 /* Explore: looks one way, then the other */
 .wb-scope .explore { transform-origin: 20px 30px; animation: lookabout 4.4s steps(1) infinite; }
@@ -1143,7 +1152,8 @@ body {
 .tf.stroll .w2 .leg-a { animation-direction: alternate-reverse; }
 .tf.stroll .w2 .leg-b { animation-direction: alternate; }
 @keyframes tf-stride { from { transform: rotate(-22deg); } to { transform: rotate(20deg); } }
-.tf.stroll .body { animation: tf-bob .5s ease-in-out infinite alternate; }
+/* the bob moves the whole tiger (body AND legs), never the body alone */
+.tf.stroll .walk { animation: tf-bob .5s ease-in-out infinite alternate; }
 @keyframes tf-bob { from { transform: translateY(0); } to { transform: translateY(-.9px); } }
 .tf.stroll .arm-f { transform-origin: 20.2px 23.5px; animation: tf-swing .5s ease-in-out infinite alternate; }
 @keyframes tf-swing { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }

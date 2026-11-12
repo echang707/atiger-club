@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import MediumWord from "./MediumWord";
+import { mediums } from "@/lib/events";
 
 // `weave` is the side of the row the tail is told to pass on — always
 // the side the word ISN'T. Without these the tail had no reason to
@@ -32,7 +33,11 @@ export default function MediumsSpread() {
   return (
     <section className="relative max-w-content mx-auto px-5 md:px-10 pt-[76px] md:pt-[112px]">
       <div className="relative flex flex-col items-center pb-14 md:pb-20">
-        <motion.p
+        {/* The section's heading. An h2 with the same classes renders
+            exactly as the old <p> did (Tailwind resets heading size and
+            weight), but gives the categories a real heading in the outline. */}
+        <motion.h2
+          id="ways-title"
           initial={{ opacity: 0, y: -26, rotate: -3 }}
           whileInView={{ opacity: 1, y: 0, rotate: 0 }}
           viewport={{ once: true, margin: "-40px" }}
@@ -40,7 +45,7 @@ export default function MediumsSpread() {
           className="relative z-10 text-center text-xs tracking-wideish text-ink/70 font-semibold uppercase"
         >
           seven ways to dive in
-        </motion.p>
+        </motion.h2>
         <motion.span
           initial={{ scaleX: 0, opacity: 0 }}
           whileInView={{ scaleX: 1, opacity: 0.5 }}
@@ -50,9 +55,14 @@ export default function MediumsSpread() {
         />
       </div>
 
+      {/* A list in the markup (role only, so nothing about the layout
+          changes): seven named categories, each a crawlable link with its
+          short description alongside. */}
+      <div role="list" aria-labelledby="ways-title">
       {words.map((w, i) => (
         <motion.div
           key={w.word}
+          role="listitem"
           initial={{ opacity: 0, y: 24, rotate: 0 }}
           whileInView={{ opacity: 1, y: 0, rotate: w.rotate }}
           viewport={{ once: true, margin: "-100px" }}
@@ -72,12 +82,18 @@ export default function MediumsSpread() {
           {w.align !== "end" && (
             <span className="font-mono text-xs text-ink/30 hidden sm:block">{w.num}</span>
           )}
-          <MediumWord word={w.word} variant={w.variant} href={w.href} />
+          <MediumWord
+            word={w.word}
+            variant={w.variant}
+            href={w.href}
+            description={mediums.find((x) => x.name.toUpperCase() === w.word)?.description}
+          />
           {w.align === "end" && (
             <span className="font-mono text-xs text-ink/30 hidden sm:block">{w.num}</span>
           )}
         </motion.div>
       ))}
+      </div>
     </section>
   );
 }

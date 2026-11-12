@@ -4,7 +4,7 @@ import MediumsSpread from "@/components/MediumsSpread";
 import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
+import { SITE_TITLE, SITE_DESCRIPTION, OG_DEFAULTS } from "@/lib/seo";
 import { nextUp } from "@/lib/nextUp";
 
 export const metadata: Metadata = {
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
   openGraph: {
+    ...OG_DEFAULTS,
     url: "/",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,

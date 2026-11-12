@@ -138,6 +138,7 @@ export default function EventPage({
     },
     organizer: {
       "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
       name: "Tiger Club",
       url: SITE_URL,
     },

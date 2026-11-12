@@ -7,7 +7,7 @@ import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
 import Footer from "@/components/Footer";
 import DiscordFab from "@/components/DiscordFab";
-import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, OG_DEFAULTS } from "@/lib/seo";
 
 // One family across the whole site: Grandstander, a friendly hand-drawn
 // rounded face, used at different weights for headlines, body copy and
@@ -52,31 +52,10 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    type: "website",
+    ...OG_DEFAULTS,
     url: "/",
-    siteName: SITE_NAME,
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    locale: SITE_LOCALE,
-    images: [
-      {
-        url: "/opengraph-image.png",
-        width: 1200,
-        height: 630,
-        alt: SITE_NAME,
-      },
-      /* Square fallback. Some surfaces — iMessage, WhatsApp, Slack's
-         compact preview — want 1:1 and will centre-crop a 1.91:1 card,
-         which would slice the top and bottom off the wordmark. Listing
-         it second means platforms that prefer the wide card still get it
-         first. */
-      {
-        url: "/opengraph-square.png",
-        width: 1200,
-        height: 1200,
-        alt: SITE_NAME,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -104,7 +83,20 @@ const jsonLd = {
       "@id": `${SITE_URL}/#organization`,
       name: SITE_NAME,
       url: SITE_URL,
+      legalName: "Tiger Club LLC",
+      description: SITE_DESCRIPTION,
       logo: `${SITE_URL}/icon-512.png`,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Atlanta",
+        addressRegion: "GA",
+        addressCountry: "US",
+      },
+      areaServed: {
+        "@type": "City",
+        name: "Atlanta",
+        containedInPlace: { "@type": "State", name: "Georgia" },
+      },
       sameAs: ["https://discord.gg/6u83g4P8Cb"],
     },
     {
@@ -112,6 +104,8 @@ const jsonLd = {
       "@id": `${SITE_URL}/#website`,
       name: SITE_NAME,
       url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      inLanguage: "en-US",
       publisher: { "@id": `${SITE_URL}/#organization` },
     },
   ],
