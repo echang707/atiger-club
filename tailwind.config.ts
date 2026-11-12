@@ -38,12 +38,12 @@ const config: Config = {
       fontFamily: {
         // Space Grotesk everywhere. The old keys are kept so existing
         // class names keep working; they all resolve to the same family.
-        display: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
-        sans: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
-        hand: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
-        mono: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
-        wordmark: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
-        tagline: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        display: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
+        sans: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
+        hand: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
+        mono: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
+        wordmark: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
+        tagline: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
       },
       letterSpacing: {
         tightest: "-0.045em",

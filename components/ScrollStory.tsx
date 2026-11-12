@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import QuoteTail from "./QuoteTail";
+import TigerFriends from "./TigerFriends";
 
 // The scatter of postcards pulls real Tiger Club gatherings — each caption
 // stays true to that specific photo's own note, so the words and the
@@ -96,6 +97,8 @@ export default function ScrollStory() {
                     {/* one restrained hand-drawn mark, drawn after the
                         last line lands */}
                     <QuoteTail />
+                    {/* the two tiger friends, sitting together on the line */}
+                    <TigerFriends variant="hug" />
                   </span>
                 ) : (
                   line.text
@@ -171,6 +174,8 @@ export default function ScrollStory() {
               </span>
             </motion.div>
           ))}
+          {/* orange snaps gold's picture in the empty corner */}
+          <TigerFriends variant="photo" />
         </div>
       </div>
     </section>

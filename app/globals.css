@@ -103,7 +103,7 @@ body {
 }
 
 .annotation {
-  font-family: var(--font-space), "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-main), "Helvetica Neue", Arial, sans-serif;
   color: #A9350C;
 }
 
@@ -792,6 +792,12 @@ body {
 }
 
 
+/* The polaroid scatter on the homepage (ScrollStory): the box's height is
+   set by its width, so the absolutely placed photos have room for two
+   rows. Taller on phones, where the captions wrap onto more lines. */
+.scatter-box { padding-bottom: 78%; }
+@media (max-width: 639px) { .scatter-box { padding-bottom: 122%; } }
+
 /* ==========================================================================
    Homepage hero (2026 redesign): "Hey, Atlanta." / Life is better together.
    ========================================================================== */
@@ -804,9 +810,10 @@ body {
      them off the bottom. */
   --tc-nav: 81px;
   height: calc(100svh - var(--tc-nav));
+  padding-bottom: clamp(8px, 5svh, 56px);
   display: grid; grid-template-rows: minmax(0, 1fr) auto; text-align: center;
 }
-.tc-hero-center { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-block: clamp(6px, 2svh, 24px) clamp(6px, 2.6svh, 36px); }
+.tc-hero-center { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-block: clamp(4px, 1svh, 12px) clamp(8px, 4svh, 52px); }
 .tc-hey {
   margin: 0 0 clamp(8px, 2.4svh, 26px); display: inline-flex; align-items: center; gap: 9px;
   font-size: clamp(11px, 1.7svh, 13px); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
@@ -814,9 +821,9 @@ body {
 }
 .tc-hey::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--tc-tiger); }
 .tc-hero h1 {
-  margin: 0; font-weight: 700; color: var(--tc-ink); text-wrap: balance;
+  margin: 0; font-weight: 900; color: var(--tc-ink); text-wrap: balance;
   font-size: clamp(1.6rem, min(9vw, 14.5svh), 8.8rem);
-  line-height: 0.95; letter-spacing: -0.038em;
+  line-height: 1; letter-spacing: -0.012em;
 }
 .tc-hero h1 > span { display: block; animation: tc-rise .9s cubic-bezier(.2,.7,.1,1) both; }
 .tc-hero h1 > span + span { animation-delay: .08s; }
@@ -860,7 +867,7 @@ body {
 @media (prefers-reduced-motion: reduce) { .tc-hey, .tc-hero h1 > span, .tc-kicker, .tc-cta { animation: none !important; } }
 
 /* the ATL door scene (components/DoorScene.tsx) */
-.tc-scene { --ink: #15130E; --tiger: #E0521C; --font: var(--font-space), "Helvetica Neue", Arial, sans-serif; --slow: 1; }
+.tc-scene { --ink: #15130E; --tiger: #E0521C; --font: var(--font-main), "Helvetica Neue", Arial, sans-serif; --slow: 1; }
 /* ── the track: two people, one door ── */
 .tc-scene {
   --w: 2.2rem;    /* a person */
@@ -870,7 +877,7 @@ body {
 @media (min-width: 900px) { .tc-scene { --w: 2.5rem; --dw: 4.3rem; height: 7rem; } }
 .tc-scene .ground { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 6px; overflow: visible; }
 
-.tc-scene .door-wrap { position: absolute; left: 50%; bottom: calc(var(--dw) * -0.061); width: var(--dw); margin-left: calc(var(--dw) / -2); color: var(--ink); }
+.tc-scene .door-wrap { position: absolute; left: 50%; bottom: calc(var(--dw) * -0.061 + 2.9px); width: var(--dw); margin-left: calc(var(--dw) / -2); color: var(--ink); }
 .tc-scene .door { display: block; width: 100%; height: auto; overflow: visible; }
 .tc-scene .door :is(.door-leaf, .tc-scene .door-light) { transform-box: view-box; }
 .tc-scene .door-light { opacity: 0; transition: opacity calc(0.3s * var(--slow)) calc(0.08s * var(--slow)); }
@@ -890,7 +897,7 @@ body {
 /* a person on the track: --x is their offset from the door, in px */
 .tc-scene .who {
   --x: 0px;
-  position: absolute; left: 50%; bottom: calc(var(--w) * -0.215);
+  position: absolute; left: 50%; bottom: calc(var(--w) * -0.215 + 2.9px);
   width: var(--w); margin-left: calc(var(--w) / -2);
   transform: translate3d(var(--x), 0, 0); color: var(--ink);
 }
@@ -967,6 +974,15 @@ body {
 /* the door's label */
 .tc-scene .door-label { font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 0.04em; }
 
+.tc-scene .tiger-tail { transform-box: view-box; transform-origin: 19.8px 35.6px; animation: tail-sway 1.6s ease-in-out infinite alternate; }
+@keyframes tail-sway { from { transform: rotate(-9deg); } to { transform: rotate(10deg); } }
+.tc-scene [data-run] .tiger-tail { animation: tail-run calc(0.26s * var(--slow, 1)) ease-in-out infinite alternate; }
+@keyframes tail-run { from { transform: rotate(-18deg); } to { transform: rotate(14deg); } }
+.tc-scene [data-nod] .tiger-tail, .tc-scene [data-after] .tiger-tail { animation: tail-wag .18s ease-in-out infinite alternate; }
+@keyframes tail-wag { from { transform: rotate(-12deg); } to { transform: rotate(16deg); } }
+
+.tc-scene [data-nod] .explorer-head .explorer-eyes { animation: none; }
+
 
 /* ==========================================================================
    Little explorers on the seven category words (components/WordBuddy.tsx)
@@ -1034,13 +1050,33 @@ body {
 .wb-scope .learn .head { animation: read 3.2s ease-in-out infinite; }
 @keyframes read { 0%, 60% { transform: rotate(5deg); } 75% { transform: rotate(1deg) translateY(-.3px); } 100% { transform: rotate(5deg); } }
 
-/* Play: toss and catch */
-.wb-scope .play .ball { animation: toss 1.3s cubic-bezier(.3,.6,.4,1) infinite; }
-@keyframes toss { 0%, 100% { transform: translateY(0); } 8% { transform: translateY(.6px) scaleY(.9); } 50% { transform: translateY(-17px); } 92% { transform: translateY(0); } }
-.wb-scope .play .toss-arm { transform-origin: 20.2px 23.5px; animation: flick 1.3s ease-in-out infinite; }
-@keyframes flick { 0%, 100% { transform: rotate(0); } 10% { transform: rotate(-26deg); } 22% { transform: rotate(0); } }
-.wb-scope .play .head { animation: watch 1.3s cubic-bezier(.3,.6,.4,1) infinite; }
-@keyframes watch { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-8deg); } }
+/* Play: the two friends toss a ball back and forth */
+.wb-scope .play .ballx { animation: catchx 2.6s linear infinite; }
+@keyframes catchx { 0%, 4% { transform: translateX(0); } 46%, 54% { transform: translateX(78.8px); } 96%, 100% { transform: translateX(0); } }
+.wb-scope .play .bally { animation: catchy 2.6s infinite; }
+@keyframes catchy {
+  0%, 4% { transform: translateY(0); animation-timing-function: cubic-bezier(.3,.7,.6,1); }
+  25% { transform: translateY(-30px); animation-timing-function: cubic-bezier(.4,0,.7,.3); }
+  46%, 54% { transform: translateY(0); animation-timing-function: cubic-bezier(.3,.7,.6,1); }
+  75% { transform: translateY(-30px); animation-timing-function: cubic-bezier(.4,0,.7,.3); }
+  96%, 100% { transform: translateY(0); }
+}
+.wb-scope .play .toss-arm { transform-origin: 20.2px 23.5px; animation: flick 2.6s ease-in-out infinite; }
+.wb-scope .play .pb .toss-arm { animation-delay: -1.3s; }
+@keyframes flick { 0%, 100% { transform: rotate(0); } 5% { transform: rotate(-30deg); } 13% { transform: rotate(0); } }
+.wb-scope .play .head { animation: watch 2.6s ease-in-out infinite; }
+.wb-scope .play .pb .head { animation-delay: -1.3s; }
+@keyframes watch { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg); } 50% { transform: rotate(4deg); } 75% { transform: rotate(-4deg); } }
+
+
+.wb-scope .tiger-tail { transform-box: view-box; transform-origin: 19.8px 35.6px; animation: tail-sway 1.6s ease-in-out infinite alternate; }
+@keyframes tail-sway { from { transform: rotate(-9deg); } to { transform: rotate(10deg); } }
+.wb-scope [data-run] .tiger-tail { animation: tail-run calc(0.26s * var(--slow, 1)) ease-in-out infinite alternate; }
+@keyframes tail-run { from { transform: rotate(-18deg); } to { transform: rotate(14deg); } }
+.wb-scope [data-nod] .tiger-tail, .wb-scope [data-after] .tiger-tail { animation: tail-wag .18s ease-in-out infinite alternate; }
+@keyframes tail-wag { from { transform: rotate(-12deg); } to { transform: rotate(16deg); } }
+
+.wb-scope .move .tiger-tail { animation: tail-run .26s ease-in-out infinite alternate; }
 
 
 /* only animate while on screen, and never for reduced motion */
@@ -1054,7 +1090,81 @@ body {
 /* the words here sit in a 1em line box: lift the seat to the cap line */
 .wb-scope .sitter, .wb-scope .sitter.run { bottom: calc(100% - var(--wb-cap, 0.15em)); }
 
-/* ScrollStory polaroid collage: the box sets the height the scattered,
-   absolutely positioned polaroids are laid out in. */
-.scatter-box { padding-bottom: 78%; }
-@media (max-width: 639px) { .scatter-box { padding-bottom: 122%; } }
+
+/* ==========================================================================
+   The two tiger friends down the page (components/TigerFriends.tsx)
+   ========================================================================== */
+.tf { pointer-events: none; display: block; }
+.tf-v { display: block; width: 100%; height: auto; overflow: visible; }
+.tf-v * { transform-box: view-box; }
+.tf .head { transform-origin: 20px 18px; }
+.tf .eyes { transform-origin: 23.4px 10.8px; animation: tf-blink 4.6s infinite; }
+.tf .t-b .eyes { animation-delay: 1.3s; }
+@keyframes tf-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+.tf .ftail { transform-origin: 19.8px 35.6px; animation: tf-tail 1.6s ease-in-out infinite alternate; }
+.tf .t-b .ftail { animation-delay: -.8s; }
+@keyframes tf-tail { from { transform: rotate(-9deg); } to { transform: rotate(10deg); } }
+
+/* hug: sway together, gold leans in, a heart floats up */
+.tf.hug .sway { transform-origin: 30px 46px; animation: tf-sway 3.2s ease-in-out infinite alternate; }
+@keyframes tf-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+.tf.hug .lean .head { animation: tf-lean 3.2s ease-in-out infinite alternate; }
+.tf.hug .t-a .head { animation: tf-lean-a 3.2s ease-in-out infinite alternate; }
+@keyframes tf-lean { from { transform: rotate(9deg); } to { transform: rotate(13deg); } }
+@keyframes tf-lean-a { from { transform: rotate(6deg); } to { transform: rotate(9deg); } }
+.tf.hug .heart-rise { animation: tf-heart 4.8s ease-out infinite; opacity: 0; }
+@keyframes tf-heart {
+  0%, 52% { opacity: 0; transform: translateY(2px) scale(.4); }
+  60% { opacity: 1; transform: translateY(-2px) scale(1.1); }
+  66% { transform: translateY(-4px) scale(.95); }
+  90% { opacity: 1; transform: translateY(-11px) scale(1); }
+  100% { opacity: 0; transform: translateY(-13px) scale(1); }
+}
+
+/* photo: gold idles, then pops a peace sign; orange snaps; flash */
+.tf.photo .cam { transform-origin: 20.2px 23.5px; animation: tf-snap 4.4s ease-in-out infinite; }
+@keyframes tf-snap { 0%, 62%, 74%, 100% { transform: rotate(0); } 66% { transform: rotate(4deg); } 69% { transform: rotate(-2deg); } }
+.tf.photo .flash { opacity: 0; animation: tf-flash 4.4s linear infinite; }
+@keyframes tf-flash { 0%, 64% { opacity: 0; } 66%, 70% { opacity: 1; } 74%, 100% { opacity: 0; } }
+.tf.photo .poser { animation: tf-hop 4.4s ease-in-out infinite; }
+@keyframes tf-hop { 0%, 46%, 88%, 100% { transform: translateY(0); } 52% { transform: translateY(-3px); } 58%, 82% { transform: translateY(0); } }
+.tf.photo .arm-up { opacity: 0; animation: tf-up 4.4s steps(1) infinite; }
+.tf.photo .arm-down { animation: tf-down 4.4s steps(1) infinite; }
+@keyframes tf-up { 0% { opacity: 0; } 50% { opacity: 1; } 86% { opacity: 0; } }
+@keyframes tf-down { 0% { opacity: 1; } 50% { opacity: 0; } 86% { opacity: 1; } }
+.tf.photo .t-b .head { animation: tf-tilt 4.4s ease-in-out infinite; }
+@keyframes tf-tilt { 0%, 46%, 88%, 100% { transform: rotate(0); } 54%, 82% { transform: rotate(-8deg); } }
+.tf.photo .t-a .leg, .tf.photo .t-b .leg { animation: none; }
+
+/* stroll: legs stride, bodies bob, hands stay joined */
+.tf.stroll .leg { transform-origin: 20px 36px; }
+.tf.stroll .leg-a { animation: tf-stride .5s ease-in-out infinite alternate; }
+.tf.stroll .leg-b { animation: tf-stride .5s ease-in-out infinite alternate-reverse; }
+.tf.stroll .w2 .leg-a { animation-direction: alternate-reverse; }
+.tf.stroll .w2 .leg-b { animation-direction: alternate; }
+@keyframes tf-stride { from { transform: rotate(-22deg); } to { transform: rotate(20deg); } }
+.tf.stroll .body { animation: tf-bob .5s ease-in-out infinite alternate; }
+@keyframes tf-bob { from { transform: translateY(0); } to { transform: translateY(-.9px); } }
+.tf.stroll .arm-f { transform-origin: 20.2px 23.5px; animation: tf-swing .5s ease-in-out infinite alternate; }
+@keyframes tf-swing { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }
+.tf.stroll .ftail { animation-duration: .5s; }
+
+/* placements */
+/* anchored to the LAST line of the span, so it still sits on "ps" when the
+   line wraps on phones */
+.tf-hug { position: absolute; right: 0.3em; bottom: 0.5em; width: 0.95em; z-index: 2; }
+.tf-photo { position: absolute; left: 77%; top: 69%; width: 14%; z-index: 2; }
+@media (max-width: 639px) { .tf-photo { left: 58%; top: 84%; width: 34%; } }
+.tf-lane { position: absolute; left: 0; right: 0; top: 0; height: 0; pointer-events: none; z-index: 2; }
+.tf-walker { position: absolute; bottom: calc(clamp(54px, 5.6vw, 72px) * -0.136 - 0.5px); left: 0; width: clamp(54px, 5.6vw, 72px); animation: tf-lap 46s linear infinite; }
+.tf-walker .tf-turn { display: block; animation: tf-face 46s steps(1) infinite; }
+@keyframes tf-lap { 0% { left: 2%; } 50% { left: calc(98% - clamp(54px, 5.6vw, 72px)); } 100% { left: 2%; } }
+@keyframes tf-face { 0% { transform: none; } 50% { transform: scaleX(-1); } }
+
+/* only animate while on screen, and never for reduced motion */
+.tf:not([data-on]) *, .tf-lane:not([data-on]) .tf-walker, .tf-lane:not([data-on]) .tf-walker * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .tf *, .tf-walker, .tf-turn { animation: none !important; }
+  .tf.photo .arm-up, .tf.photo .flash { opacity: 0; }
+  .tf-walker { left: 8%; }
+}

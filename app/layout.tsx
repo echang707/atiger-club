@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
 import NewsletterPopup from "@/components/NewsletterPopup";
-import { Space_Grotesk } from "next/font/google";
+import { Grandstander } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
@@ -9,13 +9,14 @@ import Footer from "@/components/Footer";
 import DiscordFab from "@/components/DiscordFab";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
-// One family across the whole site: Space Grotesk, used at different
-// weights for headlines, body copy and labels. (The logo is an image and
-// is unaffected.) Every Tailwind font key points at this one variable.
-const space = Space_Grotesk({
+// One family across the whole site: Grandstander, a friendly hand-drawn
+// rounded face, used at different weights for headlines, body copy and
+// labels. (The logo is an image and is unaffected.) Every Tailwind font key
+// points at this one variable.
+const main = Grandstander({
   subsets: ["latin"],
-  variable: "--font-space",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-main",
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -124,7 +125,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={space.variable}
+      className={main.variable}
     >
       <body className="font-sans antialiased">
         <script

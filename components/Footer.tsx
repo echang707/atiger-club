@@ -1,6 +1,7 @@
 import Link from "next/link";
 import TigerWordmark from "./TigerWordmark";
 import NewsletterForm from "./NewsletterForm";
+import TigerFriends from "./TigerFriends";
 
 /* The five links were laid out as one flex row, which on a phone forced
    "Work With Us" to wrap onto three lines and pushed Discord past the
@@ -18,7 +19,9 @@ const LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-ink/10 bg-paper">
+    <footer className="relative border-t border-ink/10 bg-paper">
+      {/* the two tiger friends strolling hand in hand along the top edge */}
+      <TigerFriends variant="stroll" />
       <div className="max-w-content mx-auto px-5 sm:px-6 md:px-10 py-10 md:py-12 border-b border-ink/10 flex flex-col md:flex-row md:items-center gap-5 md:gap-10">
         <div className="md:max-w-xs">
           <p className="font-display text-xl text-ink leading-tight">

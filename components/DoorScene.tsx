@@ -1,6 +1,6 @@
 "use client";
 
-/* The homepage hero's little scene: two Tiger Club explorers and an ATL
+/* The homepage hero's little scene: two little stick tigers (orange and gold) and an ATL
    door. One gets there first, opens the door and waves the other through,
    then follows them in. Drawn and animated in the same way as the
    Experiful explorer: inline SVG, every movement a CSS state (see
@@ -30,7 +30,7 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
       <div class="who who-a" data-a aria-hidden="true">
         <span class="face">
           <svg viewBox="0 0 40 56" class="explorer" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-            <g class="explorer-body">
+            <g class="explorer-body"><g class="tiger-tail"><path d="M19.8 35.4c-2.8 1.8-6.2 2.8-8.8 2-1.8-.6-2.6-2-2.2-3.6"/><circle cx="9.1" cy="33.1" r="1.6" fill="#E0521C" stroke-width="1.5"/></g>
               <path class="explorer-arm explorer-arm-back" d="M19.6 23.5 L14.6 29.4"/>
               <g class="explorer-pack">
                 <rect x="6.6" y="19" width="10.8" height="14.6" rx="3.8" fill="#e0521c"/>
@@ -39,8 +39,7 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
                 <path d="M16.8 20.4C18.4 19.6 19.6 20 20.1 21.4" stroke-width="1.5"/>
               </g>
               <path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/>
-              <path class="explorer-head" d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
-              <g class="explorer-eyes" fill="currentColor" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+              <g class="explorer-head"><g transform="translate(20.6 18.6) scale(1.1) translate(-20.6 -18.6)"><path d="M13.6 7.6c-1.1-3.4.1-5.8 2.2-5.6 1.3.1 2.4 1 2.9 2.4" fill="#E0521C" stroke-width="1.9"/><path d="M22.6 3.8c.8-1.5 2.1-2.2 3.5-1.8 1.9.6 2.4 3 1.6 5.6" fill="#E0521C" stroke-width="1.9"/><path d="M12.4 11.4c0-5 3.6-8.4 8.2-8.4s8.2 3.4 8.2 8.2c0 4.8-3.6 8-8.3 8-4.6 0-8.1-3.2-8.1-7.8Z" fill="#E0521C"/><path d="M19.6 3.4v1.9" stroke-width="1.35"/><path d="M22.4 3.5l-.3 1.8" stroke-width="1.35"/><path d="M22.6 14.3c.8.8 2 .8 2.8 0" stroke-width="1.15"/><g class="explorer-eyes"><g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.9" r="1.55"/><circle cx="25.4" cy="10.7" r="1.55"/></g><g fill="#fff" stroke="none"><circle cx="21.95" cy="10.35" r=".55"/><circle cx="25.95" cy="10.15" r=".55"/></g></g></g></g>
               <g class="explorer-arm explorer-arm-front"><path d="M20.2 23.5 L25.6 29.2"/></g>
             </g>
             <path class="explorer-leg explorer-leg-a" d="M20 36 L23.6 47.2 L26.8 47.3"/>
@@ -51,13 +50,10 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
       <div class="who who-b" data-b aria-hidden="true">
         <span class="face">
           <svg viewBox="0 0 40 56" class="explorer" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-            <g class="explorer-body">
+            <g class="explorer-body"><g class="tiger-tail"><path d="M19.8 35.4c-2.8 1.8-6.2 2.8-8.8 2-1.8-.6-2.6-2-2.2-3.6"/><circle cx="9.1" cy="33.1" r="1.6" fill="#F2A541" stroke-width="1.5"/></g>
               <path class="explorer-arm explorer-arm-back" d="M19.6 23.5 L14.6 29.4"/>
               <path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/>
-              <path class="scarf-tail" d="M17.6 19.6c-1.6 1.7-2.9 3.6-3.6 6.1" stroke="#e0521c" stroke-width="2.8"/>
-              <path class="explorer-head" d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
-              <path d="M15.4 18.4c2.9 1.9 7.6 2 10.6-.1" stroke="#e0521c" stroke-width="3.2"/>
-              <g class="explorer-eyes" fill="currentColor" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+              <g class="explorer-head"><g transform="translate(20.6 18.6) scale(1.1) translate(-20.6 -18.6)"><path d="M13.6 7.6c-1.1-3.4.1-5.8 2.2-5.6 1.3.1 2.4 1 2.9 2.4" fill="#F2A541" stroke-width="1.9"/><path d="M22.6 3.8c.8-1.5 2.1-2.2 3.5-1.8 1.9.6 2.4 3 1.6 5.6" fill="#F2A541" stroke-width="1.9"/><path d="M12.4 11.4c0-5 3.6-8.4 8.2-8.4s8.2 3.4 8.2 8.2c0 4.8-3.6 8-8.3 8-4.6 0-8.1-3.2-8.1-7.8Z" fill="#F2A541"/><path d="M19.6 3.4v1.9" stroke-width="1.35"/><path d="M22.4 3.5l-.3 1.8" stroke-width="1.35"/><path d="M22.6 14.3c.8.8 2 .8 2.8 0" stroke-width="1.15"/><g class="explorer-eyes"><g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.9" r="1.55"/><circle cx="25.4" cy="10.7" r="1.55"/></g><g fill="#fff" stroke="none"><circle cx="21.95" cy="10.35" r=".55"/><circle cx="25.95" cy="10.15" r=".55"/></g></g></g></g>
               <g class="explorer-arm explorer-arm-front"><path d="M20.2 23.5 L25.6 29.2"/></g>
             </g>
             <path class="explorer-leg explorer-leg-a" d="M20 36 L23.6 47.2 L26.8 47.3"/>
