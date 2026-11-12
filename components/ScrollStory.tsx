@@ -141,7 +141,9 @@ export default function ScrollStory() {
       <div className="h-[5vh] md:h-[10vh]" />
 
       <div className="relative max-w-content mx-auto px-6 md:px-10">
-        <div className="relative w-full" style={{ paddingBottom: "78%" }}>
+        {/* Taller on phones: the captions there wrap onto several lines, so
+            the second row needs more room to clear the first. */}
+        <div className="scatter-box relative w-full">
           {scatter.map((p, i) => (
             <motion.div
               key={p.image}
@@ -161,10 +163,10 @@ export default function ScrollStory() {
                   className="object-cover"
                 />
               </div>
-              {/* On phones each polaroid is ~95px wide, so a caption can only wrap
-                  into an unreadable column — the scatter reads as a collage
-                  there instead. Captions return from sm up. */}
-              <span className="annotation hidden sm:block px-3 pt-2 text-sm md:text-base leading-tight text-jungle/80 truncate">
+              {/* Captions always show in full and wrap onto a second line rather
+                  than being cut off. On phones the polaroids are narrow, so the
+                  caption drops to a smaller size there. */}
+              <span className="annotation block px-1.5 sm:px-3 pt-1.5 sm:pt-2 pb-0.5 text-[10px] leading-[1.25] sm:text-sm md:text-base sm:leading-tight text-jungle/80">
                 {p.caption}
               </span>
             </motion.div>

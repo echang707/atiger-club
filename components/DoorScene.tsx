@@ -10,7 +10,7 @@
    motion get one still frame: the door held open, both looking at each
    other. */
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="none" aria-hidden="true">
         <path d="M2 3.4C140 2.6 260 3.9 380 3.1s250 .7 376-.2" fill="none" stroke="rgba(21,19,14,0.22)" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
@@ -66,19 +66,31 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
         </span>
       </div>`;
 
-export default function DoorScene({ className = "" }: { className?: string }) {
+/* The drawing is inserted once, by hand, after mount, and the component
+   never re-renders (memo, no state). This matters: the timeline below
+   holds references to these exact SVG nodes. If React re-rendered and
+   re-applied the markup (it did when the hero updated its "next up"
+   label), the animation would keep running on detached copies and the
+   visible scene would sit frozen. */
+function DoorScene({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => (ref.current ? run(ref.current) : undefined), []);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.innerHTML = MARKUP;
+    return run(el);
+  }, []);
   return (
     <div
       ref={ref}
       className={`tc-scene ${className}`}
       role="img"
       aria-label="Two people walk up to an orange door marked ATL. One opens it and waves the other through, then follows them in."
-      dangerouslySetInnerHTML={{ __html: MARKUP }}
     />
   );
 }
+
+export default memo(DoorScene);
 
 function run(track: HTMLElement): () => void {
   const door = track.querySelector<HTMLElement>("[data-door]")!;
