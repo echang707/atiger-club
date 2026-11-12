@@ -12,18 +12,28 @@
    worse than the slightly unusual placement. */
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const DISCORD_URL = "https://discord.gg/6u83g4P8Cb";
 
 export default function DiscordFab() {
   const [shown, setShown] = useState(false);
+  const pathname = usePathname();
 
   // Hold it back until the hero has had its moment. Appearing instantly
-  // on load competes with the headline animation.
+  // on load competes with the headline animation. On the homepage the
+  // hero's bottom-left corner holds "Atlanta, GA", right where this button
+  // sits, so there it waits until the visitor has scrolled a little.
   useEffect(() => {
+    if (pathname === "/") {
+      const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.3);
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
     const t = setTimeout(() => setShown(true), 1200);
     return () => clearTimeout(t);
-  }, []);
+  }, [pathname]);
 
   return (
     <a

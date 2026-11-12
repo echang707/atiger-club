@@ -36,12 +36,14 @@ const config: Config = {
         brass: "#B98A34",
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "serif"],
-        sans: ["var(--font-inter)", "sans-serif"],
-        hand: ["var(--font-caveat)", "cursive"],
-        mono: ["var(--font-jetbrains)", "monospace"],
-        wordmark: ["var(--font-bricolage)", "sans-serif"],
-        tagline: ["var(--font-instrument)", "serif"],
+        // Space Grotesk everywhere. The old keys are kept so existing
+        // class names keep working; they all resolve to the same family.
+        display: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        sans: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        hand: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        mono: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        wordmark: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
+        tagline: ["var(--font-space)", "Helvetica Neue", "Arial", "sans-serif"],
       },
       letterSpacing: {
         tightest: "-0.045em",

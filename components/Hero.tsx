@@ -1,29 +1,49 @@
 "use client";
 
-import HeroBackdrop from "./HeroBackdrop";
-import RotatingLine from "./RotatingLine";
-import WordsFindEachOther from "./WordsFindEachOther";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { nextUp, type NextUp } from "@/lib/nextUp";
+import DoorScene from "./DoorScene";
 
-export default function Hero() {
+/* The homepage's first screen.
+
+   One screen, everything on the centre line: a small "Hey, Atlanta.", the
+   two-line headline, one line on what Tiger Club is, one button. The little
+   ATL door scene sits on the bottom edge between "Atlanta, GA" and the next
+   event. All text is in the server-rendered HTML; only the scene animates. */
+
+export default function Hero({ initialNext }: { initialNext: NextUp }) {
+  // The homepage is built ahead of time, so "next up" comes from the server
+  // (identical in the HTML and on hydration) and is then refreshed in the
+  // browser in case that event has passed since the last deploy.
+  const [next, setNext] = useState<NextUp>(initialNext);
+  useEffect(() => setNext(nextUp()), []);
+
   return (
-    <section className="hero-shell relative w-full">
-      {/* One static illustration, sized to cover the hero. */}
-      <HeroBackdrop />
+    <section className="tc-hero max-w-content mx-auto px-5 sm:px-6 md:px-10" aria-labelledby="hero-title">
+      <div className="tc-hero-center">
+        <p className="tc-hey">Hey, Atlanta.</p>
+        <h1 id="hero-title">
+          <span>Life is better</span> <span>together.</span>
+        </h1>
+        <p className="tc-kicker">Building community through events, culture, and shared experiences.</p>
+        <Link href="/experiences" className="tc-cta">
+          Explore experiences <span aria-hidden="true">→</span>
+        </Link>
+      </div>
 
-      {/* Centred in the viewport AND in the artwork's clear middle — the
-          hero is exactly one screen and both illustrations leave their
-          open cream in the centre, so one position satisfies both. */}
-      <div className="hero-content absolute left-1/2 top-[var(--hero-content-top)] z-10 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center px-5 sm:px-6 md:px-10">
-        <div className="hero-tagline-wrap mx-auto w-full max-w-4xl flex flex-col items-center">
-          <WordsFindEachOther />
-          {/* No margin here: the gap is owned solely by `.hero-subline`'s
-              own margin-top, so there is one place to tune it. This
-              wrapper used to add mt-9/mt-8 on top of that, which is why
-              the two lines drifted so far apart. */}
-          <div className="w-full max-w-2xl">
-            <RotatingLine />
-          </div>
-        </div>
+      <div className="tc-foot">
+        <span className="l">Atlanta, GA</span>
+        <DoorScene />
+        {next ? (
+          <Link href={next.href} className="r">
+            <b>Next up</b> <span>{next.title} · {next.date} →</span>
+          </Link>
+        ) : (
+          <Link href="/experiences" className="r">
+            <span>All experiences →</span>
+          </Link>
+        )}
       </div>
     </section>
   );

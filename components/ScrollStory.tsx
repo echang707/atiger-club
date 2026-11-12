@@ -35,9 +35,9 @@ const scatter = [
   },
   {
     rotate: -6, x: 46, y: 48, w: 26,
-    image: "/images/explore-festival.jpg",
-    alt: "Tiger Club exploring a cultural festival crowd",
-    caption: "right place, right time",
+    image: "/images/oca-georgia-autumn-gala.jpg",
+    alt: "Tiger Club volunteers at the welcome table of the OCA-Georgia Autumn Gala",
+    caption: "volunteering at the OCA-Georgia autumn gala",
   },
 ];
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import WordBuddy from "./WordBuddy";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -264,8 +265,8 @@ export default function MediumWord({
   // (the SERVE dot and its cursor-following logic are gone; the word now
   // animates its own letters instead)
 
-  // All seven category words are set in Bricolage Grotesque — the wordmark
-  // face — at heavy weight. Flat ink, no decorative treatment: the
+  // All seven category words are set in Space Grotesk (the site's one
+  // family) at heavy weight. Flat ink, no decorative treatment: the
   // personality is in the interactions, not the lettering.
   const baseCls = `font-wordmark font-extrabold ${size} leading-none tracking-tight text-ink`;
 
@@ -281,6 +282,8 @@ export default function MediumWord({
       onMouseMove={onMove}
       className="group relative z-10 inline-flex cursor-pointer select-none py-3"
     >
+      {/* the little explorer doing this category's thing on top of the word */}
+      <WordBuddy variant={variant} size={size} />
       {variant === "explore" ? (
         <ExploreDoor letters={letters} baseCls={baseCls} hovered={hovered} langIndex={langIndex} />
       ) : (

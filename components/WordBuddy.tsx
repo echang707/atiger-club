@@ -1,0 +1,114 @@
+"use client";
+
+/* A little Tiger Club explorer sitting on (or standing on, or jogging
+   along) one of the seven category words, doing that category's thing:
+   eating noodles on EAT, painting on CREATE, jogging along MOVE, a
+   spyglass on EXPLORE, watering a sprout on SERVE, reading on LEARN,
+   tossing a ball on PLAY.
+
+   Sized in em, so it scales with the word it sits on (pass the word's
+   own font-size classes as `size`). Purely decorative: aria-hidden and
+   pointer-events none, so the word's own hover and click behave exactly
+   as before. Animates only while on screen; still for reduced motion. */
+
+import { useEffect, useRef } from "react";
+
+type Variant = "eat" | "create" | "move" | "explore" | "serve" | "learn" | "play";
+
+const BUDDIES: Record<Variant, { kind: "sit" | "stand" | "run"; left: string; w: number; svg: string }> = {
+  eat: { kind: "sit", left: "33%", w: 60, svg: `<svg class="v eat" viewBox="0 0 60 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6" stroke="#F4E9D6" stroke-width="5"/><path d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4" stroke="#F4E9D6" stroke-width="5"/><path class="sleg" d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6"/><path class="sleg" d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4"/><path d="M25 30.8h9.2c-.3 3.2-2.2 4.9-4.6 4.9S25.3 34 25 30.8Z" fill="#E0521C" stroke-width="1.5"/>
+      <path d="M26.6 30.4c.7-1.4 1.4 1.2 2.1-.2s1.4 1.2 2.1-.2 1.2 1 1.8 0" stroke-width="1"/><path d="M19.6 23.5 L14.6 29.4"/><g><rect x="6.6" y="19" width="10.8" height="14.6" rx="3.8" fill="#E0521C"/>
+  <path d="M6.9 23.6C9.4 25.6 14.6 25.6 17.1 23.6" stroke-width="1.3"/>
+  <rect x="8.8" y="27.2" width="6.4" height="4.6" rx="1.7" fill="#E0521C" stroke-width="1.3"/>
+  <path d="M16.8 20.4C18.4 19.6 19.6 20 20.1 21.4" stroke-width="1.5"/></g><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><g class="eat-arm"><path d="M20.2 23.5 L25.6 29.2"/>
+      <path d="M25.4 28.9 L31 31.4" stroke-width="1.1"/><path d="M25.9 29.6 L30.6 32.6" stroke-width="1.1"/>
+      <path class="noodle" d="M30.8 32 c-.5 1.2.5 2-.1 3.2" stroke-width="1"/></g></g></svg>` },
+  create: { kind: "sit", left: "14%", w: 60, svg: `<svg class="v create" viewBox="0 0 60 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6" stroke="#F4E9D6" stroke-width="5"/><path d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4" stroke="#F4E9D6" stroke-width="5"/><path class="sleg" d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6"/><path class="sleg" d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4"/><path d="M38 36.6 L41.2 19 L44.4 36.6" stroke-width="1.6"/>
+      <rect x="34.4" y="16.6" width="13.4" height="11" rx="1" fill="#F4E9D6" stroke-width="1.6"/>
+      <path class="paint" pathLength="1" d="M36.4 24.8c1.8-3.4 3.6-3.6 5.2-.8s2.8 1.8 4-.9" stroke="#E0521C" stroke-width="1.7"/><path d="M19.6 23.5 L14.6 29.4"/><path class="tail" d="M17.6 19.6c-1.6 1.7-2.9 3.6-3.6 6.1" stroke="#E0521C" stroke-width="2.8"/><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><path d="M15.4 18.4c2.9 1.9 7.6 2 10.6-.1" stroke="#E0521C" stroke-width="3.2"/><g class="brush-arm"><path d="M20.2 23.5 L25.6 29.2"/>
+      <path d="M25.6 29.2 L33.4 25" stroke-width="1.2"/><circle cx="33.6" cy="24.9" r="1" fill="#E0521C" stroke="none"/></g></g></svg>` },
+  move: { kind: "run", left: "0", w: 40, svg: `<svg class="v move" viewBox="0 0 40 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M19.6 23.5 L14.6 29.4"/><g><rect x="6.6" y="19" width="10.8" height="14.6" rx="3.8" fill="#E0521C"/>
+  <path d="M6.9 23.6C9.4 25.6 14.6 25.6 17.1 23.6" stroke-width="1.3"/>
+  <rect x="8.8" y="27.2" width="6.4" height="4.6" rx="1.7" fill="#E0521C" stroke-width="1.3"/>
+  <path d="M16.8 20.4C18.4 19.6 19.6 20 20.1 21.4" stroke-width="1.5"/></g><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><path class="arm-f" d="M20.2 23.5 L25.6 29.2"/></g><path class="leg leg-a" d="M20 36 L23.6 47.2 L26.8 47.3"/>
+<path class="leg leg-b" d="M20 36 L16.6 47.3 L19.7 47.4"/></svg>` },
+  explore: { kind: "stand", left: "58%", w: 48, svg: `<svg class="v explore" viewBox="0 0 48 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M19.6 23.5 L14.6 29.4"/><path class="tail" d="M17.6 19.6c-1.6 1.7-2.9 3.6-3.6 6.1" stroke="#E0521C" stroke-width="2.8"/><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  <path d="M25.4 9.6 L36.4 7.4 L37 11.8 L26 13Z" fill="#E0521C" stroke-width="1.4"/><path d="M33.6 7.9 L34.2 12.3" stroke-width="1.1"/>
+</g><path d="M15.4 18.4c2.9 1.9 7.6 2 10.6-.1" stroke="#E0521C" stroke-width="3.2"/><path d="M20.2 23.5 L26.4 18.4 L28.4 12.6"/></g><path class="leg leg-a" d="M20 36 L23.6 47.2 L26.8 47.3"/>
+<path class="leg leg-b" d="M20 36 L16.6 47.3 L19.7 47.4"/></svg>` },
+  serve: { kind: "stand", left: "16%", w: 60, svg: `<svg class="v serve" viewBox="0 0 60 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><g class="drops" fill="#15130E" stroke="none"><circle class="drop" cx="38" cy="27" r=".8"/><circle class="drop" cx="38.6" cy="27" r=".8"/><circle class="drop" cx="37.6" cy="27" r=".8"/></g>
+      <g class="sprout"><path d="M42.6 47.4 V40" stroke-width="1.5"/>
+      <path d="M42.6 42.4c-2.8-.4-3.8-2.2-3.6-4 2.2.2 3.4 1.8 3.6 4Z" fill="#E0521C" stroke-width="1.1"/>
+      <path d="M42.6 41.2c2.8-.4 3.8-2.2 3.6-4-2.2.2-3.4 1.8-3.6 4Z" fill="#E0521C" stroke-width="1.1"/></g><path d="M19.6 23.5 L14.6 29.4"/><g><rect x="6.6" y="19" width="10.8" height="14.6" rx="3.8" fill="#E0521C"/>
+  <path d="M6.9 23.6C9.4 25.6 14.6 25.6 17.1 23.6" stroke-width="1.3"/>
+  <rect x="8.8" y="27.2" width="6.4" height="4.6" rx="1.7" fill="#E0521C" stroke-width="1.3"/>
+  <path d="M16.8 20.4C18.4 19.6 19.6 20 20.1 21.4" stroke-width="1.5"/></g><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><g class="can"><path d="M20.2 23.5 L25.6 29.2"/>
+      <rect x="24.6" y="26.6" width="7" height="6" rx="1.4" fill="#E0521C" stroke-width="1.5"/>
+      <path d="M31.6 28.2 L37 25.2" stroke-width="1.5"/><path d="M24.6 27.6c-2.2-.2-2.6 3.6 0 3.8" stroke-width="1.3"/></g></g><path class="leg leg-a" d="M20 36 L23.6 47.2 L26.8 47.3"/>
+<path class="leg leg-b" d="M20 36 L16.6 47.3 L19.7 47.4"/></svg>` },
+  learn: { kind: "sit", left: "45%", w: 44, svg: `<svg class="v learn" viewBox="0 0 44 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6" stroke="#F4E9D6" stroke-width="5"/><path d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4" stroke="#F4E9D6" stroke-width="5"/><path class="sleg" d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6"/><path class="sleg" d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4"/><path d="M19.6 23.5 L14.6 29.4"/><path class="tail" d="M17.6 19.6c-1.6 1.7-2.9 3.6-3.6 6.1" stroke="#E0521C" stroke-width="2.8"/><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><path d="M15.4 18.4c2.9 1.9 7.6 2 10.6-.1" stroke="#E0521C" stroke-width="3.2"/><path d="M20.2 23.5 L25.8 27.4"/>
+      <path d="M30.4 22.2 L24.6 24.4 V30.6 L30.4 28.6 L36.2 30.6 V24.4Z" fill="#E0521C" stroke-width="1.3"/>
+      <path d="M30.4 23.2 L25.6 25 V29.6 L30.4 28 Z" fill="#F4E9D6" stroke-width="1"/>
+      <path d="M30.4 23.2 L35.2 25 V29.6 L30.4 28 Z" fill="#F4E9D6" stroke-width="1"/>
+      <path class="page" d="M30.4 23.2 L35.2 25 V29.6 L30.4 28 Z" fill="#F4E9D6" stroke-width="1"/></g></svg>` },
+  play: { kind: "sit", left: "70%", w: 40, svg: `<svg class="v play" viewBox="0 0 40 56" fill="none" stroke="#15130E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g class="body"><path d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6" stroke="#F4E9D6" stroke-width="5"/><path d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4" stroke="#F4E9D6" stroke-width="5"/><path class="sleg" d="M20 36.2 L27.4 36.6 L27.6 45.6 L30.4 45.6"/><path class="sleg" d="M20.4 36.6 L25.6 37.6 L24.8 46.4 L27.6 46.4"/><path d="M19.6 23.5 L14.6 29.4"/><g><rect x="6.6" y="19" width="10.8" height="14.6" rx="3.8" fill="#E0521C"/>
+  <path d="M6.9 23.6C9.4 25.6 14.6 25.6 17.1 23.6" stroke-width="1.3"/>
+  <rect x="8.8" y="27.2" width="6.4" height="4.6" rx="1.7" fill="#E0521C" stroke-width="1.3"/>
+  <path d="M16.8 20.4C18.4 19.6 19.6 20 20.1 21.4" stroke-width="1.5"/></g><path d="M20 19.2c-.5 5.8.6 11.1 0 16.9"/><g class="head">
+  <path d="M13 11.3c0-4.4 3.3-7.7 7.6-7.7 4.2 0 7.6 3.2 7.6 7.4 0 4.4-3.4 7.8-7.8 7.8-4.2 0-7.4-3.3-7.4-7.5Z" fill="#F4E9D6"/>
+  <g fill="#15130E" stroke="none"><circle cx="21.4" cy="10.6" r="1"/><circle cx="25" cy="10.4" r="1"/></g>
+  
+</g><g class="toss-arm"><path d="M20.2 23.5 L25.6 29.2"/></g>
+      <circle class="ball" cx="26.6" cy="25.4" r="2.6" fill="#E0521C" stroke-width="1.3"/></g></svg>` },
+};
+
+const UNIT = 0.0142; // em per drawing unit
+
+export default function WordBuddy({ variant, size }: { variant: Variant; size: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window)) { el?.setAttribute("data-on", ""); return; }
+    const io = new IntersectionObserver(([e]) =>
+      e.isIntersecting ? el.setAttribute("data-on", "") : el.removeAttribute("data-on"),
+      { rootMargin: "80px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const b = BUDDIES[variant];
+  const style = { "--vw": `${(b.w * UNIT).toFixed(4)}em`, "--vh": `${(56 * UNIT).toFixed(4)}em` } as React.CSSProperties;
+  const inner =
+    b.kind === "run"
+      ? <span className="sitter run" style={style}><span className="lane"><span className="runner"><span className="flip" dangerouslySetInnerHTML={{ __html: b.svg }} /></span></span></span>
+      : <span className={`sitter ${b.kind}`} style={{ ...style, left: b.left }} dangerouslySetInnerHTML={{ __html: b.svg }} />;
+
+  return (
+    <span ref={ref} className={`wb-scope ${size}`} aria-hidden="true">
+      {inner}
+    </span>
+  );
+}

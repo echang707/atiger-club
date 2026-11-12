@@ -81,19 +81,19 @@ export default function Nav() {
         <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-[15px] justify-self-center">
           <Link
             href="/experiences"
-            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+            className="organic-underline text-[13px] font-medium uppercase tracking-[0.05em] text-ink hover:text-tiger-text transition-colors"
           >
             Experiences
           </Link>
           <Link
             href="/work-with-us"
-            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+            className="organic-underline text-[13px] font-medium uppercase tracking-[0.05em] text-ink hover:text-tiger-text transition-colors"
           >
             Work With Us
           </Link>
           <Link
             href="/about"
-            className="organic-underline font-semibold text-ink hover:text-tiger-text transition-colors"
+            className="organic-underline text-[13px] font-medium uppercase tracking-[0.05em] text-ink hover:text-tiger-text transition-colors"
           >
             About
           </Link>

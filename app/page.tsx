@@ -5,6 +5,7 @@ import ScrollStory from "@/components/ScrollStory";
 import UpcomingRows from "@/components/UpcomingRows";
 import Ending from "@/components/Ending";
 import { SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
+import { nextUp } from "@/lib/nextUp";
 
 export const metadata: Metadata = {
   // Bypasses the layout's "%s — Tiger Club" template — SITE_TITLE is
@@ -29,7 +30,7 @@ export default function Home() {
     // the hero it read as a washed-out second copy of the artwork with a
     // visible seam between the two. The hero now fades straight into cream.
     //
-    //   Hero .............. tiger-marble, full strength, behind the nav
+    //   Hero .............. clean cream: "Hey, Atlanta.", the headline, the ATL door scene
     //   MediumsSpread ..... quiet cream
     //   ScrollStory ....... quiet cream
     //   UpcomingRows ...... quiet cream
@@ -39,7 +40,7 @@ export default function Home() {
     // pasted over the page rather than as the artwork, so the pattern now
     // lives only where it can be shown at full strength.
     <main>
-      <Hero />
+      <Hero initialNext={nextUp()} />
       <MediumsSpread />
       <ScrollStory />
       <UpcomingRows />

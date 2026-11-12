@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
 import NewsletterPopup from "@/components/NewsletterPopup";
-import { Fraunces, Inter, Caveat, JetBrains_Mono, Bricolage_Grotesque, Instrument_Serif } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
@@ -9,49 +9,13 @@ import Footer from "@/components/Footer";
 import DiscordFab from "@/components/DiscordFab";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE } from "@/lib/seo";
 
-const fraunces = Fraunces({
+// One family across the whole site: Space Grotesk, used at different
+// weights for headlines, body copy and labels. (The logo is an image and
+// is unaffected.) Every Tailwind font key points at this one variable.
+const space = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600", "900"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const caveat = Caveat({
-  subsets: ["latin"],
-  variable: "--font-caveat",
-  weight: ["500", "700"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  weight: ["400", "500"],
-  display: "swap",
-});
-
-// Wordmark: a grotesque with a bit of attitude, for "TIGER CLUB" in the nav/footer.
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  weight: ["500", "600", "700", "800"],
-  display: "swap",
-});
-
-// Tagline: a soft, condensed display italic for "life is better together."
-const instrument = Instrument_Serif({
-  subsets: ["latin"],
-  variable: "--font-instrument",
-  weight: "400",
-  style: ["normal", "italic"],
+  variable: "--font-space",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -160,7 +124,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${caveat.variable} ${jetbrains.variable} ${bricolage.variable} ${instrument.variable}`}
+      className={space.variable}
     >
       <body className="font-sans antialiased">
         <script

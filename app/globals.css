@@ -103,7 +103,7 @@ body {
 }
 
 .annotation {
-  font-family: var(--font-caveat), cursive;
+  font-family: var(--font-space), "Helvetica Neue", Arial, sans-serif;
   color: #A9350C;
 }
 
@@ -790,3 +790,249 @@ body {
     background-size: contain;
   }
 }
+
+
+/* ==========================================================================
+   Homepage hero (2026 redesign): "Hey, Atlanta." / Life is better together.
+   ========================================================================== */
+.tc-hero {
+  --tc-ink: #15130E; --tc-ink-2: #3E3A31; --tc-tiger: #E0521C; --tc-fill: #D2470F;
+  display: grid; grid-template-rows: 1fr auto; text-align: center;
+  /* the layout already leaves room for the fixed nav (~80px) above <main> */
+  min-height: max(520px, calc(100svh - 80px));
+}
+.tc-hero-center { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-block: 24px 40px; }
+.tc-hey {
+  margin: 0 0 clamp(18px, 2.6vh, 26px); display: inline-flex; align-items: center; gap: 9px;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  animation: tc-rise .9s cubic-bezier(.2,.7,.1,1) both;
+}
+.tc-hey::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--tc-tiger); }
+.tc-hero h1 { margin: 0; font-weight: 700; font-size: clamp(3.2rem, 9vw, 8.8rem); line-height: 0.9; letter-spacing: -0.055em; text-wrap: balance; color: var(--tc-ink); }
+.tc-hero h1 > span { display: block; animation: tc-rise .9s cubic-bezier(.2,.7,.1,1) both; }
+.tc-hero h1 > span + span { animation-delay: .08s; }
+@keyframes tc-rise { from { opacity: 0; transform: translateY(24%); } }
+.tc-kicker {
+  margin: clamp(22px, 3.4vh, 34px) 0 0; max-width: 44ch;
+  font-size: clamp(12.5px, 1.05vw, 14px); font-weight: 500; line-height: 1.5;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--tc-ink-2);
+  animation: tc-rise .9s cubic-bezier(.2,.7,.1,1) .18s both;
+}
+.tc-cta {
+  margin-top: clamp(24px, 3.6vh, 34px); display: inline-flex; align-items: center; gap: .45em;
+  border-radius: 999px; background: var(--tc-fill); color: #fff; text-decoration: none;
+  font-size: 13.5px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 16px 26px; transition: background-color .25s; animation: tc-rise .9s cubic-bezier(.2,.7,.1,1) .26s both;
+}
+.tc-cta:hover { background: var(--tc-ink); }
+.tc-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 16px; font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+.tc-foot .l { justify-self: start; padding-bottom: 14px; }
+.tc-foot .r { justify-self: end; padding-bottom: 14px; text-decoration: none; text-align: right; }
+.tc-foot .r:hover span { color: var(--tc-fill); }
+.tc-foot .r b { font-weight: 500; color: var(--tc-fill); }
+.tc-foot .tc-scene { width: min(520px, 42vw); max-width: none; }
+@media (max-width: 899px) {
+  .tc-hero { min-height: 0; }
+  .tc-hero-center { padding-block: 56px 44px; }
+  .tc-hero h1 { font-size: clamp(3rem, 15vw, 5.4rem); }
+  .tc-kicker { max-width: 34ch; }
+  .tc-foot { grid-template-columns: 1fr 1fr; }
+  .tc-foot .tc-scene { grid-column: 1 / -1; grid-row: 1; width: 100%; justify-self: center; }
+  .tc-foot .l, .tc-foot .r { padding-block: 14px 18px; font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) { .tc-hey, .tc-hero h1 > span, .tc-kicker, .tc-cta { animation: none !important; } }
+
+/* the ATL door scene (components/DoorScene.tsx) */
+.tc-scene { --ink: #15130E; --tiger: #E0521C; --font: var(--font-space), "Helvetica Neue", Arial, sans-serif; --slow: 1; }
+/* ── the track: two people, one door ── */
+.tc-scene {
+  --w: 2.2rem;    /* a person */
+  --dw: 3.9rem;   /* the door */
+  position: relative; width: 100%; max-width: 520px; height: 6.4rem; overflow: hidden;
+}
+@media (min-width: 900px) { .tc-scene { --w: 2.5rem; --dw: 4.3rem; height: 7rem; } }
+.tc-scene .ground { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 6px; overflow: visible; }
+
+.tc-scene .door-wrap { position: absolute; left: 50%; bottom: calc(var(--dw) * -0.061); width: var(--dw); margin-left: calc(var(--dw) / -2); color: var(--ink); }
+.tc-scene .door { display: block; width: 100%; height: auto; overflow: visible; }
+.tc-scene .door :is(.door-leaf, .tc-scene .door-light) { transform-box: view-box; }
+.tc-scene .door-light { opacity: 0; transition: opacity calc(0.3s * var(--slow)) calc(0.08s * var(--slow)); }
+.tc-scene .door-leaf { transform-origin: 7px 34px; transition: transform calc(0.36s * var(--slow)) cubic-bezier(0.34, 1.4, 0.64, 1); }
+.tc-scene .door-wrap[data-near]:not([data-open]) .door { animation: door-notice calc(0.45s * var(--slow)) ease-in-out; }
+@keyframes door-notice { 30% { transform: rotate(-2.5deg); } 65% { transform: rotate(1.8deg); } }
+.tc-scene .door-wrap[data-open] .door-leaf { transform: scaleX(0.2) skewY(-7deg); }
+.tc-scene .door-wrap[data-open] .door-light { opacity: 1; }
+/* a soft spill of light on the floor */
+.tc-scene .door-wrap::after {
+  content: ""; position: absolute; left: -12%; right: -12%; bottom: calc(var(--dw) * 0.02); height: 0.45rem; border-radius: 50%;
+  background: #FFC46B; opacity: 0;
+  opacity: 0; transition: opacity calc(0.4s * var(--slow)) calc(0.1s * var(--slow)); pointer-events: none;
+}
+.tc-scene .door-wrap[data-open]::after { opacity: .4; }
+
+/* a person on the track: --x is their offset from the door, in px */
+.tc-scene .who {
+  --x: 0px;
+  position: absolute; left: 50%; bottom: calc(var(--w) * -0.215);
+  width: var(--w); margin-left: calc(var(--w) / -2);
+  transform: translate3d(var(--x), 0, 0); color: var(--ink);
+}
+.tc-scene .face { display: block; }
+.tc-scene .who-b .face { transform: scaleX(-1); }   /* B faces left, toward the door */
+.tc-scene .explorer { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* --- the explorer's parts (Experiful) --- */
+.tc-scene .explorer :is(.explorer-leg, .tc-scene .explorer-arm, .tc-scene .explorer-pack, .tc-scene .explorer-body, .tc-scene .explorer-eyes, .tc-scene .explorer-head, .tc-scene .scarf-tail) { transform-box: view-box; }
+.tc-scene .explorer-leg { transform-origin: 20px 36px; }
+.tc-scene .explorer-arm { transform-origin: 20px 23.5px; transition: transform calc(0.22s * var(--slow)); }
+.tc-scene .explorer-eyes, .tc-scene .explorer-head { transition: transform calc(0.18s * var(--slow)); }
+.tc-scene .scarf-tail { transform-origin: 17.6px 19.6px; }
+/* idle: the faintest sign of life */
+.tc-scene .explorer-body { animation: explorer-breathe calc(2.8s * var(--slow)) ease-in-out infinite; }
+@keyframes explorer-breathe { 50% { transform: translateY(0.5px); } }
+/* running */
+.tc-scene [data-run] .explorer-leg-a { animation: explorer-stride calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
+.tc-scene [data-run] .explorer-leg-b { animation: explorer-stride calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
+.tc-scene [data-run] .explorer-arm-front { animation: explorer-swing calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
+.tc-scene [data-run] .explorer-arm-back { animation: explorer-swing calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
+.tc-scene [data-run] .explorer-body { animation: explorer-bob calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
+.tc-scene [data-run] .explorer-pack { animation: explorer-pack calc(0.26s * var(--slow)) ease-in-out infinite alternate-reverse; }
+.tc-scene [data-run] .scarf-tail { animation: scarf-flap calc(0.26s * var(--slow)) ease-in-out infinite alternate; }
+@keyframes explorer-stride { from { transform: rotate(-31deg); } to { transform: rotate(29deg); } }
+@keyframes explorer-swing { from { transform: rotate(-24deg); } to { transform: rotate(21deg); } }
+@keyframes explorer-bob { from { transform: translateY(0) rotate(5deg); } to { transform: translateY(-1.3px) rotate(7deg); } }
+@keyframes explorer-pack { from { transform: translateY(0.3px); } to { transform: translateY(-1.6px); } }
+@keyframes scarf-flap { from { transform: rotate(-14deg); } to { transform: rotate(18deg); } }
+/* stopped: a glance at each other */
+.tc-scene [data-look] .explorer-eyes { transform: translateX(1.4px); }
+.tc-scene [data-look] .explorer-head { transform: translateX(0.7px) rotate(3deg); transform-origin: 20px 18px; }
+
+/* noticing: a tiny surprised hop, and three strokes above the head */
+.tc-scene .who[data-surprise] .explorer { animation: surprise calc(0.36s * var(--slow)) cubic-bezier(0.3, 0, 0.5, 1); }
+@keyframes surprise { 40% { transform: translateY(-5px); } }
+
+/* "come on!": the front arm goes up, waves, then points at the door */
+.tc-scene .who[data-wave] .explorer-arm-front { animation: wave calc(0.95s * var(--slow)) ease-in-out forwards; }
+@keyframes wave {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(-92deg); }
+  36% { transform: rotate(-60deg); }
+  52% { transform: rotate(-94deg); }
+  68% { transform: rotate(-62deg); }
+  100% { transform: rotate(-46deg); }
+}
+/* "yes!": two quick nods */
+.tc-scene .who[data-nod] :is(.explorer-head, .tc-scene .explorer-eyes) { animation: nod calc(0.26s * var(--slow)) ease-in-out 2; transform-origin: 20px 18px; }
+@keyframes nod { 50% { transform: translate(0.7px, 1.4px) rotate(9deg); } }
+.tc-scene .who[data-nod] .explorer { animation: bounce calc(0.26s * var(--slow)) ease-in-out 2; }
+@keyframes bounce { 50% { transform: translateY(-2.5px); } }
+
+/* through the door: a little hop, then gone (Experiful) */
+.tc-scene .who[data-hop] .explorer { animation: explorer-hop calc(0.42s * var(--slow)) cubic-bezier(0.3, 0, 0.5, 1) forwards; }
+@keyframes explorer-hop {
+  35% { transform: translate(1px, -11px) scale(0.92) rotate(8deg); opacity: 1; }
+  100% { transform: translate(4px, 2px) scale(0.35) rotate(14deg); opacity: 0; }
+}
+
+.tc-scene .door-wrap[data-glow] .door-light { animation: light-flare calc(0.8s * var(--slow)) ease-out; }
+@keyframes light-flare { 20% { fill: #FFF1D6; } }
+
+/* A reaches out to the door, then waves B through: "after you" */
+.tc-scene .who[data-reach] .explorer-arm-front { transform: rotate(-58deg); }
+.tc-scene .who[data-after] .explorer-arm-front { animation: after-you calc(0.9s * var(--slow)) ease-in-out forwards; }
+@keyframes after-you {
+  0% { transform: rotate(-58deg); }
+  35% { transform: rotate(-12deg); }
+  65% { transform: rotate(-88deg); }
+  100% { transform: rotate(-46deg); }
+}
+.tc-scene .who[data-after] .explorer-head { transform: translateX(0.7px) rotate(-6deg); transform-origin: 20px 18px; }
+/* the door's label */
+.tc-scene .door-label { font-family: var(--font); font-size: 9px; font-weight: 700; letter-spacing: 0.04em; }
+
+
+/* ==========================================================================
+   Little explorers on the seven category words (components/WordBuddy.tsx)
+   ========================================================================== */
+.wb-scope { position: absolute; left: 0; right: 0; top: 0.75rem; height: 1em; line-height: 1; pointer-events: none; z-index: 2; }
+/* the little people on the words: sized in em, so they scale with the word */
+.wb-scope .v { display: block; height: auto; overflow: visible; }
+.wb-scope .v * { transform-box: view-box; }
+.wb-scope .sitter { position: absolute; bottom: calc(100% - 0.035em); pointer-events: none; }
+.wb-scope .sitter.sit .v { margin-bottom: calc(var(--vh) * -0.346); }
+.wb-scope .sitter.stand .v, .wb-scope .sitter.run .v { margin-bottom: calc(var(--vh) * -0.153); }
+.wb-scope .sitter .v { width: var(--vw); }
+.wb-scope .sitter { --unit: 0.0125em; }
+.wb-scope .v .head { transform-origin: 20px 18px; }
+
+/* Eat */
+.wb-scope .eat .eat-arm { transform-origin: 20.2px 23.5px; animation: eat 1.9s ease-in-out infinite; }
+.wb-scope .eat .head { animation: nom 1.9s ease-in-out infinite; }
+.wb-scope .eat .noodle { opacity: 0; animation: noodle 1.9s ease-in-out infinite; }
+@keyframes eat { 0%, 18%, 78%, 100% { transform: rotate(0); } 38%, 58% { transform: rotate(-58deg); } }
+@keyframes nom { 0%, 18%, 78%, 100% { transform: rotate(3deg); } 40% { transform: rotate(-3deg) translateY(-.4px); } 47% { transform: rotate(-3deg) translateY(.3px); } 54% { transform: rotate(-3deg) translateY(-.3px); } }
+@keyframes noodle { 0%, 22% { opacity: 0; } 34%, 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
+
+/* Create */
+.wb-scope .create .brush-arm { transform-origin: 20.2px 23.5px; animation: dab .5s ease-in-out infinite alternate; }
+@keyframes dab { from { transform: rotate(-6deg); } to { transform: rotate(-24deg); } }
+.wb-scope .create .paint { stroke-dasharray: 1; stroke-dashoffset: 1; animation: paint 3.4s ease-in-out infinite; }
+@keyframes paint { 0% { stroke-dashoffset: 1; } 70%, 88% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.wb-scope .create .head { transform: rotate(4deg); }
+
+/* Move: jog along the word, turn at each end */
+.wb-scope .sitter.run { left: 0; right: 0; bottom: calc(100% - 0.035em); }
+.wb-scope .sitter.run .lane { position: relative; width: 100%; height: 0; }
+.wb-scope .sitter.run .runner { position: absolute; bottom: 0; left: 0; animation: lap 6s linear infinite; }
+.wb-scope .sitter.run .flip { display: block; animation: turn 6s steps(1) infinite; }
+@keyframes lap { 0% { left: 2%; } 50% { left: calc(96% - var(--vw)); } 100% { left: 2%; } }
+@keyframes turn { 0% { transform: none; } 50% { transform: scaleX(-1); } }
+.wb-scope .move .leg { transform-origin: 20px 36px; }
+.wb-scope .move .leg-a { animation: stride .26s ease-in-out infinite alternate; }
+.wb-scope .move .leg-b { animation: stride .26s ease-in-out infinite alternate-reverse; }
+.wb-scope .move .arm-f { transform-origin: 20px 23.5px; animation: swing .26s ease-in-out infinite alternate-reverse; }
+.wb-scope .move .body { animation: bob .26s ease-in-out infinite alternate; }
+@keyframes stride { from { transform: rotate(-31deg); } to { transform: rotate(29deg); } }
+@keyframes swing { from { transform: rotate(-24deg); } to { transform: rotate(21deg); } }
+@keyframes bob { from { transform: translateY(0) rotate(5deg); } to { transform: translateY(-1.3px) rotate(7deg); } }
+
+/* Explore: looks one way, then the other */
+.wb-scope .explore { transform-origin: 20px 30px; animation: lookabout 4.4s steps(1) infinite; }
+.wb-scope .explore .head { animation: scan 2.2s ease-in-out infinite; }
+@keyframes lookabout { 0% { transform: none; } 50% { transform: scaleX(-1); } }
+@keyframes scan { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(4deg); } }
+
+/* Serve: tip the can, drops fall, the sprout perks up */
+.wb-scope .serve .can { transform-origin: 25.6px 29.2px; animation: tip 2.6s ease-in-out infinite; }
+@keyframes tip { 0%, 15%, 85%, 100% { transform: rotate(0); } 30%, 70% { transform: rotate(16deg); } }
+.wb-scope .serve .drop { opacity: 0; animation: drop 2.6s linear infinite; }
+.wb-scope .serve .drop:nth-child(2) { animation-delay: .22s; } .wb-scope .serve .drop:nth-child(3) { animation-delay: .44s; }
+@keyframes drop { 0%, 28% { opacity: 0; transform: translate(0, 0); } 32% { opacity: 1; } 52% { opacity: 1; transform: translate(4px, 10px); } 54%, 100% { opacity: 0; transform: translate(4px, 10px); } }
+.wb-scope .serve .sprout { transform-origin: 42.6px 47.4px; animation: perk 2.6s ease-in-out infinite; }
+@keyframes perk { 0%, 50% { transform: scaleY(.86); } 70%, 90% { transform: scaleY(1.06) rotate(-3deg); } 100% { transform: scaleY(.86); } }
+
+/* Learn: reading, a page flips over */
+.wb-scope .learn .page { transform-origin: 30.4px 26px; animation: flip 3.2s ease-in-out infinite; }
+@keyframes flip { 0%, 70% { transform: scaleX(1); } 85% { transform: scaleX(0); } 100% { transform: scaleX(-1); } }
+.wb-scope .learn .head { animation: read 3.2s ease-in-out infinite; }
+@keyframes read { 0%, 60% { transform: rotate(5deg); } 75% { transform: rotate(1deg) translateY(-.3px); } 100% { transform: rotate(5deg); } }
+
+/* Play: toss and catch */
+.wb-scope .play .ball { animation: toss 1.3s cubic-bezier(.3,.6,.4,1) infinite; }
+@keyframes toss { 0%, 100% { transform: translateY(0); } 8% { transform: translateY(.6px) scaleY(.9); } 50% { transform: translateY(-17px); } 92% { transform: translateY(0); } }
+.wb-scope .play .toss-arm { transform-origin: 20.2px 23.5px; animation: flick 1.3s ease-in-out infinite; }
+@keyframes flick { 0%, 100% { transform: rotate(0); } 10% { transform: rotate(-26deg); } 22% { transform: rotate(0); } }
+.wb-scope .play .head { animation: watch 1.3s cubic-bezier(.3,.6,.4,1) infinite; }
+@keyframes watch { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-8deg); } }
+
+
+/* only animate while on screen, and never for reduced motion */
+.wb-scope:not([data-on]) .v, .wb-scope:not([data-on]) .v *, .wb-scope:not([data-on]) .runner, .wb-scope:not([data-on]) .flip { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .wb-scope .v, .wb-scope .v *, .wb-scope .runner, .wb-scope .flip { animation: none !important; }
+  .wb-scope .create .paint { stroke-dashoffset: 0; }
+  .wb-scope .sitter.run .runner { left: 40%; }
+}
+
+/* the words here sit in a 1em line box: lift the seat to the cap line */
+.wb-scope .sitter, .wb-scope .sitter.run { bottom: calc(100% - var(--wb-cap, 0.15em)); }
