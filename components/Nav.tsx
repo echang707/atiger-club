@@ -18,9 +18,14 @@ function MobileAvatar() {
     return (
       <Link
         href="/join"
-        className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-[11px] font-semibold text-ink"
+        aria-label="Log in or join Tiger Club"
+        className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-ink"
       >
-        ?
+        {/* the standard "account" person icon */}
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="8.2" r="3.7" />
+          <path d="M4.8 20c.9-3.6 3.7-5.6 7.2-5.6s6.3 2 7.2 5.6" />
+        </svg>
       </Link>
     );
   }

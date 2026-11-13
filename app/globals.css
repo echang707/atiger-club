@@ -729,35 +729,9 @@ body {
   );
 }
 
-/* The fade continues BELOW the bar. Ending it at the header's own edge
-   left a measurable step (32 brightness units) where the brush strokes
-   jumped from washed to full; carrying it another 90px makes the
-   transition invisible. */
-.nav-veil::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 90px;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(244, 233, 214, 0.78) 0%,
-    rgba(244, 233, 214, 0.42) 45%,
-    rgba(244, 233, 214, 0) 100%
-  );
-}
-
-/* On mobile the artwork is pushed down so its void meets the copy, which
-   leaves a short cream band at the very top. The nav veil is extended to
-   cover it, so the illustration appears to fade in under the header
-   rather than starting on a hard edge. */
-@media (max-width: 767px) {
-  .nav-veil::after {
-    height: 150px;
-  }
-}
+/* (There used to be a cream fade continuing ~90-150px BELOW the bar, to
+   wash out the old hero painting's brush strokes. The painting is gone,
+   so that fade only greyed out the top of the headline; removed.) */
 
 /* Subline under the hero headline: one line on desktop, centred under it,
    sans-serif at regular weight, softer than the headline's full-strength
@@ -857,7 +831,9 @@ body {
   .tc-foot .l, .tc-foot .r { padding-block: clamp(8px, 1.6svh, 14px) clamp(10px, 2svh, 18px); font-size: 11px; }
 }
 /* the fixed nav is 76px + border below 768px, 80px + border from there up */
-@media (max-width: 767px) { .tc-hero { --tc-nav: 77px; } }
+@media (max-width: 767px) {
+  .tc-hero { --tc-nav: 77px; }
+}
 /* very short windows (heavy zoom): keep the headline, button and scene */
 @media (max-height: 320px) { .tc-hey, .tc-kicker { display: none; } }
 @media (max-width: 899px) and (max-height: 520px) {
