@@ -36,7 +36,7 @@ const config: Config = {
         brass: "#B98A34",
       },
       fontFamily: {
-        // Space Grotesk everywhere. The old keys are kept so existing
+        // Grandstander everywhere. The old keys are kept so existing
         // class names keep working; they all resolve to the same family.
         display: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
         sans: ["var(--font-main)", "Helvetica Neue", "Arial", "sans-serif"],
