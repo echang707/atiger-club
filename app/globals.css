@@ -988,34 +988,31 @@ body {
 
 .tc-scene [data-nod] .explorer-head .explorer-eyes { animation: none; }
 
-/* ── orange dives in, gold peeks and gets yanked ─────────────────────── */
+/* ── orange peeks in after gold and gets pulled through ──────────────── */
 /* each pose moves the WHOLE drawing (body and legs together) */
-.tc-scene .who[data-ready] .explorer { animation: dive-ready calc(0.26s * var(--slow)) ease-out forwards; transform-origin: 50% 84%; }
-@keyframes dive-ready { to { transform: translateY(5%) rotate(-6deg) scaleY(.93); } }
-.tc-scene .who[data-dive] .explorer { animation: dive calc(0.52s * var(--slow)) cubic-bezier(.3,0,.6,1) forwards; transform-origin: 50% 55%; }
-@keyframes dive {
-  0%   { transform: translateY(4%) rotate(-6deg); opacity: 1; }
-  30%  { transform: translateY(-34%) rotate(30deg); opacity: 1; }
-  62%  { transform: translateY(-20%) rotate(78deg) scale(.88); opacity: 1; }
-  84%  { transform: translateY(-2%) rotate(96deg) scale(.66); opacity: 1; }
-  100% { transform: translateY(6%) rotate(104deg) scale(.4); opacity: 0; }
-}
 .tc-scene .who[data-peek] .explorer { animation: peek calc(0.4s * var(--slow)) cubic-bezier(.3,.7,.4,1) forwards; transform-origin: 50% 84%; }
 @keyframes peek { 0% { transform: rotate(0); } 70% { transform: rotate(19deg); } 100% { transform: rotate(16deg); } }
 .tc-scene .who[data-peek] .explorer-head { animation: peek-head .7s ease-in-out .35s infinite alternate; transform-origin: 20px 18px; }
 @keyframes peek-head { from { transform: rotate(0); } to { transform: rotate(7deg) translateX(.6px); } }
-.tc-scene .who[data-yank] .explorer { animation: yank calc(0.3s * var(--slow)) cubic-bezier(.5,0,.9,.5) forwards; transform-origin: 50% 60%; }
-@keyframes yank {
-  0%   { transform: rotate(16deg) translateY(0); opacity: 1; }
-  25%  { transform: rotate(52deg) translateY(-12%); opacity: 1; }
-  75%  { transform: rotate(84deg) translateY(-6%) scale(.75); opacity: 1; }
-  100% { transform: rotate(92deg) translateY(0) scale(.4); opacity: 0; }
+/* pulled in: keeps its lean, glides into the doorway and shrinks as it goes
+   deeper into the room, fading only at the very end. No spin, no flail. */
+.tc-scene .who[data-drag] .explorer { animation: drag calc(0.52s * var(--slow)) cubic-bezier(.5,0,.6,1) forwards; transform-origin: 50% 84%; }
+@keyframes drag {
+  0%   { transform: rotate(16deg) scale(1); opacity: 1; }
+  45%  { transform: rotate(19deg) scale(.86); opacity: 1; }
+  80%  { transform: rotate(21deg) scale(.62); opacity: 1; }
+  100% { transform: rotate(22deg) scale(.5); opacity: 0; }
 }
-/* the paw that reaches out of the doorway */
-.tc-scene .door .grab { transform-box: view-box; transform-origin: 24.5px 48.6px; transform: scaleX(0); opacity: 0;
-  transition: transform calc(0.14s * var(--slow)) cubic-bezier(.2,.9,.3,1.3), opacity .05s; }
-.tc-scene .door-wrap[data-grab] .grab { transform: scaleX(1); opacity: 1; }
-.tc-scene .door-wrap:not([data-grab]) .grab { transition: transform calc(0.12s * var(--slow)) ease-in, opacity .05s .1s; }
+.tc-scene .who[data-drag] .explorer-head { animation: none; }
+/* the paw (drawn in front of the tigers): pops out, holds on, and travels
+   back into the doorway in step with the pull */
+.tc-scene .grab-wrap { pointer-events: none; }
+.tc-scene .grab-wrap .grab { transform-box: view-box; transform-origin: 27px 48.6px; opacity: 0; transform: translate(0, 0) scale(0, 1);
+  transition: transform calc(0.18s * var(--slow)) cubic-bezier(.2,.9,.3,1.2), opacity .06s; }
+.tc-scene .grab-wrap[data-grab] .grab { opacity: 1; transform: translate(0, 0) scale(1, 1); }
+/* paw follows orange's chest: from (16, 48.6) to about (29.5, 55) */
+.tc-scene .grab-wrap[data-grab][data-pull] .grab { transform-origin: 16px 48.6px; transform: translate(13.5px, 6.4px) scale(.5, .5); opacity: 0;
+  transition: transform calc(0.52s * var(--slow)) cubic-bezier(.5,0,.6,1), opacity calc(0.12s * var(--slow)) calc(0.4s * var(--slow)); }
 /* slam: the door shudders once it shuts */
 .tc-scene .door-wrap[data-slam] .door { animation: slam calc(0.42s * var(--slow)) cubic-bezier(.3,0,.4,1); transform-origin: 50% 100%; }
 @keyframes slam { 0%, 30% { transform: none; } 45% { transform: rotate(-3deg) translateX(-1px); } 62% { transform: rotate(2.2deg); } 80% { transform: rotate(-1deg); } 100% { transform: none; } }

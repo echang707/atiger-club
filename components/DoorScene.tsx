@@ -1,9 +1,9 @@
 "use client";
 
 /* The homepage hero's little scene: two little stick tigers (orange and
-   gold) and an ATL door. Orange gets there first, opens the door, gives gold
-   a look and dives in head-first. Gold wanders over, leans in to peek...
-   and a paw shoots out of the doorway and yanks it inside. Slam. Drawn and animated in the same way as the
+   gold) and an ATL door. Orange gets there first and holds the door; gold
+   nods thanks and hops through. Orange leans in to peek after it... and a
+   gold paw reaches out of the doorway and pulls it inside. Slam. Drawn and animated in the same way as the
    Experiful explorer: inline SVG, every movement a CSS state (see
    .tc-scene in globals.css) switched on a short timeline below.
 
@@ -19,7 +19,6 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
       <div class="door-wrap" data-door aria-hidden="true">
         <svg viewBox="0 0 46 66" class="door" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false">
           <path class="door-light" d="M6.5 63 6.9 7.2c0-1.9 1.1-3 3-3l26-.3c2 0 3.2 1.1 3.2 3.1L39.4 63Z" fill="#FFC46B" stroke="none"/>
-          <g class="grab"><path d="M24.5 48.6 L32.2 48.4"/><circle cx="33.4" cy="48.3" r="2.2" fill="#E0521C" stroke-width="1.6"/></g>
           <path d="M6.5 63.2 6.9 7.2c0-1.9 1.1-3 3-3l26-.3c2 0 3.2 1.1 3.2 3.1l.3 56.2"/>
           <g class="door-leaf">
             <path d="M6.7 63 7 7.3c0-1.9 1-2.9 2.9-2.9l25.9-.3c2 0 3.1 1.1 3.1 3L39.2 63Z" fill="#E0521C"/>
@@ -62,6 +61,11 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
             <path class="explorer-leg explorer-leg-b" d="M20 36 L16.6 47.3 L19.7 47.4"/>
           </svg>
         </span>
+      </div>
+      <div class="door-wrap grab-wrap" data-grabber aria-hidden="true">
+        <svg viewBox="0 0 46 66" class="door" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+          <g class="grab"><path d="M27 48.6 L17.4 48.6"/><circle cx="16" cy="48.6" r="2.5" fill="#F2A541" stroke-width="1.7"/><path d="M14.6 46.6 l-.9-1.2 M13.8 48.6 h-1.3 M14.6 50.6 l-.9 1.2" stroke-width="1.2"/></g>
+        </svg>
       </div>`;
 
 /* The drawing is inserted once, by hand, after mount, and the component
@@ -83,7 +87,7 @@ function DoorScene({ className = "" }: { className?: string }) {
       ref={ref}
       className={`tc-scene ${className}`}
       role="img"
-      aria-label="Two tigers run up to a door marked ATL. One dives in head-first; the other peeks inside and gets pulled in."
+      aria-label="Two tigers run up to a door marked ATL. Orange holds it open and gold hops through; then orange peeks inside and gets pulled in."
     />
   );
 }
@@ -94,6 +98,7 @@ function run(track: HTMLElement): () => void {
   const door = track.querySelector<HTMLElement>("[data-door]")!;
   const A = track.querySelector<HTMLElement>("[data-a]")!;
   const B = track.querySelector<HTMLElement>("[data-b]")!;
+  const paw = track.querySelector<HTMLElement>("[data-grabber]")!;
   const flag = (el: HTMLElement, name: string, on: boolean) =>
     on ? el.setAttribute(name, "") : el.removeAttribute(name);
   const both = (name: string, on: boolean) => { flag(A, name, on); flag(B, name, on); };
@@ -112,16 +117,17 @@ function run(track: HTMLElement): () => void {
     return {
       start: half + w * 0.7,        // just off either end of the track
       holder: dw * 0.5 + w * 0.32,  // A, holding the door, beside its hinge
-      front: w * 0.16,              // (still frame) B in front of the doorway
-      wait: dw * 0.5 + w * 0.62,    // B, stopping short on the right
-      peek: dw * 0.5 - w * 0.05,    // B, right up at the frame to peek in
+      front: w * 0.16,              // B, in front of the open doorway
+      peek: -dw * 0.217 - w * 0.15, // A, at the left edge of the doorway
       hole: dw * 0.06,              // the middle of the open doorway
+      pulled: dw * 0.12,            // A, pulled well into the doorway
     };
   };
   const clear = () => {
     ["data-run", "data-look", "data-nod", "data-hop", "data-reach", "data-after",
-     "data-ready", "data-dive", "data-peek", "data-yank"].forEach((n) => both(n, false));
-    ["data-open", "data-glow", "data-grab", "data-slam"].forEach((n) => flag(door, n, false));
+     "data-peek", "data-drag"].forEach((n) => both(n, false));
+    ["data-open", "data-glow", "data-slam"].forEach((n) => flag(door, n, false));
+    ["data-grab", "data-pull"].forEach((n) => flag(paw, n, false));
   };
 
   class Stop extends Error {}
@@ -142,10 +148,10 @@ function run(track: HTMLElement): () => void {
       place(A, -G.holder, 1150, "cubic-bezier(.3,.5,.4,1)");
       await wait(500, g);
 
-      // B sets off a beat later, at an easier pace, and stops short
+      // B sets off a beat later, at an easier pace
       B.style.opacity = "1";
       flag(B, "data-run", true);
-      place(B, G.wait, 1700, "cubic-bezier(.25,.55,.35,1)");
+      place(B, G.front, 1700, "cubic-bezier(.25,.55,.35,1)");
       await wait(650, g);
       flag(A, "data-run", false);
 
@@ -155,50 +161,48 @@ function run(track: HTMLElement): () => void {
       flag(door, "data-open", true);
       await wait(380, g);
 
-      // A gives B a look... crouches... and DIVES in head-first, legs going
+      // "after you"
       flag(A, "data-reach", false);
+      flag(A, "data-after", true);
       flag(A, "data-look", true);
-      await wait(420, g);
+      await wait(400, g);
       flag(B, "data-run", false);
-      flag(A, "data-ready", true);
-      await wait(260, g);
-      flag(A, "data-ready", false);
-      flag(A, "data-look", false);
-      flag(A, "data-run", true);
-      flag(A, "data-dive", true);
-      place(A, G.hole, 520, "cubic-bezier(.4,0,.7,.4)");
-      await wait(420, g);
-      flag(door, "data-glow", true);
-      await wait(120, g);
-      A.style.transition = "none"; A.style.opacity = "0";
-      flag(A, "data-run", false);
-      flag(A, "data-dive", false);
-
-      // B: huh? creeps up to the doorway and leans in for a look
       flag(B, "data-look", true);
-      await wait(560, g);
-      flag(door, "data-glow", false);
-      flag(B, "data-run", true);
-      place(B, G.peek, 420, "ease-in-out");
-      await wait(420, g);
-      flag(B, "data-run", false);
-      flag(B, "data-peek", true);
-      await wait(820, g);
+      await wait(160, g);
 
-      // a paw shoots out and YANKS B inside
-      flag(door, "data-grab", true);
-      await wait(150, g);
-      flag(B, "data-peek", false);
-      flag(B, "data-look", false);
-      flag(B, "data-run", true);
-      flag(B, "data-yank", true);
-      place(B, G.hole, 300, "cubic-bezier(.6,0,.9,.4)");
-      await wait(120, g);
-      flag(door, "data-grab", false);
-      await wait(180, g);
+      // B nods thanks and hops through
+      flag(B, "data-nod", true);
+      await wait(560, g);
+      flag(B, "data-hop", true);
+      await wait(420, g);
       B.style.transition = "none"; B.style.opacity = "0";
-      flag(B, "data-run", false);
-      flag(B, "data-yank", false);
+      flag(door, "data-glow", true);
+
+      // A wanders up to the doorway and leans in for a peek
+      await wait(380, g);
+      flag(A, "data-after", false);
+      flag(door, "data-glow", false);
+      flag(A, "data-run", true);
+      place(A, G.peek, 460, "ease-in-out");
+      await wait(460, g);
+      flag(A, "data-run", false);
+      flag(A, "data-peek", true);
+      await wait(900, g);
+
+      // a gold paw reaches out, takes hold... and pulls A smoothly inside;
+      // the paw draws back in step, so it stays on A the whole way
+      flag(paw, "data-grab", true);
+      await wait(300, g);
+      flag(A, "data-look", false);
+      flag(A, "data-drag", true);
+      flag(paw, "data-pull", true);
+      place(A, G.pulled, 520, "cubic-bezier(.5,0,.6,1)");
+      await wait(520, g);
+      A.style.transition = "none"; A.style.opacity = "0";
+      flag(A, "data-peek", false);
+      flag(A, "data-drag", false);
+      flag(paw, "data-grab", false);
+      flag(paw, "data-pull", false);
       flag(door, "data-glow", true);
 
       // SLAM
