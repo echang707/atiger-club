@@ -860,7 +860,10 @@ body {
 .tc-scene .door-leaf { transform-origin: 7px 34px; transition: transform calc(0.36s * var(--slow)) cubic-bezier(0.34, 1.4, 0.64, 1); }
 .tc-scene .door-wrap[data-near]:not([data-open]) .door { animation: door-notice calc(0.45s * var(--slow)) ease-in-out; }
 @keyframes door-notice { 30% { transform: rotate(-2.5deg); } 65% { transform: rotate(1.8deg); } }
-.tc-scene .door-wrap[data-open] .door-leaf { transform: scaleX(0.2) skewY(-7deg); }
+/* opening is a pull, not a pop: same duration and curve as the tiger
+   stepping back (PULL_MS / PULL_EASE in DoorScene.tsx). Closing keeps the
+   quick bouncy swing from .door-leaf above. */
+.tc-scene .door-wrap[data-open] .door-leaf { transform: scaleX(0.2) skewY(-7deg); transition: transform calc(0.76s * var(--slow)) cubic-bezier(.45,0,.4,1); }
 .tc-scene .door-wrap[data-open] .door-light { opacity: 1; }
 /* a soft spill of light on the floor */
 .tc-scene .door-wrap::after {
@@ -944,6 +947,12 @@ body {
 
 /* A reaches out to the door, then waves B through: "after you" */
 .tc-scene .who[data-reach] .explorer-arm-front { transform: rotate(-58deg); }
+/* holding the knob while the door swings: the skewed leaf lifts the knob,
+   so the arm rises with it on the same curve as the swing */
+.tc-scene .who[data-holdknob] .explorer-arm-front { transform: rotate(-101.6deg); transition: transform calc(0.76s * var(--slow)) cubic-bezier(.45,0,.4,1); }
+/* stepping backwards while pulling the door: legs walk, the arm stays on the knob */
+.tc-scene .who[data-back] .explorer-leg-a { animation: explorer-stride calc(0.3s * var(--slow)) ease-in-out infinite alternate; }
+.tc-scene .who[data-back] .explorer-leg-b { animation: explorer-stride calc(0.3s * var(--slow)) ease-in-out infinite alternate-reverse; }
 .tc-scene .who[data-after] .explorer-arm-front { animation: after-you calc(0.9s * var(--slow)) ease-in-out forwards; }
 @keyframes after-you {
   0% { transform: rotate(-58deg); }

@@ -1,7 +1,8 @@
 "use client";
 
 /* The homepage hero's little scene: two little stick tigers (orange and
-   gold) and an ATL door. Orange gets there first and holds the door; gold
+   gold) and an ATL door. Orange gets there first, takes the door knob and
+   pulls the door open, stepping back with it, then holds it; gold
    nods thanks and hops through. Orange leans in to peek after it... and a
    gold paw reaches out of the doorway and pulls it inside. Slam. Drawn and animated in the same way as the
    Experiful explorer: inline SVG, every movement a CSS state (see
@@ -22,7 +23,7 @@ const MARKUP = `<svg class="ground" viewBox="0 0 760 6" preserveAspectRatio="non
           <path d="M6.5 63.2 6.9 7.2c0-1.9 1.1-3 3-3l26-.3c2 0 3.2 1.1 3.2 3.1l.3 56.2"/>
           <g class="door-leaf">
             <path d="M6.7 63 7 7.3c0-1.9 1-2.9 2.9-2.9l25.9-.3c2 0 3.1 1.1 3.1 3L39.2 63Z" fill="#E0521C"/>
-            <circle cx="33.2" cy="37.5" r="1.5" fill="#F4E9D6" stroke="none"/>
+            <circle class="knob" cx="33.2" cy="46" r="1.5" fill="#F4E9D6" stroke="none"/>
             <text class="door-label" x="23" y="22" text-anchor="middle" fill="#F4E9D6" stroke="none">ATL</text>
           </g>
           <path d="M1.5 63.3c14.4-.5 28.7-.4 43 .1"/>
@@ -94,6 +95,10 @@ function DoorScene({ className = "" }: { className?: string }) {
 
 export default memo(DoorScene);
 
+// the door's pull-open swing (must match .door-wrap[data-open] .door-leaf)
+const PULL_MS = 760;
+const PULL_EASE = "cubic-bezier(.45,0,.4,1)";
+
 function run(track: HTMLElement): () => void {
   const door = track.querySelector<HTMLElement>("[data-door]")!;
   const A = track.querySelector<HTMLElement>("[data-a]")!;
@@ -116,7 +121,15 @@ function run(track: HTMLElement): () => void {
     const half = track.clientWidth / 2, w = A.offsetWidth, dw = door.offsetWidth;
     return {
       start: half + w * 0.7,        // just off either end of the track
-      holder: dw * 0.5 + w * 0.32,  // A, holding the door, beside its hinge
+      // The knob sits at x=33.2 of the 46-wide door; open, the leaf is
+      // scaled to 0.2 about its hinge (x=7), which carries the knob to 12.24
+      // (and the leaf's skew lifts it a little). A's paw is 7.89/40 of a
+      // body width in front of its centre with the arm at reach, 4.69/40
+      // with the arm raised to follow the lifted knob, so standing at these
+      // two spots keeps the paw ON the knob from start to finish.
+      approach: dw * (33.2 - 23) / 46 - w * 7.89 / 40,  // paw on the closed knob
+      hold: dw * (12.24 - 23) / 46 - w * 4.69 / 40,     // paw on the open knob
+      side: dw * 0.5 + w * 0.62,                        // B waits beside the door
       front: w * 0.16,              // B, in front of the open doorway
       peek: -dw * 0.217 - w * 0.15, // A, at the left edge of the doorway
       hole: dw * 0.06,              // the middle of the open doorway
@@ -125,7 +138,7 @@ function run(track: HTMLElement): () => void {
   };
   const clear = () => {
     ["data-run", "data-look", "data-nod", "data-hop", "data-reach", "data-after",
-     "data-peek", "data-drag"].forEach((n) => both(n, false));
+     "data-peek", "data-drag", "data-back", "data-holdknob"].forEach((n) => both(n, false));
     ["data-open", "data-glow", "data-slam"].forEach((n) => flag(door, n, false));
     ["data-grab", "data-pull"].forEach((n) => flag(paw, n, false));
   };
@@ -142,24 +155,39 @@ function run(track: HTMLElement): () => void {
       place(A, -G.start); place(B, G.start);
       await wait(80, g);
 
-      // A trots in and stops beside the door
+      // A trots in and stops at the door, right by the knob
       A.style.opacity = "1";
       flag(A, "data-run", true);
-      place(A, -G.holder, 1150, "cubic-bezier(.3,.5,.4,1)");
+      place(A, G.approach, 1150, "cubic-bezier(.3,.5,.4,1)");
       await wait(500, g);
 
-      // B sets off a beat later, at an easier pace
+      // B sets off a beat later, at an easier pace, and waits beside the door
       B.style.opacity = "1";
       flag(B, "data-run", true);
-      place(B, G.front, 1700, "cubic-bezier(.25,.55,.35,1)");
+      place(B, G.side, 1700, "cubic-bezier(.25,.55,.35,1)");
       await wait(650, g);
       flag(A, "data-run", false);
 
-      // A reaches for the door; it swings open
+      // A puts a paw on the knob...
       flag(A, "data-reach", true);
-      await wait(220, g);
+      await wait(280, g);
+      // ...and pulls: the door swings toward its hinge and A steps back
+      // with it, on the same timing curve, so the paw never leaves the knob
+      flag(A, "data-back", true);
+      flag(A, "data-holdknob", true);
       flag(door, "data-open", true);
+      place(A, G.hold, PULL_MS, PULL_EASE);
+      await wait(PULL_MS, g);
+      flag(A, "data-back", false);
+      flag(B, "data-run", false);
+      await wait(160, g);
+
+      // the way is open: B steps up in front of the doorway
+      flag(B, "data-run", true);
+      place(B, G.front, 380, "ease-in-out");
       await wait(380, g);
+      flag(B, "data-run", false);
+      flag(A, "data-holdknob", false);
 
       // "after you"
       flag(A, "data-reach", false);
@@ -219,7 +247,7 @@ function run(track: HTMLElement): () => void {
   const still = () => {
     const G = geom();
     clear();
-    place(A, -G.holder); place(B, G.front);
+    place(A, G.hold); place(B, G.front);
     A.style.opacity = B.style.opacity = "1";
     flag(A, "data-after", true);
     both("data-look", true);
