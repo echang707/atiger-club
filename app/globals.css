@@ -818,6 +818,10 @@ body {
 .tc-cta:hover { background: var(--tc-ink); }
 .tc-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 16px; font-size: clamp(11px, 1.6svh, 12px); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
 .tc-foot .l { justify-self: start; padding-bottom: clamp(8px, 1.8svh, 14px); }
+.tc-foot .l { display: inline-flex; align-items: center; gap: 12px; }
+.tc-ig { display: inline-grid; place-items: center; width: 30px; height: 30px; margin: -7px 0; border-radius: 50%; color: var(--tc-ink); transition: color .2s, background-color .2s; }
+.tc-ig:hover { color: var(--tc-fill); background: rgba(21, 19, 14, .06); }
+.tc-ig:focus-visible { outline: 2px solid var(--tc-fill); outline-offset: 2px; }
 .tc-foot .r { justify-self: end; padding-bottom: clamp(8px, 1.8svh, 14px); text-decoration: none; text-align: right; }
 .tc-foot .r:hover span { color: var(--tc-fill); }
 .tc-foot .r b { font-weight: 500; color: var(--tc-fill); }
@@ -832,7 +836,9 @@ body {
 }
 /* the fixed nav is 76px + border below 768px, 80px + border from there up */
 @media (max-width: 767px) {
-  .tc-hero { --tc-nav: 77px; }
+  /* phones: the bottom row rests just above the browser's toolbar, so the
+     desktop breathing room under it is trimmed */
+  .tc-hero { --tc-nav: 77px; padding-bottom: clamp(4px, 1.2svh, 12px); }
 }
 /* very short windows (heavy zoom): keep the headline, button and scene */
 @media (max-height: 320px) { .tc-hey, .tc-kicker { display: none; } }

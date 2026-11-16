@@ -97,7 +97,7 @@ const jsonLd = {
         name: "Atlanta",
         containedInPlace: { "@type": "State", name: "Georgia" },
       },
-      sameAs: ["https://discord.gg/6u83g4P8Cb"],
+      sameAs: ["https://www.instagram.com/tigerclubatl/", "https://discord.gg/6u83g4P8Cb"],
     },
     {
       "@type": "WebSite",

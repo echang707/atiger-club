@@ -33,7 +33,18 @@ export default function Hero({ initialNext }: { initialNext: NextUp }) {
       </div>
 
       <div className="tc-foot">
-        <span className="l">Atlanta, GA</span>
+        <span className="l">
+          Atlanta, GA
+          <a
+            className="tc-ig"
+            href="https://www.instagram.com/tigerclubatl/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow Tiger Club on Instagram (@tigerclubatl)"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2" /><circle cx="12" cy="12" r="4.1" /><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" /></svg>
+          </a>
+        </span>
         <DoorScene />
         {next ? (
           <Link href={next.href} className="r">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import TigerWordmark from "./TigerWordmark";
 import NewsletterForm from "./NewsletterForm";
 
-/* The five links were laid out as one flex row, which on a phone forced
+/* The links were laid out as one flex row, which on a phone forced
    "Work With Us" to wrap onto three lines and pushed Discord past the
    edge. Mobile now gets its own structure — logo, then a two-column
    grid of links, then the sign-off and the copyright — while md and up
@@ -14,6 +14,7 @@ const LINKS = [
   { label: "About", href: "/about" },
   { label: "Contact", href: "mailto:hello@atigercub.com", external: true },
   { label: "Discord", href: "https://discord.gg/6u83g4P8Cb", blank: true },
+  { label: "Instagram", href: "https://www.instagram.com/tigerclubatl/", blank: true },
 ];
 
 export default function Footer() {
