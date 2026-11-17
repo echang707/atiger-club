@@ -194,13 +194,25 @@ export default function EventPage({
 
             {/* ── left: image ── */}
             <div className="lg:sticky lg:top-28">
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden">
+              {/* Every event gets the same square frame, and the whole image
+                  always fits inside it (flyers are often tall, photos wide),
+                  so no text on a flyer is ever cut off. The leftover space is
+                  filled with a soft, blurred copy of the same image. */}
+              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-ink/[0.04]">
+                <Image
+                  src={event.image}
+                  alt=""
+                  aria-hidden="true"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 560px"
+                  className="object-cover scale-110 blur-2xl opacity-40 saturate-50"
+                />
                 <Image
                   src={event.image}
                   alt={event.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 560px"
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
                 {past && (

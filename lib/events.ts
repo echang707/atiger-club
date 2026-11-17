@@ -528,6 +528,7 @@ export const events: TigerEvent[] = [
       "This Friendsgiving, we're bringing the world to the table. Ten local food pop-ups and vendors will be sharing dishes rooted in their cultures, family traditions, and celebrations — available to purchase à la carte.",
     image: "/images/multicultural-friendsgiving.png",
     price: "À la carte",
+    partifulLink: "https://partiful.com/e/WwvSwAj8WMb96aX2VmpN",
   },
   {
     kind: "original",
@@ -544,6 +545,7 @@ export const events: TigerEvent[] = [
     description:
       "Make a tiny piece of art, exchange it with someone new, and take home something handmade.",
     image: "/images/tiny-art-exchange.png",
+    partifulLink: "https://partiful.com/e/mI7eJTQEpcYQW3abhzXI",
   },
   {
     kind: "collab",
@@ -564,6 +566,24 @@ export const events: TigerEvent[] = [
     partifulLink: "https://partiful.com/e/ty2YiLp0ZqIXCsnQscFs",
     link: "https://www.tickettailor.com/events/thebakeryatlanta/2514786",
     linkLabel: "Get Tickets",
+  },
+  {
+    kind: "original",
+    time: "7pm – 10pm",
+    id: "board-game-night",
+    title: "Board Game Night",
+    medium: "Play",
+    city: "Atlanta",
+    date: "Dec 10",
+    month: "DEC",
+    day: "10",
+    location: "Round Trip Brewing Co., Atlanta",
+    address: "1279 Seaboard Industrial Blvd NW, Atlanta, GA 30318",
+    description:
+      "Join us for a laid-back board game night at Round Trip Brewing Co.! Bring your favorite board game or jump into one with new friends. Whether you're into strategy games, party games, or just here to hang out, there's a seat at the table for you. Come solo or bring friends. No experience needed, just show up ready to play. Bring a game if you have one; we'll have games to share too!",
+    image: "/images/board-game-night.png",
+    price: "Free entry",
+    partifulLink: "https://partiful.com/e/BRxiEXHj4Erjt4yvesHO",
   },
   {
     kind: "original",
