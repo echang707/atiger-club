@@ -514,7 +514,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "original",
-    time: "6pm – 10pm",
+    time: "6pm – 9pm",
     id: "multicultural-friendsgiving",
     title: "Multicultural Friendsgiving",
     medium: "Eat",
