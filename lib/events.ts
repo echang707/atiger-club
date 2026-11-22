@@ -569,7 +569,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "original",
-    time: "7pm – 10pm",
+    time: "7:30pm – 10:30pm",
     id: "board-game-night",
     title: "Board Game Night",
     medium: "Play",
@@ -587,7 +587,7 @@ export const events: TigerEvent[] = [
   },
   {
     kind: "original",
-    time: "2pm – 4pm",
+    time: "11am – 1pm",
     id: "creative-cafe-ornament-making",
     title: "Creative Café: Ornament Making",
     medium: "Create",
