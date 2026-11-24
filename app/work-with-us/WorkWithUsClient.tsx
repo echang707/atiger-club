@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { cities } from "@/lib/events";
 import { supabase } from "@/lib/club/supabase";
+import PartnerWall from "@/components/PartnerWall";
 
 const CONTACT_EMAIL = "eric@atigercub.com";
 // Supabase table that stores submissions — see run-this-in-supabase.sql.
@@ -93,6 +94,8 @@ export default function WorkWithUsClient() {
             and get people in the room.
           </p>
         </motion.div>
+
+        <PartnerWall />
 
         <motion.form
           onSubmit={handleSubmit}

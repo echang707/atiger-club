@@ -1239,3 +1239,24 @@ body {
 .gw .tg .ftail { transform-origin: 19.8px 35.6px; animation: gw-tail 1.5s ease-in-out infinite alternate; }
 @keyframes gw-tail { from { transform: rotate(-9deg); } to { transform: rotate(10deg); } }
 @media (prefers-reduced-motion: reduce) { .gw .tg * { animation: none !important; } }
+
+/* ── Partner wall (work-with-us) ── */
+.pw-wall { position: relative; overflow: hidden; display: grid; gap: 14px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.pw-row { display: flex; width: max-content; margin: 0; padding: 0; list-style: none; animation: pw-scroll 60s linear infinite; }
+.pw-row--rev { animation-direction: reverse; animation-duration: 72s; }
+.pw-wall:hover .pw-row { animation-play-state: paused; }
+.pw-set { display: flex; gap: 14px; padding-right: 14px; }
+.pw-tile { flex: 0 0 auto; width: 112px; height: 112px; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.08); background: #fff; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.pw-tile:hover { transform: translateY(-3px) scale(1.03); }
+.pw-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 768px) { .pw-tile { width: 136px; height: 136px; border-radius: 22px; } }
+@keyframes pw-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .pw-wall { overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .pw-row { animation: none; width: auto; flex-wrap: wrap; }
+  .pw-set[aria-hidden] { display: none; }
+  .pw-set { flex-wrap: wrap; padding-right: 0; }
+}
