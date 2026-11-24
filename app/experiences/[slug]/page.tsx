@@ -178,7 +178,7 @@ export default function EventPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="pt-24 md:pt-32 pb-24">
+      <main className="pt-24 md:pt-14 pb-24">
         {/* Phone: one narrow column. Desktop: Partiful-style two columns —
             image on the left (sticky), details on the right. */}
         <div className="max-w-lg lg:max-w-6xl mx-auto px-5 lg:px-10">

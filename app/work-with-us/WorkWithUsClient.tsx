@@ -73,7 +73,7 @@ export default function WorkWithUsClient() {
   };
 
   return (
-    <main className="pt-28 md:pt-36 pb-24">
+    <main className="pt-28 md:pt-20 pb-24">
       <div className="max-w-content mx-auto px-6 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
@@ -95,7 +95,7 @@ export default function WorkWithUsClient() {
           </p>
         </motion.div>
 
-        <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-start">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-stretch">
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 14 }}

@@ -130,7 +130,7 @@ export default function AboutClient() {
     <MotionConfig reducedMotion="user">
       <main className="overflow-x-hidden">
         {/* ================= OPENING ================= */}
-        <section className="mx-auto max-w-content px-6 pb-16 pt-28 md:px-10 md:pb-24 md:pt-36">
+        <section className="mx-auto max-w-content px-6 pb-16 pt-28 md:px-10 md:pb-24 md:pt-20">
           <Rise>
             <h1 className={TITLE}>why Tiger Club?</h1>
           </Rise>

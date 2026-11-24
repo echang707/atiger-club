@@ -40,7 +40,7 @@ function Tile({ p, fluid, hidden, label }: { p: Partner; fluid?: boolean; hidden
 
 export default function PartnerWall() {
   return (
-    <section aria-labelledby="partners-title" className="pw mb-16 md:mb-20">
+    <section aria-labelledby="partners-title" className="pw mb-16 md:mb-20 lg:mb-0 lg:flex lg:flex-col">
       <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
         <div>
           <p className="font-mono text-xs tracking-wideish uppercase text-tiger-text mb-2">

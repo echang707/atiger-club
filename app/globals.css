@@ -1267,3 +1267,10 @@ a.pw-tile:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; 
 .pw-grid-item { width: calc((100% - 32px) / 3); }
 .pw-tile--fluid { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: 22px; }
 .pw-tile--fluid img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Wide screens: the logo grid fills the height of the form beside it.
+   Rows are spread so the last row lines up with the form's bottom edge. */
+@media (min-width: 1024px) {
+  .pw-grid { flex: 1 1 0; height: 0; min-height: 0; align-content: space-between; justify-content: center; }
+  .pw-grid-item { width: calc((100% - 64px) / 5); }
+}

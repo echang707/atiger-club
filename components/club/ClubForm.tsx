@@ -22,7 +22,7 @@ export function ClubShell({
     // pt clears the fixed nav (76px mobile / 80px desktop) with room to
     // breathe; the page is deliberately short so it never scrolls on a
     // phone with the keyboard open.
-    <main className="min-h-svh px-5 pb-24 pt-32 sm:px-6 md:px-10 md:pt-40">
+    <main className="min-h-svh px-5 pb-24 pt-32 sm:px-6 md:px-10 md:pt-20">
       <div className="mx-auto w-full max-w-[26rem]">
         <p className="font-mono text-[11px] uppercase tracking-wideish text-tiger-text">
           {eyebrow}

@@ -88,7 +88,7 @@ export default function ExperiencesClient({
   }
 
   return (
-    <main className="pt-28 md:pt-36 pb-24">
+    <main className="pt-28 md:pt-20 pb-24">
       <div className="max-w-content mx-auto px-6 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 14 }}

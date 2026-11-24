@@ -11,7 +11,7 @@ export default function UpcomingRows() {
   const preview = upcomingEvents().slice(0, 5);
 
   return (
-    <section className="relative max-w-content mx-auto px-6 md:px-10 pt-24 md:pt-32 pb-10 md:pb-12">
+    <section className="relative max-w-content mx-auto px-6 md:px-10 pt-24 md:pt-14 pb-10 md:pb-12">
       {/* No quiet zone here any more. This is the most text-heavy block
           on the page, so it now sits on plain cream — the marble simply
           isn't behind it. Readability by absence rather than by scrim. */}
