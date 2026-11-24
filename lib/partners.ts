@@ -16,4 +16,5 @@ export const partners: Partner[] = [
   { name: "Out of Hand Theatre", slug: "out-of-hand-theatre", url: "https://www.outofhandtheater.com" },
   { name: "Hong Kong Dragon Boat Festival", slug: "hong-kong-dragon-boat-festival-v3", url: "https://www.dragonboatatlanta.com" },
   { name: "Trees Atlanta", slug: "trees-atlanta", url: "https://www.treesatlanta.org" },
+  { name: "Community Bucket", slug: "community-bucket", url: "https://communitybucketatl.com/" },
 ];
