@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PawPrints from "@/components/PawPrints";
 import NewsletterPopup from "@/components/NewsletterPopup";
-import { Grandstander } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { MemberProvider } from "@/components/club/MemberProvider";
@@ -13,10 +13,17 @@ import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, OG_DEFAULTS } from "
 // rounded face, used at different weights for headlines, body copy and
 // labels. (The logo is an image and is unaffected.) Every Tailwind font key
 // points at this one variable.
-const main = Grandstander({
-  subsets: ["latin"],
+// Self-hosted (app/fonts/*.woff2) so the build never fetches from Google Fonts.
+const main = localFont({
+  src: [
+    { path: "./fonts/grandstander-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/grandstander-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/grandstander-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/grandstander-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/grandstander-latin-800-normal.woff2", weight: "800", style: "normal" },
+    { path: "./fonts/grandstander-latin-900-normal.woff2", weight: "900", style: "normal" },
+  ],
   variable: "--font-main",
-  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
