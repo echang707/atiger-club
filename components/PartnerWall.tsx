@@ -47,11 +47,11 @@ export default function PartnerWall() {
             our partners
           </p>
           <h2 id="partners-title" className="font-display text-2xl md:text-3xl text-ink leading-tight">
-            built with the crews around Atlanta.
+            Our crew of crews.
           </h2>
         </div>
         <p className="text-sm text-ink/60 max-w-xs">
-          Hosts, makers and neighbors we&rsquo;ve shared a table with.
+          Hosts, venues and makers we&rsquo;ve worked with on real events, across the city.
         </p>
       </div>
 
