@@ -95,8 +95,6 @@ export default function WorkWithUsClient() {
           </p>
         </motion.div>
 
-        <PartnerWall />
-
         <motion.form
           onSubmit={handleSubmit}
           initial={{ opacity: 0, y: 14 }}
@@ -200,6 +198,8 @@ export default function WorkWithUsClient() {
             )}
           </div>
         </motion.form>
+
+        <PartnerWall />
       </div>
     </main>
   );

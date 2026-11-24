@@ -28,8 +28,8 @@ export default function PartnerWall() {
           <ul key={i} className={`pw-row ${i % 2 ? "pw-row--rev" : ""}`} role="list">
             {[0, 1].map((copy) => (
               <li key={copy} className="pw-set" aria-hidden={copy === 1 || undefined}>
-                {row.map((p) => (
-                  <span key={p.slug} className="pw-tile" title={p.name}>
+                {row.map((p) => {
+                  const img = (
                     <img
                       src={`/partners/${p.slug}.webp`}
                       alt={copy === 0 ? p.name : ""}
@@ -38,8 +38,26 @@ export default function PartnerWall() {
                       loading="lazy"
                       decoding="async"
                     />
-                  </span>
-                ))}
+                  );
+                  return p.url ? (
+                    <a
+                      key={p.slug}
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pw-tile"
+                      title={p.name}
+                      aria-label={copy === 0 ? `${p.name} (opens in a new tab)` : undefined}
+                      tabIndex={copy === 1 ? -1 : undefined}
+                    >
+                      {img}
+                    </a>
+                  ) : (
+                    <span key={p.slug} className="pw-tile" title={p.name}>
+                      {img}
+                    </span>
+                  );
+                })}
               </li>
             ))}
           </ul>
