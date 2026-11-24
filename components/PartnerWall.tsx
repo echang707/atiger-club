@@ -1,12 +1,44 @@
-import { partners } from "@/lib/partners";
+import { partners, type Partner } from "@/lib/partners";
 
-/* Two rows of partner logos drifting in opposite directions.
-   Each row is rendered twice so the loop is seamless. With reduced
-   motion, the CSS turns this into a plain wrapping grid. */
+/* Partner logos. On phones and tablets they drift as one row; on wide
+   screens they sit as a static grid beside the form. Every logo appears
+   exactly once in each layout. */
+
+function Tile({ p, fluid, hidden, label }: { p: Partner; fluid?: boolean; hidden?: boolean; label?: boolean }) {
+  const cls = `pw-tile${fluid ? " pw-tile--fluid" : ""}`;
+  const img = (
+    <img
+      src={`/partners/${p.slug}.webp`}
+      alt={label ? p.name : ""}
+      width={480}
+      height={480}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+  if (!p.url) {
+    return (
+      <span className={cls} title={p.name}>
+        {img}
+      </span>
+    );
+  }
+  return (
+    <a
+      href={p.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cls}
+      title={p.name}
+      aria-label={label ? `${p.name} (opens in a new tab)` : undefined}
+      tabIndex={hidden ? -1 : undefined}
+    >
+      {img}
+    </a>
+  );
+}
+
 export default function PartnerWall() {
-  const half = Math.ceil(partners.length / 2);
-  const rows = [partners.slice(0, half), partners.slice(half)];
-
   return (
     <section aria-labelledby="partners-title" className="pw mb-16 md:mb-20">
       <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
@@ -23,46 +55,27 @@ export default function PartnerWall() {
         </p>
       </div>
 
-      <div className="pw-wall">
-        {rows.map((row, i) => (
-          <ul key={i} className={`pw-row ${i % 2 ? "pw-row--rev" : ""}`} role="list">
-            {[0, 1].map((copy) => (
-              <li key={copy} className="pw-set" aria-hidden={copy === 1 || undefined}>
-                {row.map((p) => {
-                  const img = (
-                    <img
-                      src={`/partners/${p.slug}.webp`}
-                      alt={copy === 0 ? p.name : ""}
-                      width={480}
-                      height={480}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  );
-                  return p.url ? (
-                    <a
-                      key={p.slug}
-                      href={p.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="pw-tile"
-                      title={p.name}
-                      aria-label={copy === 0 ? `${p.name} (opens in a new tab)` : undefined}
-                      tabIndex={copy === 1 ? -1 : undefined}
-                    >
-                      {img}
-                    </a>
-                  ) : (
-                    <span key={p.slug} className="pw-tile" title={p.name}>
-                      {img}
-                    </span>
-                  );
-                })}
-              </li>
-            ))}
-          </ul>
-        ))}
+      {/* Phones and tablets: one drifting row */}
+      <div className="pw-wall lg:hidden">
+        <ul className="pw-row" role="list">
+          {[0, 1].map((copy) => (
+            <li key={copy} className="pw-set" aria-hidden={copy === 1 || undefined}>
+              {partners.map((p) => (
+                <Tile key={p.slug} p={p} hidden={copy === 1} label={copy === 0} />
+              ))}
+            </li>
+          ))}
+        </ul>
       </div>
+
+      {/* Wide screens: every logo once, in a static grid */}
+      <ul className="pw-grid hidden lg:flex" role="list">
+        {partners.map((p) => (
+          <li key={p.slug} className="pw-grid-item">
+            <Tile p={p} fluid label />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

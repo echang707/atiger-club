@@ -9,11 +9,11 @@ export const partners: Partner[] = [
   { name: "Amistad Coffee", slug: "amistad-coffee", url: "https://www.instagram.com/amistadcoffeeco/?hl=en" },
   { name: "The Bite of Korea", slug: "the-bite-of-korea", url: "https://biteofkorea.com" },
   { name: "CT Reforma Taqueria", slug: "ct-reforma", url: "https://reforma.cttacos.com/" },
-  { name: "The International Night Market Atlanta", slug: "atlanta-international-night-market", url: "https://atlnightmarketfoundation.org/" },
+  { name: "The International Night Market Atlanta", slug: "atlanta-international-night-market-v2", url: "https://atlnightmarketfoundation.org/" },
   { name: "The Supermarket", slug: "the-supermarket", url: "https://www.thesupermarketatl.com/" },
   { name: "Round Trip Brewing Co", slug: "round-trip-brewing-co", url: "https://roundtripbrewing.com" },
   { name: "Concrete Jungle", slug: "concrete-jungle", url: "https://www.concrete-jungle.org" },
   { name: "Out of Hand Theatre", slug: "out-of-hand-theatre", url: "https://www.outofhandtheater.com" },
-  { name: "Hong Kong Dragon Boat Festival", slug: "hong-kong-dragon-boat-festival", url: "https://www.dragonboatatlanta.com" },
+  { name: "Hong Kong Dragon Boat Festival", slug: "hong-kong-dragon-boat-festival-v2", url: "https://www.dragonboatatlanta.com" },
   { name: "Trees Atlanta", slug: "trees-atlanta", url: "https://www.treesatlanta.org" },
 ];

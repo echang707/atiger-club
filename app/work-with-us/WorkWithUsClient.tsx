@@ -95,111 +95,113 @@ export default function WorkWithUsClient() {
           </p>
         </motion.div>
 
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-xl grid gap-5"
-        >
-          <div className="grid sm:grid-cols-2 gap-5">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-start">
+          <motion.form
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-xl grid gap-5"
+          >
+            <div className="grid sm:grid-cols-2 gap-5">
+              <label className="grid gap-1.5 text-sm">
+                <span className="text-ink/75">Your name</span>
+                <input
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
+                  placeholder="Jamie Lee"
+                />
+              </label>
+              <label className="grid gap-1.5 text-sm">
+                <span className="text-ink/75">Email</span>
+                <input
+                  required
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
+                  placeholder="jamie@email.com"
+                />
+              </label>
+            </div>
+
             <label className="grid gap-1.5 text-sm">
-              <span className="text-ink/75">Your name</span>
+              <span className="text-ink/75">City</span>
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
+              >
+                {cities.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="grid gap-1.5 text-sm">
+              <span className="text-ink/75">What&rsquo;s the idea, in a few words?</span>
               <input
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={idea}
+                onChange={(e) => setIdea(e.target.value)}
                 className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
-                placeholder="Jamie Lee"
+                placeholder="A rooftop dinner for people new to the city"
               />
             </label>
+
             <label className="grid gap-1.5 text-sm">
-              <span className="text-ink/75">Email</span>
-              <input
+              <span className="text-ink/75">Tell us more</span>
+              <textarea
                 required
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
-                placeholder="jamie@email.com"
+                rows={5}
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger resize-none"
+                placeholder="Who is it for, roughly when, and what would make it feel meaningful?"
               />
             </label>
-          </div>
 
-          <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/75">City</span>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
-            >
-              {cities.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/75">What&rsquo;s the idea, in a few words?</span>
-            <input
-              required
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
-              className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger"
-              placeholder="A rooftop dinner for people new to the city"
-            />
-          </label>
-
-          <label className="grid gap-1.5 text-sm">
-            <span className="text-ink/75">Tell us more</span>
-            <textarea
-              required
-              rows={5}
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              className="rounded-xl border border-ink/15 bg-paper-dim/60 px-4 py-3 text-ink outline-none transition-colors focus:border-tiger resize-none"
-              placeholder="Who is it for, roughly when, and what would make it feel meaningful?"
-            />
-          </label>
-
-          <div className="flex items-center gap-4 pt-2">
-            <button
-              type="submit"
-              disabled={!canSubmit || status === "sending"}
-              className="px-6 py-3 rounded-full text-sm font-medium bg-ink text-paper hover:bg-tiger-fill transition-colors duration-300 disabled:opacity-40 disabled:hover:bg-ink"
-            >
-              {status === "sending" ? "Sending…" : "Send it our way"}
-            </button>
-            {status === "sent" && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-ink/70"
+            <div className="flex items-center gap-4 pt-2">
+              <button
+                type="submit"
+                disabled={!canSubmit || status === "sending"}
+                className="px-6 py-3 rounded-full text-sm font-medium bg-ink text-paper hover:bg-tiger-fill transition-colors duration-300 disabled:opacity-40 disabled:hover:bg-ink"
               >
-                Got it — we&rsquo;ll be in touch.
-              </motion.span>
-            )}
-            {status === "error" && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                role="alert"
-                className="text-sm text-ink/70"
-              >
-                That didn&rsquo;t go through.{" "}
-                <a href={mailtoHref} className="underline text-tiger-text">
-                  Email it to us instead
-                </a>
-                .
-              </motion.span>
-            )}
-          </div>
-        </motion.form>
+                {status === "sending" ? "Sending…" : "Send it our way"}
+              </button>
+              {status === "sent" && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-sm text-ink/70"
+                >
+                  Got it — we&rsquo;ll be in touch.
+                </motion.span>
+              )}
+              {status === "error" && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  role="alert"
+                  className="text-sm text-ink/70"
+                >
+                  That didn&rsquo;t go through.{" "}
+                  <a href={mailtoHref} className="underline text-tiger-text">
+                    Email it to us instead
+                  </a>
+                  .
+                </motion.span>
+              )}
+            </div>
+          </motion.form>
 
-        <PartnerWall />
+          <PartnerWall />
+        </div>
       </div>
     </main>
   );

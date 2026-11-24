@@ -1241,7 +1241,7 @@ body {
 @media (prefers-reduced-motion: reduce) { .gw .tg * { animation: none !important; } }
 
 /* ── Partner wall (work-with-us) ── */
-.pw-wall { position: relative; overflow: hidden; display: grid; gap: 14px;
+.pw-wall { position: relative; overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
           mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
 .pw-row { display: flex; width: max-content; margin: 0; padding: 0; list-style: none; animation: pw-scroll 60s linear infinite; }
@@ -1261,3 +1261,9 @@ a.pw-tile:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; 
   .pw-set[aria-hidden] { display: none; }
   .pw-set { flex-wrap: wrap; padding-right: 0; }
 }
+
+/* Partner wall: wide-screen grid (beside the form) */
+.pw-grid { justify-content: center; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.pw-grid-item { width: calc((100% - 32px) / 3); }
+.pw-tile--fluid { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: 22px; }
+.pw-tile--fluid img { display: block; width: 100%; height: 100%; object-fit: cover; }
