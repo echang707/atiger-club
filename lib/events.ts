@@ -71,12 +71,6 @@ export type TigerEvent = {
   image: string;
   link?: string;
   linkLabel?: string;
-  /* The Partiful (or other primary RSVP) URL. Rendered as the main CTA
-     button. Kept separate from `link` so events with a Partiful RSVP can
-     ALSO carry a secondary `link` for "Learn More" — e.g. JapanFest has
-     no Partiful but does have a festival website, while Refuge Coffee Run
-     has both a Partiful RSVP and a race website. */
-  partifulLink?: string;
   /* Start/end time as it should read on the page, e.g. "10am – 12pm". */
   time?: string;
   /* Secondary line, e.g. ticket price. Kept out of the description. */
@@ -115,7 +109,7 @@ export type TigerEvent = {
      percentage. Beats the percentage when present. */
   memberPriceCents?: number | null;
 
-  /* EXTERNAL — registration happens on Partiful/Eventbrite/a partner
+  /* EXTERNAL — registration happens on Eventbrite/a partner
      site, and `link` is where we send people. NATIVE — registration
      happens here. Everything today is EXTERNAL; this field is what lets
      events move across one at a time. */
@@ -199,7 +193,6 @@ export const events: TigerEvent[] = [
     location: "Tucker, GA",
     description: "Korean food, conversation, and a table that keeps growing all night.",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1400&auto=format&fit=crop",
-    link: "https://partiful.com/e/4S3CS9C7IGONvBxaYBK1?c=Ol8nU_yY",
     linkLabel: "RSVP",
   },
   {
@@ -213,12 +206,10 @@ export const events: TigerEvent[] = [
     location: "Doraville, GA",
     description: "A relaxed coffee-shop gathering for artists, designers, and builders around ATL.",
     image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1400&auto=format&fit=crop",
-    link: "https://partiful.com/e/k28h6U9GOsR5Ws0wBqfn?c=0AUE-CEo",
     linkLabel: "RSVP",
   },
   {
     time: "10am \u2013 12pm",
-    link: "https://partiful.com/e/6qbYzQvsB2LlHhwzXjlO?c=PBA9uuw5",
     linkLabel: "RSVP",
     id: "creative-cafe-social",
     title: "Creative Café Social",
@@ -269,7 +260,6 @@ export const events: TigerEvent[] = [
   {
     price: "$45 per person, tax and gratuity included",
     time: "6:30pm \u2013 8:30pm",
-    link: "https://partiful.com/e/k2VBxjugI1iUasRyoaYj?c=tr7NgZ0G",
     linkLabel: "RSVP",
     id: "bite-club-mexico",
     title: "Bite Club: A Taste of México",
@@ -298,7 +288,6 @@ export const events: TigerEvent[] = [
     description:
       "Don't just watch the Lantern Parade. Help make it happen. Join our volunteer crew to guide the parade, support performers, and see one of Atlanta's favorite traditions from inside the action.",
     image: "/images/lantern-parade.jpg",
-    partifulLink: "https://partiful.com/e/jnRWU1l6quV3on9pYAkK?c=AOFgnI6C",
   },
   {
     kind: "collab",
@@ -314,7 +303,6 @@ export const events: TigerEvent[] = [
     description:
       "Run, walk, or cheer, then stick around with Tiger Club after the finish line for coffee, treats, and an easygoing hangout instead of heading straight home.",
     image: "/images/refuge-run.jpg",
-    partifulLink: "https://partiful.com/e/0JhHFQMLl8P4ELme0AB8?c=2P_UUtTQ",
     link: "https://www.refugecoffeeco.com/events/refuge-coffee-run/",
     linkLabel: "Learn More",
   },
@@ -349,12 +337,9 @@ export const events: TigerEvent[] = [
     location: "The Supermarket, 638 N Highland Ave NE",
     address: "638 N Highland Ave NE, Atlanta, GA 30306",
     description:
-      "Come spend Friday night on Cloud Nine. The Bakery Atlanta has spent nine years supporting the city's emerging, DIY, and underground arts scene, and we're bringing a group to celebrate at their birthday party. Expect a full night of live music, DJs, karaoke, art, installations, drag, and plenty of Atlanta creative energy. Come alone or bring a friend: we'll have a Tiger Club group there, make introductions, and experience the night together. Tickets are through The Bakery, and Tiger Club gets a discount, so DM us for the access code before you buy. RSVP on Partiful too so we know who's coming with the group.",
+      "Come spend Friday night on Cloud Nine. The Bakery Atlanta has spent nine years supporting the city's emerging, DIY, and underground arts scene, and we're bringing a group to celebrate at their birthday party. Expect a full night of live music, DJs, karaoke, art, installations, drag, and plenty of Atlanta creative energy. Come alone or bring a friend: we'll have a Tiger Club group there, make introductions, and experience the night together. Tickets are through The Bakery, and Tiger Club gets a discount, so DM us for the access code before you buy. RSVP here on the site so we know who's coming with the group.",
     image: "/images/cloud-nine.jpg",
-    partifulLink: "https://partiful.com/e/ZaIDMOnNq49VRRPmMn4m?c=0gM7u6UN",
-    /* Ticket page. EventRow shows only the Partiful button when a
-       partifulLink exists, so this is not rendered today \u2014 the Partiful
-       page carries the ticket link. Kept here so it is on record. */
+    /* Ticket page, shown as the secondary "Tickets" link. */
     link: "https://www.tickettailor.com/events/thebakeryatlanta/2384479",
     linkLabel: "Tickets",
   },
@@ -372,7 +357,6 @@ export const events: TigerEvent[] = [
     description:
       "Spend the morning on Concrete Jungle's half-acre urban farm planting, cultivating, and harvesting produce to donate. Lend a hand, learn a thing or two about farming, and meet the rest of the crew over the rows.",
     image: "/images/doghead-farm.jpg",
-    partifulLink: "https://partiful.com/e/xEcVGHcU2THUYQCQSEzG?c=zrDHrw7p",
     presentedBy: "Concrete Jungle",
   },
   {
@@ -406,7 +390,6 @@ export const events: TigerEvent[] = [
     description:
       "Scissors, magazines, glue sticks, and good company. Bring yourself — we'll bring everything else. Show up, cut things up, make something, meet people.",
     image: "/images/collage-night.jpg",
-    partifulLink: "https://partiful.com/e/kGgbaU3n3i0v9GCs7G8m?c=kVbIxMpz",
   },
   {
     kind: "collab",
@@ -422,7 +405,6 @@ export const events: TigerEvent[] = [
     description:
       "A relaxed fall afternoon in Piedmont Park with the Chefs Club and Tiger Club communities. Bring a dish, a snack, a dessert, or something from your favorite Atlanta spot — no pressure to cook. We'll have music, mini pumpkin painting, and a pie-eating competition. Grab a plate, find a blanket, and meet some people.",
     image: "/images/fall-potluck.jpg",
-    partifulLink: "https://partiful.com/e/vfSlPvjwMvNFZciMAbsQ?c=jEvOkC1w",
     presentedBy: "Chefs Club",
   },
   {
@@ -439,7 +421,6 @@ export const events: TigerEvent[] = [
     description:
       "The sweetest 5K in Atlanta. Walk to some of the city's best donut shops, try delicious treats, and meet new people along the way. Some donuts will be discounted, some free, some available to buy. All of them worth it.",
     image: "/images/atl-donut-crawl.jpg",
-    partifulLink: "https://partiful.com/e/858fqrttTmmSI1EJ5sAV?c=nEN_GJ5a",
   },
   {
     kind: "pick",
@@ -455,7 +436,6 @@ export const events: TigerEvent[] = [
     description:
       "Trees Atlanta\u2019s biggest volunteer event of the year. We\u2019ll spend the morning at Freedom Park planting trees alongside volunteers from across Atlanta, helping make the city greener while meeting new people along the way. Plantlanta brings hundreds of volunteers together to plant hundreds of trees across Atlanta in just two days, and we\u2019re bringing a Tiger Club group to be part of it. No planting experience is needed: Trees Atlanta provides the guidance and everything you need to get started. Just come ready to get your hands dirty, meet some new people, and leave a lasting impact on one of Atlanta\u2019s green spaces.",
     image: "/images/plantlanta.jpg",
-    partifulLink: "https://partiful.com/e/9iy1nu9zoPpFNdpS8nW6?c=wnsOSHZW",
     presentedBy: "Trees Atlanta",
   },
   {
@@ -472,7 +452,6 @@ export const events: TigerEvent[] = [
     description:
       "A real-life city adventure. Teams of 4–5 race through four Atlanta neighborhoods using MARTA and walking only, completing challenges in each neighborhood along the way. Each challenge is specific to where you are — discovery, physical, creative, puzzle, and social tasks that make Atlanta itself the game board. First team to reach Piedmont Park wins. More details and team sign-up coming soon.",
     image: "/images/great-atlanta-race.jpg",
-    partifulLink: "https://partiful.com/e/M6BJMzsJtZWMsIm7Cx7E?c=DaM93T3T",
   },
   {
     kind: "collab",
@@ -510,7 +489,6 @@ export const events: TigerEvent[] = [
       "A meal, a play, and a conversation about the American Dream. Tiger Club joins Out of Hand Theater for a free community experience — enjoy a free meal, watch a short thought-provoking play, then join a small-group discussion guided by trained facilitators. Come curious and ready to hear someone else's perspective.",
     image: "/images/we-hold-these-truths.png",
     price: "Free",
-    partifulLink: "https://partiful.com/e/UBKbdBAOBm5qw9JEsWLg",
   },
   {
     kind: "original",
@@ -528,7 +506,6 @@ export const events: TigerEvent[] = [
       "This Friendsgiving, we're bringing the world to the table. Ten local food pop-ups and vendors will be sharing dishes rooted in their cultures, family traditions, and celebrations — available to purchase à la carte.",
     image: "/images/multicultural-friendsgiving.png",
     price: "À la carte",
-    partifulLink: "https://partiful.com/e/WwvSwAj8WMb96aX2VmpN",
   },
   {
     kind: "original",
@@ -545,13 +522,14 @@ export const events: TigerEvent[] = [
     description:
       "Make a tiny piece of art, exchange it with someone new, and take home something handmade.",
     image: "/images/tiny-art-exchange.png",
-    partifulLink: "https://partiful.com/e/mI7eJTQEpcYQW3abhzXI",
   },
   {
     kind: "collab",
     presentedBy: "The Bakery Atlanta",
     time: "7pm – 9pm",
     id: "letter-writing-social",
+    startsAt: "2026-12-09T19:00:00-05:00",
+    endsAt: "2026-12-09T21:00:00-05:00",
     title: "Letter Writing Social",
     medium: "Create",
     city: "Atlanta",
@@ -563,7 +541,6 @@ export const events: TigerEvent[] = [
     description:
       "Tiger Club and The Bakery Atlanta team up for an evening of letter writing, creativity, and connection. Put pen to paper and write to a friend, a loved one, or yourself — then meet the people around you over a relaxed evening of conversation. Come solo or with a friend, no writing experience needed.",
     image: "/images/letter-writing-social.png",
-    partifulLink: "https://partiful.com/e/ty2YiLp0ZqIXCsnQscFs",
     link: "https://www.tickettailor.com/events/thebakeryatlanta/2514786",
     linkLabel: "Get Tickets",
   },
@@ -571,6 +548,8 @@ export const events: TigerEvent[] = [
     kind: "original",
     time: "7:30pm – 10:30pm",
     id: "board-game-night",
+    startsAt: "2026-12-10T19:30:00-05:00",
+    endsAt: "2026-12-10T22:30:00-05:00",
     title: "Board Game Night",
     medium: "Play",
     city: "Atlanta",
@@ -583,12 +562,13 @@ export const events: TigerEvent[] = [
       "Join us for a laid-back board game night at Round Trip Brewing Co.! Bring your favorite board game or jump into one with new friends. Whether you're into strategy games, party games, or just here to hang out, there's a seat at the table for you. Come solo or bring friends. No experience needed, just show up ready to play. Bring a game if you have one; we'll have games to share too!",
     image: "/images/board-game-night.png",
     price: "Free entry",
-    partifulLink: "https://partiful.com/e/BRxiEXHj4Erjt4yvesHO",
   },
   {
     kind: "original",
     time: "11am – 1pm",
     id: "creative-cafe-ornament-making",
+    startsAt: "2026-12-12T11:00:00-05:00",
+    endsAt: "2026-12-12T13:00:00-05:00",
     title: "Creative Café: Ornament Making",
     medium: "Create",
     city: "Atlanta",
@@ -600,7 +580,6 @@ export const events: TigerEvent[] = [
     description:
       "A holiday edition of Creative Café Social at Postern Coffee. Make your own ornaments, sip on something warm, and meet new people in a relaxed, creative setting. No experience needed — ornament-making supplies provided while supplies last.",
     image: "/images/ornament-making.png",
-    partifulLink: "https://partiful.com/e/wU5SLcQ2JYAACCfik6ZC",
   },
 ];
 
@@ -713,7 +692,7 @@ export function eventSlug(e: TigerEvent) {
    default: an event wrongly marked NATIVE would offer a checkout that
    does not exist, whereas one wrongly marked EXTERNAL just links out. */
 export function registrationTypeOf(e: TigerEvent): RegistrationType {
-  return e.registrationType ?? "EXTERNAL";
+  return e.registrationType ?? "NATIVE";
 }
 
 export function eventStatusOf(e: TigerEvent): EventStatus {

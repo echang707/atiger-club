@@ -397,3 +397,61 @@ export async function getSavedEventIds(memberId: string): Promise<string[]> {
     .eq("member_id", memberId);
   return (data ?? []).map((r: { event_id: string }) => r.event_id);
 }
+
+/* ---------------------------------------------------------------------
+   Native RSVPs (see supabase/migrations/20261125_rsvps.sql).
+   --------------------------------------------------------------------- */
+
+export type RsvpOutcome = "going" | "already" | "full" | "error";
+
+/* Capacity is checked inside the database (rsvp_event), not here, so two
+   people racing for the last spot cannot both get it. */
+export async function rsvpToEvent(
+  eventId: string,
+  capacity: number | null,
+): Promise<RsvpOutcome> {
+  const sb = supabase();
+  if (!sb) return "error";
+  const { data, error } = await sb.rpc("rsvp_event", {
+    p_event_id: eventId,
+    p_capacity: capacity,
+  });
+  if (error || typeof data !== "string") {
+    console.error("[rsvp] failed:", error?.message);
+    return "error";
+  }
+  return data as RsvpOutcome;
+}
+
+export async function cancelRsvp(memberId: string, eventId: string): Promise<boolean> {
+  const sb = supabase();
+  if (!sb) return false;
+  const { error } = await sb
+    .from("rsvps")
+    .update({ status: "cancelled" })
+    .eq("member_id", memberId)
+    .eq("event_id", eventId);
+  return !error;
+}
+
+export async function getMyRsvpEventIds(memberId: string): Promise<string[]> {
+  const sb = supabase();
+  if (!sb) return [];
+  const { data } = await sb
+    .from("rsvps")
+    .select("event_id")
+    .eq("member_id", memberId)
+    .eq("status", "going");
+  return (data ?? []).map((r: { event_id: string }) => r.event_id);
+}
+
+/* Counts only, safe for signed-out visitors. */
+export async function getRsvpCounts(eventIds: string[]): Promise<Record<string, number>> {
+  const sb = supabase();
+  if (!sb) return {};
+  const { data, error } = await sb.rpc("rsvp_counts", { event_ids: eventIds });
+  if (error || !data) return {};
+  return Object.fromEntries(
+    (data as { event_id: string; going: number }[]).map((r) => [r.event_id, Number(r.going)]),
+  );
+}

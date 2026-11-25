@@ -2,9 +2,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { events, eventSlug, TigerEvent } from "@/lib/events";
+import { events, eventSlug, registrationTypeOf, TigerEvent } from "@/lib/events";
 import { SITE_URL } from "@/lib/seo";
 import SaveEventButton from "@/components/club/SaveEventButton";
+import RsvpPanel from "@/components/club/RsvpPanel";
+import AddToCalendar from "@/components/club/AddToCalendar";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -111,10 +113,9 @@ export default function EventPage({
   const pageUrl = `${SITE_URL}/experiences/${eventSlug(event)}`;
 
   // CTA mirrors EventRow logic exactly.
-  const primaryHref = event.partifulLink ?? event.link ?? null;
-  const primaryLabel = event.partifulLink
-    ? "RSVP on Partiful"
-    : (event.linkLabel ?? "Learn More");
+  const nativeRsvp = registrationTypeOf(event) === "NATIVE";
+  const primaryHref = event.link ?? null;
+  const primaryLabel = event.linkLabel ?? "Learn More";
 
   // ── JSON-LD ──────────────────────────────────────────────────────────────
   const jsonLd: Record<string, unknown> = {
@@ -179,7 +180,7 @@ export default function EventPage({
       />
 
       <main className="pt-24 md:pt-14 pb-24">
-        {/* Phone: one narrow column. Desktop: Partiful-style two columns —
+        {/* Phone: one narrow column. Desktop: two columns —
             image on the left (sticky), details on the right. */}
         <div className="max-w-lg lg:max-w-6xl mx-auto px-5 lg:px-10">
 
@@ -299,6 +300,8 @@ export default function EventPage({
                       See upcoming experiences →
                     </Link>
                   </div>
+                ) : nativeRsvp ? (
+                  <RsvpPanel event={event} />
                 ) : (
                   <a
                     href={primaryHref ?? "https://discord.gg/6u83g4P8Cb"}
@@ -309,6 +312,7 @@ export default function EventPage({
                     {primaryHref ? primaryLabel : "RSVP on Discord"}
                   </a>
                 )}
+                {!past && <AddToCalendar event={event} />}
                 {!past && (
                   <div className="mt-3">
                     <SaveEventButton

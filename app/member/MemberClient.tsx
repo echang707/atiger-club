@@ -131,7 +131,6 @@ export default function MemberClient() {
 
 function SavedRow({ e, days }: { e: TigerEvent; days: number }) {
   const soon = days >= 0 && days <= 7;
-  const href = e.partifulLink ?? e.link;
   return (
     <li className="py-5 first:pt-0 last:pb-0">
       <div className="flex items-start justify-between gap-4">
@@ -154,15 +153,13 @@ function SavedRow({ e, days }: { e: TigerEvent; days: number }) {
           </p>
           {e.location && <p className="mt-0.5 text-[14px] text-ink/50">{e.location}</p>}
         </Link>
-        {days >= 0 && href && (
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
+        {days >= 0 && (
+          <Link
+            href={`/experiences/${eventSlug(e)}`}
             className="shrink-0 rounded-full bg-tiger-fill px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-tiger-deep"
           >
             RSVP
-          </a>
+          </Link>
         )}
       </div>
     </li>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { TigerEvent, eventSlug } from "@/lib/events";
+import { TigerEvent, eventSlug, registrationTypeOf } from "@/lib/events";
 import { useMember } from "@/components/club/MemberProvider";
 import { toggleSavedEvent } from "@/lib/club/supabase";
 
@@ -98,10 +98,9 @@ export default function EventRow({
   const kind = event.kind ?? "original";
   const [open, setOpen] = useState(false);
 
-  const primaryHref = event.partifulLink ?? event.link ?? null;
-  const primaryLabel = event.partifulLink
-    ? "RSVP on Partiful"
-    : (event.linkLabel ?? "Learn More");
+  const nativeRsvp = registrationTypeOf(event) === "NATIVE";
+  const primaryHref = nativeRsvp ? `/experiences/${eventSlug(event)}` : (event.link ?? null);
+  const primaryLabel = nativeRsvp ? "RSVP" : (event.linkLabel ?? "Learn More");
 
   // Dedicated event page URL — this is the main destination for the row click.
   const eventHref = `/experiences/${eventSlug(event)}`;
@@ -183,8 +182,8 @@ export default function EventRow({
                   {primaryHref ? (
                     <a
                       href={primaryHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={nativeRsvp ? undefined : "_blank"}
+                      rel={nativeRsvp ? undefined : "noopener noreferrer"}
                       className="inline-block rounded-full bg-tiger-fill border-2 border-tiger-fill px-5 py-2.5 text-[13px] font-semibold leading-none text-white transition-colors hover:bg-tiger-deep hover:border-tiger-deep"
                     >
                       {primaryLabel}
