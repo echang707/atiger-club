@@ -36,7 +36,7 @@ export default function NavMemberMobile({
   return (
     <div className="mt-1 border-t border-ink/10 pt-5">
       {/* Mini identity card at the top of the signed-in drawer */}
-      <div className="flex items-center gap-3 mb-5">
+      <Link href="/member" onClick={onNavigate} className="flex items-center gap-3 mb-5">
         <Avatar member={member} size={36} />
         <div className="min-w-0">
           <p className="font-semibold text-ink leading-tight truncate">
@@ -44,14 +44,11 @@ export default function NavMemberMobile({
           </p>
           <p className="text-[12px] text-ink/50 truncate">{member.email}</p>
         </div>
-      </div>
+      </Link>
 
       <div className="flex flex-col gap-5">
         <Link href="/member" className={link} onClick={onNavigate}>
           Your Club
-        </Link>
-        <Link href="/member/profile" className={link} onClick={onNavigate}>
-          Your Profile
         </Link>
         <button
           type="button"

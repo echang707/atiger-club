@@ -30,9 +30,13 @@ function MobileAvatar() {
     );
   }
   return (
-    <span className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[11px] font-bold text-white select-none">
+    <Link
+      href="/member"
+      aria-label="Your Club"
+      className="md:hidden grid h-7 w-7 place-items-center rounded-full bg-tiger-fill text-[11px] font-bold text-white select-none"
+    >
       {member.firstName.trim().charAt(0).toUpperCase() || "T"}
-    </span>
+    </Link>
   );
 }
 

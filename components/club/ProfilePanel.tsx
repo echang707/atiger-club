@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMember } from "./MemberProvider";
 import { Field, FormError, FormNote, SubmitButton } from "./ClubForm";
 import { Avatar, ClubSection, DetailRow, MARK } from "./ClubUI";
@@ -12,13 +12,23 @@ import {
   uploadAvatar,
 } from "@/lib/club/supabase";
 
-export default function ProfilePanel({ member }: { member: Member }) {
+export default function ProfilePanel({
+  member,
+  editRequest = 0,
+}: {
+  member: Member;
+  editRequest?: number;
+}) {
   const { refresh } = useMember();
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [avatarBusy, setAvatarBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editRequest > 0) setEditing(true);
+  }, [editRequest]);
 
   const [form, setForm] = useState<EditableProfile>({
     firstName: member.firstName,
@@ -80,10 +90,22 @@ export default function ProfilePanel({ member }: { member: Member }) {
 
   return (
     <>
-      {/* Photo section */}
-      <ClubSection eyebrow="Photo">
-        <div className="flex items-center gap-5 md:gap-8">
-          <Avatar member={member} size={72} />
+      <ClubSection
+        eyebrow={editing ? "Edit your profile" : "Your profile"}
+        action={
+          editing ? undefined : (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className={`${MARK} text-ink/45 transition-colors hover:text-ink`}
+            >
+              Edit
+            </button>
+          )
+        }
+      >
+        <div className="mb-6 flex items-center gap-5 md:gap-8">
+          <Avatar member={member} size={64} />
           <div>
             <button
               type="button"
@@ -103,23 +125,8 @@ export default function ProfilePanel({ member }: { member: Member }) {
             className="hidden"
           />
         </div>
-        {error && <p className="mt-4 text-[14px] text-tiger-text">{error}</p>}
-      </ClubSection>
-
-      {/* Details — read view */}
+        {error && !editing && <p className="mb-4 text-[14px] text-tiger-text">{error}</p>}
       {!editing && (
-        <ClubSection
-          eyebrow="Your details"
-          action={
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className={`${MARK} text-ink/45 transition-colors hover:text-ink`}
-            >
-              Edit
-            </button>
-          }
-        >
           <dl>
             <DetailRow label="First name" value={member.firstName} />
             <DetailRow label="Last name" value={member.lastName} />
@@ -133,12 +140,10 @@ export default function ProfilePanel({ member }: { member: Member }) {
               value={member.instagram ? `@${member.instagram}` : null}
             />
           </dl>
-        </ClubSection>
       )}
 
       {/* Edit form */}
       {editing && (
-        <ClubSection eyebrow="Edit your details">
           <form onSubmit={onSave} className="space-y-5 max-w-lg" noValidate>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <Field
@@ -208,8 +213,8 @@ export default function ProfilePanel({ member }: { member: Member }) {
               </button>
             </div>
           </form>
-        </ClubSection>
       )}
+      </ClubSection>
     </>
   );
 }
