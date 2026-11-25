@@ -52,7 +52,7 @@ export default function RsvpPanel({ event }: { event: TigerEvent }) {
           RSVP — join free
         </Link>
         <p className="mt-2 text-center text-xs text-ink/50">
-          Free to RSVP. Takes about 30 seconds.
+          {event.price ? `RSVP is free. ${event.price}.` : "Free to RSVP. Takes about 30 seconds."}
         </p>
       </div>
     );
@@ -114,7 +114,7 @@ export default function RsvpPanel({ event }: { event: TigerEvent }) {
           disabled={busy || going === null}
           className={`${BUTTON} bg-tiger-fill text-white hover:bg-tiger-deep disabled:opacity-60`}
         >
-          {busy ? "…" : "RSVP — free"}
+          {busy ? "…" : event.price ? "RSVP" : "RSVP — free"}
         </button>
       )}
       {spotsLeft !== null && !full && !going && (

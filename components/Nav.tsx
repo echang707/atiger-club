@@ -17,7 +17,7 @@ function MobileAvatar() {
   if (!member) {
     return (
       <Link
-        href="/join"
+        href="/login"
         aria-label="Log in or join Tiger Club"
         className="md:hidden grid h-7 w-7 place-items-center rounded-full border border-ink/25 text-ink"
       >

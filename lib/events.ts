@@ -539,7 +539,8 @@ export const events: TigerEvent[] = [
     location: "The Supermarket, Atlanta",
     address: "638 N Highland Ave NE, Atlanta, GA",
     description:
-      "Tiger Club and The Bakery Atlanta team up for an evening of letter writing, creativity, and connection. Put pen to paper and write to a friend, a loved one, or yourself — then meet the people around you over a relaxed evening of conversation. Come solo or with a friend, no writing experience needed.",
+      "Tiger Club and The Bakery Atlanta team up for an evening of letter writing, creativity, and connection. Put pen to paper and write to a friend, a loved one, or yourself — then meet the people around you over a relaxed evening of conversation. Come solo or with a friend, no writing experience needed. $5 per person, paid at the door. RSVP here so we know you're coming.",
+    price: "$5, pay at the door",
     image: "/images/letter-writing-social.png",
     link: "https://www.tickettailor.com/events/thebakeryatlanta/2514786",
     linkLabel: "Get Tickets",
