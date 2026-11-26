@@ -312,7 +312,11 @@ export default function EventPage({
                     {primaryHref ? primaryLabel : "RSVP on Discord"}
                   </a>
                 )}
-                {!past && <AddToCalendar event={event} />}
+                {!past && (
+                  <div className="mt-6">
+                    <AddToCalendar event={event} />
+                  </div>
+                )}
                 {!past && (
                   <div className="mt-3">
                     <SaveEventButton

@@ -1,16 +1,17 @@
 "use client";
 
-/* One page for the member: their experiences first (going, saved, past),
-   then their profile, which they can edit in place. Reached from the
-   avatar in the nav on every screen size. */
+/* The member's home: their experiences as flyers first (going, saved,
+   what's coming up, past), then their profile in a card they can edit in
+   place. Reached from the avatar in the nav on every screen size. */
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMember } from "@/components/club/MemberProvider";
-import { ClubHero, ClubSection, ClubLink, BODY, MARK } from "@/components/club/ClubUI";
-import ProfilePanel from "@/components/club/ProfilePanel";
-import AddToCalendar from "@/components/club/AddToCalendar";
+import { Avatar, MARK } from "@/components/club/ClubUI";
+import EditProfileSheet from "@/components/club/EditProfileSheet";
+import { Door } from "@/components/club/JourneyArt";
 import { memberSince } from "@/lib/member";
 import { events, eventSlug, type TigerEvent } from "@/lib/events";
 import { daysUntil, whenLabel } from "@/lib/club/alerts";
@@ -18,10 +19,12 @@ import {
   getMyRsvpEventIds,
   getSavedEventIds,
   rsvpToEvent,
-  signOut,
 } from "@/lib/club/supabase";
 
 type Row = { e: TigerEvent; days: number };
+
+const WRAP = "mx-auto max-w-content px-5 md:px-10";
+const GRID = "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 md:gap-x-6";
 
 export default function MemberClient() {
   const router = useRouter();
@@ -29,7 +32,7 @@ export default function MemberClient() {
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [goingIds, setGoingIds] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
-  const [editRequest, setEditRequest] = useState(0);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!member) return;
@@ -49,7 +52,7 @@ export default function MemberClient() {
   if (loading || !member) {
     return (
       <main className="min-h-svh pt-[76px] md:pt-20">
-        <div className="mx-auto max-w-content px-6 py-16 md:px-10">
+        <div className={`${WRAP} py-16`}>
           <p className={`${MARK} text-ink/40`}>
             {available ? "Opening your club…" : "Membership is unavailable."}
           </p>
@@ -59,166 +62,271 @@ export default function MemberClient() {
   }
 
   const since = memberSince(member);
-
-  const rows = (ids: string[]): Row[] =>
-    events.filter((e) => ids.includes(e.id)).map((e) => ({ e, days: daysUntil(e) }));
+  const all: Row[] = events.map((e) => ({ e, days: daysUntil(e) }));
   const soonest = (a: Row, b: Row) => a.days - b.days;
 
-  const going = rows(goingIds).filter((r) => r.days >= 0).sort(soonest);
-  const saved = rows(savedIds.filter((id) => !goingIds.includes(id)))
-    .filter((r) => r.days >= 0)
+  const going = all.filter((r) => goingIds.includes(r.e.id) && r.days >= 0).sort(soonest);
+  const saved = all
+    .filter((r) => savedIds.includes(r.e.id) && !goingIds.includes(r.e.id) && r.days >= 0)
     .sort(soonest);
-  const past = rows(Array.from(new Set([...goingIds, ...savedIds])))
-    .filter((r) => r.days < 0)
+  const comingUp = all
+    .filter((r) => r.days >= 0 && !goingIds.includes(r.e.id) && !savedIds.includes(r.e.id))
+    .sort(soonest)
+    .slice(0, 4);
+  const past = all
+    .filter((r) => r.days < 0 && (goingIds.includes(r.e.id) || savedIds.includes(r.e.id)))
     .sort((a, b) => b.days - a.days);
   const attended = past.filter((r) => goingIds.includes(r.e.id)).length;
 
-  function editProfile() {
-    setEditRequest((n) => n + 1);
-    document.getElementById("profile")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 
   return (
-    <main className="min-h-svh bg-paper pt-[76px] md:pt-20">
-      <ClubHero
-        member={member}
-        eyebrow="Your Club"
-        title={`${member.firstName} ${member.lastName}`.trim()}
-        subtitle={since ? `Member since ${since}` : null}
-        actions={
-          <>
-            <Stat value={going.length} label="Going" />
-            <Stat value={attended} label="Been to" />
-            <Stat value={saved.length} label="Saved" />
-            <button
-              type="button"
-              onClick={editProfile}
-              className="self-center rounded-full border border-ink/20 px-4 py-2 text-[13px] font-semibold text-ink transition-colors hover:border-ink/40"
-            >
-              Edit profile
-            </button>
-          </>
-        }
-      />
-
-      <ClubSection
-        eyebrow="You're going"
-        action={<ClubLink href="/experiences">Find more</ClubLink>}
-      >
-        {!ready ? null : going.length === 0 ? (
-          <p className={BODY}>
-            No RSVPs yet.{" "}
-            <ClubLink href="/experiences">See what&rsquo;s coming up →</ClubLink>
+    <main className="min-h-svh bg-paper pt-[76px] pb-16 md:pt-20">
+      {/* Profile header, Luma/Partiful style: the public face only */}
+      <header className={`${WRAP} pt-6 pb-2 md:pt-6`}>
+        <div className="flex flex-col items-center text-center">
+          <Avatar member={member} size={112} />
+          <h1 className="mt-5 font-wordmark font-extrabold text-ink tracking-tight leading-none text-[clamp(2rem,5vw,3rem)]">
+            {member.firstName} {member.lastName}
+          </h1>
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[15px] text-ink/60">
+            {member.city && <span>{member.city}</span>}
+            {member.city && member.instagram && <span aria-hidden="true">·</span>}
+            {member.instagram && (
+              <a
+                href={`https://instagram.com/${member.instagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-ink/75 hover:text-tiger-text"
+              >
+                @{member.instagram}
+              </a>
+            )}
+            {(member.city || member.instagram) && since && <span aria-hidden="true">·</span>}
+            {since && <span>Joined {since}</span>}
           </p>
-        ) : (
-          <ul className="divide-y divide-ink/8">
-            {going.map((r) => (
-              <EventItem key={r.e.id} row={r}>
-                <span className="shrink-0 rounded-full bg-tiger-fill/10 px-3 py-1.5 text-[12px] font-semibold text-tiger-text">
-                  Going ✓
-                </span>
-              </EventItem>
-            ))}
-          </ul>
-        )}
-        {going.length > 0 && (
-          <div className="mt-6 max-w-sm">
-            <p className={`${MARK} mb-3 text-ink/40`}>Next up</p>
-            <AddToCalendar event={going[0].e} />
-          </div>
-        )}
-      </ClubSection>
+          <dl className="mt-6 flex items-center gap-8">
+            <Stat value={going.length} label="Going" door="closed" />
+            <Stat value={attended} label="Attended" door="open" />
+            <Stat value={saved.length} label="Saved" door="outline" />
+          </dl>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="mt-6 rounded-full border border-ink/20 px-5 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:border-ink/40"
+          >
+            Edit profile
+          </button>
+        </div>
+      </header>
 
-      {ready && saved.length > 0 && (
-        <ClubSection eyebrow="Saved, not RSVPed yet">
-          <ul className="divide-y divide-ink/8">
+      {/* Upcoming: RSVPed first, then saved-but-not-RSVPed */}
+      <Section title="Your upcoming experiences" action={<MoreLink />}>
+        {!ready ? (
+          <SkeletonGrid />
+        ) : going.length + saved.length === 0 ? (
+          <div className="flex flex-col items-center rounded-3xl border border-dashed border-ink/20 px-6 py-10 text-center">
+            <Door state="outline" className="mb-4 h-14 w-auto" />
+            <p className="font-display text-[1.25rem] text-ink">Your next door is waiting.</p>
+            <p className="mt-2 text-[15px] text-ink/60">
+              RSVP or save an experience and it shows up here.
+            </p>
+          </div>
+        ) : (
+          <ul className={GRID}>
+            {going.map((r) => (
+              <FlyerCard key={r.e.id} row={r} badge="Going" badgeStrong door="closed" />
+            ))}
             {saved.map((r) => (
-              <EventItem key={r.e.id} row={r}>
+              <FlyerCard key={r.e.id} row={r} badge="Saved" door="outline">
                 <InlineRsvp
                   event={r.e}
                   onGoing={() => setGoingIds((ids) => [...ids, r.e.id])}
                 />
-              </EventItem>
+              </FlyerCard>
             ))}
           </ul>
-        </ClubSection>
+        )}
+      </Section>
+
+      {/* Coming up */}
+      {ready && comingUp.length > 0 && (
+        <Section title="Coming up at Tiger Club" action={<MoreLink />}>
+          <ul className={GRID}>
+            {comingUp.map((r) => (
+              <FlyerCard key={r.e.id} row={r} />
+            ))}
+          </ul>
+        </Section>
       )}
 
+      {/* Past */}
       {ready && past.length > 0 && (
-        <ClubSection eyebrow="Past experiences">
-          <ul className="divide-y divide-ink/8 opacity-70">
+        <Section title="Past experiences">
+          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6 md:gap-4">
             {past.map((r) => (
-              <EventItem key={r.e.id} row={r}>
-                {goingIds.includes(r.e.id) ? (
-                  <span className={`${MARK} shrink-0 text-ink/45`}>Went</span>
-                ) : null}
-              </EventItem>
+              <PastCard key={r.e.id} row={r} went={goingIds.includes(r.e.id)} />
             ))}
           </ul>
-        </ClubSection>
+        </Section>
       )}
 
-      <div id="profile" className="scroll-mt-24">
-        <ProfilePanel member={member} editRequest={editRequest} />
-      </div>
-
-      <section>
-        <div className="mx-auto max-w-content px-6 py-10 md:px-10">
-          <button
-            type="button"
-            onClick={async () => {
-              await signOut();
-              router.replace("/");
-            }}
-            className={`${MARK} text-ink/45 transition-colors hover:text-ink`}
-          >
-            Log out
-          </button>
-        </div>
-      </section>
+      <EditProfileSheet
+        member={member}
+        open={editing}
+        onClose={() => setEditing(false)}
+        onSignedOut={() => router.replace("/")}
+      />
     </main>
   );
 }
 
-function Stat({ value, label }: { value: number; label: string }) {
+function Section({
+  title,
+  note,
+  action,
+  children,
+}: {
+  title: string;
+  note?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="mr-4 min-w-[3.5rem]">
-      <p className="font-wordmark text-[1.75rem] font-extrabold leading-none text-ink tabular-nums">
+    <section className={`${WRAP} pt-8 md:pt-12`}>
+      <div className="mb-5 flex items-baseline justify-between gap-4 md:mb-7">
+        <h2 className="font-display text-[1.5rem] md:text-[1.85rem] text-ink leading-tight">
+          {title}
+          {note && <span className="ml-3 align-middle text-[13px] text-ink/45">{note}</span>}
+        </h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function MoreLink() {
+  return (
+    <Link
+      href="/experiences"
+      className="shrink-0 text-[14px] font-semibold text-tiger-text transition-colors hover:text-tiger-deep"
+    >
+      All experiences →
+    </Link>
+  );
+}
+
+function Stat({
+  value,
+  label,
+  door,
+}: {
+  value: number;
+  label: string;
+  door: "open" | "closed" | "outline";
+}) {
+  return (
+    <div className="flex flex-col-reverse items-center">
+      <dt className="mt-1 flex items-center gap-1.5 text-[13px] text-ink/55">
+        <Door state={door} className="h-5 w-auto" />
+        {label}
+      </dt>
+      <dd className="font-wordmark text-[1.6rem] font-extrabold leading-none text-ink tabular-nums">
         {value}
-      </p>
-      <p className={`${MARK} mt-1 text-ink/45`}>{label}</p>
+      </dd>
     </div>
   );
 }
 
-function EventItem({ row, children }: { row: Row; children?: React.ReactNode }) {
+function FlyerCard({
+  row,
+  badge,
+  badgeStrong,
+  door,
+  children,
+}: {
+  row: Row;
+  badge?: string;
+  badgeStrong?: boolean;
+  door?: "closed" | "outline";
+  children?: React.ReactNode;
+}) {
   const { e, days } = row;
-  const soon = days >= 0 && days <= 7;
+  const label = badge ?? (days <= 7 ? whenLabel(days) : null);
   return (
-    <li className="py-5 first:pt-0 last:pb-0">
-      <div className="flex items-start justify-between gap-4">
-        <Link href={`/experiences/${eventSlug(e)}`} className="group min-w-0 flex-1">
-          {soon && (
+    <li className="flex flex-col">
+      <Link href={`/experiences/${eventSlug(e)}`} className="group block">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ink/[0.06] ring-1 ring-ink/10">
+          <Image
+            src={e.image}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 25vw, (min-width:640px) 33vw, 50vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+          {label && (
             <span
-              className={`mb-1.5 inline-block rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wideish ${
-                days <= 1 ? "bg-tiger-fill text-white" : "bg-ink/[0.06] text-ink/70"
+              className={`absolute left-2.5 top-2.5 flex items-center gap-1.5 rounded-full py-1 pl-2 pr-2.5 text-[11px] font-semibold shadow-sm ${
+                badgeStrong || days <= 1 ? "bg-tiger-fill text-white" : "bg-paper/95 text-ink"
               }`}
             >
-              {whenLabel(days)}
+              {door && (
+                <Door
+                  state={door}
+                  className={`h-3.5 w-auto ${badgeStrong ? "[&_*]:stroke-white" : ""}`}
+                />
+              )}
+              {label}
             </span>
           )}
-          <p className="font-display text-[1.15rem] leading-snug text-ink group-hover:text-tiger-text">
-            {e.title}
-          </p>
-          <p className={`${MARK} mt-1.5 text-ink/45`}>
-            {e.month} {e.day}
-            {e.time ? ` · ${e.time}` : ""}
-          </p>
-          {e.location && <p className="mt-0.5 text-[14px] text-ink/50">{e.location}</p>}
-        </Link>
-        {children}
-      </div>
+        </div>
+        <p className={`${MARK} mt-3 text-tiger-text`}>
+          {e.month} {e.day}
+          {e.time ? ` · ${e.time}` : ""}
+        </p>
+        <p className="mt-1 font-display text-[1.05rem] leading-snug text-ink group-hover:text-tiger-text md:text-[1.15rem]">
+          {e.title}
+        </p>
+        {e.location && <p className="mt-0.5 truncate text-[13px] text-ink/50">{e.location}</p>}
+      </Link>
+      {children && <div className="mt-3">{children}</div>}
     </li>
+  );
+}
+
+function PastCard({ row, went }: { row: Row; went: boolean }) {
+  const { e } = row;
+  return (
+    <li>
+      <Link href={`/experiences/${eventSlug(e)}`} className="group block">
+        <div className="relative aspect-square overflow-hidden rounded-xl bg-ink/[0.06] ring-1 ring-ink/10">
+          <Image
+            src={e.image}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 16vw, 33vw"
+            className="object-cover grayscale-[40%] opacity-80 transition group-hover:grayscale-0 group-hover:opacity-100"
+          />
+          {went && (
+            <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-paper/95 py-0.5 pl-1.5 pr-2 text-[10px] font-semibold text-ink">
+              <Door state="open" className="h-3 w-auto" />
+              Went
+            </span>
+          )}
+        </div>
+        <p className="mt-2 truncate text-[13px] font-semibold text-ink/75">{e.title}</p>
+      </Link>
+    </li>
+  );
+}
+
+function SkeletonGrid() {
+  return (
+    <ul className={GRID} aria-hidden="true">
+      {[0, 1].map((i) => (
+        <li key={i} className="aspect-[4/5] animate-pulse rounded-2xl bg-ink/[0.06]" />
+      ))}
+    </ul>
   );
 }
 
@@ -233,23 +341,23 @@ function InlineRsvp({ event, onGoing }: { event: TigerEvent; onGoing: () => void
     setBusy(false);
     if (outcome === "going" || outcome === "already") onGoing();
     else if (outcome === "full") setNote("Sold out");
-    else setNote("Try again");
+    else setNote("Couldn't save. Try again.");
   }
 
   if (note === "Sold out") {
-    return <span className={`${MARK} shrink-0 text-ink/45`}>Sold out</span>;
+    return <p className="text-center text-[13px] font-semibold text-ink/50">Sold out</p>;
   }
   return (
-    <div className="shrink-0 text-right">
+    <>
       <button
         type="button"
         onClick={go}
         disabled={busy}
-        className="rounded-full bg-tiger-fill px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-tiger-deep disabled:opacity-60"
+        className="w-full rounded-full bg-tiger-fill px-4 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-tiger-deep disabled:opacity-60"
       >
         {busy ? "…" : "RSVP"}
       </button>
-      {note && <p className="mt-1 text-[12px] text-tiger-text">{note}</p>}
-    </div>
+      {note && <p className="mt-1.5 text-center text-[12px] text-tiger-text">{note}</p>}
+    </>
   );
 }
